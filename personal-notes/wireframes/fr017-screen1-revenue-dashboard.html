@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 Screen 1 – Financial Reporting: Revenue Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Sidebar ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+  .sidebar-icon { width: 16px; text-align: center; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+
+  /* ── Filter bar ── */
+  .filterbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .filter-label { color: #6b7280; font-size: 12px; font-weight: 500; }
+  .filter-select {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    color: #374151;
+  }
+  .filter-select .icon { color: #9ca3af; }
+  .filter-divider { width: 1px; height: 24px; background: #e5e7eb; margin: 0 4px; }
+  .filter-toggle {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .toggle-pill {
+    width: 32px; height: 18px;
+    background: #d1d5db;
+    border-radius: 9px;
+    position: relative;
+    cursor: pointer;
+  }
+  .toggle-pill::after {
+    content: '';
+    width: 14px; height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px; left: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+
+  /* ── Page content ── */
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── KPI cards ── */
+  .kpi-grid { display: grid; gap: 14px; }
+  .kpi-grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .kpi-grid-4b { grid-template-columns: repeat(4, 1fr); }
+
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 18px 20px;
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .card-value.large { font-size: 30px; }
+  .card-delta {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .delta-up { color: #10b981; }
+  .delta-down { color: #ef4444; }
+  .delta-neutral { color: #6b7280; }
+  .card-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+
+  /* alert cards */
+  .card.alert-risk { border-left: 4px solid #f59e0b; }
+  .card.alert-failed { border-left: 4px solid #ef4444; }
+  .card.alert-currency { border-left: 4px solid #8b5cf6; }
+  .card.card-conversion { border-left: 4px solid #10b981; }
+
+  .card-value.alert { font-size: 36px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .badge-risk { background: #fef3c7; color: #92400e; }
+  .badge-failed { background: #fee2e2; color: #991b1b; }
+  .badge-currency { background: #ede9fe; color: #5b21b6; }
+  .card-link {
+    font-size: 11px;
+    color: #4a90d9;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  /* ── Outstanding + Pending row ── */
+  .two-col { display: grid; grid-template-columns: 1fr 320px; gap: 14px; }
+
+  .aging-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .aging-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .aging-amount { font-size: 22px; font-weight: 700; color: #111827; }
+  .aging-hint { font-size: 11px; color: #9ca3af; }
+
+  .aging-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .aging-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .aging-table td {
+    padding: 9px 8px;
+    border-bottom: 1px solid #f9fafb;
+    font-size: 12px;
+  }
+  .aging-table tr:last-child td { border-bottom: none; }
+  .aging-bar-wrap { width: 120px; }
+  .aging-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
+  .aging-bar-fill { height: 100%; border-radius: 3px; }
+  .bar-green { background: #10b981; }
+  .bar-yellow { background: #f59e0b; }
+  .bar-orange { background: #f97316; }
+  .bar-red { background: #ef4444; }
+
+  .pending-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .pending-card .card-value { font-size: 28px; }
+  .pending-desc { font-size: 11px; color: #6b7280; line-height: 1.5; margin-top: 6px; }
+
+  /* ── Chart sections ── */
+  .chart-full { background: #fff; border-radius: 10px; border: 1px solid #e4e8f0; padding: 20px; }
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .chart-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .chart-controls { display: flex; align-items: center; gap: 8px; }
+  .chip {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: pointer;
+  }
+  .chip.active { background: #eff6ff; color: #2563eb; }
+
+  .warning-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    background: #fff7ed;
+    color: #c2410c;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  /* SVG chart area */
+  .chart-area { width: 100%; border-radius: 8px; overflow: hidden; }
+
+  .two-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ── Tables ── */
+  .two-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .data-table td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #f9fafb;
+    font-size: 12px;
+    color: #374151;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafafa; }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .rank-1 { background: #fef3c7; color: #92400e; }
+  .rank-2 { background: #f3f4f6; color: #6b7280; }
+  .rank-3 { background: #fff7ed; color: #c2410c; }
+
+  .roi-badge { padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .roi-high { background: #d1fae5; color: #065f46; }
+  .roi-mid { background: #dbeafe; color: #1e40af; }
+
+  .status-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .dot-pending { background: #f59e0b; }
+  .dot-processing { background: #3b82f6; }
+  .dot-paid { background: #10b981; }
+  .dot-failed { background: #ef4444; }
+
+  .progress-bar { height: 4px; border-radius: 2px; background: #f3f4f6; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 2px; }
+
+  /* sort icon */
+  .sort-icon { cursor: pointer; color: #d1d5db; font-size: 10px; }
+
+  /* ── Comparison mode ── */
+  .toggle-pill { cursor: pointer; transition: background 0.2s; }
+  .compare-active .toggle-pill { background: #4a90d9; }
+  .compare-active .toggle-pill::after { left: 16px; }
+  .compare-active .filter-toggle { color: #2563eb; font-weight: 600; }
+
+  .compare-period-label {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #6b7280;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 3px 9px;
+    border-radius: 5px;
+    margin-left: 8px;
+  }
+  .compare-active .compare-period-label { display: inline-flex; }
+
+  /* KPI prev values */
+  .kpi-prev { display: none; margin-top: 5px; padding-top: 6px; border-top: 1px solid #f3f4f6; }
+  .compare-active .kpi-prev { display: block; }
+  .kpi-prev-row { display: flex; justify-content: space-between; align-items: center; }
+  .kpi-prev-label { font-size: 10px; color: #9ca3af; }
+  .kpi-prev-val { font-size: 12px; color: #6b7280; font-weight: 600; }
+  .kpi-delta-abs { font-size: 11px; margin-top: 2px; }
+
+  /* Chart prev elements */
+  .prev-line { display: none; }
+  .compare-active .prev-line { display: block; }
+  .prev-bars { display: none; }
+  .compare-active .prev-bars { display: block; }
+
+  /* Chart legend */
+  .chart-legend { display: none; align-items: center; gap: 14px; font-size: 11px; color: #6b7280; margin-top: 8px; }
+  .compare-active .chart-legend { display: flex; }
+  .legend-dot { width: 20px; height: 2px; display: inline-block; border-radius: 1px; }
+  .legend-dashed { border-top: 2px dashed #94a3b8; display: inline-block; width: 20px; }
+
+  /* Table compare columns */
+  .cmp-col { display: none; }
+  .compare-active .cmp-col { display: table-cell; }
+
+  /* Pie chart prev ring */
+  .prev-ring { display: none; }
+  .compare-active .prev-ring { display: block; }
+
+  /* Comparison banner */
+  .compare-banner {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: #1e40af;
+  }
+  .compare-active .compare-banner { display: flex; }
+  .banner-sep { width: 40px; height: 2px; background: #93c5fd; border-radius: 1px; display: inline-block; vertical-align: middle; }
+  .prev-period-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f1f5f9; border: 1px dashed #94a3b8;
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #64748b;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">HAIR<span>LINE</span> <span style="font-size:10px;font-weight:400;color:#555a7a;">Admin</span></div>
+
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item">📊 <span>Dashboard</span></div>
+
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item active">📈 <span>Financial Reporting</span></div>
+    <div class="sidebar-item">🏥 <span>Provider Billing</span></div>
+    <div class="sidebar-item">🧑‍🤝‍🧑 <span>Patient Billing</span></div>
+    <div class="sidebar-item">🤝 <span>Affiliate Billing</span></div>
+    <div class="sidebar-item">🔍 <span>Investigation</span></div>
+    <div class="sidebar-item">💱 <span>Currency Alerts</span></div>
+    <div class="sidebar-item">📋 <span>Audit Trail</span></div>
+
+    <div class="sidebar-section">Management</div>
+    <div class="sidebar-item">👥 <span>Providers</span></div>
+    <div class="sidebar-item">🎟️ <span>Promotions</span></div>
+    <div class="sidebar-item">⚙️ <span>Settings</span></div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Billing &amp; Finance</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Financial Reporting</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">📄 Export CSV</button>
+        <button class="btn btn-primary">⬇ Export Full Report</button>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filterbar">
+      <span class="filter-label">Period:</span>
+      <div class="filter-select">📅 Oct 1 – Oct 31, 2025 <span class="icon">▾</span></div>
+      <div class="chip active">Last 30 days</div>
+      <div class="chip">Last 7 days</div>
+      <div class="chip">This quarter</div>
+      <div class="chip">Custom</div>
+      <div class="filter-divider"></div>
+      <span class="filter-label">Currency:</span>
+      <div class="filter-select">💵 USD <span class="icon">▾</span></div>
+      <div class="filter-toggle" id="compareToggle" onclick="toggleCompare()" style="cursor:pointer;">
+        <div class="toggle-pill"></div>
+        Compare to previous period
+      </div>
+      <span class="compare-period-label">📅 vs Sep 1 – Sep 30, 2025</span>
+    </div>
+
+    <!-- Page content -->
+    <div class="content" id="pageContent">
+
+      <!-- Comparison banner -->
+      <div class="compare-banner">
+        <span>📊 Comparing:</span>
+        <strong>Oct 1 – Oct 31, 2025</strong>
+        <div class="banner-sep"></div>
+        <span class="prev-period-chip">- - - Sep 1 – Sep 30, 2025</span>
+        <span style="margin-left:auto;font-size:11px;color:#3b82f6;">All charts + KPIs show both periods</span>
+      </div>
+
+      <!-- KPI Row 1 -->
+      <div class="kpi-grid kpi-grid-4">
+        <div class="card">
+          <div class="card-label">Total Revenue</div>
+          <div class="card-value large">$4,820,000</div>
+          <div class="card-delta delta-up">▲ +12.4% vs prev period</div>
+          <div class="kpi-prev">
+            <div class="kpi-prev-row">
+              <span class="kpi-prev-label">Sep (prev)</span>
+              <span class="kpi-prev-val">$4,289,000</span>
+            </div>
+            <div class="kpi-delta-abs delta-up">▲ +$531,000 absolute</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Platform Commission</div>
+          <div class="card-value">$963,500</div>
+          <div class="card-delta delta-up">▲ +9.1% vs prev period</div>
+          <div class="kpi-prev">
+            <div class="kpi-prev-row">
+              <span class="kpi-prev-label">Sep (prev)</span>
+              <span class="kpi-prev-val">$882,700</span>
+            </div>
+            <div class="kpi-delta-abs delta-up">▲ +$80,800 absolute</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Provider Payouts</div>
+          <div class="card-value">$3,254,100</div>
+          <div class="card-delta delta-up">▲ +11.7% vs prev period</div>
+          <div class="kpi-prev">
+            <div class="kpi-prev-row">
+              <span class="kpi-prev-label">Sep (prev)</span>
+              <span class="kpi-prev-val">$2,912,500</span>
+            </div>
+            <div class="kpi-delta-abs delta-up">▲ +$341,600 absolute</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Affiliate Payouts</div>
+          <div class="card-value">$128,400</div>
+          <div class="card-delta delta-down">▼ -3.2% vs prev period</div>
+          <div class="kpi-prev">
+            <div class="kpi-prev-row">
+              <span class="kpi-prev-label">Sep (prev)</span>
+              <span class="kpi-prev-val">$132,600</span>
+            </div>
+            <div class="kpi-delta-abs delta-down">▼ -$4,200 absolute</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Row 2 -->
+      <div class="kpi-grid kpi-grid-4b">
+        <div class="card alert-risk">
+          <div class="card-label">⚠ At Risk Invoices <span class="badge badge-risk">Action needed</span></div>
+          <div class="card-value alert" style="color:#d97706;">7</div>
+          <div class="card-sub">All retries exhausted</div>
+          <a class="card-link">View invoices →</a>
+        </div>
+        <div class="card alert-failed">
+          <div class="card-label">✗ Failed Payouts <span class="badge badge-failed">Retry required</span></div>
+          <div class="card-value alert" style="color:#dc2626;">3</div>
+          <div class="card-sub">Provider + affiliate combined</div>
+          <a class="card-link">Review &amp; retry →</a>
+        </div>
+        <div class="card alert-currency">
+          <div class="card-label">🔔 Currency Alerts <span class="badge badge-currency">2 active</span></div>
+          <div class="card-value alert" style="color:#7c3aed;">2</div>
+          <div class="card-sub">Unacknowledged alerts</div>
+          <a class="card-link">View alerts → Screen 8</a>
+        </div>
+        <div class="card card-conversion">
+          <div class="card-label">Conversion Rate</div>
+          <div class="card-value alert" style="color:#059669;">24.6%</div>
+          <div class="card-sub">Bookings / Inquiries × 100</div>
+          <div class="card-delta delta-up">▲ +2.1pp vs prev period</div>
+        </div>
+      </div>
+
+      <!-- Outstanding Invoices + Pending Provider Payouts -->
+      <div class="two-col">
+        <div class="card">
+          <div class="aging-header">
+            <div>
+              <div class="aging-title">Outstanding Patient Invoices <span style="font-size:11px;color:#9ca3af;cursor:pointer;">▼ expanded</span></div>
+              <div class="aging-hint">Pending · Partial · Overdue · At Risk</div>
+            </div>
+            <div class="aging-amount">$241,300</div>
+          </div>
+          <table class="aging-table">
+            <thead>
+              <tr>
+                <th>Bucket</th>
+                <th>Invoices</th>
+                <th>Amount</th>
+                <th style="width:130px;">Share</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0–30 days overdue</td>
+                <td>14</td>
+                <td>$98,200</td>
+                <td>
+                  <div class="aging-bar-wrap">
+                    <div class="aging-bar"><div class="aging-bar-fill bar-green" style="width:40%;"></div></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>31–60 days overdue</td>
+                <td>6</td>
+                <td>$84,700</td>
+                <td>
+                  <div class="aging-bar-wrap">
+                    <div class="aging-bar"><div class="aging-bar-fill bar-yellow" style="width:35%;"></div></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>60+ days overdue ⚠</td>
+                <td>3</td>
+                <td>$34,400</td>
+                <td>
+                  <div class="aging-bar-wrap">
+                    <div class="aging-bar"><div class="aging-bar-fill bar-orange" style="width:14%;"></div></div>
+                  </div>
+                </td>
+              </tr>
+              <tr style="background:#fff5f5;">
+                <td><strong>At Risk 🔴</strong></td>
+                <td><strong>2</strong></td>
+                <td><strong>$24,000</strong></td>
+                <td>
+                  <div class="aging-bar-wrap">
+                    <div class="aging-bar"><div class="aging-bar-fill bar-red" style="width:10%;"></div></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card pending-card">
+          <div>
+            <div class="card-label">Pending Provider Payouts</div>
+            <div class="card-value" style="font-size:32px;margin-top:8px;">$387,500</div>
+            <div class="pending-desc">
+              Treatment earnings awaiting payout.<br>
+              Includes cases with status <strong>Completed</strong> or <strong>Aftercare</strong> not yet paid out.
+            </div>
+          </div>
+          <div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:4px;">
+                <span>Paid out this period</span><span>$3,254,100</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:89%;background:#10b981;"></div></div>
+            </div>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;">Go to Provider Billing →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Trend (full width) -->
+      <div class="chart-full">
+        <div class="chart-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="chart-title">Revenue Trend</span>
+            <span class="warning-badge">⚠ Anomaly: drop on Oct 14</span>
+          </div>
+          <div class="chart-controls">
+            <span class="chip active">Line</span>
+            <span class="chip">Bar</span>
+            <span class="chip">Area</span>
+          </div>
+        </div>
+        <!-- SVG Revenue Trend Chart -->
+        <svg class="chart-area" viewBox="0 0 900 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4a90d9" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#4a90d9" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="50" y1="20" x2="880" y2="20" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="50" y1="50" x2="880" y2="50" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="50" y1="80" x2="880" y2="80" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="50" y1="110" x2="880" y2="110" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="50" y1="140" x2="880" y2="140" stroke="#f3f4f6" stroke-width="1"/>
+          <!-- Y labels -->
+          <text x="44" y="24" font-size="9" fill="#9ca3af" text-anchor="end">$600K</text>
+          <text x="44" y="54" font-size="9" fill="#9ca3af" text-anchor="end">$480K</text>
+          <text x="44" y="84" font-size="9" fill="#9ca3af" text-anchor="end">$360K</text>
+          <text x="44" y="114" font-size="9" fill="#9ca3af" text-anchor="end">$240K</text>
+          <text x="44" y="144" font-size="9" fill="#9ca3af" text-anchor="end">$120K</text>
+          <!-- Area fill -->
+          <polygon points="50,130 130,95 210,110 290,75 370,135 450,60 530,80 610,55 690,70 770,45 850,35 880,35 880,145 50,145" fill="url(#areaGrad)"/>
+          <!-- Line -->
+          <polyline points="50,130 130,95 210,110 290,75 370,135 450,60 530,80 610,55 690,70 770,45 850,35"
+            fill="none" stroke="#4a90d9" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <!-- Anomaly marker -->
+          <circle cx="370" cy="135" r="5" fill="#ef4444" opacity="0.8"/>
+          <text x="370" y="155" font-size="8" fill="#ef4444" text-anchor="middle">Oct 14</text>
+          <!-- Data points -->
+          <circle cx="50" cy="130" r="3" fill="#4a90d9"/>
+          <circle cx="130" cy="95" r="3" fill="#4a90d9"/>
+          <circle cx="210" cy="110" r="3" fill="#4a90d9"/>
+          <circle cx="290" cy="75" r="3" fill="#4a90d9"/>
+          <circle cx="450" cy="60" r="3" fill="#4a90d9"/>
+          <circle cx="530" cy="80" r="3" fill="#4a90d9"/>
+          <circle cx="610" cy="55" r="3" fill="#4a90d9"/>
+          <circle cx="690" cy="70" r="3" fill="#4a90d9"/>
+          <circle cx="770" cy="45" r="3" fill="#4a90d9"/>
+          <circle cx="850" cy="35" r="3" fill="#4a90d9"/>
+          <!-- Prev period dashed line (Sep) -->
+          <polyline class="prev-line"
+            points="50,145 130,118 210,130 290,105 370,150 450,95 530,110 610,90 690,102 770,80 850,72"
+            fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"
+            stroke-linejoin="round" stroke-linecap="round"/>
+          <!-- X labels -->
+          <text x="50" y="170" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 1</text>
+          <text x="210" y="170" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 8</text>
+          <text x="370" y="170" font-size="9" fill="#ef4444" text-anchor="middle" font-weight="600">Oct 14</text>
+          <text x="530" y="170" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 20</text>
+          <text x="690" y="170" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 25</text>
+          <text x="850" y="170" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 31</text>
+        </svg>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#4a90d9;height:2px;"></span> Oct 2025 (current)</span>
+          <span><span class="legend-dashed"></span> Sep 2025 (prev period)</span>
+        </div>
+      </div>
+
+      <!-- Country + Treatment Type charts -->
+      <div class="two-charts">
+        <!-- Revenue by Country -->
+        <div class="chart-full">
+          <div class="chart-header">
+            <span class="chart-title">Revenue by Country</span>
+            <div class="chart-controls">
+              <span class="chip active">Pie</span><span class="chip">Bar</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:24px;">
+            <svg viewBox="0 0 160 160" width="160" height="160" xmlns="http://www.w3.org/2000/svg">
+              <!-- Turkey 42% -->
+              <path d="M80,80 L80,10 A70,70 0 0,1 145.87,45 Z" fill="#4a90d9"/>
+              <!-- Thailand 28% -->
+              <path d="M80,80 L145.87,45 A70,70 0 0,1 124.87,143.33 Z" fill="#7dd3fc"/>
+              <!-- India 18% -->
+              <path d="M80,80 L124.87,143.33 A70,70 0 0,1 15.13,143.33 Z" fill="#a5f3fc"/>
+              <!-- Other 12% -->
+              <path d="M80,80 L15.13,143.33 A70,70 0 0,1 80,10 Z" fill="#e0f2fe"/>
+              <circle cx="80" cy="80" r="32" fill="#fff"/>
+              <text x="80" y="77" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Revenue</text>
+              <text x="80" y="91" font-size="10" fill="#6b7280" text-anchor="middle">by Country</text>
+            </svg>
+            <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:2px;background:#4a90d9;flex-shrink:0;"></div>
+                <span style="flex:1;font-size:12px;">🇹🇷 Turkey</span>
+                <strong style="font-size:12px;">42%</strong>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:2px;background:#7dd3fc;flex-shrink:0;"></div>
+                <span style="flex:1;font-size:12px;">🇹🇭 Thailand</span>
+                <strong style="font-size:12px;">28%</strong>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:2px;background:#a5f3fc;flex-shrink:0;"></div>
+                <span style="flex:1;font-size:12px;">🇮🇳 India</span>
+                <strong style="font-size:12px;">18%</strong>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:2px;background:#e0f2fe;flex-shrink:0;"></div>
+                <span style="flex:1;font-size:12px;">🌍 Other</span>
+                <strong style="font-size:12px;">12%</strong>
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#9ca3af;">Click segment to filter dashboard</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue by Treatment Type -->
+        <div class="chart-full">
+          <div class="chart-header">
+            <span class="chart-title">Revenue by Treatment Type</span>
+            <div class="chart-controls">
+              <span class="chip active">Bar</span><span class="chip">Pie</span>
+            </div>
+          </div>
+          <svg viewBox="0 0 340 160" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <!-- FUE 62% -->
+            <rect x="16" y="30" width="186" height="26" rx="4" fill="#4a90d9"/>
+            <text x="210" y="47" font-size="11" fill="#374151">FUE — 62%</text>
+            <!-- DHI 38% -->
+            <rect x="16" y="65" width="114" height="26" rx="4" fill="#7dd3fc"/>
+            <text x="138" y="82" font-size="11" fill="#374151">DHI — 38%</text>
+            <!-- FUT 26% -->
+            <rect x="16" y="100" width="78" height="26" rx="4" fill="#a5f3fc"/>
+            <text x="102" y="117" font-size="11" fill="#374151">FUT — 26%</text>
+            <!-- Other 8% -->
+            <rect x="16" y="135" width="24" height="18" rx="4" fill="#e0f2fe"/>
+            <text x="48" y="148" font-size="11" fill="#374151">Other — 8%</text>
+            <text x="16" y="16" font-size="9" fill="#9ca3af">Excludes refunded bookings · Click bar to filter</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Refund Trend -->
+      <div class="chart-full">
+        <div class="chart-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="chart-title">Refund Trend</span>
+            <span class="warning-badge">⚠ High refund rate on Oct 18–20</span>
+          </div>
+          <div class="chart-controls">
+            <span style="font-size:11px;color:#6b7280;margin-right:4px;">Full &amp; partial refunds</span>
+            <span class="chip active">Bar</span>
+            <span class="chip">Line</span>
+            <a class="card-link" style="margin-left:8px;">Drill-down → Screen 4a</a>
+          </div>
+        </div>
+        <svg class="chart-area" viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg">
+          <line x1="50" y1="10" x2="880" y2="10" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="50" y1="40" x2="880" y2="40" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="50" y1="70" x2="880" y2="70" stroke="#f3f4f6" stroke-width="1"/>
+          <text x="44" y="13" font-size="9" fill="#9ca3af" text-anchor="end">$30K</text>
+          <text x="44" y="43" font-size="9" fill="#9ca3af" text-anchor="end">$20K</text>
+          <text x="44" y="73" font-size="9" fill="#9ca3af" text-anchor="end">$10K</text>
+          <!-- Prev period bars (Sep) — lighter, offset left -->
+          <g class="prev-bars">
+            <rect x="58"  y="76" width="12" height="14" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="138" y="71" width="12" height="19" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="218" y="78" width="12" height="12" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="298" y="73" width="12" height="17" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="378" y="65" width="12" height="25" rx="2" fill="#94a3b8" opacity="0.8"/>
+            <rect x="458" y="52" width="12" height="38" rx="2" fill="#94a3b8" opacity="0.8"/>
+            <rect x="538" y="66" width="12" height="24" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="618" y="77" width="12" height="13" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="698" y="80" width="12" height="10" rx="2" fill="#cbd5e1" opacity="0.7"/>
+            <rect x="778" y="82" width="12" height="8"  rx="2" fill="#cbd5e1" opacity="0.7"/>
+          </g>
+          <!-- Bars refund amounts -->
+          <rect x="70"  y="72" width="22" height="18" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="150" y="68" width="22" height="22" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="230" y="75" width="22" height="15" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="310" y="70" width="22" height="20" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="390" y="55" width="22" height="35" rx="2" fill="#ef4444" opacity="0.9"/>
+          <rect x="470" y="42" width="22" height="48" rx="2" fill="#ef4444" opacity="0.9"/>
+          <rect x="550" y="58" width="22" height="32" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="630" y="73" width="22" height="17" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="710" y="77" width="22" height="13" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <rect x="790" y="80" width="22" height="10" rx="2" fill="#fca5a5" opacity="0.8"/>
+          <!-- X labels -->
+          <text x="81"  y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 3</text>
+          <text x="161" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 6</text>
+          <text x="241" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 10</text>
+          <text x="321" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 14</text>
+          <text x="401" y="106" font-size="9" fill="#ef4444" text-anchor="middle" font-weight="600">Oct 18</text>
+          <text x="481" y="106" font-size="9" fill="#ef4444" text-anchor="middle" font-weight="600">Oct 20</text>
+          <text x="561" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 22</text>
+          <text x="641" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 25</text>
+          <text x="721" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 28</text>
+          <text x="801" y="106" font-size="9" fill="#9ca3af" text-anchor="middle">Oct 31</text>
+        </svg>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#fca5a5;height:10px;width:10px;border-radius:2px;display:inline-block;"></span> Oct 2025 (current)</span>
+          <span><span style="display:inline-block;width:10px;height:10px;background:#cbd5e1;border-radius:2px;"></span> Sep 2025 (prev period)</span>
+        </div>
+      </div>
+
+      <!-- Tables Row -->
+      <div class="two-tables">
+        <!-- Top Providers -->
+        <div class="card">
+          <div class="chart-header" style="margin-bottom:12px;">
+            <span class="chart-title">Top Providers by Revenue</span>
+            <div class="chart-controls">
+              <span class="chip active">Revenue ↓</span>
+              <span class="chip">Bookings</span>
+              <span class="chip">Avg Value</span>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Provider</th>
+                <th>Revenue <span class="sort-icon">↕</span></th>
+                <th class="cmp-col" style="color:#94a3b8;">Prev</th>
+                <th class="cmp-col" style="color:#94a3b8;">Δ</th>
+                <th>Bookings</th>
+                <th>Avg</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="rank-badge rank-1">1</span></td>
+                <td><strong>Istanbul Clinic</strong><br><span style="font-size:10px;color:#9ca3af;">🇹🇷 Turkey</span></td>
+                <td><strong>$824K</strong></td>
+                <td class="cmp-col" style="color:#9ca3af;">$731K</td>
+                <td class="cmp-col"><span style="color:#10b981;font-size:11px;font-weight:600;">▲ +12.7%</span></td>
+                <td>42</td>
+                <td>$19.6K</td>
+              </tr>
+              <tr>
+                <td><span class="rank-badge rank-2">2</span></td>
+                <td><strong>Bangkok Hair</strong><br><span style="font-size:10px;color:#9ca3af;">🇹🇭 Thailand</span></td>
+                <td><strong>$612K</strong></td>
+                <td class="cmp-col" style="color:#9ca3af;">$588K</td>
+                <td class="cmp-col"><span style="color:#10b981;font-size:11px;font-weight:600;">▲ +4.1%</span></td>
+                <td>38</td>
+                <td>$16.1K</td>
+              </tr>
+              <tr>
+                <td><span class="rank-badge rank-3">3</span></td>
+                <td><strong>Delhi Premium</strong><br><span style="font-size:10px;color:#9ca3af;">🇮🇳 India</span></td>
+                <td><strong>$489K</strong></td>
+                <td class="cmp-col" style="color:#9ca3af;">$524K</td>
+                <td class="cmp-col"><span style="color:#ef4444;font-size:11px;font-weight:600;">▼ -6.7%</span></td>
+                <td>31</td>
+                <td>$15.8K</td>
+              </tr>
+              <tr>
+                <td><span class="rank-badge rank-2">4</span></td>
+                <td><strong>Ankara Hair Ctr</strong><br><span style="font-size:10px;color:#9ca3af;">🇹🇷 Turkey</span></td>
+                <td><strong>$374K</strong></td>
+                <td class="cmp-col" style="color:#9ca3af;">$341K</td>
+                <td class="cmp-col"><span style="color:#10b981;font-size:11px;font-weight:600;">▲ +9.7%</span></td>
+                <td>28</td>
+                <td>$13.4K</td>
+              </tr>
+              <tr>
+                <td><span class="rank-badge rank-2">5</span></td>
+                <td><strong>Phuket Clinic</strong><br><span style="font-size:10px;color:#9ca3af;">🇹🇭 Thailand</span></td>
+                <td><strong>$298K</strong></td>
+                <td class="cmp-col" style="color:#9ca3af;">$305K</td>
+                <td class="cmp-col"><span style="color:#ef4444;font-size:11px;font-weight:600;">▼ -2.3%</span></td>
+                <td>22</td>
+                <td>$13.5K</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Discount Usage -->
+        <div class="card">
+          <div class="chart-header" style="margin-bottom:12px;">
+            <span class="chart-title">Discount Usage</span>
+            <div class="chart-controls">
+              <span class="chip active">ROI ↓</span>
+              <span class="chip">Usage</span>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Used <span class="sort-icon">↕</span></th>
+                <th class="cmp-col" style="color:#94a3b8;">Prev used</th>
+                <th>Discount</th>
+                <th>ROI <span class="sort-icon">↕</span></th>
+                <th class="cmp-col" style="color:#94a3b8;">Δ ROI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:11px;">VIP15</code></td>
+                <td>23</td>
+                <td class="cmp-col" style="color:#9ca3af;">19</td>
+                <td>$17,250</td>
+                <td><span class="roi-badge roi-high">4.1x</span></td>
+                <td class="cmp-col"><span style="color:#10b981;font-size:11px;font-weight:600;">▲ +0.4x</span></td>
+              </tr>
+              <tr>
+                <td><code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:11px;">HAIR20</code></td>
+                <td>87</td>
+                <td class="cmp-col" style="color:#9ca3af;">74</td>
+                <td>$43,500</td>
+                <td><span class="roi-badge roi-high">3.2x</span></td>
+                <td class="cmp-col"><span style="color:#10b981;font-size:11px;font-weight:600;">▲ +0.3x</span></td>
+              </tr>
+              <tr>
+                <td><code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:11px;">SUMMER10</code></td>
+                <td>54</td>
+                <td class="cmp-col" style="color:#9ca3af;">61</td>
+                <td>$21,600</td>
+                <td><span class="roi-badge roi-mid">2.8x</span></td>
+                <td class="cmp-col"><span style="color:#ef4444;font-size:11px;font-weight:600;">▼ -0.5x</span></td>
+              </tr>
+              <tr>
+                <td><code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:11px;">NEWUSER</code></td>
+                <td>31</td>
+                <td class="cmp-col" style="color:#9ca3af;">28</td>
+                <td>$9,300</td>
+                <td><span class="roi-badge roi-mid">2.1x</span></td>
+                <td class="cmp-col"><span style="color:#10b981;font-size:11px;font-weight:600;">▲ +0.1x</span></td>
+              </tr>
+              <tr>
+                <td><code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:11px;">FLASH5</code></td>
+                <td>18</td>
+                <td class="cmp-col" style="color:#9ca3af;">22</td>
+                <td>$5,400</td>
+                <td><span class="roi-badge roi-mid">1.9x</span></td>
+                <td class="cmp-col"><span style="color:#ef4444;font-size:11px;font-weight:600;">▼ -0.2x</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Affiliate Payout Status Summary -->
+      <div class="card">
+        <div class="chart-header" style="margin-bottom:12px;">
+          <span class="chart-title">Affiliate Payout Status Summary</span>
+          <div class="chart-controls">
+            <span class="chip active">Status</span>
+            <span class="chip">Amount ↓</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Count <span class="sort-icon">↕</span></th>
+              <th>Total Amount <span class="sort-icon">↕</span></th>
+              <th>% of Total</th>
+              <th>Distribution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="status-dot dot-pending"></span><strong>Pending</strong></td>
+              <td>12</td>
+              <td>$28,400</td>
+              <td>22%</td>
+              <td><div class="progress-bar" style="width:200px;"><div class="progress-fill" style="width:22%;background:#f59e0b;"></div></div></td>
+            </tr>
+            <tr>
+              <td><span class="status-dot dot-processing"></span><strong>Processing</strong></td>
+              <td>5</td>
+              <td>$14,100</td>
+              <td>11%</td>
+              <td><div class="progress-bar" style="width:200px;"><div class="progress-fill" style="width:11%;background:#3b82f6;"></div></div></td>
+            </tr>
+            <tr>
+              <td><span class="status-dot dot-paid"></span><strong>Paid</strong></td>
+              <td>38</td>
+              <td>$85,900</td>
+              <td>66%</td>
+              <td><div class="progress-bar" style="width:200px;"><div class="progress-fill" style="width:66%;background:#10b981;"></div></div></td>
+            </tr>
+            <tr style="background:#fff5f5;">
+              <td><span class="status-dot dot-failed"></span><strong style="color:#dc2626;">Failed 🔴</strong></td>
+              <td><strong>1</strong></td>
+              <td><strong>$600</strong></td>
+              <td>0.5%</td>
+              <td><div class="progress-bar" style="width:200px;"><div class="progress-fill" style="width:0.5%;background:#ef4444;"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer note -->
+      <div style="text-align:center;font-size:11px;color:#d1d5db;padding-bottom:8px;">
+        FR-017 · Screen 1: Financial Reporting — Revenue Dashboard · Admin Platform (A-05)
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+<script>
+  function toggleCompare() {
+    const content = document.getElementById('pageContent');
+    const filterbar = document.querySelector('.filterbar');
+    const isActive = content.classList.toggle('compare-active');
+    filterbar.classList.toggle('compare-active', isActive);
+  }
+</script>
+</body>
+</html>
