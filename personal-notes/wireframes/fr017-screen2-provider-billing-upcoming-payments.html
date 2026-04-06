@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 Screen 2 – Provider Billing: Upcoming Payments List</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    font-size: 13px;
+    color: #a8b2c8;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-danger { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+  .btn-ghost { background: transparent; color: #4a90d9; border: none; padding: 5px 8px; font-size: 11px; cursor: pointer; text-decoration: underline; }
+
+  /* ── Filter bar ── */
+  .filterbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .filter-label { color: #6b7280; font-size: 12px; font-weight: 500; }
+  .filter-select {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    color: #374151;
+  }
+  .filter-select .icon { color: #9ca3af; }
+  .search-input {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #9ca3af;
+    min-width: 200px;
+  }
+  .filter-divider { width: 1px; height: 24px; background: #e5e7eb; margin: 0 2px; }
+
+  /* ── Content ── */
+  .content { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .page-title { font-size: 20px; font-weight: 700; color: #111827; }
+  .page-subtitle { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+  /* ── Batch approval toolbar ── */
+  .batch-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: #1e40af;
+  }
+  .batch-toolbar .count-badge {
+    font-weight: 700;
+    background: #2563eb;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+  }
+  .batch-info { display: flex; align-items: center; gap: 6px; }
+  .batch-info strong { color: #111827; }
+  .batch-spacer { flex: 1; }
+
+  /* ── Section headers ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0 4px;
+    border-bottom: 2px solid #f3f4f6;
+    margin-bottom: -6px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .section-title.overdue { color: #dc2626; }
+  .section-title.failed { color: #b45309; }
+  .section-title.upcoming { color: #374151; }
+  .section-count {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 100px;
+  }
+  .count-overdue { background: #fee2e2; color: #991b1b; }
+  .count-failed { background: #fef3c7; color: #92400e; }
+  .count-upcoming { background: #f3f4f6; color: #374151; }
+
+  /* ── Table ── */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    padding: 10px 12px;
+    background: #f9fafb;
+    border-bottom: 1px solid #f3f4f6;
+    white-space: nowrap;
+  }
+  .data-table th:first-child { width: 36px; }
+  .data-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid #f9fafb;
+    font-size: 12px;
+    color: #374151;
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafafa; }
+  .data-table tr.row-overdue td { background: #fff5f5; }
+  .data-table tr.row-overdue:hover td { background: #fee8e8; }
+  .data-table tr.row-failed td { background: #fffbeb; }
+  .data-table tr.row-failed:hover td { background: #fef3c7; }
+  .data-table tr.row-selected td { background: #eff6ff; }
+
+  /* Section separator row */
+  .section-row td {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .section-row.overdue td { background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; }
+  .section-row.failed td { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
+  .section-row.upcoming td { background: #f9fafb; color: #6b7280; border-left: 4px solid #d1d5db; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  /* Status */
+  .badge-pending { background: #eff6ff; color: #1d4ed8; }
+  .badge-approved { background: #d1fae5; color: #065f46; }
+  .badge-processing { background: #e0e7ff; color: #3730a3; }
+  .badge-paid { background: #d1fae5; color: #065f46; }
+  .badge-failed { background: #fee2e2; color: #991b1b; }
+  .badge-overdue { background: #fee2e2; color: #991b1b; }
+  .badge-voided { background: #f3f4f6; color: #6b7280; }
+  /* Readiness */
+  .badge-ready { background: #d1fae5; color: #065f46; }
+  .badge-missing { background: #fef3c7; color: #92400e; }
+  .badge-invalid { background: #fee2e2; color: #991b1b; }
+  .badge-review { background: #ede9fe; color: #5b21b6; }
+  /* Schedule */
+  .badge-weekly { background: #eff6ff; color: #1d4ed8; }
+  .badge-bimonthly { background: #f0fdf4; color: #15803d; }
+  .badge-monthly { background: #fff7ed; color: #9a3412; }
+
+  /* ── Action buttons group ── */
+  .action-group { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+
+  /* ── Provider cell ── */
+  .provider-name { font-weight: 600; color: #111827; font-size: 12px; }
+  .provider-id { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+  .payout-ref { font-size: 10px; color: #6b7280; margin-top: 1px; font-family: monospace; }
+
+  /* ── Currency ── */
+  .amount { font-weight: 600; color: #111827; font-size: 12px; }
+  .amount-net { font-weight: 700; color: #111827; font-size: 13px; }
+
+  /* ── Blocked reason ── */
+  .blocked-reason {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-top: 3px;
+  }
+
+  /* ── Pagination ── */
+  .pagination-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #fff;
+    border-top: 1px solid #f3f4f6;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .page-btns { display: flex; align-items: center; gap: 4px; }
+  .page-btn {
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #374151;
+  }
+  .page-btn.active { background: #4a90d9; color: #fff; border-color: #4a90d9; }
+
+  /* ── Checkboxes ── */
+  input[type="checkbox"] {
+    width: 15px; height: 15px;
+    cursor: pointer;
+    accent-color: #4a90d9;
+  }
+
+  /* ── Summary stats ── */
+  .summary-row {
+    display: flex;
+    gap: 12px;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e4e8f0;
+    padding: 14px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-label { font-size: 11px; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 22px; font-weight: 700; color: #111827; }
+  .stat-sub { font-size: 11px; color: #6b7280; }
+  .stat-card.alert-border { border-left: 4px solid #ef4444; }
+  .stat-card.warn-border { border-left: 4px solid #f59e0b; }
+
+  /* Sort icons */
+  .sort { color: #d1d5db; font-size: 10px; cursor: pointer; margin-left: 2px; }
+
+  .masked { font-family: monospace; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">HAIR<span>LINE</span> <span style="font-size:10px;font-weight:400;color:#555a7a;">Admin</span></div>
+
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item">📊 <span>Dashboard</span></div>
+
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item">📈 <span>Financial Reporting</span></div>
+    <div class="sidebar-item active">🏥 <span>Provider Billing</span></div>
+    <div class="sidebar-item">🧑‍🤝‍🧑 <span>Patient Billing</span></div>
+    <div class="sidebar-item">🤝 <span>Affiliate Billing</span></div>
+    <div class="sidebar-item">🔍 <span>Investigation</span></div>
+    <div class="sidebar-item">💱 <span>Currency Alerts</span></div>
+    <div class="sidebar-item">📋 <span>Audit Trail</span></div>
+
+    <div class="sidebar-section">Management</div>
+    <div class="sidebar-item">👥 <span>Providers</span></div>
+    <div class="sidebar-item">🎟️ <span>Promotions</span></div>
+    <div class="sidebar-item">⚙️ <span>Settings</span></div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Billing &amp; Finance</span>
+        <span class="breadcrumb-sep">›</span>
+        <span>Provider Billing</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Upcoming Payments</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">📄 Export CSV</button>
+        <button class="btn btn-primary">✓ Approve All Selected</button>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filterbar">
+      <div class="search-input">🔍 Search provider name or ID...</div>
+      <div class="filter-divider"></div>
+      <span class="filter-label">Status:</span>
+      <div class="filter-select">All Statuses <span class="icon">▾</span></div>
+      <span class="filter-label">Schedule:</span>
+      <div class="filter-select">All Schedules <span class="icon">▾</span></div>
+      <span class="filter-label">Payout Date:</span>
+      <div class="filter-select">📅 Apr 1 – Apr 30, 2026 <span class="icon">▾</span></div>
+      <div class="filter-divider"></div>
+      <span class="filter-label">Sort by:</span>
+      <div class="filter-select">Payout Date ↑ <span class="icon">▾</span></div>
+    </div>
+
+    <!-- Page content -->
+    <div class="content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">Provider Billing — Upcoming Payments</div>
+          <div class="page-subtitle">All payout statements pending review. Statements auto-generated based on each provider's individual payout schedule.</div>
+        </div>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="summary-row">
+        <div class="stat-card alert-border">
+          <div class="stat-label">⚠ Overdue</div>
+          <div class="stat-value" style="color:#dc2626;">2</div>
+          <div class="stat-sub">£6,140.00 total net payout</div>
+        </div>
+        <div class="stat-card warn-border">
+          <div class="stat-label">✗ Failed</div>
+          <div class="stat-value" style="color:#d97706;">1</div>
+          <div class="stat-sub">£3,210.00 total net payout</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Approval</div>
+          <div class="stat-value">8</div>
+          <div class="stat-sub">£47,820.00 total net payout</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Net Payout (All)</div>
+          <div class="stat-value">£57,170.00</div>
+          <div class="stat-sub">11 statements · This period</div>
+        </div>
+      </div>
+
+      <!-- Batch toolbar (shown when rows selected) -->
+      <div class="batch-toolbar">
+        <span class="count-badge">3 selected</span>
+        <div class="batch-info">
+          <span>Selected net total:</span>
+          <strong>£18,460.00</strong>
+        </div>
+        <div class="batch-spacer"></div>
+        <button class="btn btn-primary btn-sm">✓ Approve All Selected Payouts</button>
+        <button class="btn btn-outline btn-sm" onclick="clearSelection()">✕ Clear Selection</button>
+      </div>
+
+      <!-- Main Table -->
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" onclick="toggleAll(this)" /></th>
+              <th>Provider <span class="sort">↕</span></th>
+              <th>Payout Reference</th>
+              <th>Schedule</th>
+              <th>Next Payout Date <span class="sort">↕</span></th>
+              <th>Outstanding Earnings <span class="sort">↕</span></th>
+              <th>Commission</th>
+              <th>Net Payout <span class="sort">↕</span></th>
+              <th>Bank Account</th>
+              <th>Readiness</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- ── OVERDUE SECTION ── -->
+            <tr class="section-row overdue">
+              <td colspan="12">⚠ OVERDUE — 2 statements · Action required</td>
+            </tr>
+
+            <!-- Overdue Row 1 -->
+            <tr class="row-overdue">
+              <td><input type="checkbox" class="row-check" /></td>
+              <td>
+                <div class="provider-name">Istanbul Clinic</div>
+                <div class="provider-id">HP-PRV-00123</div>
+                <div class="payout-ref">PST-HP-PRV-00123-2026-03-W3</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00123-2026-03-W3</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td><strong style="color:#dc2626;">24-03-2026</strong><br><span style="font-size:10px;color:#dc2626;">⚠ 13 days overdue</span></td>
+              <td class="amount">£4,200.00</td>
+              <td>15%</td>
+              <td class="amount-net">£3,570.00</td>
+              <td class="masked">****1234</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-overdue">Overdue</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Overdue Row 2 -->
+            <tr class="row-overdue">
+              <td><input type="checkbox" class="row-check" /></td>
+              <td>
+                <div class="provider-name">Delhi Premium Hair</div>
+                <div class="provider-id">HP-PRV-00311</div>
+                <div class="payout-ref">PST-HP-PRV-00311-2026-03-W4</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00311-2026-03-W4</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td><strong style="color:#dc2626;">31-03-2026</strong><br><span style="font-size:10px;color:#dc2626;">⚠ 6 days overdue</span></td>
+              <td class="amount">£3,000.00</td>
+              <td>£150 Flat</td>
+              <td class="amount-net">£2,570.00</td>
+              <td class="masked">****5678</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-overdue">Overdue</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- ── FAILED SECTION ── -->
+            <tr class="section-row failed">
+              <td colspan="12">✗ FAILED — 1 statement · Stripe transfer failed — retry required</td>
+            </tr>
+
+            <!-- Failed Row -->
+            <tr class="row-failed">
+              <td><input type="checkbox" disabled style="opacity:0.4;" /></td>
+              <td>
+                <div class="provider-name">Bangkok Hair Center</div>
+                <div class="provider-id">HP-PRV-00189</div>
+                <div class="payout-ref">PST-HP-PRV-00189-2026-03-W4</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00189-2026-03-W4</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td>31-03-2026</td>
+              <td class="amount">£3,780.00</td>
+              <td>15%</td>
+              <td class="amount-net">£3,213.00</td>
+              <td class="masked">****9012</td>
+              <td>
+                <span class="badge badge-ready">✓ Ready</span>
+                <div class="blocked-reason">⚠ Stripe: Insufficient funds in platform account</div>
+              </td>
+              <td><span class="badge badge-failed">Failed</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary" style="background:#f59e0b;">↺ Retry</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- ── UPCOMING / PENDING APPROVAL SECTION ── -->
+            <tr class="section-row upcoming">
+              <td colspan="12">UPCOMING / PENDING APPROVAL — 8 statements</td>
+            </tr>
+
+            <!-- Pending Row 1 (selected) -->
+            <tr class="row-selected">
+              <td><input type="checkbox" class="row-check" checked /></td>
+              <td>
+                <div class="provider-name">Ankara Hair Centre</div>
+                <div class="provider-id">HP-PRV-00247</div>
+                <div class="payout-ref">PST-HP-PRV-00247-2026-04-W1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00247-2026-04-W1</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td>07-04-2026</td>
+              <td class="amount">£6,120.00</td>
+              <td>15%</td>
+              <td class="amount-net">£5,202.00</td>
+              <td class="masked">****3456</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 2 (selected) -->
+            <tr class="row-selected">
+              <td><input type="checkbox" class="row-check" checked /></td>
+              <td>
+                <div class="provider-name">Phuket Hair Clinic</div>
+                <div class="provider-id">HP-PRV-00301</div>
+                <div class="payout-ref">PST-HP-PRV-00301-2026-04-W1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00301-2026-04-W1</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td>07-04-2026</td>
+              <td class="amount">£8,430.00</td>
+              <td>15%</td>
+              <td class="amount-net">£7,165.50</td>
+              <td class="masked">****7890</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 3 (selected) -->
+            <tr class="row-selected">
+              <td><input type="checkbox" class="row-check" checked /></td>
+              <td>
+                <div class="provider-name">Mumbai Advanced Hair</div>
+                <div class="provider-id">HP-PRV-00412</div>
+                <div class="payout-ref">PST-HP-PRV-00412-2026-04-W1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00412-2026-04-W1</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td>07-04-2026</td>
+              <td class="amount">£7,200.00</td>
+              <td>15%</td>
+              <td class="amount-net">£6,120.00</td>
+              <td class="masked">****2211</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 4 — Missing Bank Details (blocked) -->
+            <tr>
+              <td><input type="checkbox" disabled style="opacity:0.4;" /></td>
+              <td>
+                <div class="provider-name">Kuala Lumpur Hair Experts</div>
+                <div class="provider-id">HP-PRV-00528</div>
+                <div class="payout-ref">PST-HP-PRV-00528-2026-04-W1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00528-2026-04-W1</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td>07-04-2026</td>
+              <td class="amount">£5,800.00</td>
+              <td>15%</td>
+              <td class="amount-net">£4,930.00</td>
+              <td style="color:#9ca3af;font-size:11px;">— Not on file</td>
+              <td>
+                <span class="badge badge-missing">⚠ Missing Bank Details</span>
+                <div class="blocked-reason">⚠ Provider must add bank details in PR-06 Billing Settings</div>
+              </td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-outline" disabled style="opacity:0.5;cursor:not-allowed;">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 5 — Bi-monthly -->
+            <tr>
+              <td><input type="checkbox" class="row-check" /></td>
+              <td>
+                <div class="provider-name">Cairo Restoration Centre</div>
+                <div class="provider-id">HP-PRV-00604</div>
+                <div class="payout-ref">PST-HP-PRV-00604-2026-04-H1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00604-2026-04-H1</td>
+              <td><span class="badge badge-bimonthly">2x a Month</span></td>
+              <td>15-04-2026</td>
+              <td class="amount">£9,500.00</td>
+              <td>12%</td>
+              <td class="amount-net">£8,360.00</td>
+              <td class="masked">****4433</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 6 — Manual Review Required -->
+            <tr>
+              <td><input type="checkbox" disabled style="opacity:0.4;" /></td>
+              <td>
+                <div class="provider-name">Barcelona Hair Med</div>
+                <div class="provider-id">HP-PRV-00719</div>
+                <div class="payout-ref">PST-HP-PRV-00719-2026-04-H1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00719-2026-04-H1</td>
+              <td><span class="badge badge-bimonthly">2x a Month</span></td>
+              <td>15-04-2026</td>
+              <td class="amount">£4,650.00</td>
+              <td>15%</td>
+              <td class="amount-net">£3,952.50</td>
+              <td class="masked">****6655</td>
+              <td>
+                <span class="badge badge-review">⚑ Manual Review</span>
+                <div class="blocked-reason">⚠ Refund deduction exceeds payout — carry-forward pending</div>
+              </td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-outline" disabled style="opacity:0.5;cursor:not-allowed;">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 7 — Monthly -->
+            <tr>
+              <td><input type="checkbox" class="row-check" /></td>
+              <td>
+                <div class="provider-name">Athens Follicle Institute</div>
+                <div class="provider-id">HP-PRV-00835</div>
+                <div class="payout-ref">PST-HP-PRV-00835-2026-04-M1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00835-2026-04-M1</td>
+              <td><span class="badge badge-monthly">Monthly</span></td>
+              <td>30-04-2026</td>
+              <td class="amount">£12,400.00</td>
+              <td>18%</td>
+              <td class="amount-net">£10,168.00</td>
+              <td class="masked">****8877</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-pending">Pending Approval</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-primary">✓ Approve</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                  <button class="btn btn-sm btn-danger">✕ Void</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending Row 8 — Approved (can unapprove, before payout date) -->
+            <tr>
+              <td><input type="checkbox" disabled style="opacity:0.4;" /></td>
+              <td>
+                <div class="provider-name">Dubai Hair Specialists</div>
+                <div class="provider-id">HP-PRV-00902</div>
+                <div class="payout-ref">PST-HP-PRV-00902-2026-04-W1</div>
+              </td>
+              <td style="font-size:10px;color:#6b7280;font-family:monospace;">PST-HP-PRV-00902-2026-04-W1</td>
+              <td><span class="badge badge-weekly">Weekly</span></td>
+              <td>07-04-2026</td>
+              <td class="amount">£5,950.00</td>
+              <td>15%</td>
+              <td class="amount-net">£5,057.50</td>
+              <td class="masked">****1199</td>
+              <td><span class="badge badge-ready">✓ Ready</span></td>
+              <td><span class="badge badge-approved">Approved</span></td>
+              <td>
+                <div class="action-group">
+                  <button class="btn btn-sm btn-outline">↩ Unapprove</button>
+                  <button class="btn btn-sm btn-outline">👁 View</button>
+                  <button class="btn btn-sm btn-outline">📝 Note</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination-row">
+          <span>Total 11 statements · Page 1 of 1</span>
+          <div class="page-btns">
+            <div class="page-btn">‹</div>
+            <div class="page-btn active">1</div>
+            <div class="page-btn">›</div>
+          </div>
+          <div class="filter-select" style="font-size:11px;">10 / page <span class="icon">▾</span></div>
+        </div>
+      </div>
+
+      <!-- Footer note -->
+      <div style="text-align:center;font-size:11px;color:#d1d5db;padding-bottom:8px;">
+        FR-017 · Screen 2: Provider Billing — Upcoming Payments List · Admin Platform (A-05)
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Batch Confirmation Modal (shown on "Approve All Selected") ── -->
+<div id="batchModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px;width:460px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px;">Approve Payouts for 3 Providers</div>
+    <div style="font-size:12px;color:#6b7280;margin-bottom:16px;">Review the batch before proceeding. This action cannot be undone.</div>
+
+    <div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span style="color:#6b7280;">Selected statements</span>
+        <strong>3</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span style="color:#6b7280;">Selected net total</span>
+        <strong style="color:#111827;font-size:14px;">£18,487.50</strong>
+      </div>
+    </div>
+
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:10px 14px;font-size:11px;color:#9a3412;margin-bottom:16px;">
+      ⚠ Each provider's payout destination was last validated in FR-032 Billing Settings. Confirm all details are correct before proceeding.
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;">Re-authentication required</div>
+      <input type="password" placeholder="Enter your password to confirm..." style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;" />
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button style="flex:1;padding:9px;background:#4a90d9;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">Yes, Approve All</button>
+      <button onclick="document.getElementById('batchModal').style.display='none'" style="flex:1;padding:9px;background:#fff;color:#374151;border:1px solid #d1d5db;border-radius:6px;font-size:13px;cursor:pointer;">No, Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleAll(master) {
+    document.querySelectorAll('.row-check:not([disabled])').forEach(cb => cb.checked = master.checked);
+  }
+  function clearSelection() {
+    document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
+    document.getElementById('selectAll').checked = false;
+  }
+  // Hide modal on load (demo only showing it in code)
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('batchModal').style.display = 'none';
+  });
+</script>
+</body>
+</html>
