@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 · Screen 7 — Transaction Search &amp; Audit Log</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  background: #1a1f2e;
+  color: #1a1a2e;
+}
+
+/* ══════════════════════════════
+   WIREFRAME DOCUMENT WRAPPER
+══════════════════════════════ */
+.wf-doc {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.wf-doc-header {
+  padding: 28px 40px 24px;
+  background: #13172200;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 1px solid #2d3650;
+}
+.wf-doc-badge {
+  background: #4a90d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.wf-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.wf-doc-meta {
+  font-size: 12px;
+  color: #6b7a99;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════
+   FRAME CONTAINER
+══════════════════════════════ */
+.wf-frame {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+}
+.wf-frame-label {
+  background: #2d3650;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wf-frame-num {
+  background: #4a90d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+.wf-frame-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5cfdf;
+  letter-spacing: 0.3px;
+}
+.wf-frame-note {
+  font-size: 11px;
+  color: #6b7a99;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════
+   SHARED: ADMIN PAGE SHELL
+══════════════════════════════ */
+.page { display: flex; min-height: 0; background: #f0f2f5; }
+
+/* Sidebar */
+.sidebar {
+  width: 210px;
+  background: #1a1a2e;
+  color: #a8b2c8;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-logo {
+  padding: 18px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  border-bottom: 1px solid #2d2d4e;
+}
+.sidebar-logo span { color: #6c8ebf; }
+.sidebar-section {
+  padding: 12px 16px 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555a7a;
+}
+.sidebar-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid transparent;
+  font-size: 12px;
+  color: #a8b2c8;
+}
+.sidebar-item.active { background: #1e2d50; color: #fff; border-left-color: #4a90d9; }
+
+/* Main area */
+.main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* Topbar */
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid #e4e8f0;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+.breadcrumb-sep { color: #d1d5db; }
+.breadcrumb-cur { color: #111827; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #6b7280; }
+
+/* Content */
+.content { padding: 18px 24px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+
+/* Page header */
+.pg-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.pg-title { font-size: 18px; font-weight: 700; color: #111827; }
+.pg-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+/* ══════════════════════════════
+   TABS
+══════════════════════════════ */
+.tab-shell {
+  background: #fff;
+  border: 1px solid #e4e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.tab-bar {
+  display: flex;
+  padding: 0 16px;
+  border-bottom: 2px solid #e4e8f0;
+  background: #fff;
+}
+.tab {
+  padding: 11px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tab.active { color: #4a90d9; border-bottom-color: #4a90d9; }
+.tab-count {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  color: #374151;
+}
+.tab.active .tab-count { background: #dbeafe; color: #1d4ed8; }
+
+/* Search Controls Bar */
+.search-bar {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f1f4;
+  background: #fafbfc;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.search-row-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 72px;
+}
+.mock-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #374151;
+  cursor: pointer;
+}
+.mock-select .arr { color: #9ca3af; font-size: 9px; }
+.mock-input-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #9ca3af;
+  min-width: 220px;
+}
+.mock-multiselect {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #374151;
+  cursor: pointer;
+}
+.mock-tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.mock-tag-more { color: #6b7280; font-size: 10px; }
+.mock-daterange {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #9ca3af;
+}
+.fdiv { width: 1px; height: 22px; background: #e5e7eb; }
+
+/* ══════════════════════════════
+   TABLE
+══════════════════════════════ */
+.table-wrap { overflow-x: auto; }
+
+table { width: max-content; min-width: 100%; border-collapse: collapse; }
+
+thead th {
+  background: #f8f9fc;
+  padding: 9px 11px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #6b7280;
+  text-align: left;
+  border-bottom: 1px solid #e4e8f0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+thead th.r { text-align: right; }
+thead th.c { text-align: center; }
+
+tbody tr { border-bottom: 1px solid #f0f1f4; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f8faff; }
+
+tbody td {
+  padding: 10px 11px;
+  font-size: 11px;
+  color: #374151;
+  vertical-align: top;
+}
+tbody td.r { text-align: right; }
+tbody td.c { text-align: center; }
+tbody td.mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: #4b5563; }
+tbody td.name-cell { font-weight: 600; color: #111827; }
+
+.link-cell { color: #4a90d9; text-decoration: underline; cursor: pointer; font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; }
+
+/* ══════════════════════════════
+   BADGES
+══════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.b-invoice      { background: #dbeafe; color: #1e40af; }
+.b-payout       { background: #d1fae5; color: #065f46; }
+.b-installment  { background: #e0e7ff; color: #4338ca; }
+.b-refund       { background: #fee2e2; color: #b91c1c; }
+.b-affiliate    { background: #fef3c7; color: #92400e; }
+.b-pending      { background: #fef3c7; color: #92400e; }
+.b-paid         { background: #d1fae5; color: #065f46; }
+.b-processing   { background: #dbeafe; color: #1e40af; }
+.b-failed       { background: #fee2e2; color: #b91c1c; }
+.b-voided       { background: #f3f4f6; color: #6b7280; }
+
+/* Audit action badges */
+.b-approved     { background: #d1fae5; color: #065f46; }
+.b-unapproved   { background: #fef3c7; color: #92400e; }
+.b-override     { background: #ede9fe; color: #6d28d9; }
+.b-note         { background: #f3f4f6; color: #374151; }
+.b-bulk         { background: #dbeafe; color: #1e40af; }
+.b-currency     { background: #fef9c3; color: #713f12; }
+
+/* Dispute panel badges */
+.b-already-paid   { background: #d1fae5; color: #065f46; }
+.b-eligible-missed { background: #fee2e2; color: #b91c1c; }
+.b-not-eligible   { background: #f3f4f6; color: #6b7280; }
+.b-investigate    { background: #ede9fe; color: #6d28d9; }
+
+/* ══════════════════════════════
+   BUTTONS
+══════════════════════════════ */
+.btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.btn-primary { background: #4a90d9; color: #fff; }
+.btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+.btn-ghost   { background: transparent; color: #4a90d9; border: none; font-size: 10px; text-decoration: underline; cursor: pointer; padding: 3px 0; }
+.btn-lg { padding: 7px 14px; font-size: 12px; }
+
+/* ══════════════════════════════
+   EMPTY STATE
+══════════════════════════════ */
+.empty-state {
+  padding: 40px 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+}
+.empty-state-icon { font-size: 28px; margin-bottom: 10px; }
+.empty-state-msg { font-size: 13px; color: #374151; font-weight: 600; margin-bottom: 4px; }
+.empty-state-hint { font-size: 11px; color: #9ca3af; }
+
+/* ══════════════════════════════
+   DISPUTE RESOLUTION PANEL
+══════════════════════════════ */
+.dispute-panel {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  margin: 14px 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dispute-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dispute-panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.dispute-panel-subtitle {
+  font-size: 11px;
+  color: #3b82f6;
+  margin-top: 1px;
+}
+.dispute-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.dispute-field { display: flex; flex-direction: column; gap: 2px; }
+.dispute-field-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.dispute-field-value { font-size: 12px; color: #111827; }
+.dispute-divider { border: none; border-top: 1px solid #bfdbfe; }
+.dispute-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dispute-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.form-label .req { color: #ef4444; margin-left: 2px; }
+.form-select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-select .arr { color: #9ca3af; font-size: 9px; }
+.form-textarea {
+  padding: 7px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #9ca3af;
+  min-height: 64px;
+  line-height: 1.5;
+}
+.form-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #374151;
+}
+.form-checkbox-row input[type="checkbox"] {
+  width: 13px; height: 13px;
+  accent-color: #4a90d9;
+}
+.form-note { font-size: 10px; color: #6b7280; margin-top: 1px; }
+.dispute-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid #bfdbfe;
+}
+
+/* ══════════════════════════════
+   PAGINATOR
+══════════════════════════════ */
+.paginator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid #f0f1f4;
+  background: #fff;
+}
+.pag-info { font-size: 11px; color: #6b7280; }
+.pag-pages { display: flex; align-items: center; gap: 3px; }
+.pag-btn {
+  width: 26px; height: 26px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #e4e8f0;
+  background: #fff;
+  color: #374151;
+}
+.pag-btn.active { background: #4a90d9; color: #fff; border-color: #4a90d9; }
+.pag-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ══════════════════════════════
+   BEFORE / AFTER CELLS
+══════════════════════════════ */
+.diff-cell { display: flex; flex-direction: column; gap: 2px; }
+.diff-before { font-size: 10px; color: #b91c1c; }
+.diff-after  { font-size: 10px; color: #065f46; }
+
+/* Notes truncated */
+.note-trunc { font-size: 11px; color: #374151; }
+.note-expand { color: #4a90d9; font-size: 10px; cursor: pointer; text-decoration: underline; }
+
+/* Highlighted result row */
+tbody tr.row-highlighted td { background: #eff6ff; }
+tbody tr.row-highlighted:hover td { background: #dbeafe; }
+
+/* Tab inner layout */
+.tab-content-wrap { padding: 0; }
+</style>
+</head>
+<body>
+
+<div class="wf-doc-header">
+  <span class="wf-doc-badge">FR-017</span>
+  <span class="wf-doc-title">Screen 7 — Transaction Search &amp; Audit Log</span>
+  <span class="wf-doc-meta">Admin Platform · Billing &amp; Finance</span>
+</div>
+
+<div class="wf-doc">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FRAME 1 — TAB 1: TRANSACTION SEARCH (default / results state)
+  ════════════════════════════════════════════════════════════════ -->
+  <div class="wf-frame">
+    <div class="wf-frame-label">
+      <span class="wf-frame-num">7-A</span>
+      <span class="wf-frame-name">Tab 1 — Transaction Search · Results State</span>
+      <span class="wf-frame-note">Search across invoices, payouts, installments, refunds</span>
+    </div>
+    <div class="page" style="min-height:680px;">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-logo">Hairline<span>.io</span></div>
+        <div class="sidebar-section">Billing &amp; Finance</div>
+        <div class="sidebar-item">Provider Payouts</div>
+        <div class="sidebar-item">Patient Invoices</div>
+        <div class="sidebar-item">Discount Usage</div>
+        <div class="sidebar-item">Affiliate Payouts</div>
+        <div class="sidebar-item active">Transaction Search &amp; Audit Log</div>
+      </div>
+      <!-- Main -->
+      <div class="main-area">
+        <!-- Topbar -->
+        <div class="topbar">
+          <div class="breadcrumb">
+            <span>Billing &amp; Finance</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-cur">Transaction Search &amp; Audit Log</span>
+          </div>
+          <div class="topbar-right">
+            <span>Admin: J. Smith</span>
+            <span style="width:26px;height:26px;background:#e5e7eb;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#374151;">JS</span>
+          </div>
+        </div>
+        <!-- Content -->
+        <div class="content">
+          <div class="pg-header">
+            <div>
+              <div class="pg-title">Transaction Search &amp; Audit Log</div>
+              <div class="pg-sub">Search all financial records · View compliance audit trail</div>
+            </div>
+          </div>
+
+          <!-- Tab shell -->
+          <div class="tab-shell">
+            <div class="tab-bar">
+              <div class="tab active">Transaction Search</div>
+              <div class="tab">Audit Log</div>
+            </div>
+
+            <!-- Search Controls -->
+            <div class="search-bar">
+              <div class="search-row">
+                <span class="search-row-label">Search By</span>
+                <div class="mock-select">Booking Reference <span class="arr">▾</span></div>
+                <div class="mock-input-field" style="min-width:260px;">
+                  <span style="color:#9ca3af;">🔍</span>
+                  <span>BKG-2511-00892</span>
+                </div>
+                <button class="btn btn-primary btn-lg">Search</button>
+                <button class="btn btn-outline">Clear</button>
+              </div>
+              <div class="search-row">
+                <span class="search-row-label">Record Type</span>
+                <div class="mock-multiselect">
+                  <span class="mock-tag">Invoice</span>
+                  <span class="mock-tag">Payout</span>
+                  <span class="mock-tag-more">+3 more</span>
+                  <span class="arr">▾</span>
+                </div>
+                <div class="fdiv"></div>
+                <span class="search-row-label" style="min-width:auto;">Date Range</span>
+                <div class="mock-daterange">📅 01-01-2026 — 31-03-2026 <span class="arr">▾</span></div>
+                <div class="fdiv"></div>
+                <span class="search-row-label" style="min-width:auto;">Status</span>
+                <div class="mock-multiselect">Any Status <span class="arr">▾</span></div>
+              </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="table-wrap tab-content-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Record Type</th>
+                    <th>Reference / ID</th>
+                    <th>Booking Reference</th>
+                    <th>Patient / Provider / Affiliate</th>
+                    <th>Date</th>
+                    <th class="r">Amount</th>
+                    <th>Currency</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-highlighted">
+                    <td><span class="badge b-invoice">Invoice</span></td>
+                    <td><span class="link-cell">INV-2511-00456</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">John Doe <span style="font-weight:400;color:#6b7280;">(PAT-00123)</span></td>
+                    <td class="mono">14-03-2026</td>
+                    <td class="r" style="font-weight:600;">£3,500.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge b-payout">Payout</span></td>
+                    <td><span class="link-cell">PAY-2026-00781</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">TurkeyClinic Istanbul <span style="font-weight:400;color:#6b7280;">(PRV-0041)</span></td>
+                    <td class="mono">02-04-2026</td>
+                    <td class="r" style="font-weight:600;">£2,975.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge b-installment">Installment</span></td>
+                    <td><span class="link-cell">INST-00892-1</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">John Doe <span style="font-weight:400;color:#6b7280;">(PAT-00123)</span></td>
+                    <td class="mono">14-01-2026</td>
+                    <td class="r" style="font-weight:600;">£1,750.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge b-installment">Installment</span></td>
+                    <td><span class="link-cell">INST-00892-2</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">John Doe <span style="font-weight:400;color:#6b7280;">(PAT-00123)</span></td>
+                    <td class="mono">14-03-2026</td>
+                    <td class="r" style="font-weight:600;">£1,750.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge b-refund">Refund</span></td>
+                    <td><span class="link-cell">REF-2026-00045</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">John Doe <span style="font-weight:400;color:#6b7280;">(PAT-00123)</span></td>
+                    <td class="mono">28-03-2026</td>
+                    <td class="r" style="font-weight:600;color:#b91c1c;">−£350.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Processed</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="paginator">
+              <span class="pag-info">5 records found for "BKG-2511-00892" · sorted by date desc</span>
+              <div class="pag-pages">
+                <div class="pag-btn disabled">‹</div>
+                <div class="pag-btn active">1</div>
+                <div class="pag-btn disabled">›</div>
+              </div>
+            </div>
+          </div><!-- /tab-shell -->
+        </div><!-- /content -->
+      </div><!-- /main-area -->
+    </div><!-- /page -->
+  </div><!-- /wf-frame 7-A -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FRAME 2 — TAB 1: DISPUTE RESOLUTION PANEL (expanded)
+  ════════════════════════════════════════════════════════════════ -->
+  <div class="wf-frame">
+    <div class="wf-frame-label">
+      <span class="wf-frame-num">7-B</span>
+      <span class="wf-frame-name">Tab 1 — Dispute Resolution Panel · Expanded State</span>
+      <span class="wf-frame-note">Opened from a booking-linked result row · Workflow B1</span>
+    </div>
+    <div class="page" style="min-height:600px;">
+      <div class="sidebar">
+        <div class="sidebar-logo">Hairline<span>.io</span></div>
+        <div class="sidebar-section">Billing &amp; Finance</div>
+        <div class="sidebar-item">Provider Payouts</div>
+        <div class="sidebar-item">Patient Invoices</div>
+        <div class="sidebar-item">Discount Usage</div>
+        <div class="sidebar-item">Affiliate Payouts</div>
+        <div class="sidebar-item active">Transaction Search &amp; Audit Log</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div class="breadcrumb">
+            <span>Billing &amp; Finance</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-cur">Transaction Search &amp; Audit Log</span>
+          </div>
+          <div class="topbar-right">
+            <span>Admin: J. Smith</span>
+            <span style="width:26px;height:26px;background:#e5e7eb;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#374151;">JS</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="tab-shell">
+            <div class="tab-bar">
+              <div class="tab active">Transaction Search</div>
+              <div class="tab">Audit Log</div>
+            </div>
+
+            <!-- Search bar (collapsed summary) -->
+            <div class="search-bar" style="padding:8px 16px;">
+              <div class="search-row">
+                <span class="search-row-label">Search By</span>
+                <div class="mock-select">Booking Reference <span class="arr">▾</span></div>
+                <div class="mock-input-field" style="min-width:200px;color:#374151;">BKG-2511-00892</div>
+                <button class="btn btn-primary">Search</button>
+                <button class="btn btn-outline">Clear</button>
+                <span style="font-size:11px;color:#6b7280;margin-left:auto;">5 records · <a href="#" style="color:#4a90d9;">Modify filters</a></span>
+              </div>
+            </div>
+
+            <!-- Results table (abbreviated) -->
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Record Type</th>
+                    <th>Reference / ID</th>
+                    <th>Booking Reference</th>
+                    <th>Patient / Provider / Affiliate</th>
+                    <th>Date</th>
+                    <th class="r">Amount</th>
+                    <th>Currency</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge b-invoice">Invoice</span></td>
+                    <td><span class="link-cell">INV-2511-00456</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">John Doe</td>
+                    <td class="mono">14-03-2026</td>
+                    <td class="r">£3,500.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Paid</span></td>
+                  </tr>
+                  <tr class="row-highlighted">
+                    <td><span class="badge b-payout">Payout</span></td>
+                    <td><span class="link-cell">PAY-2026-00782</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">TurkeyClinic Istanbul <span style="font-weight:400;color:#6b7280;">(PRV-0041)</span></td>
+                    <td class="mono">—</td>
+                    <td class="r">£2,975.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-eligible-missed">Eligible but Missed</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge b-installment">Installment</span></td>
+                    <td><span class="link-cell">INST-00892-1</span></td>
+                    <td><span class="link-cell">BKG-2511-00892</span></td>
+                    <td class="name-cell">John Doe</td>
+                    <td class="mono">14-01-2026</td>
+                    <td class="r">£1,750.00</td>
+                    <td>GBP</td>
+                    <td><span class="badge b-paid">Paid</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Dispute Resolution Panel -->
+            <div class="dispute-panel">
+              <div class="dispute-panel-header">
+                <div>
+                  <div class="dispute-panel-title">⚠ Dispute Resolution — PAY-2026-00782</div>
+                  <div class="dispute-panel-subtitle">Booking-linked payout record · Eligible but missed payout cycle</div>
+                </div>
+                <button class="btn btn-outline" style="font-size:10px;">✕ Close Panel</button>
+              </div>
+
+              <div class="dispute-fields">
+                <div class="dispute-field">
+                  <div class="dispute-field-label">Booking Reference</div>
+                  <div class="dispute-field-value" style="color:#4a90d9;text-decoration:underline;cursor:pointer;">BKG-2511-00892</div>
+                </div>
+                <div class="dispute-field">
+                  <div class="dispute-field-label">Provider</div>
+                  <div class="dispute-field-value">TurkeyClinic Istanbul <span style="color:#6b7280;">(PRV-0041)</span></div>
+                </div>
+                <div class="dispute-field">
+                  <div class="dispute-field-label">Treatment Status at Prior Payout Cutoff</div>
+                  <div class="dispute-field-value">Completed</div>
+                </div>
+                <div class="dispute-field">
+                  <div class="dispute-field-label">Expected Net Payout</div>
+                  <div class="dispute-field-value" style="font-weight:700;">£2,975.00</div>
+                </div>
+                <div class="dispute-field">
+                  <div class="dispute-field-label">Last Evaluated Payout Cycle</div>
+                  <div class="dispute-field-value">02-04-2026</div>
+                </div>
+                <div class="dispute-field">
+                  <div class="dispute-field-label">Prior Inclusion Status</div>
+                  <div class="dispute-field-value"><span class="badge b-eligible-missed">Eligible but Missed</span></div>
+                </div>
+              </div>
+
+              <hr class="dispute-divider" />
+
+              <div class="dispute-actions">
+                <div class="dispute-actions-row">
+                  <div class="form-field">
+                    <div class="form-label">Resolution Action <span class="req">*</span></div>
+                    <div class="form-select">Add to Next Payout <span class="arr">▾</span></div>
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">Target Payout Cycle <span class="req">*</span></div>
+                    <div class="form-select">TurkeyClinic Istanbul — 02-05-2026 <span class="arr">▾</span></div>
+                    <div class="form-note">Only cycles in "Pending Approval" or future-scheduled state</div>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <div class="form-label">Internal Note <span class="req">*</span> <span style="font-size:10px;color:#9ca3af;font-weight:400;text-transform:none;letter-spacing:0;">(max 500 chars)</span></div>
+                  <div class="form-textarea">Booking BKG-2511-00892 was confirmed completed on 12-03-2026 but was omitted from the 02-04-2026 cycle due to a timing gap. Adding to next available payout cycle.</div>
+                </div>
+                <div class="form-checkbox-row">
+                  <input type="checkbox" checked disabled />
+                  <span>Notify Provider — auto-selected and required for "Add to Next Payout" action</span>
+                </div>
+              </div>
+
+              <div class="dispute-footer">
+                <button class="btn btn-outline">Cancel</button>
+                <button class="btn btn-primary btn-lg">Save Resolution</button>
+              </div>
+            </div><!-- /dispute-panel -->
+          </div><!-- /tab-shell -->
+        </div><!-- /content -->
+      </div><!-- /main-area -->
+    </div><!-- /page -->
+  </div><!-- /wf-frame 7-B -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FRAME 3 — TAB 1: EMPTY / NO RESULTS STATE
+  ════════════════════════════════════════════════════════════════ -->
+  <div class="wf-frame">
+    <div class="wf-frame-label">
+      <span class="wf-frame-num">7-C</span>
+      <span class="wf-frame-name">Tab 1 — Transaction Search · No Results State</span>
+      <span class="wf-frame-note">When search returns zero matching records</span>
+    </div>
+    <div class="page" style="min-height:420px;">
+      <div class="sidebar">
+        <div class="sidebar-logo">Hairline<span>.io</span></div>
+        <div class="sidebar-section">Billing &amp; Finance</div>
+        <div class="sidebar-item active">Transaction Search &amp; Audit Log</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div class="breadcrumb">
+            <span>Billing &amp; Finance</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-cur">Transaction Search &amp; Audit Log</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="tab-shell">
+            <div class="tab-bar">
+              <div class="tab active">Transaction Search</div>
+              <div class="tab">Audit Log</div>
+            </div>
+            <div class="search-bar">
+              <div class="search-row">
+                <span class="search-row-label">Search By</span>
+                <div class="mock-select">Booking Reference <span class="arr">▾</span></div>
+                <div class="mock-input-field" style="min-width:220px;color:#374151;">BKG-9999-00000</div>
+                <button class="btn btn-primary">Search</button>
+                <button class="btn btn-outline">Clear</button>
+              </div>
+            </div>
+            <div class="empty-state">
+              <div class="empty-state-icon">🔍</div>
+              <div class="empty-state-msg">No financial records found for "BKG-9999-00000".</div>
+              <div class="empty-state-hint">Check the reference and try again.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /wf-frame 7-C -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FRAME 4 — TAB 2: AUDIT LOG
+  ════════════════════════════════════════════════════════════════ -->
+  <div class="wf-frame">
+    <div class="wf-frame-label">
+      <span class="wf-frame-num">7-D</span>
+      <span class="wf-frame-name">Tab 2 — Audit Log</span>
+      <span class="wf-frame-note">Read-only · REQ-017-011 / REQ-017-018</span>
+    </div>
+    <div class="page" style="min-height:720px;">
+      <div class="sidebar">
+        <div class="sidebar-logo">Hairline<span>.io</span></div>
+        <div class="sidebar-section">Billing &amp; Finance</div>
+        <div class="sidebar-item">Provider Payouts</div>
+        <div class="sidebar-item">Patient Invoices</div>
+        <div class="sidebar-item">Discount Usage</div>
+        <div class="sidebar-item">Affiliate Payouts</div>
+        <div class="sidebar-item active">Transaction Search &amp; Audit Log</div>
+      </div>
+      <div class="main-area">
+        <div class="topbar">
+          <div class="breadcrumb">
+            <span>Billing &amp; Finance</span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-cur">Transaction Search &amp; Audit Log</span>
+          </div>
+          <div class="topbar-right">
+            <button class="btn btn-outline" style="font-size:11px;">⬇ Export CSV</button>
+            <span>Admin: J. Smith</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="tab-shell">
+            <div class="tab-bar">
+              <div class="tab">Transaction Search</div>
+              <div class="tab active">Audit Log</div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="search-bar">
+              <div class="search-row">
+                <span class="search-row-label">Date Range</span>
+                <div class="mock-daterange">📅 01-04-2026 — 16-04-2026 <span class="arr">▾</span></div>
+                <div class="fdiv"></div>
+                <span class="search-row-label" style="min-width:auto;">Admin User</span>
+                <div class="mock-select">All Admins <span class="arr">▾</span></div>
+                <div class="fdiv"></div>
+                <span class="search-row-label" style="min-width:auto;">Action Type</span>
+                <div class="mock-multiselect">
+                  All Action Types <span class="arr">▾</span>
+                </div>
+              </div>
+              <div class="search-row">
+                <span class="search-row-label">Affected Entity</span>
+                <div class="mock-multiselect">All Entities <span class="arr">▾</span></div>
+                <div class="fdiv"></div>
+                <span class="search-row-label" style="min-width:auto;">Entity ID</span>
+                <div class="mock-input-field" style="min-width:180px;">Filter by entity ID…</div>
+              </div>
+            </div>
+
+            <!-- Audit Log Table -->
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Admin</th>
+                    <th>Action Type</th>
+                    <th>Affected Entity</th>
+                    <th>Before Value</th>
+                    <th>After Value</th>
+                    <th>IP Address</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">15-04-2026 14:32:07 UTC</td>
+                    <td class="name-cell">J. Smith <span style="font-weight:400;color:#6b7280;">(ADM-001)</span></td>
+                    <td><span class="badge b-approved">Payout Approved</span></td>
+                    <td><span class="link-cell">Payout PAY-2026-00781</span></td>
+                    <td><div class="diff-cell"><span class="diff-before">Status: Pending Approval</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Status: Processing</span></div></td>
+                    <td class="mono">203.0.113.45</td>
+                    <td>
+                      <span class="note-trunc">Approved Q1 payout cycle for TurkeyClinic…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">15-04-2026 11:15:44 UTC</td>
+                    <td class="name-cell">M. Ahmed <span style="font-weight:400;color:#6b7280;">(ADM-003)</span></td>
+                    <td><span class="badge b-override">Status Overridden</span></td>
+                    <td><span class="link-cell">Invoice INV-2511-00456</span></td>
+                    <td><div class="diff-cell"><span class="diff-before">Status: Pending</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Status: Paid</span></div></td>
+                    <td class="mono">198.51.100.12</td>
+                    <td>
+                      <span class="note-trunc">Manual override — Stripe webhook missed…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">14-04-2026 09:50:22 UTC</td>
+                    <td class="name-cell">J. Smith <span style="font-weight:400;color:#6b7280;">(ADM-001)</span></td>
+                    <td><span class="badge b-bulk">Bulk Approval</span></td>
+                    <td><span class="link-cell">Booking BKG-2511-00892</span></td>
+                    <td><div class="diff-cell"><span class="diff-before">Included: false</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Payout cycle: 02-05-2026</span></div></td>
+                    <td class="mono">203.0.113.45</td>
+                    <td>
+                      <span class="note-trunc">Payout Added to Next Cycle — dispute…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">13-04-2026 16:08:11 UTC</td>
+                    <td class="name-cell">R. Patel <span style="font-weight:400;color:#6b7280;">(ADM-002)</span></td>
+                    <td><span class="badge b-paid" style="background:#fee2e2;color:#b91c1c;">Refund Processed</span></td>
+                    <td><span class="link-cell">Invoice INV-2511-00501</span></td>
+                    <td><div class="diff-cell"><span class="diff-before">Refund: £0.00</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Refund: £350.00</span></div></td>
+                    <td class="mono">192.0.2.88</td>
+                    <td>
+                      <span class="note-trunc">Partial refund — add-on package cancelled…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">12-04-2026 10:22:59 UTC</td>
+                    <td class="name-cell">M. Ahmed <span style="font-weight:400;color:#6b7280;">(ADM-003)</span></td>
+                    <td><span class="badge b-note">Note Added</span></td>
+                    <td><span class="link-cell">Payout PAY-2026-00750</span></td>
+                    <td><div class="diff-cell"><span style="font-size:10px;color:#9ca3af;">—</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Note added</span></div></td>
+                    <td class="mono">198.51.100.12</td>
+                    <td>
+                      <span class="note-trunc">Provider requested breakdown of commission…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">11-04-2026 08:44:03 UTC</td>
+                    <td class="name-cell">J. Smith <span style="font-weight:400;color:#6b7280;">(ADM-001)</span></td>
+                    <td><span class="badge b-currency">Currency Alert Decision</span></td>
+                    <td><span class="link-cell">Currency Alert GBP/EUR</span></td>
+                    <td><div class="diff-cell"><span class="diff-before">Decision: Pending</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Decision: Accept risk</span></div></td>
+                    <td class="mono">203.0.113.45</td>
+                    <td>
+                      <span class="note-trunc">Rate movement within acceptable exposure…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="mono" style="white-space:nowrap;">10-04-2026 15:33:17 UTC</td>
+                    <td class="name-cell">R. Patel <span style="font-weight:400;color:#6b7280;">(ADM-002)</span></td>
+                    <td><span class="badge b-paid" style="background:#dbeafe;color:#1e40af;">Affiliate Payout Processed</span></td>
+                    <td><span class="link-cell">Affiliate Commission AFF-COM-00312</span></td>
+                    <td><div class="diff-cell"><span class="diff-before">Status: Pending</span></div></td>
+                    <td><div class="diff-cell"><span class="diff-after">Status: Paid</span></div></td>
+                    <td class="mono">192.0.2.88</td>
+                    <td>
+                      <span class="note-trunc">Monthly affiliate commission payout Q1…</span>
+                      <span class="note-expand">more</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="paginator">
+              <span class="pag-info">Showing 1–7 of 142 log entries · Read-only</span>
+              <div class="pag-pages">
+                <div class="pag-btn disabled">‹</div>
+                <div class="pag-btn active">1</div>
+                <div class="pag-btn">2</div>
+                <div class="pag-btn">3</div>
+                <span style="font-size:11px;color:#9ca3af;padding:0 4px;">…</span>
+                <div class="pag-btn">21</div>
+                <div class="pag-btn">›</div>
+              </div>
+            </div>
+          </div><!-- /tab-shell -->
+        </div><!-- /content -->
+      </div><!-- /main-area -->
+    </div><!-- /page -->
+  </div><!-- /wf-frame 7-D -->
+
+</div><!-- /wf-doc -->
+</body>
+</html>

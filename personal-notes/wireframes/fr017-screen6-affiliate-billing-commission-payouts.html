@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 · Screen 6 — Affiliate Billing: Commission Payouts</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  background: #1a1f2e;
+  color: #1a1a2e;
+}
+
+/* ══════════════════════════════
+   WIREFRAME DOCUMENT WRAPPER
+══════════════════════════════ */
+.wf-doc {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.wf-doc-header {
+  padding: 28px 40px 24px;
+  background: #13172200;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 1px solid #2d3650;
+}
+.wf-doc-badge {
+  background: #4a90d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.wf-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.wf-doc-meta {
+  font-size: 12px;
+  color: #6b7a99;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════
+   FRAME CONTAINER
+══════════════════════════════ */
+.wf-frame {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+}
+.wf-frame-label {
+  background: #2d3650;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wf-frame-num {
+  background: #4a90d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+.wf-frame-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5cfdf;
+  letter-spacing: 0.3px;
+}
+.wf-frame-note {
+  font-size: 11px;
+  color: #6b7a99;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════
+   SHARED: ADMIN PAGE SHELL
+══════════════════════════════ */
+.page { display: flex; min-height: 0; background: #f0f2f5; }
+
+/* Sidebar */
+.sidebar {
+  width: 210px;
+  background: #1a1a2e;
+  color: #a8b2c8;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-logo {
+  padding: 18px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  border-bottom: 1px solid #2d2d4e;
+}
+.sidebar-logo span { color: #6c8ebf; }
+.sidebar-section {
+  padding: 12px 16px 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555a7a;
+}
+.sidebar-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid transparent;
+  font-size: 12px;
+  color: #a8b2c8;
+}
+.sidebar-item.active { background: #1e2d50; color: #fff; border-left-color: #4a90d9; }
+
+/* Main area */
+.main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* Topbar */
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid #e4e8f0;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+.breadcrumb-sep { color: #d1d5db; }
+.breadcrumb-cur { color: #111827; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #6b7280; }
+
+/* Filterbar */
+.filterbar {
+  background: #fff;
+  border-bottom: 1px solid #e4e8f0;
+  padding: 9px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.filter-label { color: #6b7280; font-size: 11px; font-weight: 600; }
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #374151;
+  cursor: pointer;
+}
+.filter-chip .arr { color: #9ca3af; font-size: 9px; }
+.search-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 11px;
+  color: #9ca3af;
+  min-width: 200px;
+}
+.fdiv { width: 1px; height: 22px; background: #e5e7eb; }
+
+/* Content */
+.content { padding: 18px 24px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+
+/* Page header */
+.pg-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.pg-title { font-size: 18px; font-weight: 700; color: #111827; }
+.pg-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+/* Notice bar */
+.notice {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 9px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11px;
+  color: #1d4ed8;
+  line-height: 1.5;
+}
+.notice a { font-weight: 700; text-decoration: underline; cursor: pointer; }
+
+/* ══════════════════════════════
+   TABS
+══════════════════════════════ */
+.tab-shell {
+  background: #fff;
+  border: 1px solid #e4e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.tab-bar {
+  display: flex;
+  padding: 0 16px;
+  border-bottom: 2px solid #e4e8f0;
+  background: #fff;
+}
+.tab {
+  padding: 11px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tab.active { color: #4a90d9; border-bottom-color: #4a90d9; }
+.tab-count {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  color: #374151;
+}
+.tab.active .tab-count { background: #dbeafe; color: #1d4ed8; }
+.tab-count.warn { background: #fee2e2; color: #b91c1c; }
+
+/* Tab inner filter bar */
+.tab-filters {
+  padding: 8px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafbfc;
+}
+
+/* ══════════════════════════════
+   BULK TOOLBAR
+══════════════════════════════ */
+.bulk-bar {
+  background: #1e3a5f;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.bulk-info { display: flex; align-items: center; gap: 14px; flex: 1; }
+.bulk-stat { font-size: 12px; }
+.bulk-stat-label { color: #93c5fd; font-weight: 500; }
+.bulk-stat-val { color: #fff; font-weight: 700; }
+.bulk-sep { width: 1px; height: 16px; background: #2d4a6e; }
+
+/* ══════════════════════════════
+   TABLE
+══════════════════════════════ */
+.table-wrap { overflow-x: auto; }
+
+table { width: max-content; min-width: 100%; border-collapse: collapse; }
+
+thead th {
+  background: #f8f9fc;
+  padding: 9px 11px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #6b7280;
+  text-align: left;
+  border-bottom: 1px solid #e4e8f0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+thead th.r { text-align: right; }
+thead th.c { text-align: center; }
+
+tbody tr { border-bottom: 1px solid #f0f1f4; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f8faff; }
+
+tbody td {
+  padding: 10px 11px;
+  font-size: 11px;
+  color: #374151;
+  vertical-align: top;
+}
+tbody td.r { text-align: right; }
+tbody td.c { text-align: center; }
+tbody td.mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: #4b5563; }
+tbody td.name-cell { font-weight: 600; color: #111827; }
+
+/* Sticky columns */
+.col-cb  { position: sticky; left: 0;    z-index: 2; min-width: 38px; max-width: 38px; }
+.col-aff { position: sticky; left: 38px; z-index: 2; min-width: 155px; max-width: 155px; }
+.col-id  { position: sticky; left: 193px; z-index: 2; min-width: 120px; max-width: 120px;
+           box-shadow: 3px 0 8px -3px rgba(0,0,0,0.14); border-right: 1px solid #e4e8f0; }
+
+thead th.col-cb, thead th.col-aff, thead th.col-id { background: #f8f9fc; }
+tbody tr td.col-cb, tbody tr td.col-aff, tbody tr td.col-id { background: #fff; }
+tbody tr:hover td.col-cb, tbody tr:hover td.col-aff, tbody tr:hover td.col-id { background: #f8faff; }
+
+/* Section header row */
+tr.sec-hdr { border-top: 2px solid; border-bottom: 1px solid; }
+tr.sec-hdr td { padding: 6px 11px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+tr.sec-pending { border-color: #fde68a; }
+tr.sec-pending td { background: #fef9ec; color: #92400e; }
+tr.sec-pending td.col-cb, tr.sec-pending td.col-aff, tr.sec-pending td.col-id { background: #fef9ec; }
+tr.sec-failed { border-color: #fecaca; }
+tr.sec-failed td { background: #fff5f5; color: #b91c1c; }
+tr.sec-failed td.col-cb, tr.sec-failed td.col-aff, tr.sec-failed td.col-id { background: #fff5f5; }
+
+/* Failed data rows */
+tr.row-failed { }
+tr.row-failed td { background: #fff8f8; }
+tr.row-failed td.col-cb, tr.row-failed td.col-aff, tr.row-failed td.col-id { background: #fff8f8; }
+tr.row-failed:hover td { background: #fff0f0; }
+tr.row-failed:hover td.col-cb, tr.row-failed:hover td.col-aff, tr.row-failed:hover td.col-id { background: #fff0f0; }
+
+/* ══════════════════════════════
+   BADGES
+══════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.b-pending    { background: #fef3c7; color: #92400e; }
+.b-processing { background: #dbeafe; color: #1e40af; }
+.b-paid       { background: #d1fae5; color: #065f46; }
+.b-failed     { background: #fee2e2; color: #b91c1c; }
+.b-ready      { background: #d1fae5; color: #065f46; }
+.b-missing    { background: #fef3c7; color: #92400e; }
+.b-invalid    { background: #fee2e2; color: #b91c1c; }
+.b-review     { background: #ede9fe; color: #6d28d9; }
+
+/* ══════════════════════════════
+   BUTTONS
+══════════════════════════════ */
+.btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.btn-primary { background: #4a90d9; color: #fff; }
+.btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+.btn-warning { background: #f59e0b; color: #fff; }
+.btn-danger  { background: #ef4444; color: #fff; }
+.btn-ghost   { background: transparent; color: #4a90d9; border: none; font-size: 10px; text-decoration: underline; cursor: pointer; padding: 3px 0; }
+.btn:disabled, .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+.btn-lg { padding: 7px 14px; font-size: 12px; }
+
+/* Action cell */
+.actions { display: flex; flex-direction: column; gap: 4px; }
+.actions-row { display: flex; gap: 3px; }
+.fail-reason { font-size: 10px; color: #b91c1c; margin-top: 3px; line-height: 1.4; }
+
+/* ══════════════════════════════
+   MODAL FRAME (standalone card)
+══════════════════════════════ */
+.modal-frame-bg {
+  background: #f0f2f5;
+  padding: 48px 24px;
+  display: flex;
+  justify-content: center;
+}
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 32px;
+  width: 520px;
+  max-width: 100%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.modal-title { font-size: 16px; font-weight: 700; color: #111827; }
+.modal-body { display: flex; flex-direction: column; gap: 12px; }
+.modal-headline { font-size: 14px; font-weight: 600; color: #111827; }
+.modal-field { display: flex; flex-direction: column; gap: 2px; }
+.modal-field-label { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+.modal-field-value { font-size: 12px; color: #111827; }
+.modal-field-value.mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; }
+.modal-warning {
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px;
+  padding: 10px 13px; font-size: 11px; color: #92400e;
+  display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+}
+.modal-info {
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
+  padding: 10px 13px; font-size: 11px; color: #1e40af;
+  display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+}
+.modal-auth {
+  background: #f8f9fc; border: 1px solid #e4e8f0; border-radius: 8px;
+  padding: 13px 15px; display: flex; flex-direction: column; gap: 7px;
+}
+.modal-auth-title { font-size: 11px; font-weight: 700; color: #374151; }
+.modal-auth-sub { font-size: 10px; color: #6b7280; }
+.mock-input {
+  width: 100%; padding: 7px 11px; border: 1px solid #d1d5db; border-radius: 5px;
+  font-size: 11px; color: #9ca3af; background: #fff;
+}
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding-top: 4px; border-top: 1px solid #f3f4f6; }
+.modal-result {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;
+  padding: 10px 13px; font-size: 11px; color: #065f46; line-height: 1.5;
+}
+.modal-result-fail {
+  background: #fff5f5; border: 1px solid #fecaca; border-radius: 6px;
+  padding: 10px 13px; font-size: 11px; color: #b91c1c; line-height: 1.5;
+}
+.modal-divider { border: none; border-top: 2px dashed #e5e7eb; margin: 4px 0; }
+
+/* Side-by-side modal states */
+.modal-states {
+  background: #f0f2f5;
+  padding: 32px 24px;
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+}
+.modal-state-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+/* ══════════════════════════════
+   SUB-TABLE PANEL
+══════════════════════════════ */
+.subtable-frame-bg {
+  background: #f0f2f5;
+  padding: 32px 24px;
+}
+.subtable-context {
+  background: #fff;
+  border: 1px solid #e4e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.subtable-context-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e4e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.subtable-context-who { font-size: 12px; font-weight: 700; color: #111827; }
+.subtable-context-meta { font-size: 11px; color: #6b7280; display: flex; gap: 12px; }
+.subtable-context-meta span::before { content: '· '; }
+.subtable-panel {
+  background: #f8f9fc;
+  padding: 16px;
+  border-top: 2px solid #4a90d9;
+}
+.subtable-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.subtable-panel table thead th { background: #eff1f8; font-size: 10px; }
+.link-cell { color: #4a90d9; text-decoration: underline; cursor: pointer; font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; }
+
+/* ══════════════════════════════
+   PAID TAB TABLE (inside tab shell)
+══════════════════════════════ */
+.tab-content { padding: 14px 16px; }
+
+/* Checkbox */
+input[type="checkbox"] {
+  width: 13px; height: 13px;
+  accent-color: #4a90d9;
+  cursor: pointer;
+  margin-top: 1px;
+}
+
+/* ══════════════════════════════
+   PAGINATOR
+══════════════════════════════ */
+.paginator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid #e4e8f0;
+  background: #fff;
+}
+.pag-info { font-size: 11px; color: #6b7280; }
+.pag-controls { display: flex; align-items: center; gap: 3px; }
+.pag-btn {
+  min-width: 30px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  background: #fff;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.pag-btn:hover { background: #f3f4f6; }
+.pag-btn.active { background: #4a90d9; color: #fff; border-color: #4a90d9; font-weight: 700; }
+.pag-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pag-sep { font-size: 11px; color: #9ca3af; padding: 0 2px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     DOCUMENT HEADER
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-doc-header">
+  <span class="wf-doc-badge">FR-017</span>
+  <div class="wf-doc-title">Screen 6 — Affiliate Billing: Commission Payouts</div>
+  <div class="wf-doc-meta">Admin Platform (A-05) &nbsp;·&nbsp; 7 frames &nbsp;·&nbsp; 2026-04-09</div>
+</div>
+
+<div class="wf-doc">
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 1 — Main Listing: Pending Payouts Tab (Default View)
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">01</span>
+    <span class="wf-frame-name">Affiliate Billing Listing — Pending Payouts Tab (Default View, no row selected)</span>
+    <span class="wf-frame-note">Two-tab layout · Pending tab active · Failed rows pinned at bottom</span>
+  </div>
+
+  <div class="page">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">Hairline<span>PM</span></div>
+      <div class="sidebar-section">Admin</div>
+      <div class="sidebar-item">📊 Dashboard</div>
+      <div class="sidebar-item">📅 Bookings</div>
+      <div class="sidebar-item">👥 Patients</div>
+      <div class="sidebar-item">🏥 Providers</div>
+      <div class="sidebar-section">Billing &amp; Finance</div>
+      <div class="sidebar-item">💳 Provider Payouts</div>
+      <div class="sidebar-item">🧾 Patient Invoices</div>
+      <div class="sidebar-item">🏷️ Discount Usage</div>
+      <div class="sidebar-item active">🤝 Affiliate Payouts</div>
+      <div class="sidebar-item">🔍 Transaction Search</div>
+      <div class="sidebar-section">Settings</div>
+      <div class="sidebar-item">⚙️ Configuration</div>
+    </nav>
+
+    <div class="main-area">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="breadcrumb">
+          <span>Billing &amp; Finance</span>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-cur">Affiliate Billing – Commission Payouts</span>
+        </div>
+        <div class="topbar-right">
+          <span>Currency:</span>
+          <div class="filter-chip">GBP (£) <span class="arr">▾</span></div>
+          <div class="filter-chip">April 2026 <span class="arr">▾</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Page header -->
+        <div class="pg-header">
+          <div>
+            <div class="pg-title">Affiliate Billing — Commission Payouts</div>
+            <div class="pg-sub">Monthly affiliate commission payout processing · Payouts due: 7th of each month for prior month's earnings</div>
+          </div>
+        </div>
+
+        <!-- Ownership notice -->
+        <div class="notice">
+          <span>ℹ️</span>
+          <span>Commission rates, referral attribution, and discount code assignment are managed in <a>FR-018: Affiliate Program Management</a>. Resolve any commission disputes in FR-018 before processing payouts here. A-05 reads commission amounts for payout execution only — it does not recalculate them.</span>
+        </div>
+
+        <!-- Tab shell -->
+        <div class="tab-shell">
+          <!-- Tab bar -->
+          <div class="tab-bar">
+            <div class="tab active">Pending Payouts <span class="tab-count warn">28</span><span class="tab-count warn" style="background:#fff5f5;color:#b91c1c;margin-left:2px;">+5 Failed</span></div>
+            <div class="tab">Paid Payouts <span class="tab-count" style="background:#d1fae5;color:#065f46;">12</span></div>
+          </div>
+
+          <!-- Tab filters -->
+          <div class="tab-filters">
+            <span class="filter-label">Filter:</span>
+            <div class="filter-chip">📅 Payout Month: March 2026 <span class="arr">▾</span></div>
+            <div class="filter-chip">🗓️ Period Range <span class="arr">▾</span></div>
+            <div class="fdiv"></div>
+            <div class="search-box">🔍 Search affiliate name or ID…</div>
+          </div>
+
+          <!-- Main table -->
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-cb c"><input type="checkbox" /></th>
+                  <th class="col-aff">Affiliate Name</th>
+                  <th class="col-id">Affiliate ID</th>
+                  <th>Payout Reference</th>
+                  <th>Discount Code(s)</th>
+                  <th>Payout Period</th>
+                  <th class="r">Total Referrals</th>
+                  <th class="r">Total Referral Revenue</th>
+                  <th class="r">Commission Rate</th>
+                  <th class="r">Commission Earned</th>
+                  <th>Payment Status</th>
+                  <th>Payout Readiness</th>
+                  <th>Payment Method</th>
+                  <th>Payment Destination</th>
+                  <th>Payment Date</th>
+                  <th>Processed At</th>
+                  <th>Stripe Transfer ID</th>
+                  <th>Failure Reason</th>
+                  <th>Processed By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <!-- ─── PENDING section ─── -->
+                <tr class="sec-hdr sec-pending">
+                  <td class="col-cb"></td>
+                  <td class="col-aff" colspan="2">⏳ Pending — Awaiting Processing</td>
+                  <td colspan="17"></td>
+                </tr>
+
+                <!-- Row 1: Pending · Ready · checkbox enabled -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" /></td>
+                  <td class="col-aff name-cell">Sarah Mitchell</td>
+                  <td class="col-id mono">HP-AFF-00012</td>
+                  <td class="mono">PAY-AFF-2026-0312</td>
+                  <td class="mono">SARAH20, SARAH10</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">18</td>
+                  <td class="r">£28,400.00</td>
+                  <td class="r">8%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,272.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****4921</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary">💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 2: Pending · Ready -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" /></td>
+                  <td class="col-aff name-cell">TurkeyMed Referrals Ltd</td>
+                  <td class="col-id mono">HP-AFF-00007</td>
+                  <td class="mono">PAY-AFF-2026-0307</td>
+                  <td class="mono">TURKEYMED15</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">31</td>
+                  <td class="r">£62,000.00</td>
+                  <td class="r">15%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£9,300.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****8820</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary">💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 3: Pending · Missing Destination · checkbox disabled -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">Marcus Webb</td>
+                  <td class="col-id mono">HP-AFF-00019</td>
+                  <td class="mono">PAY-AFF-2026-0319</td>
+                  <td class="mono">WEBB10</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">7</td>
+                  <td class="r">£11,200.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£1,120.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-missing">Missing Destination</span></td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#b91c1c;font-size:10px;">Affiliate has not provided payout destination. Update in FR-018 before processing.</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary" disabled>💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 4: Pending · Ready -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" /></td>
+                  <td class="col-aff name-cell">Priya Kapoor Agency</td>
+                  <td class="col-id mono">HP-AFF-00022</td>
+                  <td class="mono">PAY-AFF-2026-0322</td>
+                  <td class="mono">PRIYA15</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">13</td>
+                  <td class="r">£19,500.00</td>
+                  <td class="r">15%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,925.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****6612</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary">💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 5: Pending · Ready -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" /></td>
+                  <td class="col-aff name-cell">Wellness Referrals Ltd</td>
+                  <td class="col-id mono">HP-AFF-00028</td>
+                  <td class="mono">PAY-AFF-2026-0328</td>
+                  <td class="mono">WELL10</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">21</td>
+                  <td class="r">£37,800.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£3,780.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****2255</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary">💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 6: Pending · Ready -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" /></td>
+                  <td class="col-aff name-cell">Apex Partners</td>
+                  <td class="col-id mono">HP-AFF-00055</td>
+                  <td class="mono">PAY-AFF-2026-0355</td>
+                  <td class="mono">APEX20</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">9</td>
+                  <td class="r">£14,400.00</td>
+                  <td class="r">20%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,880.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****8801</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary">💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 7: Pending · Manual Review Required · checkbox disabled -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">NordicHair Group</td>
+                  <td class="col-id mono">HP-AFF-00041</td>
+                  <td class="mono">PAY-AFF-2026-0341</td>
+                  <td class="mono">NORDIC12</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">6</td>
+                  <td class="r">£9,000.00</td>
+                  <td class="r">12%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£1,080.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-review">Manual Review Required</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****9934</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#b91c1c;font-size:10px;">Commission disputed in FR-018. Resolve dispute before processing payout.</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary" disabled>💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 8: Pending · Missing Destination · checkbox disabled -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">GlowUp Network</td>
+                  <td class="col-id mono">HP-AFF-00033</td>
+                  <td class="mono">PAY-AFF-2026-0333</td>
+                  <td class="mono">GLOW8</td>
+                  <td class="mono" style="white-space:nowrap;">01-03-2026 to 31-03-2026</td>
+                  <td class="r">3</td>
+                  <td class="r">£4,800.00</td>
+                  <td class="r">8%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£384.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-missing">Missing Destination</span></td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#b91c1c;font-size:10px;">Affiliate has not provided payout destination. Update in FR-018 before processing.</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-primary" disabled>💸 Process Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ─── FAILED section ─── -->
+                <tr class="sec-hdr sec-failed">
+                  <td class="col-cb"></td>
+                  <td class="col-aff" colspan="2">⚠️ Failed / Requires Retry</td>
+                  <td colspan="17"></td>
+                </tr>
+
+                <!-- Row 9: Failed · Ready (can retry) -->
+                <tr class="row-failed">
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">Hana Referrals Co.</td>
+                  <td class="col-id mono">HP-AFF-00004</td>
+                  <td class="mono">PAY-AFF-2026-0204</td>
+                  <td class="mono">HANA25</td>
+                  <td class="mono" style="white-space:nowrap;">01-02-2026 to 28-02-2026</td>
+                  <td class="r">11</td>
+                  <td class="r">£22,000.00</td>
+                  <td class="r">12%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,640.00</td>
+                  <td><span class="badge b-failed">Failed</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****3377</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td class="mono">02-04-2026 09:03:11 UTC</td>
+                  <td class="mono">tr_3Qx8...</td>
+                  <td style="color:#b91c1c;font-size:10px;">Stripe transfer rejected — invalid account number. Destination updated by affiliate on 05-04-2026.</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-warning">🔄 Retry Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 5: Failed · Invalid Destination (cannot retry yet) -->
+                <tr class="row-failed">
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">ZenHair Partners</td>
+                  <td class="col-id mono">HP-AFF-00031</td>
+                  <td class="mono">PAY-AFF-2026-0231</td>
+                  <td class="mono">ZENHAIR5</td>
+                  <td class="mono" style="white-space:nowrap;">01-02-2026 to 28-02-2026</td>
+                  <td class="r">4</td>
+                  <td class="r">£6,800.00</td>
+                  <td class="r">5%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£340.00</td>
+                  <td><span class="badge b-failed">Failed</span></td>
+                  <td><span class="badge b-invalid">Invalid Destination</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****0001</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td class="mono">02-04-2026 09:04:45 UTC</td>
+                  <td class="mono">tr_3Qx9...</td>
+                  <td style="color:#b91c1c;font-size:10px;">Destination account closed. Affiliate must update payout details in FR-018 before retry can proceed.</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-warning" disabled>🔄 Retry Payout</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">📝 Add Note</button>
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div><!-- /table-wrap -->
+
+          <!-- Paginator Frame 1 -->
+          <div class="paginator">
+            <div class="pag-info">Showing 1–10 of 28 &nbsp;·&nbsp; 8 pending &nbsp;·&nbsp; 2 failed pinned</div>
+            <div class="pag-controls">
+              <button class="pag-btn" disabled>‹ Prev</button>
+              <button class="pag-btn active">1</button>
+              <button class="pag-btn">2</button>
+              <button class="pag-btn">3</button>
+              <span class="pag-sep">…</span>
+              <button class="pag-btn">14</button>
+              <button class="pag-btn">Next ›</button>
+            </div>
+          </div>
+
+        </div><!-- /tab-shell -->
+
+      </div><!-- /content -->
+    </div><!-- /main-area -->
+  </div><!-- /page -->
+</div><!-- /frame 1 -->
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 2 — Bulk Payout Toolbar (rows selected state)
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">02</span>
+    <span class="wf-frame-name">Bulk Payout Toolbar — Pending Payouts Tab (2 rows selected)</span>
+    <span class="wf-frame-note">Toolbar appears above table when ≥1 eligible row is checked · "Process All Selected Payouts" opens Frame 05</span>
+  </div>
+
+  <div class="page">
+    <nav class="sidebar">
+      <div class="sidebar-logo">Hairline<span>PM</span></div>
+      <div class="sidebar-section">Billing &amp; Finance</div>
+      <div class="sidebar-item active">🤝 Affiliate Payouts</div>
+    </nav>
+
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">
+          <span>Billing &amp; Finance</span><span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-cur">Affiliate Billing – Commission Payouts</span>
+        </div>
+        <div class="topbar-right">
+          <span>Currency:</span>
+          <div class="filter-chip">GBP (£) <span class="arr">▾</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="pg-header">
+          <div>
+            <div class="pg-title">Affiliate Billing — Commission Payouts</div>
+            <div class="pg-sub">Monthly affiliate commission payout processing · Payouts due: 7th of each month</div>
+          </div>
+        </div>
+
+        <div class="tab-shell">
+          <div class="tab-bar">
+            <div class="tab active">Pending Payouts <span class="tab-count warn">28</span><span class="tab-count warn" style="background:#fff5f5;color:#b91c1c;margin-left:2px;">+5 Failed</span></div>
+            <div class="tab">Paid Payouts <span class="tab-count" style="background:#d1fae5;color:#065f46;">12</span></div>
+          </div>
+
+          <div class="tab-filters">
+            <span class="filter-label">Filter:</span>
+            <div class="filter-chip">📅 Payout Month: March 2026 <span class="arr">▾</span></div>
+            <div class="filter-chip">🗓️ Period Range <span class="arr">▾</span></div>
+            <div class="fdiv"></div>
+            <div class="search-box">🔍 Search affiliate name or ID…</div>
+          </div>
+
+          <!-- ★ BULK TOOLBAR ★ -->
+          <div class="bulk-bar">
+            <div class="bulk-info">
+              <div class="bulk-stat">
+                <span class="bulk-stat-label">Selected Payouts: </span>
+                <span class="bulk-stat-val">2</span>
+              </div>
+              <div class="bulk-sep"></div>
+              <div class="bulk-stat">
+                <span class="bulk-stat-label">Selected Total: </span>
+                <span class="bulk-stat-val">£11,572.00</span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg">✅ Process All Selected Payouts</button>
+            <button class="btn btn-outline btn-lg" style="color:#c5cfdf;border-color:#2d4a6e;background:transparent;">✕ Clear Selection</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-cb c"><input type="checkbox" /></th>
+                  <th class="col-aff">Affiliate Name</th>
+                  <th class="col-id">Affiliate ID</th>
+                  <th>Payout Reference</th>
+                  <th>Discount Code(s)</th>
+                  <th>Payout Period</th>
+                  <th class="r">Total Referrals</th>
+                  <th class="r">Total Referral Revenue</th>
+                  <th class="r">Commission Rate</th>
+                  <th class="r">Commission Earned</th>
+                  <th>Payment Status</th>
+                  <th>Payout Readiness</th>
+                  <th>Payment Method</th>
+                  <th>Payment Destination</th>
+                  <th>Payment Date</th>
+                  <th>Processed At</th>
+                  <th>Stripe Transfer ID</th>
+                  <th>Failure Reason</th>
+                  <th>Processed By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="sec-hdr sec-pending">
+                  <td class="col-cb"></td>
+                  <td class="col-aff" colspan="2">⏳ Pending — Awaiting Processing</td>
+                  <td colspan="17"></td>
+                </tr>
+
+                <!-- Row 1: selected ✓ -->
+                <tr style="background:#f0f6ff;">
+                  <td class="col-cb c" style="background:#f0f6ff;"><input type="checkbox" checked /></td>
+                  <td class="col-aff name-cell" style="background:#f0f6ff;">Sarah Mitchell</td>
+                  <td class="col-id mono" style="background:#f0f6ff;">HP-AFF-00012</td>
+                  <td class="mono">PAY-AFF-2026-0312</td>
+                  <td class="mono">SARAH20, SARAH10</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">18</td>
+                  <td class="r">£28,400.00</td>
+                  <td class="r">8%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,272.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****4921</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-primary">💸 Process Payout</button></div><div class="actions-row"><button class="btn btn-outline">📝 Add Note</button><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 2: selected ✓ -->
+                <tr style="background:#f0f6ff;">
+                  <td class="col-cb c" style="background:#f0f6ff;"><input type="checkbox" checked /></td>
+                  <td class="col-aff name-cell" style="background:#f0f6ff;">TurkeyMed Referrals Ltd</td>
+                  <td class="col-id mono" style="background:#f0f6ff;">HP-AFF-00007</td>
+                  <td class="mono">PAY-AFF-2026-0307</td>
+                  <td class="mono">TURKEYMED15</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">31</td>
+                  <td class="r">£62,000.00</td>
+                  <td class="r">15%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£9,300.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****8820</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-primary">💸 Process Payout</button></div><div class="actions-row"><button class="btn btn-outline">📝 Add Note</button><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 3: not eligible (Missing Destination) -->
+                <tr>
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">Marcus Webb</td>
+                  <td class="col-id mono">HP-AFF-00019</td>
+                  <td class="mono">PAY-AFF-2026-0319</td>
+                  <td class="mono">WEBB10</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">7</td>
+                  <td class="r">£11,200.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£1,120.00</td>
+                  <td><span class="badge b-pending">Pending</span></td>
+                  <td><span class="badge b-missing">Missing Destination</span></td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td style="color:#b91c1c;font-size:10px;">No payout destination on file.</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-primary" disabled>💸 Process Payout</button></div><div class="actions-row"><button class="btn btn-outline">📝 Add Note</button><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <tr class="sec-hdr sec-failed">
+                  <td class="col-cb"></td>
+                  <td class="col-aff" colspan="2">⚠️ Failed / Requires Retry</td>
+                  <td colspan="17"></td>
+                </tr>
+
+                <tr class="row-failed">
+                  <td class="col-cb c"><input type="checkbox" disabled style="opacity:0.3;" /></td>
+                  <td class="col-aff name-cell">Hana Referrals Co.</td>
+                  <td class="col-id mono">HP-AFF-00004</td>
+                  <td class="mono">PAY-AFF-2026-0204</td>
+                  <td class="mono">HANA25</td>
+                  <td class="mono">01-02-2026 to 28-02-2026</td>
+                  <td class="r">11</td>
+                  <td class="r">£22,000.00</td>
+                  <td class="r">12%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,640.00</td>
+                  <td><span class="badge b-failed">Failed</span></td>
+                  <td><span class="badge b-ready">Ready</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****3377</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td class="mono">02-04-2026 09:03 UTC</td>
+                  <td class="mono">tr_3Qx8...</td>
+                  <td style="color:#b91c1c;font-size:10px;">Stripe rejected — invalid account. Destination updated.</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-warning">🔄 Retry Payout</button></div><div class="actions-row"><button class="btn btn-outline">📝 Add Note</button><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /frame 2 -->
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 3 — Process Payout Confirmation Modal
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">03</span>
+    <span class="wf-frame-name">Process Payout Confirmation Modal</span>
+    <span class="wf-frame-note">Triggered by: clicking "Process Payout" on a Pending · Ready row · Confirm button enabled ONLY after successful re-authentication</span>
+  </div>
+  <div class="modal-frame-bg">
+    <div class="modal-card">
+      <div class="modal-title">💸 Process Payout Confirmation</div>
+      <div class="modal-body">
+        <div class="modal-headline">Process payout of £2,272.00 to Sarah Mitchell?</div>
+
+        <div class="modal-field">
+          <div class="modal-field-label">For Period</div>
+          <div class="modal-field-value">01-03-2026 to 31-03-2026</div>
+        </div>
+
+        <div class="modal-field">
+          <div class="modal-field-label">Payment Method</div>
+          <div class="modal-field-value">Via: Bank Transfer — confirm this is correct before proceeding</div>
+        </div>
+
+        <div class="modal-field">
+          <div class="modal-field-label">Payment Destination</div>
+          <div class="modal-field-value mono">****4921</div>
+        </div>
+
+        <div class="modal-auth">
+          <div class="modal-auth-title">🔐 Re-authentication Required</div>
+          <div class="modal-auth-sub">Enter your password to authorise this payout. MFA challenge available after FR-026 / FR-031.</div>
+          <input class="mock-input" type="password" placeholder="Enter your password…" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-lg">No, Cancel</button>
+        <button class="btn btn-primary btn-lg" disabled>Yes, Process Payout</button>
+      </div>
+      <div style="font-size:10px;color:#9ca3af;text-align:right;margin-top:-10px;">Confirm button enabled after password is entered</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 4 — Retry Payout Confirmation Modal
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">04</span>
+    <span class="wf-frame-name">Retry Payout Confirmation Modal</span>
+    <span class="wf-frame-note">Triggered by: clicking "Retry Payout" on a Failed · Ready row · Shows prior failure context + current readiness</span>
+  </div>
+  <div class="modal-frame-bg">
+    <div class="modal-card">
+      <div class="modal-title">🔄 Retry Affiliate Payout</div>
+      <div class="modal-body">
+        <div class="modal-headline">Retry affiliate payout of £2,640.00 to Hana Referrals Co.?</div>
+
+        <div class="modal-warning">
+          <span>⚠️</span>
+          <div>
+            <div style="margin-bottom:4px;"><strong>Prior failure reason:</strong> Stripe transfer rejected — invalid account number (02-04-2026 09:03 UTC).</div>
+            <div><strong>Current Payout Readiness:</strong> <span class="badge b-ready" style="font-size:10px;">Ready</span> — Affiliate updated bank details on 05-04-2026.</div>
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <div class="modal-field-label">Payment Destination</div>
+          <div class="modal-field-value mono">****3377 (updated 05-04-2026)</div>
+        </div>
+
+        <div class="modal-auth">
+          <div class="modal-auth-title">🔐 Re-authentication Required</div>
+          <div class="modal-auth-sub">Enter your password to authorise this retry. MFA challenge available after FR-026 / FR-031.</div>
+          <input class="mock-input" type="password" placeholder="Enter your password…" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-lg">No, Cancel</button>
+        <button class="btn btn-warning btn-lg" disabled>Yes, Retry Payout</button>
+      </div>
+      <div style="font-size:10px;color:#9ca3af;text-align:right;margin-top:-10px;">Confirm button enabled after password is entered</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 5 — Bulk Affiliate Payout Confirmation Modal (2 states)
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">05</span>
+    <span class="wf-frame-name">Bulk Affiliate Payout Confirmation Modal — Initial State &amp; Result State</span>
+    <span class="wf-frame-note">Triggered by: "Process All Selected Payouts" in Bulk Toolbar · Processing is sequential; failures do not block others</span>
+  </div>
+  <div class="modal-states">
+
+    <!-- State A: Initial (pre-submit) -->
+    <div style="flex:1;max-width:480px;">
+      <div class="modal-state-label">State A — Initial (before submitting)</div>
+      <div class="modal-card">
+        <div class="modal-title">✅ Bulk Affiliate Payout Confirmation</div>
+        <div class="modal-body">
+          <div class="modal-headline">Process payouts for 2 affiliates totalling £11,572.00?</div>
+
+          <div class="modal-field">
+            <div class="modal-field-label">For Payout Period</div>
+            <div class="modal-field-value">01-03-2026 to 31-03-2026</div>
+          </div>
+
+          <div class="modal-warning">
+            <span>⚠️</span>
+            <span>Confirm all payment destinations are correct before proceeding. Processing is sequential — individual failures will not block other transfers.</span>
+          </div>
+
+          <div class="modal-auth">
+            <div class="modal-auth-title">🔐 Re-authentication Required</div>
+            <div class="modal-auth-sub">Enter your password to authorise bulk processing. MFA challenge available after FR-026 / FR-031.</div>
+            <input class="mock-input" type="password" placeholder="Enter your password…" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline btn-lg">No, Cancel</button>
+          <button class="btn btn-primary btn-lg" disabled>Yes, Process All</button>
+        </div>
+        <div style="font-size:10px;color:#9ca3af;text-align:right;margin-top:-10px;">Confirm button enabled after password is entered</div>
+      </div>
+    </div>
+
+    <!-- State B: Result (post-submit) -->
+    <div style="flex:1;max-width:480px;">
+      <div class="modal-state-label">State B — Result Summary (after processing)</div>
+      <div class="modal-card">
+        <div class="modal-title">✅ Bulk Affiliate Payout Confirmation</div>
+        <div class="modal-body">
+          <div class="modal-headline">Process payouts for 2 affiliates totalling £11,572.00?</div>
+
+          <div class="modal-field">
+            <div class="modal-field-label">For Payout Period</div>
+            <div class="modal-field-value">01-03-2026 to 31-03-2026</div>
+          </div>
+
+          <hr class="modal-divider" />
+
+          <!-- Result: all success -->
+          <div class="modal-result">
+            ✅ <strong>2 payouts initiated. 0 failed.</strong><br />
+            All Stripe transfers submitted — status will update to "Processing" shortly. Refresh the list to see updated statuses.
+          </div>
+
+          <!-- Result: partial failure (alternative state shown below) -->
+          <div class="modal-result-fail">
+            ⚠️ <strong>1 payout initiated. 1 failed.</strong><br />
+            Failed row has been pinned in the "Failed / Requires Retry" section for individual follow-up. See Failure Reason column for details.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-lg">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /frame 5 -->
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 6 — Referral Booking Sub-Table (View Details expanded)
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">06</span>
+    <span class="wf-frame-name">Referral Booking Sub-Table — View Details Expanded</span>
+    <span class="wf-frame-note">Triggered by: clicking "View Details" on any affiliate row · Expands inline below the row · Booking Reference links to A-01</span>
+  </div>
+  <div class="subtable-frame-bg">
+    <div class="subtable-context">
+
+      <!-- Context: the affiliate row that was expanded -->
+      <div class="subtable-context-header">
+        <div>
+          <div class="subtable-context-who">Sarah Mitchell</div>
+          <div style="font-size:10px;color:#6b7280;margin-top:1px;">HP-AFF-00012 · Payout Ref: PAY-AFF-2026-0312</div>
+        </div>
+        <div class="subtable-context-meta">
+          <span>March 2026</span>
+          <span>18 referrals</span>
+          <span style="font-weight:700;color:#111827;">Commission: £2,272.00</span>
+          <span><span class="badge b-pending">Pending</span></span>
+        </div>
+        <button class="btn btn-outline" style="margin-left:16px;">✕ Close Details</button>
+      </div>
+
+      <!-- Sub-table panel -->
+      <div class="subtable-panel">
+        <div class="subtable-title">
+          📋 Referral Bookings Breakdown
+          <span style="font-weight:400;color:#6b7280;font-size:11px;">Showing 3 of 18 · </span>
+          <button class="btn-ghost" style="font-size:10px;">⬇ Download Full Report PDF</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking Reference</th>
+                <th>Patient Name</th>
+                <th>Treatment Date</th>
+                <th>Treatment Type</th>
+                <th class="r">Booking Amount</th>
+                <th class="r">Commission Rate</th>
+                <th class="r">Commission Earned</th>
+                <th>Currency</th>
+                <th>Referral Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="link-cell">BK-2026-030142</td>
+                <td>James Thornton</td>
+                <td class="mono">08-03-2026</td>
+                <td>FUE</td>
+                <td class="r">£3,200.00</td>
+                <td class="r">8%</td>
+                <td class="r">£256.00</td>
+                <td>GBP</td>
+                <td class="mono">SARAH20</td>
+              </tr>
+              <tr>
+                <td class="link-cell">BK-2026-030198</td>
+                <td>Priya Kapoor</td>
+                <td class="mono">12-03-2026</td>
+                <td>DHI</td>
+                <td class="r">£4,100.00</td>
+                <td class="r">8%</td>
+                <td class="r">£328.00</td>
+                <td>GBP</td>
+                <td class="mono">SARAH20</td>
+              </tr>
+              <tr>
+                <td class="link-cell">BK-2026-030245</td>
+                <td>David Osei</td>
+                <td class="mono">19-03-2026</td>
+                <td>FUT</td>
+                <td class="r">£2,900.00</td>
+                <td class="r">8%</td>
+                <td class="r">£232.00</td>
+                <td>GBP</td>
+                <td class="mono">SARAH10</td>
+              </tr>
+              <tr>
+                <td colspan="9" style="text-align:center;color:#9ca3af;font-size:10px;padding:10px 11px;background:#f8f9fc;border-top:1px dashed #e5e7eb;">
+                  … 15 more bookings not shown · <span class="link-cell" style="font-family:inherit;">Download full report PDF to view all</span>
+                </td>
+              </tr>
+              <tr style="background:#f8f9fc;">
+                <td colspan="4" style="font-size:10px;font-weight:700;color:#374151;padding:9px 11px;border-top:1px solid #e4e8f0;">Total (18 bookings)</td>
+                <td class="r" style="font-weight:700;color:#111827;border-top:1px solid #e4e8f0;">£28,400.00</td>
+                <td class="r" style="border-top:1px solid #e4e8f0;">8%</td>
+                <td class="r" style="font-weight:700;color:#111827;border-top:1px solid #e4e8f0;">£2,272.00</td>
+                <td style="border-top:1px solid #e4e8f0;"></td>
+                <td style="border-top:1px solid #e4e8f0;"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /frame 6 -->
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     FRAME 7 — Paid Payouts Tab
+════════════════════════════════════════════════════════════════ -->
+<div class="wf-frame">
+  <div class="wf-frame-label">
+    <span class="wf-frame-num">07</span>
+    <span class="wf-frame-name">Paid Payouts Tab — Status: Processing or Paid (Read-only, no bulk actions)</span>
+    <span class="wf-frame-note">No checkbox column · No Process/Retry buttons · Add Note available at all statuses</span>
+  </div>
+
+  <div class="page">
+    <nav class="sidebar">
+      <div class="sidebar-logo">Hairline<span>PM</span></div>
+      <div class="sidebar-section">Billing &amp; Finance</div>
+      <div class="sidebar-item active">🤝 Affiliate Payouts</div>
+    </nav>
+
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">
+          <span>Billing &amp; Finance</span><span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-cur">Affiliate Billing – Commission Payouts</span>
+        </div>
+        <div class="topbar-right">
+          <span>Currency:</span>
+          <div class="filter-chip">GBP (£) <span class="arr">▾</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="pg-header">
+          <div>
+            <div class="pg-title">Affiliate Billing — Commission Payouts</div>
+            <div class="pg-sub">Monthly affiliate commission payout processing · Payouts due: 7th of each month</div>
+          </div>
+        </div>
+
+        <div class="tab-shell">
+          <div class="tab-bar">
+            <div class="tab">Pending Payouts <span class="tab-count warn">28</span><span class="tab-count warn" style="background:#fff5f5;color:#b91c1c;margin-left:2px;">+5 Failed</span></div>
+            <div class="tab active">Paid Payouts <span class="tab-count" style="background:#d1fae5;color:#065f46;">24</span></div>
+          </div>
+
+          <div class="tab-filters">
+            <span class="filter-label">Filter:</span>
+            <div class="filter-chip">📅 Payout Month: March 2026 <span class="arr">▾</span></div>
+            <div class="filter-chip">🗓️ Period Range <span class="arr">▾</span></div>
+            <div class="fdiv"></div>
+            <div class="search-box">🔍 Search affiliate name or ID…</div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Affiliate Name</th>
+                  <th>Affiliate ID</th>
+                  <th>Payout Reference</th>
+                  <th>Discount Code(s)</th>
+                  <th>Payout Period</th>
+                  <th class="r">Total Referrals</th>
+                  <th class="r">Total Referral Revenue</th>
+                  <th class="r">Commission Rate</th>
+                  <th class="r">Commission Earned</th>
+                  <th>Payment Status</th>
+                  <th>Payment Method</th>
+                  <th>Payment Destination</th>
+                  <th>Payment Date</th>
+                  <th>Processed At</th>
+                  <th>Stripe Transfer ID</th>
+                  <th>Processed By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr>
+                  <td class="name-cell">Bloom Referrals</td>
+                  <td class="mono">HP-AFF-00003</td>
+                  <td class="mono">PAY-AFF-2026-0303</td>
+                  <td class="mono">BLOOM10</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">9</td>
+                  <td class="r">£7,200.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£720.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****1102</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:14:22 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxK9...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-outline">📝 Add Note</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="name-cell">NordReferral AB</td>
+                  <td class="mono">HP-AFF-00009</td>
+                  <td class="mono">PAY-AFF-2026-0309</td>
+                  <td class="mono">NORD20</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">22</td>
+                  <td class="r">£44,000.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£4,400.00</td>
+                  <td><span class="badge b-processing">Processing</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****5588</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td class="mono">07-04-2026 09:14:30 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxL1...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-outline">📝 Add Note</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="name-cell">Elite Hair Referrals</td>
+                  <td class="mono">HP-AFF-00015</td>
+                  <td class="mono">PAY-AFF-2026-0315</td>
+                  <td class="mono">ELITE10, ELITE15</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">14</td>
+                  <td class="r">£19,600.00</td>
+                  <td class="r">12%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,352.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****7743</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:14:55 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxM2...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td>
+                    <div class="actions">
+                      <div class="actions-row">
+                        <button class="btn btn-outline">👁 View Details</button>
+                        <button class="btn btn-outline">📝 Add Note</button>
+                      </div>
+                      <div class="actions-row">
+                        <button class="btn btn-outline">⬇ Download Report</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                  <td class="name-cell">HairFirst Agency</td>
+                  <td class="mono">HP-AFF-00002</td>
+                  <td class="mono">PAY-AFF-2026-0302</td>
+                  <td class="mono">HAIRFIRST10</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">15</td>
+                  <td class="r">£22,500.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,250.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****3341</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:15:10 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxN3...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                  <td class="name-cell">Istanbul Connect</td>
+                  <td class="mono">HP-AFF-00020</td>
+                  <td class="mono">PAY-AFF-2026-0320</td>
+                  <td class="mono">ISTANBUL10</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">27</td>
+                  <td class="r">£54,000.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£5,400.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****7721</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:15:32 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxP4...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 6 -->
+                <tr>
+                  <td class="name-cell">Gloss Partners</td>
+                  <td class="mono">HP-AFF-00016</td>
+                  <td class="mono">PAY-AFF-2026-0316</td>
+                  <td class="mono">GLOSS15</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">8</td>
+                  <td class="r">£12,000.00</td>
+                  <td class="r">15%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£1,800.00</td>
+                  <td><span class="badge b-processing">Processing</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****4490</td>
+                  <td style="color:#9ca3af;">—</td>
+                  <td class="mono">07-04-2026 09:15:44 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxQ5...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 7 -->
+                <tr>
+                  <td class="name-cell">Revive Referrals</td>
+                  <td class="mono">HP-AFF-00025</td>
+                  <td class="mono">PAY-AFF-2026-0325</td>
+                  <td class="mono">REVIVE12</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">5</td>
+                  <td class="r">£7,500.00</td>
+                  <td class="r">12%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£900.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****1188</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:16:05 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxR6...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 8 -->
+                <tr>
+                  <td class="name-cell">HairFirst Asia</td>
+                  <td class="mono">HP-AFF-00038</td>
+                  <td class="mono">PAY-AFF-2026-0338</td>
+                  <td class="mono">ASIA20</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">11</td>
+                  <td class="r">£17,600.00</td>
+                  <td class="r">20%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£3,520.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****6630</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:16:20 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxS7...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 9 -->
+                <tr>
+                  <td class="name-cell">Crown Partners</td>
+                  <td class="mono">HP-AFF-00044</td>
+                  <td class="mono">PAY-AFF-2026-0344</td>
+                  <td class="mono">CROWN8</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">6</td>
+                  <td class="r">£9,600.00</td>
+                  <td class="r">8%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£768.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****2277</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:16:38 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxT8...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+                <!-- Row 10 -->
+                <tr>
+                  <td class="name-cell">TrueHair Network</td>
+                  <td class="mono">HP-AFF-00051</td>
+                  <td class="mono">PAY-AFF-2026-0351</td>
+                  <td class="mono">TRUE10</td>
+                  <td class="mono">01-03-2026 to 31-03-2026</td>
+                  <td class="r">19</td>
+                  <td class="r">£28,500.00</td>
+                  <td class="r">10%</td>
+                  <td class="r" style="font-weight:700;color:#111827;">£2,850.00</td>
+                  <td><span class="badge b-paid">Paid</span></td>
+                  <td>Bank Transfer</td>
+                  <td class="mono">****9956</td>
+                  <td class="mono">07-04-2026</td>
+                  <td class="mono">07-04-2026 09:16:55 UTC</td>
+                  <td class="mono" style="color:#4a90d9;">tr_3QxU9...</td>
+                  <td style="font-size:10px;">admin@hairlinepm.com</td>
+                  <td><div class="actions"><div class="actions-row"><button class="btn btn-outline">👁 View Details</button><button class="btn btn-outline">📝 Add Note</button></div><div class="actions-row"><button class="btn btn-outline">⬇ Download Report</button></div></div></td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginator Frame 7 -->
+          <div class="paginator">
+            <div class="pag-info">Showing 1–10 of 24 paid payouts &nbsp;·&nbsp; March 2026</div>
+            <div class="pag-controls">
+              <button class="pag-btn" disabled>‹ Prev</button>
+              <button class="pag-btn active">1</button>
+              <button class="pag-btn">2</button>
+              <button class="pag-btn">3</button>
+              <span class="pag-sep">…</span>
+              <button class="pag-btn">12</button>
+              <button class="pag-btn">Next ›</button>
+            </div>
+          </div>
+
+        </div><!-- /tab-shell -->
+      </div>
+    </div>
+  </div>
+</div><!-- /frame 7 -->
+
+</div><!-- /wf-doc -->
+</body>
+</html>

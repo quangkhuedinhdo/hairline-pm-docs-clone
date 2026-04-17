@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 Screen 4 – Patient Billing: Invoice Management</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    font-size: 13px;
+    color: #a8b2c8;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-danger { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
+  .btn-warning { background: #fff; color: #d97706; border: 1px solid #fcd34d; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+  .btn-ghost { background: transparent; color: #4a90d9; border: none; padding: 5px 8px; font-size: 11px; cursor: pointer; text-decoration: underline; }
+
+  /* ── Filter bar ── */
+  .filterbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .filter-label { color: #6b7280; font-size: 12px; font-weight: 500; }
+  .filter-select {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    color: #374151;
+  }
+  .filter-select .icon { color: #9ca3af; }
+  .search-input {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #9ca3af;
+    min-width: 220px;
+  }
+  .filter-divider { width: 1px; height: 24px; background: #e5e7eb; margin: 0 2px; }
+
+  /* ── Content ── */
+  .content { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .page-title { font-size: 20px; font-weight: 700; color: #111827; }
+  .page-subtitle { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+
+  /* ── Section headers ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0 4px;
+    border-bottom: 2px solid #f3f4f6;
+    margin-bottom: -6px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .section-title.at-risk { color: #7c3aed; }
+  .section-title.overdue { color: #dc2626; }
+  .section-title.standard { color: #374151; }
+  .section-count {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 100px;
+  }
+  .section-count.at-risk { background: #ede9fe; color: #7c3aed; }
+  .section-count.overdue { background: #fee2e2; color: #dc2626; }
+  .section-count.standard { background: #f3f4f6; color: #374151; }
+
+  /* ── Table ── */
+  .table-card {
+    background: #fff;
+    border: 1px solid #e4e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #f8f9fc;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    border-bottom: 1px solid #e4e8f0;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #f3f4f6; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
+  tbody td { padding: 11px 12px; vertical-align: middle; }
+
+  /* ── At Risk rows ── */
+  tbody tr.at-risk-row { background: #faf5ff; }
+  tbody tr.at-risk-row:hover { background: #f3e8ff; }
+
+  /* ── Overdue rows ── */
+  tbody tr.overdue-row { background: #fff8f8; }
+  tbody tr.overdue-row:hover { background: #fee2e2; }
+
+  /* ── Links ── */
+  .link { color: #4a90d9; font-weight: 500; cursor: pointer; text-decoration: none; }
+  .link:hover { text-decoration: underline; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-pending    { background: #fef9c3; color: #854d0e; }
+  .badge-partial    { background: #e0f2fe; color: #0369a1; }
+  .badge-paid       { background: #dcfce7; color: #166534; }
+  .badge-overdue    { background: #fee2e2; color: #991b1b; }
+  .badge-refunded   { background: #f3f4f6; color: #374151; }
+  .badge-at-risk    { background: #ede9fe; color: #6d28d9; }
+  .badge-installment { background: #e0f2fe; color: #0369a1; }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .dot-pending  { background: #ca8a04; }
+  .dot-partial  { background: #0284c7; }
+  .dot-paid     { background: #16a34a; }
+  .dot-overdue  { background: #dc2626; }
+  .dot-refunded { background: #9ca3af; }
+  .dot-at-risk  { background: #7c3aed; }
+
+  /* ── Warning badge ── */
+  .badge-override-warn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 10px;
+    font-weight: 500;
+    margin-top: 3px;
+  }
+
+  /* ── Installment progress ── */
+  .installment-text { font-size: 11px; color: #374151; }
+  .installment-retry { font-size: 10px; color: #d97706; margin-top: 1px; }
+  .warn-icon { color: #f59e0b; }
+
+  /* ── Currency ── */
+  .amount { font-variant-numeric: tabular-nums; font-weight: 500; color: #111827; }
+  .amount-muted { font-variant-numeric: tabular-nums; color: #6b7280; }
+  .amount-outstanding { font-variant-numeric: tabular-nums; font-weight: 600; color: #1e40af; }
+
+  /* ── Action buttons cell ── */
+  .actions-cell { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-top: 1px solid #f3f4f6;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+  }
+  .page-btn.active { background: #4a90d9; border-color: #4a90d9; color: #fff; font-weight: 600; }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    width: 520px;
+    max-width: 96vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-wide { width: 720px; }
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e4e8f0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; color: #111827; }
+  .modal-subtitle { font-size: 12px; color: #6b7280; margin-top: 3px; }
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 1px solid #e4e8f0;
+    background: #f9fafb;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6b7280;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e4e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* ── Info rows in modal ── */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+  .info-row { display: flex; flex-direction: column; gap: 2px; }
+  .info-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .info-value { font-size: 13px; color: #111827; font-weight: 500; }
+
+  /* ── Alert banner ── */
+  .alert-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .alert-banner.at-risk { background: #faf5ff; border: 1px solid #c4b5fd; color: #5b21b6; }
+  .alert-banner.overdue { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+  .alert-banner.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Channel pill ── */
+  .channel-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #0369a1;
+    font-weight: 500;
+  }
+
+  /* ── Reminder type row ── */
+  .reminder-type-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #f8f9fc;
+    border-radius: 8px;
+    border: 1px solid #e4e8f0;
+  }
+  .reminder-type-label { font-size: 12px; color: #6b7280; }
+  .reminder-type-value { font-size: 12px; font-weight: 600; color: #111827; }
+
+  /* ── Override modal extras ── */
+  .select-field, .textarea-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    font-family: inherit;
+  }
+  .textarea-field { resize: vertical; min-height: 80px; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 12px; font-weight: 600; color: #374151; }
+  .field-hint { font-size: 11px; color: #9ca3af; }
+  .char-count { font-size: 10px; color: #9ca3af; text-align: right; margin-top: 2px; }
+
+  /* ── Re-auth field ── */
+  .reauth-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .reauth-label { font-size: 12px; font-weight: 600; color: #92400e; display: flex; align-items: center; gap: 6px; }
+  .reauth-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    background: #fff;
+  }
+
+  /* ── Detail view (Screen 4a) ── */
+  .detail-panel {
+    background: #fff;
+    border: 1px solid #e4e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .detail-panel-header {
+    padding: 16px 20px;
+    background: #f8f9fc;
+    border-bottom: 1px solid #e4e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .detail-panel-title { font-size: 13px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; }
+  .detail-panel-body { padding: 16px 20px; }
+  .sub-table { width: 100%; border-collapse: collapse; }
+  .sub-table th {
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    border-bottom: 1px solid #e4e8f0;
+    background: #f8f9fc;
+    white-space: nowrap;
+  }
+  .sub-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+  .sub-table tr:last-child td { border-bottom: none; }
+
+  /* Tab navigation */
+  .screen-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #e4e8f0;
+    margin-bottom: 16px;
+    background: #fff;
+    padding: 0 28px;
+  }
+  .screen-tab {
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+  }
+  .screen-tab.active { color: #4a90d9; border-bottom-color: #4a90d9; font-weight: 600; }
+
+  /* ── Refund modal specifics ── */
+  .refund-policy-block {
+    background: #f8f9fc;
+    border: 1px solid #e4e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .policy-tier {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .policy-tier .tier-label { color: #374151; }
+  .policy-tier .tier-pct { font-weight: 700; color: #16a34a; }
+  .policy-tier.active-tier {
+    background: #dcfce7;
+    border-radius: 6px;
+    padding: 6px 10px;
+    border: 1px solid #86efac;
+  }
+  .amount-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .amount-box {
+    background: #f8f9fc;
+    border: 1px solid #e4e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+  .amount-box.highlight { background: #eff6ff; border-color: #bfdbfe; }
+  .amount-box .ab-label { font-size: 11px; color: #6b7280; margin-bottom: 3px; }
+  .amount-box .ab-value { font-size: 16px; font-weight: 700; color: #111827; }
+  .amount-box.highlight .ab-value { color: #1e40af; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Admin</div>
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item">📊 Dashboard</div>
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item">📈 Revenue Dashboard</div>
+    <div class="sidebar-item">💳 Provider Billing</div>
+    <div class="sidebar-item active">🧾 Patient Billing</div>
+    <div class="sidebar-item">🏷️ Discount Usage</div>
+    <div class="sidebar-item">🤝 Affiliate Payouts</div>
+    <div class="sidebar-section">Operations</div>
+    <div class="sidebar-item">📅 Bookings</div>
+    <div class="sidebar-item">👥 Patients</div>
+    <div class="sidebar-item">🏥 Providers</div>
+    <div class="sidebar-section">System</div>
+    <div class="sidebar-item">⚙️ Settings</div>
+    <div class="sidebar-item">📋 Audit Log</div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <nav class="breadcrumb">
+        <span>Finance</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Patient Billing — Invoice Management</span>
+      </nav>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm">⬇ Export CSV</button>
+        <button class="btn btn-primary btn-sm">✉ Send Reminders (All Overdue)</button>
+      </div>
+    </header>
+
+    <!-- Screen tabs -->
+    <div class="screen-tabs">
+      <div class="screen-tab active">Screen 4 — Invoice List</div>
+      <div class="screen-tab">Screen 4a — Invoice Detail</div>
+      <div class="screen-tab">Screen 4b — Refund Modal</div>
+      <div class="screen-tab">Send Reminder Modal</div>
+      <div class="screen-tab">Override Status Modal</div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filterbar">
+      <div class="search-input">🔍 Search patient name, ID, invoice #, booking ref…</div>
+      <div class="filter-divider"></div>
+      <span class="filter-label">Filter:</span>
+      <div class="filter-select">Status <span class="icon">▾</span></div>
+      <div class="filter-select">Date Range <span class="icon">▾</span></div>
+      <div class="filter-select">Currency <span class="icon">▾</span></div>
+      <div class="filter-select">Payment Type <span class="icon">▾</span></div>
+      <div class="filter-divider"></div>
+      <button class="btn btn-outline btn-sm">↺ Clear Filters</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">Patient Invoice Management</div>
+          <div class="page-subtitle">142 total invoices · 4 At Risk · 7 Overdue · 131 other</div>
+        </div>
+      </div>
+
+      <!-- ── AT RISK SECTION ── -->
+      <div class="section-header">
+        <span class="section-title at-risk">⚠ At Risk</span>
+        <span class="section-count at-risk">4 invoices</span>
+        <span style="font-size:11px; color:#7c3aed; margin-left:4px;">All payment retries exhausted — admin intervention required</span>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+
+              <th>Invoice #</th>
+              <th>Patient</th>
+              <th>Booking Ref</th>
+              <th>Invoice Date</th>
+              <th>Due Date</th>
+              <th>Total Amount</th>
+              <th>Amount Paid</th>
+              <th>Outstanding</th>
+              <th>Currency</th>
+              <th>Status</th>
+              <th>Payment Method</th>
+              <th>Installments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- At Risk row 1 -->
+            <tr class="at-risk-row">
+
+              <td><a class="link">INV-2511-00421</a></td>
+              <td>
+                <div><a class="link">Emma Thompson</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00201</div>
+              </td>
+              <td><a class="link">BK-00892</a></td>
+              <td>15-01-2026</td>
+              <td>22-01-2026</td>
+              <td class="amount">£3,200.00</td>
+              <td class="amount">£640.00</td>
+              <td class="amount-outstanding">£2,560.00</td>
+              <td>GBP</td>
+              <td>
+                <span class="badge badge-at-risk"><span class="badge-dot dot-at-risk"></span>At Risk</span>
+              </td>
+              <td style="font-size:11px;">Visa ending in 4242</td>
+              <td>
+                <div class="installment-text">1/5 installments paid</div>
+                <div class="installment-retry">⚠ Retry 3/3 failed</div>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-warning btn-sm">✉ Remind</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+            <!-- At Risk row 2 -->
+            <tr class="at-risk-row">
+
+              <td><a class="link">INV-2511-00398</a></td>
+              <td>
+                <div><a class="link">James Okafor</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00178</div>
+              </td>
+              <td><a class="link">BK-00871</a></td>
+              <td>10-01-2026</td>
+              <td>17-01-2026</td>
+              <td class="amount">£1,800.00</td>
+              <td class="amount">£900.00</td>
+              <td class="amount-outstanding">£900.00</td>
+              <td>GBP</td>
+              <td>
+                <span class="badge badge-at-risk"><span class="badge-dot dot-at-risk"></span>At Risk</span>
+                <div class="badge-override-warn">⚠ Status manually adjusted — 20-01-2026</div>
+              </td>
+              <td style="font-size:11px;">Mastercard ending in 5810</td>
+              <td>
+                <div class="installment-text">2/4 installments paid</div>
+                <div class="installment-retry">⚠ Retry 3/3 failed</div>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-warning btn-sm">✉ Remind</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── OVERDUE SECTION ── -->
+      <div class="section-header">
+        <span class="section-title overdue">🔴 Overdue</span>
+        <span class="section-count overdue">7 invoices</span>
+        <span style="font-size:11px; color:#6b7280; margin-left:4px;">Outstanding balance 7+ days past due date</span>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+
+              <th>Invoice #</th>
+              <th>Patient</th>
+              <th>Booking Ref</th>
+              <th>Invoice Date</th>
+              <th>Due Date</th>
+              <th>Total Amount</th>
+              <th>Amount Paid</th>
+              <th>Outstanding</th>
+              <th>Currency</th>
+              <th>Status</th>
+              <th>Payment Method</th>
+              <th>Installments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="overdue-row">
+
+              <td><a class="link">INV-2511-00412</a></td>
+              <td>
+                <div><a class="link">Aisha Patel</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00190</div>
+              </td>
+              <td><a class="link">BK-00883</a></td>
+              <td>05-01-2026</td>
+              <td>12-01-2026</td>
+              <td class="amount">£2,400.00</td>
+              <td class="amount">£0.00</td>
+              <td class="amount-outstanding">£2,400.00</td>
+              <td>GBP</td>
+              <td><span class="badge badge-overdue"><span class="badge-dot dot-overdue"></span>Overdue</span></td>
+              <td style="font-size:11px;">Visa ending in 1212</td>
+              <td style="color:#6b7280;font-size:11px;">—</td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-warning btn-sm">✉ Remind</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="overdue-row">
+
+              <td><a class="link">INV-2511-00408</a></td>
+              <td>
+                <div><a class="link">Marco Fernandez</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00185</div>
+              </td>
+              <td><a class="link">BK-00879</a></td>
+              <td>03-01-2026</td>
+              <td>10-01-2026</td>
+              <td class="amount">€1,950.00</td>
+              <td class="amount">€650.00</td>
+              <td class="amount-outstanding">€1,300.00</td>
+              <td>EUR</td>
+              <td><span class="badge badge-overdue"><span class="badge-dot dot-overdue"></span>Overdue</span></td>
+              <td style="font-size:11px;">Mastercard ending in 9934</td>
+              <td>
+                <div class="installment-text">1/3 installments paid</div>
+                <div class="installment-retry">⚠ Retry 2/3 in progress</div>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-warning btn-sm">✉ Remind</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── ALL INVOICES SECTION ── -->
+      <div class="section-header">
+        <span class="section-title standard">All Invoices</span>
+        <span class="section-count standard">142 total</span>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+
+              <th>Invoice #</th>
+              <th>Patient</th>
+              <th>Booking Ref</th>
+              <th>Invoice Date</th>
+              <th>Due Date</th>
+              <th>Total Amount</th>
+              <th>Amount Paid</th>
+              <th>Outstanding</th>
+              <th>Currency</th>
+              <th>Status</th>
+              <th>Payment Method</th>
+              <th>Installments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Paid row -->
+            <tr>
+
+              <td><a class="link">INV-2511-00456</a></td>
+              <td>
+                <div><a class="link">Sophie Williams</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00789</div>
+              </td>
+              <td><a class="link">BK-00920</a></td>
+              <td>25-01-2026</td>
+              <td>01-02-2026</td>
+              <td class="amount">£4,500.00</td>
+              <td class="amount">£4,500.00</td>
+              <td class="amount-muted">£0.00</td>
+              <td>GBP</td>
+              <td><span class="badge badge-paid"><span class="badge-dot dot-paid"></span>Paid</span></td>
+              <td style="font-size:11px;">Visa ending in 8823</td>
+              <td>
+                <div class="installment-text">5/5 installments paid</div>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-danger btn-sm">↩ Refund</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Pending row with warning icon (due in 7 days) -->
+            <tr>
+
+              <td><a class="link">INV-2511-00451</a></td>
+              <td>
+                <div><a class="link">David Chen</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00221</div>
+              </td>
+              <td><a class="link">BK-00915</a></td>
+              <td>22-01-2026</td>
+              <td>
+                <span class="warn-icon">⚠</span> 29-01-2026
+                <div style="font-size:10px;color:#d97706;">Due in 6 days</div>
+              </td>
+              <td class="amount">£2,800.00</td>
+              <td class="amount">£700.00</td>
+              <td class="amount-outstanding">£2,100.00</td>
+              <td>GBP</td>
+              <td><span class="badge badge-pending"><span class="badge-dot dot-pending"></span>Pending</span></td>
+              <td style="font-size:11px;">Mastercard ending in 3341</td>
+              <td>
+                <div class="installment-text">1/4 installments paid</div>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-warning btn-sm">✉ Remind</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Partial row -->
+            <tr>
+
+              <td><a class="link">INV-2511-00445</a></td>
+              <td>
+                <div><a class="link">Yuki Tanaka</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00210</div>
+              </td>
+              <td><a class="link">BK-00908</a></td>
+              <td>18-01-2026</td>
+              <td>25-01-2026</td>
+              <td class="amount">$3,600.00</td>
+              <td class="amount">$1,200.00</td>
+              <td class="amount-outstanding">$2,400.00</td>
+              <td>USD</td>
+              <td><span class="badge badge-partial"><span class="badge-dot dot-partial"></span>Partial</span></td>
+              <td style="font-size:11px;">Visa ending in 7712</td>
+              <td>
+                <div class="installment-text">2/6 installments paid</div>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-danger btn-sm">↩ Refund</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Refunded row -->
+            <tr>
+
+              <td><a class="link">INV-2511-00430</a></td>
+              <td>
+                <div><a class="link">Lena Müller</a></div>
+                <div style="font-size:10px;color:#6b7280;">HP-PAT-00198</div>
+              </td>
+              <td><a class="link">BK-00897</a></td>
+              <td>12-01-2026</td>
+              <td>19-01-2026</td>
+              <td class="amount">£1,500.00</td>
+              <td class="amount-muted">£0.00</td>
+              <td class="amount-muted">£0.00</td>
+              <td>GBP</td>
+              <td><span class="badge badge-refunded"><span class="badge-dot dot-refunded"></span>Refunded</span></td>
+              <td style="font-size:11px;">Visa ending in 5509</td>
+              <td style="color:#6b7280;font-size:11px;">—</td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn btn-outline btn-sm">👁 View</button>
+                  <button class="btn btn-outline btn-sm">⬇ Invoice</button>
+                  <button class="btn btn-outline btn-sm">🔧 Override</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>Showing 1–10 of 142 invoices</span>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">…</button>
+            <button class="page-btn">15</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- SCREEN 4a — PATIENT INVOICE DETAIL (inline panel) -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <div style="border-top: 3px dashed #4a90d9; padding-top: 24px; margin-top: 12px;">
+        <div style="font-size: 13px; font-weight: 700; color: #4a90d9; margin-bottom: 16px; display:flex; align-items:center; gap:8px;">
+          ── Screen 4a: Patient Invoice Detail (opens when "View Details" clicked) ──
+        </div>
+
+        <!-- At Risk banner -->
+        <div class="alert-banner at-risk" style="margin-bottom:12px;">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>All payment retries have been exhausted.</strong> Please contact the patient to resolve. This invoice requires immediate admin intervention — contact patient, update payment method, or cancel booking.
+          </div>
+        </div>
+
+        <!-- Invoice Header -->
+        <div class="detail-panel" style="margin-bottom:12px;">
+          <div class="detail-panel-header">
+            <span class="detail-panel-title">Invoice Header</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-warning btn-sm">✉ Send Reminder</button>
+              <button class="btn btn-outline btn-sm">⬇ Download Invoice</button>
+              <button class="btn btn-outline btn-sm">🔧 Override Status</button>
+              <button class="btn btn-outline btn-sm">✕ Close</button>
+            </div>
+          </div>
+          <div class="detail-panel-body">
+            <div class="info-grid">
+              <div class="info-row">
+                <span class="info-label">Invoice Number</span>
+                <span class="info-value"><a class="link">INV-2511-00421</a></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Patient Name</span>
+                <span class="info-value"><a class="link">Emma Thompson</a></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Patient ID</span>
+                <span class="info-value"><a class="link">HP-PAT-00201</a></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Booking Reference</span>
+                <span class="info-value"><a class="link">BK-00892</a></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Invoice Date</span>
+                <span class="info-value">15-01-2026</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Currency</span>
+                <span class="info-value">GBP</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Total Amount</span>
+                <span class="info-value">£3,200.00</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Adjusted Total After Refund</span>
+                <span class="info-value" style="color:#6b7280;">— (no refund applied)</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Outstanding Balance</span>
+                <span class="info-value" style="color:#1e40af; font-weight:700;">£2,560.00</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Payment Status</span>
+                <span class="info-value"><span class="badge badge-at-risk"><span class="badge-dot dot-at-risk"></span>At Risk</span></span>
+              </div>
+              <div class="info-row" style="grid-column: span 2;">
+                <span class="info-label">Discount Code Applied</span>
+                <span class="info-value">None — no discount applied</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment History Table -->
+        <div class="detail-panel" style="margin-bottom:12px;">
+          <div class="detail-panel-header">
+            <span class="detail-panel-title">Payment History</span>
+          </div>
+          <div class="detail-panel-body" style="padding:0;">
+            <table class="sub-table">
+              <thead>
+                <tr>
+                  <th>Payment #</th>
+                  <th>Type</th>
+                  <th>Scheduled Date</th>
+                  <th>Paid Date</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Stripe Payment Intent ID</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><span class="badge badge-pending" style="background:#e0f2fe;color:#0369a1;">Deposit</span></td>
+                  <td>15-01-2026</td>
+                  <td>15-01-2026</td>
+                  <td class="amount">£640.00</td>
+                  <td>Visa ending in 4242</td>
+                  <td style="font-size:10px;color:#6b7280;">pi_3abc123</td>
+                  <td><span class="badge badge-paid">Paid</span></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><span class="badge badge-installment">Installment</span></td>
+                  <td>15-02-2026</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td class="amount">£640.00</td>
+                  <td>Visa ending in 4242</td>
+                  <td style="color:#6b7280;font-size:10px;">—</td>
+                  <td><span class="badge badge-overdue">Failed</span></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><span class="badge badge-installment">Installment</span></td>
+                  <td>15-03-2026</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td class="amount">£640.00</td>
+                  <td>Visa ending in 4242</td>
+                  <td style="color:#6b7280;font-size:10px;">—</td>
+                  <td><span class="badge badge-pending">Scheduled</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Installment Schedule Table -->
+        <div class="detail-panel" style="margin-bottom:12px;">
+          <div class="detail-panel-header">
+            <span class="detail-panel-title">Installment Schedule</span>
+          </div>
+          <div class="detail-panel-body" style="padding:0;">
+            <table class="sub-table">
+              <thead>
+                <tr>
+                  <th>Installment #</th>
+                  <th>Scheduled Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Retry Count</th>
+                  <th>Next Retry Date</th>
+                  <th>Paid Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1 of 5</td>
+                  <td>15-01-2026</td>
+                  <td class="amount">£640.00</td>
+                  <td><span class="badge badge-paid">Paid</span></td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td>15-01-2026</td>
+                </tr>
+                <tr>
+                  <td>2 of 5</td>
+                  <td>15-02-2026</td>
+                  <td class="amount">£640.00</td>
+                  <td><span class="badge badge-overdue">Failed</span></td>
+                  <td style="color:#dc2626; font-weight:600;">3 of 3 retries used</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                </tr>
+                <tr>
+                  <td>3 of 5</td>
+                  <td>15-03-2026</td>
+                  <td class="amount">£640.00</td>
+                  <td><span class="badge badge-pending">Pending</span></td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                </tr>
+                <tr>
+                  <td>4 of 5</td>
+                  <td>15-04-2026</td>
+                  <td class="amount">£640.00</td>
+                  <td><span class="badge badge-pending">Pending</span></td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                </tr>
+                <tr>
+                  <td>5 of 5</td>
+                  <td>15-05-2026</td>
+                  <td class="amount">£640.00</td>
+                  <td><span class="badge badge-pending">Pending</span></td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                  <td style="color:#6b7280;">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Reminder History Table -->
+        <div class="detail-panel" style="margin-bottom:12px;">
+          <div class="detail-panel-header">
+            <span class="detail-panel-title">Reminder History</span>
+          </div>
+          <div class="detail-panel-body" style="padding:0;">
+            <table class="sub-table">
+              <thead>
+                <tr>
+                  <th>Reminder Type</th>
+                  <th>Channel</th>
+                  <th>Sent At</th>
+                  <th>Delivery Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="badge badge-pending">Upcoming Due</span></td>
+                  <td>Email + Push</td>
+                  <td>08-01-2026 09:00</td>
+                  <td><span class="badge badge-paid">Sent</span></td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge-overdue">Overdue Reminder</span></td>
+                  <td>Email + Push</td>
+                  <td>22-01-2026 09:00</td>
+                  <td><span class="badge badge-paid">Sent</span></td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge-at-risk">At Risk — Final Notice</span></td>
+                  <td>Email + Push</td>
+                  <td>25-01-2026 10:15</td>
+                  <td><span class="badge badge-overdue">Failed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Status Override History Table -->
+        <div class="detail-panel" style="margin-bottom:24px;">
+          <div class="detail-panel-header">
+            <span class="detail-panel-title">Status Override History</span>
+          </div>
+          <div class="detail-panel-body" style="padding:0;">
+            <table class="sub-table">
+              <thead>
+                <tr>
+                  <th>Override Date</th>
+                  <th>Previous Status</th>
+                  <th>New Status</th>
+                  <th>Reason</th>
+                  <th>Admin</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>20-01-2026 14:32</td>
+                  <td><span class="badge badge-pending">Pending</span></td>
+                  <td><span class="badge badge-at-risk">At Risk</span></td>
+                  <td style="font-size:11px; max-width:280px;">Stripe webhook delayed confirmation; manual override applied after off-system verification confirmed retry failure.</td>
+                  <td style="font-size:11px;">ADM-00045</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════ -->
+      <!-- SCREEN 4b — REFUND CONFIRMATION MODAL (inline demo) -->
+      <!-- ════════════════════════════════════════════════════ -->
+      <div style="border-top: 3px dashed #dc2626; padding-top: 24px; margin-top: 12px;">
+        <div style="font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 16px;">
+          ── Screen 4b: Refund Confirmation Modal ──
+        </div>
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+
+          <!-- Refund Modal -->
+          <div class="modal" style="position:relative; box-shadow:0 4px 24px rgba(0,0,0,0.12); max-height:none; flex-shrink:0;">
+            <div class="modal-header">
+              <div>
+                <div class="modal-title">Process Refund</div>
+                <div class="modal-subtitle">Refund amount calculated per FR-006 cancellation policy</div>
+              </div>
+              <button class="modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+
+              <!-- Invoice info -->
+              <div class="info-grid" style="grid-template-columns: repeat(3,1fr);">
+                <div class="info-row">
+                  <span class="info-label">Invoice #</span>
+                  <span class="info-value">INV-2511-00456</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Patient Name</span>
+                  <span class="info-value">Sophie Williams</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Booking Reference</span>
+                  <span class="info-value">BK-00920</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Treatment Date</span>
+                  <span class="info-value">15-03-2026</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Days Until Treatment</span>
+                  <span class="info-value">45 days</span>
+                </div>
+              </div>
+
+              <!-- Policy block -->
+              <div>
+                <div class="field-label" style="margin-bottom:8px;">Cancellation Policy Applied</div>
+                <div class="refund-policy-block">
+                  <div class="policy-tier active-tier">
+                    <span class="tier-label">&#x2713; &gt;30 days before treatment</span>
+                    <span class="tier-pct">90% refund</span>
+                  </div>
+                  <div class="policy-tier" style="padding:4px 10px;color:#9ca3af;">
+                    <span class="tier-label">15–30 days before treatment</span>
+                    <span class="tier-pct" style="color:#9ca3af;">50% refund</span>
+                  </div>
+                  <div class="policy-tier" style="padding:4px 10px;color:#9ca3af;">
+                    <span class="tier-label">&lt;15 days / post-treatment</span>
+                    <span class="tier-pct" style="color:#9ca3af;">0% refund</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Amount summary -->
+              <div class="amount-summary">
+                <div class="amount-box">
+                  <div class="ab-label">Original Invoice Amount</div>
+                  <div class="ab-value">£4,500.00</div>
+                </div>
+                <div class="amount-box">
+                  <div class="ab-label">Calculated Refund Amount (90%)</div>
+                  <div class="ab-value">£4,050.00</div>
+                </div>
+                <div class="amount-box highlight">
+                  <div class="ab-label">Adjusted Refund Amount</div>
+                  <div class="ab-value">£4,050.00</div>
+                  <div style="font-size:10px;color:#6b7280;margin-top:2px;">Editable — adjust for partial refund</div>
+                </div>
+                <div class="amount-box">
+                  <div class="ab-label">Platform Fee (Non-Refundable)</div>
+                  <div class="ab-value" style="color:#dc2626;">£450.00</div>
+                </div>
+              </div>
+              <!-- Final Refund Amount — full width, prominent -->
+              <div class="amount-box highlight" style="border: 2px solid #4a90d9;">
+                <div class="ab-label">Final Refund Amount <span style="font-size:10px;color:#6b7280;font-weight:400;">— Read-only · Amount sent to Stripe</span></div>
+                <div class="ab-value" style="font-size:20px;">£4,050.00</div>
+              </div>
+
+              <!-- Reason field -->
+              <div class="field-group">
+                <label class="field-label">Reason for Refund <span style="color:#dc2626;">*</span></label>
+                <textarea class="textarea-field" placeholder="Enter reason for refund (required)">Patient requested cancellation — treatment date rescheduled by provider</textarea>
+                <div class="char-count">88 / 500</div>
+              </div>
+
+              <!-- Adjustment justification (hidden by default, shown when adjusted) -->
+              <div class="field-group" style="opacity:0.45;">
+                <label class="field-label">Adjustment Justification <span style="font-size:10px;color:#9ca3af;">(required only if adjusted amount differs)</span></label>
+                <textarea class="textarea-field" placeholder="Enter justification for adjusted refund amount (required if adjusted)" style="min-height:60px;"></textarea>
+              </div>
+
+              <!-- Re-authentication -->
+              <div class="reauth-box">
+                <div class="reauth-label">🔒 Financial Re-Authentication Required</div>
+                <input class="reauth-input" type="password" placeholder="Enter your password to confirm" value="••••••••" />
+                <div style="font-size:10px;color:#92400e;">Required for all financial status changes. Will be replaced by MFA challenge after FR-026 / FR-031.</div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline">No, Cancel</button>
+              <button class="btn btn-danger" style="background:#dc2626; color:#fff; border:none;">Confirm Refund of £4,050.00</button>
+            </div>
+          </div>
+
+          <!-- Send Reminder Modal -->
+          <div>
+            <div style="font-size:12px; font-weight:700; color:#4a90d9; margin-bottom:12px;">Send Reminder Confirmation Modal</div>
+            <div class="modal" style="position:relative; box-shadow:0 4px 24px rgba(0,0,0,0.12); max-height:none; width:420px;">
+              <div class="modal-header">
+                <div>
+                  <div class="modal-title">Send Payment Reminder</div>
+                  <div class="modal-subtitle">Send payment reminder to Aisha Patel?</div>
+                </div>
+                <button class="modal-close">✕</button>
+              </div>
+              <div class="modal-body">
+                <div class="info-grid">
+                  <div class="info-row">
+                    <span class="info-label">Invoice #</span>
+                    <span class="info-value">INV-2511-00412</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Outstanding Balance</span>
+                    <span class="info-value" style="color:#dc2626; font-weight:700;">£2,400.00</span>
+                  </div>
+                </div>
+                <div class="reminder-type-row">
+                  <span class="reminder-type-label">Reminder Type</span>
+                  <span class="reminder-type-value">Overdue Reminder</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="info-label">Delivery Channel</span>
+                  <span class="channel-pill">📧 Email + 🔔 Push Notification</span>
+                </div>
+                <div class="alert-banner info" style="font-size:11px; padding:10px 14px;">
+                  Reminder content and template are determined automatically based on invoice status. Admin cannot customize the message text.
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-outline">No, Cancel</button>
+                <button class="btn btn-primary">Yes, Send Reminder</button>
+              </div>
+            </div>
+
+            <!-- Override Status Modal -->
+            <div style="font-size:12px; font-weight:700; color:#374151; margin-top:24px; margin-bottom:12px;">Override Status Modal</div>
+            <div class="modal" style="position:relative; box-shadow:0 4px 24px rgba(0,0,0,0.12); max-height:none; width:420px;">
+              <div class="modal-header">
+                <div>
+                  <div class="modal-title">Override Payment Status</div>
+                  <div class="modal-subtitle">INV-2511-00412 · Aisha Patel · Current: Overdue</div>
+                </div>
+                <button class="modal-close">✕</button>
+              </div>
+              <div class="modal-body">
+                <div class="field-group">
+                  <label class="field-label">New Status <span style="color:#dc2626;">*</span></label>
+                  <select class="select-field">
+                    <option>— Select new status —</option>
+                    <option>Pending</option>
+                    <option>Partial</option>
+                    <option selected>Paid</option>
+                    <option>Overdue</option>
+                    <option>Refunded</option>
+                    <option>At Risk</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Reason for Override <span style="color:#dc2626;">*</span></label>
+                  <textarea class="textarea-field" placeholder="Enter mandatory reason (required)">Off-system payment received via bank transfer — Stripe webhook failed to update status.</textarea>
+                  <div class="char-count">73 / 500</div>
+                </div>
+                <div class="reauth-box">
+                  <div class="reauth-label">🔒 Financial Re-Authentication Required</div>
+                  <input class="reauth-input" type="password" placeholder="Enter your password to confirm" />
+                  <div style="font-size:10px;color:#92400e;">Override does NOT automatically trigger Stripe charge or refund — admin is responsible for any off-system action.</div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-outline">Cancel</button>
+                <button class="btn btn-primary" style="opacity:0.5; cursor:not-allowed;">Confirm Override</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>
