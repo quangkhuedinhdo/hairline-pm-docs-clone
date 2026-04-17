@@ -1,0 +1,14 @@
+PLACEHOLDER: Replace this file with an actual screenshot of the generated Figma table.
+
+To generate the screenshot:
+1. Run the skill on sample-input.md (Example 1 — Data Table)
+2. After use_figma executes successfully, call get_screenshot on the generated frame
+3. Save the returned PNG here as sample-output.png
+
+The expected output should show:
+- Dark header row (#1E1E2E background, white text)
+- Alternating row fills (white / #F5F5FA)
+- 5 columns: Transaction ID, Date, Amount, Status, Provider
+- 4 data rows
+- Rounded corners (8px), subtle drop shadow
+- Inter font throughout

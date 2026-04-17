@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 Screen 10 – Provider Payout History (Stage 2 — Confirmed Payouts)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Shared Layout ── */
+  .screen { display: flex; min-height: 100vh; }
+
+  .screen + .screen {
+    margin-top: 0;
+    border-top: 6px solid #d1d5db;
+    position: relative;
+  }
+  .screen-divider {
+    background: #e5e7eb;
+    text-align: center;
+    padding: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #9ca3af;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px; background: #1a1a2e; color: #a8b2c8;
+    flex-shrink: 0; display: flex; flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px; font-size: 16px; font-weight: 700;
+    color: #fff; border-bottom: 1px solid #2d2d4e; letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px; color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px; cursor: pointer; display: flex; align-items: center;
+    gap: 10px; border-left: 3px solid transparent; font-size: 13px; color: #a8b2c8;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active { background: #1e2d50; color: #fff; border-left-color: #4a90d9; }
+  .sidebar-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar {
+    height: 52px; background: #fff; border-bottom: 1px solid #e0e4ed;
+    display: flex; align-items: center; padding: 0 24px; gap: 10px;
+  }
+  .topbar-title { font-weight: 600; font-size: 15px; color: #1a1a2e; }
+  .topbar-sep { color: #c0c6d4; }
+  .topbar-sub { color: #6b7280; font-size: 13px; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #4a90d9; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+
+  .content { flex: 1; padding: 24px; overflow-y: auto; }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #6b7280; margin-bottom: 16px;
+  }
+  .breadcrumb a { color: #4a90d9; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* ── Page Header ── */
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-header-left h1 { font-size: 18px; font-weight: 700; color: #1a1a2e; }
+  .page-header-left p { font-size: 12px; color: #6b7280; margin-top: 3px; }
+  .page-header-right { display: flex; gap: 10px; flex-shrink: 0; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: none; white-space: nowrap;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-outline:hover { background: #f9fafb; }
+  .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-xs { padding: 4px 10px; font-size: 11px; }
+
+  /* ── Filter Bar ── */
+  .filter-bar {
+    background: #fff; border: 1px solid #e0e4ed; border-radius: 10px;
+    padding: 14px 18px; display: flex; align-items: center;
+    gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 12px; font-weight: 600; color: #6b7280; white-space: nowrap; }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-select {
+    height: 34px; padding: 0 10px; border: 1px solid #d1d5db;
+    border-radius: 6px; font-size: 12px; color: #374151;
+    background: #fff; cursor: pointer; min-width: 140px;
+  }
+  .filter-input {
+    height: 34px; padding: 0 10px; border: 1px solid #d1d5db;
+    border-radius: 6px; font-size: 12px; color: #374151; background: #fff; min-width: 120px;
+  }
+  .filter-sep { color: #d1d5db; font-size: 11px; }
+  .filter-right { margin-left: auto; display: flex; gap: 8px; }
+
+  /* ── Sort Bar ── */
+  .sort-bar {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px; font-size: 12px; color: #6b7280;
+  }
+  .sort-bar span { font-weight: 600; }
+  .sort-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border: 1px solid #d1d5db;
+    border-radius: 20px; background: #fff; font-size: 12px;
+    color: #374151; cursor: pointer;
+  }
+  .sort-chip.active { border-color: #4a90d9; background: #eff6ff; color: #4a90d9; font-weight: 600; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .badge-paid       { background: #dcfce7; color: #15803d; }
+  .badge-processing { background: #dbeafe; color: #1d4ed8; }
+  .badge-failed     { background: #fee2e2; color: #b91c1c; }
+  .badge-weekly     { background: #f3f4f6; color: #374151; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff; border: 1px solid #e0e4ed;
+    border-radius: 10px; margin-bottom: 20px;
+  }
+  .card-header {
+    padding: 14px 20px; border-bottom: 1px solid #e0e4ed;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-header h2 {
+    font-size: 14px; font-weight: 600; color: #1a1a2e;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-body { padding: 20px; }
+  .record-count {
+    font-size: 12px; color: #6b7280;
+    background: #f3f4f6; padding: 2px 8px; border-radius: 12px;
+  }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead tr { background: #f8f9fb; border-bottom: 1px solid #e0e4ed; }
+  thead th {
+    padding: 10px 14px; text-align: left;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: #6b7280; white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #f3f4f6; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbfd; }
+  tbody tr.failed-row { background: #fff9f9; }
+  tbody td { padding: 12px 14px; vertical-align: middle; color: #374151; }
+
+  .ref-code {
+    font-family: 'Courier New', monospace; font-size: 11.5px;
+    font-weight: 600; color: #1a1a2e;
+  }
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 7px; border: 1px solid #d1d5db;
+    border-radius: 4px; background: #fff;
+    font-size: 10px; color: #6b7280; cursor: pointer; margin-left: 6px;
+  }
+  .copy-btn:hover { background: #f3f4f6; }
+
+  .row-link {
+    color: #4a90d9; font-weight: 600; text-decoration: none; font-size: 12px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .row-link:hover { text-decoration: underline; }
+
+  .amount { font-weight: 600; color: #1a1a2e; }
+  .warn-icon { color: #ef4444; margin-right: 2px; }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-top: 1px solid #e0e4ed;
+    font-size: 12px; color: #6b7280;
+  }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn {
+    width: 30px; height: 30px; border: 1px solid #d1d5db;
+    border-radius: 6px; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px; color: #374151;
+  }
+  .page-btn.active { background: #4a90d9; color: #fff; border-color: #4a90d9; font-weight: 600; }
+
+  /* ── Detail Page — Info Grid ── */
+  .info-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 24px;
+  }
+  .info-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .info-item label {
+    display: block; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: #9ca3af; margin-bottom: 5px;
+  }
+  .info-item .value {
+    font-size: 13px; color: #1a1a2e; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .info-item .value.large { font-size: 18px; font-weight: 700; }
+  .info-item .value.green { color: #16a34a; }
+  .info-item .value.muted { color: #6b7280; font-weight: 400; }
+  .info-item .value .ref-code { font-size: 13px; }
+
+  /* ── Failure Block ── */
+  .failure-block {
+    padding: 14px 16px;
+    background: #fff5f5; border: 1px solid #fecaca;
+    border-radius: 8px; margin-bottom: 20px;
+  }
+  .failure-block .failure-title {
+    font-weight: 600; color: #b91c1c; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px; font-size: 13px;
+  }
+  .failure-block .failure-msg {
+    font-size: 12px; color: #7f1d1d; line-height: 1.6;
+  }
+
+  /* ── Retry Timeline ── */
+  .retry-block {
+    background: #fff; border: 1px solid #e0e4ed;
+    border-radius: 10px; margin-bottom: 20px;
+  }
+  .retry-block-header {
+    padding: 14px 20px; border-bottom: 1px solid #e0e4ed;
+  }
+  .retry-block-header h2 { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+  .timeline { padding: 16px 20px; display: flex; flex-direction: column; gap: 0; }
+  .timeline-item {
+    display: flex; gap: 14px; position: relative; padding-bottom: 16px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: 7px; top: 18px;
+    width: 2px; height: calc(100% - 6px); background: #e0e4ed;
+  }
+  .timeline-item:last-child::before { display: none; }
+  .timeline-dot {
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+    margin-top: 1px; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700;
+  }
+  .timeline-dot.fail  { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
+  .timeline-dot.retry { background: #fef9c3; color: #92400e; border: 2px solid #fde047; }
+  .timeline-dot.ok    { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
+  .timeline-content .tl-time { font-size: 11px; color: #9ca3af; }
+  .timeline-content .tl-label { font-size: 12px; color: #374151; margin-top: 2px; line-height: 1.5; }
+  .timeline-content .tl-label strong { color: #1a1a2e; }
+
+  /* ── Section divider label ── */
+  .divider-label {
+    text-align: center; padding: 12px 0;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #9ca3af;
+    background: #e5e7eb; border-top: 2px dashed #d1d5db;
+    border-bottom: 2px dashed #d1d5db; margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     SCREEN A — Payout History (List)
+════════════════════════════════════════════════════ -->
+<div class="screen">
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> <span style="font-size:10px;color:#555a7a;font-weight:400;">Provider</span></div>
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item"><span class="icon">🏠</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">📅</span> My Bookings</div>
+    <div class="sidebar-item"><span class="icon">👥</span> Patients</div>
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><span class="icon">💰</span> Earnings Tracker</div>
+    <div class="sidebar-item active"><span class="icon">💳</span> Payout History</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Invoices</div>
+    <div class="sidebar-section">Account</div>
+    <div class="sidebar-item"><span class="icon">⚙️</span> Settings</div>
+    <div class="sidebar-item"><span class="icon">🔔</span> Notifications</div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title">Finance</span>
+      <span class="topbar-sep">›</span>
+      <span class="topbar-sub">Payout History</span>
+      <div class="topbar-right">
+        <span style="font-size:12px;color:#6b7280;">Dr. Kemal Yilmaz</span>
+        <div class="avatar">KY</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="#">Finance</a> <span>›</span> <span>Payout History</span>
+      </div>
+
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Payout History</h1>
+          <p>Stage 2 — Confirmed Payouts · All Stripe transfers initiated for your account</p>
+        </div>
+        <div class="page-header-right">
+          <button class="btn btn-outline">⬇ Export History</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter by:</span>
+        <div class="filter-group">
+          <span style="font-size:12px;color:#374151;">Status</span>
+          <select class="filter-select">
+            <option>All Statuses</option>
+            <option>Processing</option>
+            <option>Paid</option>
+            <option>Failed</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span style="font-size:12px;color:#374151;">Date Range</span>
+          <input type="date" class="filter-input" value="2026-01-01" />
+          <span class="filter-sep">→</span>
+          <input type="date" class="filter-input" value="2026-04-17" />
+        </div>
+        <div class="filter-right">
+          <button class="btn btn-outline btn-sm">Clear</button>
+          <button class="btn btn-primary btn-sm">Apply</button>
+        </div>
+      </div>
+
+      <!-- Sort Bar -->
+      <div class="sort-bar">
+        <span>Sort by:</span>
+        <div class="sort-chip active">Payout Date ↓</div>
+        <div class="sort-chip">Payout Date ↑</div>
+        <div class="sort-chip">Net Payout ↓</div>
+        <div class="sort-chip">Net Payout ↑</div>
+      </div>
+
+      <!-- Payout Table -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+          <h2>Payout Records <span class="record-count">4 records</span></h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Payout Reference</th>
+                <th>Payout Date</th>
+                <th>Transfer Confirmation Date</th>
+                <th>Payout Period</th>
+                <th>Treatment Count</th>
+                <th>Gross Total</th>
+                <th>Commission Deducted</th>
+                <th>Net Payout</th>
+                <th>Payout Frequency</th>
+                <th>Status</th>
+                <th>Invoice</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Processing -->
+              <tr>
+                <td>
+                  <a class="row-link" href="#">PAY-HP-PRV-00127-2026-04 →</a>
+                  <button class="copy-btn">⧉ Copy</button>
+                </td>
+                <td>25-04-2026</td>
+                <td style="color:#9ca3af;">—</td>
+                <td>18-04-2026 to 24-04-2026</td>
+                <td>2</td>
+                <td class="amount">£4,800.00</td>
+                <td class="amount">£720.00</td>
+                <td class="amount">£4,080.00</td>
+                <td><span class="badge badge-weekly">Weekly</span></td>
+                <td><span class="badge badge-processing">● Processing</span></td>
+                <td><button class="btn btn-outline btn-xs" disabled>⬇ Download Invoice</button></td>
+              </tr>
+
+              <!-- Paid -->
+              <tr>
+                <td>
+                  <a class="row-link" href="#">PAY-HP-PRV-00123-2026-04 →</a>
+                  <button class="copy-btn">⧉ Copy</button>
+                </td>
+                <td>18-04-2026</td>
+                <td>18-04-2026 · 10:23 UTC</td>
+                <td>11-04-2026 to 17-04-2026</td>
+                <td>3</td>
+                <td class="amount">£7,500.00</td>
+                <td class="amount">£1,125.00</td>
+                <td class="amount">£6,375.00</td>
+                <td><span class="badge badge-weekly">Weekly</span></td>
+                <td><span class="badge badge-paid">✓ Paid</span></td>
+                <td><button class="btn btn-outline btn-xs">⬇ Download Invoice</button></td>
+              </tr>
+
+              <!-- Paid -->
+              <tr>
+                <td>
+                  <a class="row-link" href="#">PAY-HP-PRV-00119-2026-04 →</a>
+                  <button class="copy-btn">⧉ Copy</button>
+                </td>
+                <td>11-04-2026</td>
+                <td>11-04-2026 · 09:47 UTC</td>
+                <td>04-04-2026 to 10-04-2026</td>
+                <td>4</td>
+                <td class="amount">£9,200.00</td>
+                <td class="amount">£1,380.00</td>
+                <td class="amount">£7,820.00</td>
+                <td><span class="badge badge-weekly">Weekly</span></td>
+                <td><span class="badge badge-paid">✓ Paid</span></td>
+                <td><button class="btn btn-outline btn-xs">⬇ Download Invoice</button></td>
+              </tr>
+
+              <!-- Failed -->
+              <tr class="failed-row">
+                <td>
+                  <a class="row-link" href="#">PAY-HP-PRV-00108-2026-03 →</a>
+                  <button class="copy-btn">⧉ Copy</button>
+                </td>
+                <td>04-04-2026</td>
+                <td style="color:#9ca3af;">—</td>
+                <td>28-03-2026 to 03-04-2026</td>
+                <td>2</td>
+                <td class="amount">£4,100.00</td>
+                <td class="amount">£615.00</td>
+                <td class="amount">£3,485.00</td>
+                <td><span class="badge badge-weekly">Weekly</span></td>
+                <td><span class="warn-icon">⚠</span><span class="badge badge-failed">✕ Failed</span></td>
+                <td><button class="btn btn-outline btn-xs" disabled>⬇ Download Invoice</button></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span>Showing 4 of 4 records</span>
+          <div class="page-btns">
+            <div class="page-btn">‹</div>
+            <div class="page-btn active">1</div>
+            <div class="page-btn">›</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /screen A -->
+
+
+<!-- ════════════════════════════════════════════════════
+     SCREEN B — Payout Detail (after clicking a row)
+     Example: PAY-HP-PRV-00123-2026-04  [Status: Paid]
+════════════════════════════════════════════════════ -->
+<div class="divider-label">↓ &nbsp; Screen B — Payout Detail (navigate vào sau khi click row) &nbsp; ↓</div>
+
+<div class="screen">
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> <span style="font-size:10px;color:#555a7a;font-weight:400;">Provider</span></div>
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item"><span class="icon">🏠</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">📅</span> My Bookings</div>
+    <div class="sidebar-item"><span class="icon">👥</span> Patients</div>
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><span class="icon">💰</span> Earnings Tracker</div>
+    <div class="sidebar-item active"><span class="icon">💳</span> Payout History</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Invoices</div>
+    <div class="sidebar-section">Account</div>
+    <div class="sidebar-item"><span class="icon">⚙️</span> Settings</div>
+    <div class="sidebar-item"><span class="icon">🔔</span> Notifications</div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title">Finance</span>
+      <span class="topbar-sep">›</span>
+      <span class="topbar-sub">Payout History</span>
+      <span class="topbar-sep">›</span>
+      <span class="topbar-sub" style="color:#1a1a2e;font-weight:500;">PAY-HP-PRV-00123-2026-04</span>
+      <div class="topbar-right">
+        <span style="font-size:12px;color:#6b7280;">Dr. Kemal Yilmaz</span>
+        <div class="avatar">KY</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="#">Finance</a> <span>›</span>
+        <a href="#">Payout History</a> <span>›</span>
+        <span>PAY-HP-PRV-00123-2026-04</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 style="display:flex;align-items:center;gap:10px;">
+            PAY-HP-PRV-00123-2026-04
+            <span class="badge badge-paid" style="font-size:12px;">✓ Paid</span>
+          </h1>
+          <p>Payout Detail · 18-04-2026 · Weekly</p>
+        </div>
+        <div class="page-header-right">
+          <button class="copy-btn" style="font-size:12px;padding:6px 12px;">⧉ Copy Reference</button>
+          <button class="btn btn-outline">⬇ Download Invoice</button>
+        </div>
+      </div>
+
+      <!-- Payout Summary Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Payout Summary</h2>
+        </div>
+        <div class="card-body">
+          <div class="info-grid" style="margin-bottom:20px;">
+            <div class="info-item">
+              <label>Payout Reference</label>
+              <div class="value"><span class="ref-code">PAY-HP-PRV-00123-2026-04</span></div>
+            </div>
+            <div class="info-item">
+              <label>Payout Date</label>
+              <div class="value">18-04-2026</div>
+            </div>
+            <div class="info-item">
+              <label>Transfer Confirmation Date</label>
+              <div class="value">18-04-2026 · 10:23 UTC</div>
+            </div>
+            <div class="info-item">
+              <label>Payout Frequency</label>
+              <div class="value"><span class="badge badge-weekly">Weekly</span></div>
+            </div>
+          </div>
+          <div class="info-grid cols-3" style="margin-bottom:20px;">
+            <div class="info-item">
+              <label>Payout Period</label>
+              <div class="value">11-04-2026 to 17-04-2026</div>
+            </div>
+            <div class="info-item">
+              <label>Treatment Count</label>
+              <div class="value">3 treatments</div>
+            </div>
+            <div class="info-item">
+              <label>Status</label>
+              <div class="value"><span class="badge badge-paid">✓ Paid</span></div>
+            </div>
+          </div>
+          <div style="border-top:1px solid #f3f4f6;padding-top:16px;">
+            <div class="info-grid cols-3">
+              <div class="info-item">
+                <label>Gross Total</label>
+                <div class="value large">£7,500.00</div>
+              </div>
+              <div class="info-item">
+                <label>Commission Deducted</label>
+                <div class="value large" style="color:#ef4444;">−£1,125.00</div>
+              </div>
+              <div class="info-item">
+                <label>Net Payout</label>
+                <div class="value large green">£6,375.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Treatment Breakdown Table -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <h2>Treatment Breakdown <span class="record-count">3 treatments</span></h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking Reference</th>
+                <th>Patient Name</th>
+                <th>Treatment Date</th>
+                <th>Treatment Type</th>
+                <th>Treatment Amount</th>
+                <th>Commission</th>
+                <th>Commission Deducted</th>
+                <th>Net Contribution</th>
+                <th>Currency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a class="row-link" href="#">BK-HP-00891-2026</a></td>
+                <td>James Thornton</td>
+                <td>14-04-2026</td>
+                <td>FUE</td>
+                <td class="amount">£3,200.00</td>
+                <td>15%</td>
+                <td class="amount">£480.00</td>
+                <td class="amount">£2,720.00</td>
+                <td>GBP</td>
+              </tr>
+              <tr>
+                <td><a class="row-link" href="#">BK-HP-00884-2026</a></td>
+                <td>Sara Müller</td>
+                <td>10-04-2026</td>
+                <td>DHI</td>
+                <td class="amount">£2,800.00</td>
+                <td>15%</td>
+                <td class="amount">£420.00</td>
+                <td class="amount">£2,380.00</td>
+                <td>GBP</td>
+              </tr>
+              <tr>
+                <td><a class="row-link" href="#">BK-HP-00877-2026</a></td>
+                <td>Ahmed Al-Rashid</td>
+                <td>07-04-2026</td>
+                <td>FUT</td>
+                <td class="amount">£1,500.00</td>
+                <td>£150 Flat</td>
+                <td class="amount">£150.00</td>
+                <td class="amount">£1,350.00</td>
+                <td>GBP</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /screen B -->
+
+
+<!-- ════════════════════════════════════════════════════
+     SCREEN B (variant) — Payout Detail [Status: Failed]
+     Example: PAY-HP-PRV-00108-2026-03
+════════════════════════════════════════════════════ -->
+<div class="divider-label">↓ &nbsp; Screen B (variant) — Payout Detail khi Status = Failed &nbsp; ↓</div>
+
+<div class="screen">
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> <span style="font-size:10px;color:#555a7a;font-weight:400;">Provider</span></div>
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item"><span class="icon">🏠</span> Dashboard</div>
+    <div class="sidebar-item"><span class="icon">📅</span> My Bookings</div>
+    <div class="sidebar-item"><span class="icon">👥</span> Patients</div>
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><span class="icon">💰</span> Earnings Tracker</div>
+    <div class="sidebar-item active"><span class="icon">💳</span> Payout History</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Invoices</div>
+    <div class="sidebar-section">Account</div>
+    <div class="sidebar-item"><span class="icon">⚙️</span> Settings</div>
+    <div class="sidebar-item"><span class="icon">🔔</span> Notifications</div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title">Finance</span>
+      <span class="topbar-sep">›</span>
+      <span class="topbar-sub">Payout History</span>
+      <span class="topbar-sep">›</span>
+      <span class="topbar-sub" style="color:#1a1a2e;font-weight:500;">PAY-HP-PRV-00108-2026-03</span>
+      <div class="topbar-right">
+        <span style="font-size:12px;color:#6b7280;">Dr. Kemal Yilmaz</span>
+        <div class="avatar">KY</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="breadcrumb">
+        <a href="#">Finance</a> <span>›</span>
+        <a href="#">Payout History</a> <span>›</span>
+        <span>PAY-HP-PRV-00108-2026-03</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 style="display:flex;align-items:center;gap:10px;">
+            PAY-HP-PRV-00108-2026-03
+            <span class="badge badge-failed" style="font-size:12px;">✕ Failed</span>
+          </h1>
+          <p>Payout Detail · 04-04-2026 · Weekly</p>
+        </div>
+        <div class="page-header-right">
+          <button class="copy-btn" style="font-size:12px;padding:6px 12px;">⧉ Copy Reference</button>
+          <button class="btn btn-outline" disabled>⬇ Download Invoice</button>
+        </div>
+      </div>
+
+      <!-- Failure Reason -->
+      <div class="failure-block">
+        <div class="failure-title">⚠ Payout Failed</div>
+        <div class="failure-msg">
+          <strong>Failure Reason:</strong> Bank account issue — admin has been notified and will retry.<br/>
+          Your payout of £3,485.00 for 28-03-2026 to 03-04-2026 could not be processed. Hairline is investigating. You will be notified once resolved.
+        </div>
+      </div>
+
+      <!-- Payout Summary Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Payout Summary</h2>
+        </div>
+        <div class="card-body">
+          <div class="info-grid" style="margin-bottom:20px;">
+            <div class="info-item">
+              <label>Payout Reference</label>
+              <div class="value"><span class="ref-code">PAY-HP-PRV-00108-2026-03</span></div>
+            </div>
+            <div class="info-item">
+              <label>Payout Date</label>
+              <div class="value">04-04-2026</div>
+            </div>
+            <div class="info-item">
+              <label>Transfer Confirmation Date</label>
+              <div class="value muted">— (not confirmed)</div>
+            </div>
+            <div class="info-item">
+              <label>Payout Frequency</label>
+              <div class="value"><span class="badge badge-weekly">Weekly</span></div>
+            </div>
+          </div>
+          <div class="info-grid cols-3" style="margin-bottom:20px;">
+            <div class="info-item">
+              <label>Payout Period</label>
+              <div class="value">28-03-2026 to 03-04-2026</div>
+            </div>
+            <div class="info-item">
+              <label>Treatment Count</label>
+              <div class="value">2 treatments</div>
+            </div>
+            <div class="info-item">
+              <label>Status</label>
+              <div class="value"><span class="warn-icon">⚠</span><span class="badge badge-failed">✕ Failed</span></div>
+            </div>
+          </div>
+          <div style="border-top:1px solid #f3f4f6;padding-top:16px;">
+            <div class="info-grid cols-3">
+              <div class="info-item">
+                <label>Gross Total</label>
+                <div class="value large">£4,100.00</div>
+              </div>
+              <div class="info-item">
+                <label>Commission Deducted</label>
+                <div class="value large" style="color:#ef4444;">−£615.00</div>
+              </div>
+              <div class="info-item">
+                <label>Net Payout</label>
+                <div class="value large" style="color:#9ca3af;">£3,485.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retry Resolution History -->
+      <div class="retry-block">
+        <div class="retry-block-header">
+          <h2>Retry Resolution History</h2>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot fail">✕</div>
+            <div class="timeline-content">
+              <div class="tl-time">04-04-2026 · 08:15 UTC</div>
+              <div class="tl-label"><strong>Transfer failed</strong> — Stripe error: insufficient bank account details on file.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot retry">↺</div>
+            <div class="timeline-content">
+              <div class="tl-time">04-04-2026 · 14:32 UTC</div>
+              <div class="tl-label"><strong>Retry attempt 1</strong> — Admin updated bank account details and initiated retry.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot fail">✕</div>
+            <div class="timeline-content">
+              <div class="tl-time">04-04-2026 · 14:35 UTC</div>
+              <div class="tl-label"><strong>Retry failed</strong> — Stripe error: bank account still unverified. Admin has been notified.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Treatment Breakdown Table -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Treatment Breakdown <span class="record-count">2 treatments</span></h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking Reference</th>
+                <th>Patient Name</th>
+                <th>Treatment Date</th>
+                <th>Treatment Type</th>
+                <th>Treatment Amount</th>
+                <th>Commission</th>
+                <th>Commission Deducted</th>
+                <th>Net Contribution</th>
+                <th>Currency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a class="row-link" href="#">BK-HP-00865-2026</a></td>
+                <td>Lena Fischer</td>
+                <td>29-03-2026</td>
+                <td>DHI</td>
+                <td class="amount">£2,400.00</td>
+                <td>15%</td>
+                <td class="amount">£360.00</td>
+                <td class="amount">£2,040.00</td>
+                <td>GBP</td>
+              </tr>
+              <tr>
+                <td><a class="row-link" href="#">BK-HP-00859-2026</a></td>
+                <td>Oliver Bennett</td>
+                <td>22-03-2026</td>
+                <td>FUE</td>
+                <td class="amount">£1,700.00</td>
+                <td>15%</td>
+                <td class="amount">£255.00</td>
+                <td class="amount">£1,445.00</td>
+                <td>GBP</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /screen B failed -->
+
+</body>
+</html>

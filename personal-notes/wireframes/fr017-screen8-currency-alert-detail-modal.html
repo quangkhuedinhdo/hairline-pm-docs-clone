@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-017 · Screen 8 — Currency Alert Detail Modal</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  background: #1a1f2e;
+  color: #1a1a2e;
+}
+
+/* ══════════════════════════════
+   WIREFRAME DOCUMENT WRAPPER
+══════════════════════════════ */
+.wf-doc {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.wf-doc-header {
+  padding: 28px 40px 24px;
+  background: #13172200;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  border-bottom: 1px solid #2d3650;
+}
+.wf-doc-badge {
+  background: #4a90d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.wf-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.wf-doc-meta {
+  font-size: 12px;
+  color: #6b7a99;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════
+   FRAME CONTAINER
+══════════════════════════════ */
+.wf-frame {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+}
+.wf-frame-label {
+  background: #2d3650;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wf-frame-num {
+  background: #4a90d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+.wf-frame-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5cfdf;
+  letter-spacing: 0.3px;
+}
+.wf-frame-note {
+  font-size: 11px;
+  color: #6b7a99;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════
+   SHARED: ADMIN PAGE SHELL
+══════════════════════════════ */
+.page { display: flex; min-height: 600px; background: #f0f2f5; }
+
+/* Sidebar */
+.sidebar {
+  width: 210px;
+  background: #1a1a2e;
+  color: #a8b2c8;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-logo {
+  padding: 18px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  border-bottom: 1px solid #2d2d4e;
+}
+.sidebar-logo span { color: #6c8ebf; }
+.sidebar-section {
+  padding: 12px 16px 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555a7a;
+}
+.sidebar-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid transparent;
+  font-size: 12px;
+  color: #a8b2c8;
+}
+.sidebar-item.active { background: #1e2d50; color: #fff; border-left-color: #4a90d9; }
+
+/* Main area */
+.main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* Topbar */
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid #e4e8f0;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+.breadcrumb-sep { color: #d1d5db; }
+.breadcrumb-cur { color: #111827; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #6b7280; }
+
+/* Content */
+.content { padding: 18px 24px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+
+/* Page header */
+.pg-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.pg-title { font-size: 18px; font-weight: 700; color: #111827; }
+.pg-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+/* ══════════════════════════════
+   MODAL OVERLAY
+══════════════════════════════ */
+.modal-overlay {
+  padding: 32px 40px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: transparent;
+}
+
+/* Modal box */
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  width: 1100px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal header */
+.modal-header {
+  padding: 18px 24px 16px;
+  border-bottom: 1px solid #e4e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+}
+.modal-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.modal-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.modal-alert-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.alert-icon {
+  width: 20px;
+  height: 20px;
+  background: #fef3c7;
+  border: 1.5px solid #f59e0b;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #d97706;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.modal-close-btn {
+  width: 28px;
+  height: 28px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  border: 1px solid #e4e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+/* Header meta grid */
+.modal-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 0;
+  background: #f8fafc;
+  border: 1px solid #e4e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.modal-meta-item {
+  padding: 10px 16px;
+  border-right: 1px solid #e4e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.modal-meta-item:last-child { border-right: none; }
+.meta-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #9ca3af;
+}
+.meta-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+.meta-value.highlight-up {
+  color: #dc2626;
+  font-size: 14px;
+}
+.meta-value.muted {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* ══════════════════════════════
+   AFFECTED BOOKINGS TABLE
+══════════════════════════════ */
+.modal-body {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.table-shell {
+  border: 1px solid #e4e8f0;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+thead tr {
+  background: #f8fafc;
+}
+th {
+  padding: 8px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  text-align: left;
+  border-bottom: 1px solid #e4e8f0;
+  white-space: nowrap;
+  background: #f8fafc;
+}
+td {
+  padding: 9px 10px;
+  font-size: 12px;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #f9fafb; }
+
+.td-link {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.td-rate-diff {
+  font-weight: 700;
+  color: #dc2626;
+}
+.td-rate-diff.positive {
+  color: #16a34a;
+}
+.td-exposure-neg {
+  font-weight: 600;
+  color: #dc2626;
+}
+.td-exposure-pos {
+  font-weight: 600;
+  color: #16a34a;
+}
+.td-muted {
+  color: #6b7280;
+}
+
+/* ══════════════════════════════
+   ADMIN DECISION PANEL
+══════════════════════════════ */
+.decision-panel {
+  background: #f8fafc;
+  border: 1px solid #e4e8f0;
+  border-radius: 8px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.decision-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+.radio-dot {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.radio-dot.selected {
+  border-color: #4a90d9;
+}
+.radio-dot.selected::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: #4a90d9;
+  border-radius: 50%;
+}
+.radio-label {
+  font-size: 12px;
+  color: #111827;
+  line-height: 1.4;
+}
+.radio-label .route-note {
+  font-size: 10px;
+  color: #6b7280;
+  display: block;
+  margin-top: 1px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.required-star { color: #dc2626; }
+.mock-textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #6b7280;
+  background: #fff;
+  height: 72px;
+  resize: none;
+  display: flex;
+  align-items: flex-start;
+  font-style: italic;
+}
+.char-count {
+  font-size: 10px;
+  color: #9ca3af;
+  text-align: right;
+}
+
+/* ══════════════════════════════
+   MODAL FOOTER
+══════════════════════════════ */
+.modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid #e4e8f0;
+  background: #fafbfc;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 7px 18px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: #4a90d9;
+  color: #fff;
+}
+.btn-secondary {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+/* ══════════════════════════════
+   BACKDROP PLACEHOLDER CONTENT
+══════════════════════════════ */
+.placeholder-block {
+  height: 48px;
+  background: #e9ebf0;
+  border-radius: 8px;
+}
+.placeholder-block.tall { height: 120px; }
+
+/* ══════════════════════════════
+   ANNOTATION PANEL
+══════════════════════════════ */
+.annotation-panel {
+  background: #1e2d50;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.annotation-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #7899c8;
+}
+.annotation-item {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: #a8b8d0;
+  line-height: 1.5;
+}
+.annotation-bullet {
+  color: #4a90d9;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<div class="wf-doc-header">
+  <span class="wf-doc-badge">FR-017</span>
+  <span class="wf-doc-title">Screen 8 — Currency Alert Detail Modal</span>
+  <span class="wf-doc-meta">Admin · Billing &amp; Finance · Modal overlay</span>
+</div>
+
+<div class="wf-doc">
+
+  <!-- ══════════════════ FRAME 1: MODAL STATE ══════════════════ -->
+  <div class="wf-frame">
+    <div class="wf-frame-label">
+      <span class="wf-frame-num">8</span>
+      <span class="wf-frame-name">Currency Alert Detail Modal — Active alert, decision not yet recorded</span>
+      <span class="wf-frame-note">Accessed from: Notification dropdown / email alert link</span>
+    </div>
+
+    <!-- Modal on dark background -->
+    <div style="background:#1a1a2e; padding: 40px;">
+      <div class="modal-overlay">
+          <div class="modal">
+
+            <!-- ─── Modal Header ─── -->
+            <div class="modal-header">
+              <div class="modal-header-top">
+                <div class="modal-title-group">
+                  <div class="modal-alert-title">
+                    <span class="alert-icon">!</span>
+                    Currency Fluctuation Alert
+                  </div>
+                </div>
+                <div class="modal-close-btn">✕</div>
+              </div>
+
+              <!-- Meta strip -->
+              <div class="modal-meta-grid">
+                <div class="modal-meta-item">
+                  <span class="meta-label">Currency Pair</span>
+                  <span class="meta-value">GBP / EUR</span>
+                </div>
+                <div class="modal-meta-item">
+                  <span class="meta-label">Fluctuation</span>
+                  <span class="meta-value highlight-up">+4.2% in the last 24 hours</span>
+                </div>
+                <div class="modal-meta-item">
+                  <span class="meta-label">Alert Threshold</span>
+                  <span class="meta-value muted">3% (configured in FR-029 / A-09)</span>
+                </div>
+                <div class="modal-meta-item">
+                  <span class="meta-label">Alert Generated</span>
+                  <span class="meta-value">16 Apr 2026, 09:14</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── Modal Body ─── -->
+            <div class="modal-body">
+
+              <!-- Affected Bookings Table -->
+              <div>
+                <div class="section-title">Affected Bookings — Payout within 14 days</div>
+                <div class="table-shell">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Booking Ref</th>
+                        <th>Provider</th>
+                        <th>Treatment Date</th>
+                        <th>Booking Amount</th>
+                        <th>Patient Currency</th>
+                        <th>Provider Currency</th>
+                        <th>Locked Rate</th>
+                        <th>Current Rate</th>
+                        <th>Rate Difference</th>
+                        <th>Estimated Exposure</th>
+                        <th>Payout Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><span class="td-link">BK-2026-04102</span></td>
+                        <td>Dr. Mehmet Yilmaz</td>
+                        <td>20 Apr 2026</td>
+                        <td>£3,200.00</td>
+                        <td>GBP</td>
+                        <td>EUR</td>
+                        <td>1.1542</td>
+                        <td>1.2027</td>
+                        <td><span class="td-rate-diff">+4.2%</span></td>
+                        <td><span class="td-exposure-neg">−£134.40</span></td>
+                        <td>25 Apr 2026</td>
+                      </tr>
+                      <tr>
+                        <td><span class="td-link">BK-2026-04089</span></td>
+                        <td>Dr. Mehmet Yilmaz</td>
+                        <td>18 Apr 2026</td>
+                        <td>£4,800.00</td>
+                        <td>GBP</td>
+                        <td>EUR</td>
+                        <td>1.1542</td>
+                        <td>1.2027</td>
+                        <td><span class="td-rate-diff">+4.2%</span></td>
+                        <td><span class="td-exposure-neg">−£201.60</span></td>
+                        <td>25 Apr 2026</td>
+                      </tr>
+                      <tr>
+                        <td><span class="td-link">BK-2026-04071</span></td>
+                        <td>Clinic Istanbul</td>
+                        <td>22 Apr 2026</td>
+                        <td>£2,600.00</td>
+                        <td>GBP</td>
+                        <td>EUR</td>
+                        <td>1.1542</td>
+                        <td>1.2027</td>
+                        <td><span class="td-rate-diff">+4.2%</span></td>
+                        <td><span class="td-exposure-neg">−£109.20</span></td>
+                        <td>28 Apr 2026</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Admin Decision Panel -->
+              <div class="decision-panel">
+                <div class="decision-panel-title">Admin Decision</div>
+
+                <!-- Radio options -->
+                <div class="field-group">
+                  <div class="field-label">Decision <span class="required-star">*</span></div>
+                  <div class="radio-group">
+                    <label class="radio-option">
+                      <div class="radio-dot selected"></div>
+                      <span class="radio-label">Accept risk — proceed with payouts at locked rates</span>
+                    </label>
+                    <label class="radio-option">
+                      <div class="radio-dot"></div>
+                      <span class="radio-label">Contact providers to renegotiate</span>
+                    </label>
+                    <label class="radio-option">
+                      <div class="radio-dot"></div>
+                      <span class="radio-label">
+                        Adjust commission configuration (FR-015 single-provider / FR-029 global-or-bulk)
+                        <span class="route-note">Routes to FR-015 / A-02 for single-provider edits, or FR-029 / A-09 for global / provider-scope commission settings</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Notes textarea -->
+                <div class="field-group">
+                  <div class="field-label">Notes <span class="required-star">*</span></div>
+                  <div class="mock-textarea">Document rationale for the selected decision…</div>
+                  <div class="char-count">0 / 500</div>
+                </div>
+              </div>
+
+            </div><!-- /modal-body -->
+
+            <!-- ─── Modal Footer ─── -->
+            <div class="modal-footer">
+              <button class="btn btn-secondary">Close</button>
+              <button class="btn btn-primary">Confirm Decision</button>
+            </div>
+
+          </div><!-- /modal -->
+        </div><!-- /modal-overlay -->
+    </div><!-- /dark bg -->
+  </div><!-- /wf-frame -->
+
+
+  <!-- ══════════════════ ANNOTATIONS ══════════════════ -->
+  <div class="annotation-panel">
+    <div class="annotation-title">Screen 8 — Field &amp; Behaviour Notes</div>
+
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Affected Bookings:</strong> Shows ONLY bookings with a payout date within the next 14 days — i.e., at risk of being affected by the current rate movement.</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Rate Difference:</strong> Displayed as %. Highlighted red when unfavourable to Hairline (i.e., provider currency has strengthened against patient currency, increasing payout cost).</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Estimated Exposure:</strong> Auto-calculated potential gain/loss to Hairline from the rate movement. Negative = loss (shown in red); positive = gain (shown in green).</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Booking Reference:</strong> Clickable link — navigates to the booking record in A-01.</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Decision (radio):</strong> Mandatory. Selecting "Adjust commission configuration" does not initiate the edit — it routes admin to the appropriate surface (FR-015 / A-02 or FR-029 / A-09).</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Notes (textarea):</strong> Mandatory whenever any decision is selected. Max 500 characters.</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Confirm Decision:</strong> Saves decision + notes to Transaction Audit Log (Entity 5) with action_type = "Currency Alert Decision". Dismisses modal and removes alert from notification dropdown.</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Close button:</strong> Dismisses without saving. Admin can return via notification history. Alert remains active in the notification dropdown.</span>
+    </div>
+    <div class="annotation-item">
+      <span class="annotation-bullet">▸</span>
+      <span><strong>Re-alert:</strong> If rate continues to diverge and a new alert fires (FR-029 / A-09), the alert re-surfaces even after a prior decision was confirmed.</span>
+    </div>
+  </div>
+
+</div><!-- /wf-doc -->
+</body>
+</html>
