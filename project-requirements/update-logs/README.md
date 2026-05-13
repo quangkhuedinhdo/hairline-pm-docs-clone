@@ -6,6 +6,34 @@ This folder contains documentation update reports and verification logs for the 
 
 ## Organization by Date
 
+### 2026-05-12/ (1 file)
+
+#### **FR-019 Screen Specifications Restructure + FR-004 Alignment**
+
+- `FR019_SCREEN_SPECIFICATIONS_RESTRUCTURE_2026-05-12.md` - Major restructure of FR-019 Screen Specifications (v1.3 → v1.5): unified three-program model (Admin-via-Provider, Provider Self-Created, Hairline-Funded & Direct-Issued), expanded screen inventory from 3 to 11 type-aware screens, preserved Applied vs Completed redemption state distinction, expanded Key Entities (PromotionProgram, PromotionCode, Adoption, Application). v1.5 follow-up: aligned with FR-004 by introducing `scope` (REUSABLE / AD_HOC_QUOTE_BOUND) and `bound_quote_id` on PromotionProgram, split Screen 9 into two entry modes (Standalone vs Inline-from-Quote). FR-004 v1.8: Promotion fields retyped across Screens 1/3/5/7, free-text `promotionNote` field removed (every discount must be a structured PromotionProgram).
+
+### 2026-05-07/ (3 files)
+
+#### **Notification Dispatch Report**
+
+- `NOTIFICATION_DISPATCH_REPORT_2026-05-07.md` - Created a patient notification dispatch audit report for `rosario12@example.com / password`, listing all 76 persisted inbox notifications with payload summaries and deep-link fields
+
+#### **Admin Module Re-Verification**
+
+- `ADMIN_MODULE_REVERIFICATION_2026-05-07.md` - Live codebase re-verification of A-03, A-05b, A-05c, A-09a, A-09c, A-10; corrects completion % estimates: A-09c drops from 56% → 10% (all settings pages are mock/setTimeout), A-05b drops from 33% → 20% (approve/retry backend routes missing), A-10 rises from 5% → 22% (substantial UI logic built, zero API wiring)
+
+#### **Progress Report Completion**
+
+- `PROGRESS_REPORT_COMPLETION_2026-05-07.md` - Filled all placeholder sections in the 2026-05-06 progress update report: report period, project phase, executive summary (health, snapshot table, progress since Jan 27, blockers, client decisions), mobile app / provider dashboard / admin dashboard summaries, and comprehensive findings & next phase (remaining issues, prioritized upcoming tasks, V2 vision)
+
+### 2026-05-06/ (3 files)
+
+#### **Design Verification & Templates**
+
+- `FR014_PROVIDER_DESIGN_LAYOUT_VERIFICATION_2026-05-06.md` - Provider-side FR-014 design layout verification for Screens 2-6; found 3 partial screens with legend, metric-label, disclosure-note, and export-prepopulation gaps
+- `MOBILE_BUG_REPORT_TEMPLATE_2026-05-06.md` - Mobile bug report template
+- `PROGRESS_UPDATE_REPORT_2026-05-06.md` - Progress update report based on the January 27 milestone report structure; updated 2026-05-07 with full PRD cross-check (FR-001 to FR-035), reset to 0%, business-level rewrite of all 32 module checklists
+
 ### 2025-10-23/ (7 files)
 
 #### **Major Documentation Updates & Verification**
@@ -174,6 +202,7 @@ This folder contains documentation update reports and verification logs for the 
 #### **Hairline Mobile April 2026 Postman Collection Test**
 
 - `HAIRLINE_MOBILE_APRIL_2026_POSTMAN_COLLECTION_TEST_2026-04-15.md` - Live sweep of the Hairline Mobile April 2026 API collection routes; 44 original endpoints were tested in the initial sweep, 29 of those are now confirmed meaningful, 7 return successful but sparse payloads pending product confirmation, 8 remain unresolved failures, and 25 follow-up validations were run separately to clear ambiguity. Follow-up checks confirmed the ISO-3 city lookup, meaningful `inquiry_id` payloads, brute-force quote-bearing inquiry coverage, successful provider profile and treatment update retries, an endpoint-correction retry guide for resolved endpoints including the quote decimal-precision rule, and a separate sparse-payload review for endpoints that may legitimately return empty arrays.
+- **2026-04-20**: `POSTMAN_STATE_DEPENDENT_RETEST_2026-04-20.md` - Completed the state-dependent portion of the Apr 2026 collection report with Postman MCP retests. The confirmed-state travel updates still hard-lock after submission, duplicate review prevention still fires on the known completed quote, aftercare confirmation still stops at the Stripe client step, purchase history is still empty for the main test account, and the documented instructions route now returns HTML 404 during recheck.
 
 ### 2026-04-16/ (2 files)
 
@@ -202,6 +231,16 @@ This folder contains documentation update reports and verification logs for the 
 #### **FR-014 Verification Fixes v3.5**
 
 - `FR014_VERIFICATION_FIXES_V35_2026-04-18.md` - FR-014 PRD v3.4 → v3.5 verification fixes. Screen 6 PDF branding narrowed to `providers.profile_image` only (colors-from-profile removed — no schema field). Rule 10 updated to cap FX fallback at 48 hours, beyond which affected widgets show "FX data unavailable". Added Assumption 8 recording that provider-side analytics widgets are PRD-derived by design (not a transcription discrepancy — future verification passes must not re-flag). Added Assumption 9 (FX freshness cap) and Assumption 10 (legacy `patients.location` fallback UI indicator).
+
+### 2026-04-20/ (2 files)
+
+#### **FR-017 Full-Scope Design Layout Verification**
+
+- `FR017_DESIGN_LAYOUT_VERIFICATION_2026-04-20.md` - FR-017 full-scope layout verification; `F1`, `F4`, and `F7` are `🟢 COMPLETE`, `F2`, `F3`, `F5`, `F6`, and `F8` are `🟡 PARTIAL`; both provider-finance screens now have layout coverage, but Screen 10 is still incomplete because only the payout-detail state is evidenced
+
+#### **Postman State-Dependent Retest**
+
+- `POSTMAN_STATE_DEPENDENT_RETEST_2026-04-20.md` - Completed the `State-Dependent Failures` section in the Apr 2026 mobile API test report using live Postman MCP retests. Confirmed travel-update lock responses, duplicate-review protection, Stripe client-confirmation dependency, empty purchase history, no active aftercare state, and a new route discrepancy on `get-aftercare-instructions-medications`.
 
 ### 2026-03-06/ (1 file)
 
@@ -462,6 +501,11 @@ This folder contains documentation update reports and verification logs for the 
 - **2026-03-19**: `MISSING_MOBILE_FLOWS_BACKEND_API_AUDIT_2026-03-19.md` - Backend endpoint readiness audit for all 15 missing patient mobile flows against `main/hairline-backend`
 - **2026-04-07**: `MOBILE_APP_TESTING_REPORT_PROGRESS_UPDATE_2026-04-07.md` - April 6 patient mobile testing artifacts updated for notification coverage: bottom-nav entry point, empty state, visible search/filter/bulk actions recorded, while swipe/deep-link/data-driven behavior remains blocked pending Firebase registration and backend delivery
 - **2026-04-15**: `HAIRLINE_MOBILE_APRIL_2026_POSTMAN_COLLECTION_TEST_2026-04-15.md` - Live API sweep of the Hairline Mobile April 2026 collection routes; 44 original endpoints were tested in the initial sweep, 29 are confirmed meaningful after follow-up validation, 7 return successful but sparse payloads pending product confirmation, 8 remain unresolved failures, and 25 follow-up validations were run separately to clear ambiguity. Follow-up checks verified that `GET /localization/get-cities/CAN` returns `200` when the country input is the ISO alpha-3 code, that quote-bearing inquiries return meaningful `quote/get-quotes` payloads, that `POST /settings/update-provider-profile` and `POST /treatment/update-treatment` succeed with the required IDs/payloads, and that the report now includes an endpoint-correction retry guide for resolved reruns, including the `quote_amount` decimal-precision rule
+- **2026-04-23**: `BUG_REPORT_SKELETON_2026-04-23.md` - Created a concise mobile bug report table skeleton starting from `HL61`
+- **2026-04-24**: `PROVIDER_ADMIN_MILESTONE_REPORT_2026-04-24.md` - Created Provider/Admin milestone status report with verified module completion estimates, risks, dependencies, and remaining effort; Mobile App deferred
+- **2026-04-26**: `API_TESTING_SKILL_REGISTRY_UPDATE_2026-04-26.md` - Added API testing endpoint/flow registries so later Postman/API runs can load compact indexes first, then targeted profiles with live endpoint findings such as the correct clinician resolver for Create Quote.
+- **2026-05-07**: `NOTIFICATION_DISPATCH_REPORT_2026-05-07.md` - Created a patient notification dispatch audit report for `rosario12@example.com / password`, listing all 76 persisted inbox notifications with payload summaries and deep-link fields.
+- **2026-05-06**: `PROGRESS_UPDATE_REPORT_2026-05-06.md` - Created a refreshed progress update report based on the January 27 milestone report structure, with fill-in sections for later PRD/FR checklist consolidation and fresh Provider/Admin code verification.
 - **2026-04-18**: `FR014_BACKEND_ALIGNMENT_2026-04-18.md` - FR-014 follow-up alignment after verification: backend cross-check confirmed canonical patient-country provenance is `patients.location_id -> countries.id/name`; FR-014 now documents legacy `patients.location` only as a temporary fallback, removes unsupported IP-geolocation fallback wording, aligns the system PRD SLA parameter to a platform-wide target, and adds Screen 6 service dependencies (`S-03`, `S-05`)
 - **2026-04-18**: `FR014_VERIFICATION_FIXES_V35_2026-04-18.md` - FR-014 PRD v3.4 → v3.5 verification fixes: Screen 6 PDF branding narrowed to `providers.profile_image` only; Rule 10 FX fallback capped at 48 hours; Assumption 8 added to record provider-side analytics widgets as PRD-derived by design (future passes must not re-flag as transcription discrepancies); Assumptions 9–10 added for FX freshness cap and legacy location UI indicator
 
@@ -555,6 +599,10 @@ This folder contains documentation update reports and verification logs for the 
 - **2026-04-17**: `FR014_VERIFICATION_FIXES_V2_2026-04-17.md` - FR-014 PRD v3.3 second verification round: commission formula corrected to conditional (percentage/flat-rate); last-activity source resolved to `provider_activity_logs.action_at` (backend confirmed — `provider_users.last_login_at` never existed); `provider_activity_logs` added to system-data-schema.md; SLA scoped to platform-wide minutes (per-provider deferred); Screen 7 B2 drill-down fixed; admin workflow extended to Screens 11 + 13; REQ numbering resequenced 001–104 gap-free
 - **2026-04-18**: `FR014_BACKEND_ALIGNMENT_2026-04-18.md` - FR-014 follow-up alignment: patient-country provenance normalized to `patients.location_id -> countries.name` with documented legacy fallback, unsupported geolocation fallback removed, system PRD FR-014 SLA wording aligned to platform-wide scope, and Screen 6 dependencies expanded to `S-03` and `S-05`
 - **2026-04-18**: `FR014_VERIFICATION_FIXES_V35_2026-04-18.md` - FR-014 PRD v3.5: Screen 6 branding scoped to `providers.profile_image` (no brand colors in schema); Rule 10 FX fallback capped at 48h; provider-side analytics widgets formally accepted as PRD-derived (Assumption 8) so future verifications do not re-flag them as transcription gaps; legacy `patients.location` fallback given a UI indicator requirement
+- **2026-05-06**: `FR014_PROVIDER_DESIGN_LAYOUT_VERIFICATION_2026-05-06.md` - Provider-side layout verification for FR-014 Screens 2-6; Screen 2 and 5 are complete, while Screen 3 has a legend placeholder bug, Screen 4 has patient-country metric and missing-disclosure gaps, and Screen 6 misses export-source preselection
+- **2026-05-11**: `FR014_FULL_DESIGN_LAYOUT_VERIFICATION_2026-05-11.md` - Full two-tenant FR-014 layout verification for Screens 2-13 (Screen 1 excluded as already done); provider flow is complete, admin flow is partial due to a Screen 11 aftercare KPI labeling mismatch, and all 12 in-scope screens now have layout coverage
+- **2026-04-20**: `FR017_DESIGN_LAYOUT_VERIFICATION_2026-04-20.md` - FR-017 full-scope layout verification; admin billing/investigation surfaces are mostly designed, provider payout batch states still have confirmation mismatches, `provider-earnings/` now covers Screen 9, and `payout-history/` now covers a partial Screen 10 payout-detail state while the parent list view remains missing
+- **2026-05-12**: `FR019_SCREEN_SPECIFICATIONS_RESTRUCTURE_2026-05-12.md` - FR-019 v1.4–v1.5 major restructure + FR-004 v1.8 alignment: unified three-program model with 11 type-aware screens, Applied vs Completed redemption state distinction preserved, `scope` (REUSABLE / AD_HOC_QUOTE_BOUND) added with inline-create Mode 2, FR-004 `promotionNote` field removed
 
 ### Design Specifications
 
@@ -599,4 +647,62 @@ Example: `DOCUMENTATION_UPDATES_2025-10-23.md`
 
 ---
 
-**Last Updated**: April 18, 2026
+### 2026-04-22/ (1 file)
+
+#### **Integrated Testing Plan — Patient Mobile App**
+
+- `TESTING_PLAN_2026-04-22.md` - Created comprehensive integrated testing plan & live report skeleton for patient mobile app: 79 test cases across Inquiries, Offers, In Progress, and Aftercare modules; covers happy, edge, and error cases with full mock data and agent fill-in guide
+
+### 2026-04-23/ (1 file)
+
+#### **Mobile Bug Report Skeleton**
+
+- `BUG_REPORT_SKELETON_2026-04-23.md` - Created concise mobile bug report table skeleton starting from `HL61`
+
+### 2026-04-24/ (1 file)
+
+#### **Provider/Admin Milestone Status Report**
+
+- `PROVIDER_ADMIN_MILESTONE_REPORT_2026-04-24.md` - Created the April 24 milestone status report using the January 27 report skeleton; Provider modules PR-01–PR-07 and Admin rows A-01–A-10 were re-verified against current frontend/backend code and relevant PRDs/FRs, with Mobile App intentionally deferred
+
+### 2026-04-26/ (1 file)
+
+#### **API Testing Skill Registry Update**
+
+- `API_TESTING_SKILL_REGISTRY_UPDATE_2026-04-26.md` - Added endpoint and flow registry references for API testing skills, including endpoint profiles, a Create Quote flow profile, and the provider-scoped clinician resolver correction.
+
+### 2026-05-07/ (1 file)
+
+#### **Notification Dispatch Report**
+
+- `NOTIFICATION_DISPATCH_REPORT_2026-05-07.md` - Created a patient notification dispatch audit report for `rosario12@example.com / password`, listing all 76 persisted inbox notifications with payload summaries and deep-link fields
+
+### 2026-05-11/ (1 file)
+
+#### **FR-014 Full Design Layout Verification**
+
+- `FR014_FULL_DESIGN_LAYOUT_VERIFICATION_2026-05-11.md` - Verified FR-014 across Provider and Admin analytics Screens 2-13 (Screen 1 excluded); provider flow is `🟢 COMPLETE`, admin flow is `🟡 PARTIAL`, and the remaining functional mismatch is the mislabeled aftercare KPI on Screen 11
+
+### 2026-05-12/ (1 file)
+
+#### **FR-019 Screen Specifications Restructure + FR-004 Alignment**
+
+- `FR019_SCREEN_SPECIFICATIONS_RESTRUCTURE_2026-05-12.md` - FR-019 v1.3 → v1.5: three-program model + 11-screen restructure (v1.4) plus FR-004 alignment introducing `scope` and inline-create Mode 2 (v1.5); FR-004 v1.7 → v1.8 retypes Promotion fields across Screens 1/3/5/7 and removes the free-text `promotionNote` field
+
+### 2026-05-06/ (3 files)
+
+#### **FR-014 Provider Design Layout Verification**
+
+- `FR014_PROVIDER_DESIGN_LAYOUT_VERIFICATION_2026-05-06.md` - Verified FR-014 provider-side layout coverage for Screens 2-6 and recorded remaining partial issues for Finance & Payouts disclosure notes and Export Report preselection.
+
+#### **Mobile Bug Report Template**
+
+- `MOBILE_BUG_REPORT_TEMPLATE_2026-05-06.md` - Created a new dated mobile bug report template for the next testing cycle, preserving the previous table structure while replacing old bug content with a reusable `HL71` starter row and detailed AI fill-in guidance down to API evidence expectations.
+
+#### **Progress Update Report**
+
+- `PROGRESS_UPDATE_REPORT_2026-05-06.md` - Created a refreshed progress update report based on the January 27 milestone report structure, preserving the Executive Summary and three-tenant module tables while removing old progress claims and replacing long ending sections with a concise findings and next-phase section.
+
+---
+
+**Last Updated**: May 12, 2026
