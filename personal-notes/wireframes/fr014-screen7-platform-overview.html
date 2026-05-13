@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 7: Platform Overview Dashboard (Admin)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #1a1d23;
+      border-bottom: 1px solid #2d3240;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo {
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .top-nav .logo span { color: #7c8cf8; }
+    .top-nav .nav-items {
+      display: flex;
+      gap: 4px;
+    }
+    .top-nav .nav-item {
+      padding: 6px 12px;
+      border-radius: 6px;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .top-nav .nav-item.active {
+      background: rgba(124, 140, 248, 0.15);
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+    .top-nav .nav-item:hover:not(.active) { background: rgba(255,255,255,0.06); color: #e5e7eb; }
+    .top-nav .admin-badge {
+      margin-left: auto;
+      background: rgba(124,140,248,0.18);
+      color: #a5b4fc;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Sub-nav (admin analytics tabs) ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .sub-nav .tab {
+      padding: 12px 16px;
+      font-size: 12.5px;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    .sub-nav .tab.active {
+      color: #3b4ef8;
+      border-bottom-color: #3b4ef8;
+      font-weight: 600;
+    }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1d23;
+    }
+    .page-header p {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+    .stale-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 7px;
+      padding: 7px 14px;
+      font-size: 11.5px;
+      color: #92400e;
+      margin: 0 24px 8px;
+    }
+    .stale-banner .dot { width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .filter-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #374151;
+    }
+    .filter-select .caret { color: #9ca3af; font-size: 10px; }
+    .filter-select .tag {
+      background: #e8f0fe;
+      color: #3b4ef8;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ── Section tabs (A / B / C) ── */
+    .section-tabs-bar {
+      padding: 0 24px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e2e5ea;
+    }
+    .section-tab {
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color .15s;
+    }
+    .section-tab.active {
+      color: #3b4ef8;
+      border-bottom-color: #3b4ef8;
+      font-weight: 700;
+    }
+    .section-tab:hover:not(.active) { color: #374151; }
+    .section-tab .badge {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .section-tab.active .badge { background: #e8f0fe; color: #3b4ef8; }
+    .section-tab:not(.active) .badge { background: #f3f4f6; color: #9ca3af; }
+
+    /* ── Tab panels ── */
+    .tab-panel { display: none; padding: 0 24px 32px; }
+    .tab-panel.active { display: block; }
+
+    /* ── Widget card ── */
+    .widget {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .widget-header {
+      padding: 14px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .widget-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1d23;
+    }
+    .widget-subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .widget-body {
+      padding: 16px 18px;
+    }
+    .drill-hint {
+      font-size: 10.5px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .drill-hint::before { content: '↗'; font-size: 11px; }
+
+    /* ── Tile grid ── */
+    .tile-grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+    .tile-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 1200px) {
+      .tile-grid-5 { grid-template-columns: repeat(3, 1fr); }
+      .tile-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── KPI tile ── */
+    .kpi-tile {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: box-shadow .15s;
+    }
+    .kpi-tile:hover { box-shadow: 0 2px 10px rgba(0,0,0,.07); }
+    .kpi-tile .kpi-label {
+      font-size: 11.5px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .kpi-tile .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1d23;
+      line-height: 1;
+    }
+    .kpi-tile .kpi-sub {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+    .kpi-tile .kpi-sub .up { color: #10b981; font-weight: 600; }
+    .kpi-tile .kpi-sub .down { color: #ef4444; font-weight: 600; }
+    .kpi-tile .tap-hint {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .kpi-tile .tap-hint::before { content: '↗'; }
+
+    /* ── Donut chart (CSS) ── */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .donut-svg { flex-shrink: 0; }
+    .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #374151;
+    }
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .legend-row .leg-count { font-weight: 600; color: #1a1d23; }
+    .legend-row .leg-pct { color: #9ca3af; font-size: 11px; }
+
+    /* Donut in kpi tile */
+    .kpi-donut-tile {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+    }
+    .kpi-donut-tile .kpi-label { font-size: 11.5px; color: #6b7280; font-weight: 500; margin-bottom: 12px; }
+    .kpi-donut-tile .tap-hint { font-size: 10px; color: #9ca3af; margin-top: 10px; display: flex; align-items: center; gap: 3px; }
+    .kpi-donut-tile .tap-hint::before { content: '↗'; }
+
+    /* ── Engagement tile (special) ── */
+    .kpi-tile.engagement .kpi-value { font-size: 22px; }
+    .dormant-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fef2f2;
+      color: #dc2626;
+      border-radius: 5px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    /* ── 2-col grid ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Funnel chart ── */
+    .funnel-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 0;
+    }
+    .funnel-stage {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .funnel-bar-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .funnel-bar {
+      height: 34px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #3b4ef8 0%, #7c8cf8 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      transition: opacity .15s;
+    }
+    .funnel-bar:hover { opacity: 0.85; }
+    .funnel-bar .bar-count { font-size: 12px; font-weight: 700; color: #fff; }
+    .funnel-stage-label {
+      width: 110px;
+      font-size: 12px;
+      color: #374151;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .funnel-step-pct {
+      width: 56px;
+      text-align: right;
+      font-size: 11.5px;
+      color: #6b7280;
+      flex-shrink: 0;
+    }
+    .funnel-arrow {
+      font-size: 11px;
+      color: #d1d5db;
+      width: 16px;
+      text-align: center;
+    }
+    .funnel-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f2f5;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .funnel-footer strong { color: #1a1d23; }
+
+    /* ── Bullet chart ── */
+    .bullet-chart { padding: 12px 0; }
+    .bullet-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .bullet-label {
+      width: 60px;
+      font-size: 12px;
+      color: #374151;
+      flex-shrink: 0;
+    }
+    .bullet-track {
+      flex: 1;
+      height: 20px;
+      background: #f3f4f6;
+      border-radius: 5px;
+      position: relative;
+    }
+    .bullet-fill {
+      height: 100%;
+      border-radius: 5px;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .bullet-marker {
+      position: absolute;
+      top: -4px;
+      width: 3px;
+      height: 28px;
+      background: #374151;
+      border-radius: 2px;
+    }
+    .bullet-marker-label {
+      position: absolute;
+      top: -16px;
+      font-size: 9px;
+      color: #6b7280;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .bullet-value {
+      width: 64px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1d23;
+      text-align: right;
+    }
+
+    /* color states */
+    .fill-green { background: #10b981; }
+    .fill-amber { background: #f59e0b; }
+    .fill-red { background: #ef4444; }
+
+    /* ── Financial KPI tiles ── */
+    .fin-tile {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      padding: 18px;
+      cursor: pointer;
+      transition: box-shadow .15s;
+    }
+    .fin-tile:hover { box-shadow: 0 2px 10px rgba(0,0,0,.07); }
+    .fin-tile .fin-label {
+      font-size: 11.5px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .fin-tile .fin-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1d23;
+      letter-spacing: -0.5px;
+    }
+    .fin-tile .fin-sub {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+    .fin-tile .fin-sub .up { color: #10b981; font-weight: 600; }
+    .fin-tile .fin-sub .down { color: #ef4444; font-weight: 600; }
+    .fin-tile .fin-drill {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .fin-tile .fin-drill::before { content: '↗'; }
+
+    /* ── Skeleton placeholder ── */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f2f5 25%, #e8eaed 50%, #f0f2f5 75%);
+      background-size: 400% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* ── Section description ── */
+    .section-desc {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    /* ── Divider label ── */
+    .divider-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 20px 0 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top Nav (Admin) ── -->
+<nav class="top-nav">
+  <div class="logo">hairline<span>.</span>admin</div>
+  <div class="nav-items">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Providers</div>
+    <div class="nav-item">Patients</div>
+    <div class="nav-item">Inquiries</div>
+    <div class="nav-item">Payments</div>
+    <div class="nav-item active">Analytics</div>
+    <div class="nav-item">Settings</div>
+  </div>
+  <div class="admin-badge">Admin Portal</div>
+</nav>
+
+<!-- ── Sub-nav (Admin Analytics screens) ── -->
+<nav class="sub-nav">
+  <div class="tab active">Platform Overview</div>
+  <div class="tab">Provider Performance</div>
+  <div class="tab">Patient Acquisition</div>
+  <div class="tab">Geographic Intel</div>
+  <div class="tab">Treatment Outcomes</div>
+  <div class="tab">Financial Health</div>
+  <div class="tab">Pricing Intelligence</div>
+</nav>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>Platform Overview Dashboard</h1>
+    <p>Platform health at a glance — aggregated across all providers &nbsp;·&nbsp; Last updated 3 min ago</p>
+  </div>
+</div>
+
+<!-- ── Stale data banner (non-blocking, conditionally shown) ── -->
+<div class="stale-banner">
+  <div class="dot"></div>
+  Analytics pipeline delayed — showing cached data as of 14:22. Data may be up to 22 min old.
+  <a href="#" style="color:#b45309;font-weight:600;text-decoration:none;margin-left:auto;">Retry</a>
+</div>
+
+<!-- ── Filter bar ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filters:</span>
+  <div class="filter-select">
+    📅 Last 4 weeks <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    🌍 All Countries <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    🏥 All Providers <span class="caret">▾</span>
+  </div>
+</div>
+
+<!-- ── Section A / B / C Tabs ── -->
+<div class="section-tabs-bar">
+  <div class="section-tab active" onclick="switchTab('A', this)">
+    A — Operational Health <span class="badge">5 tiles</span>
+  </div>
+  <div class="section-tab" onclick="switchTab('B', this)">
+    B — Performance Signals <span class="badge">4 charts</span>
+  </div>
+  <div class="section-tab" onclick="switchTab('C', this)">
+    C — Financial Summary <span class="badge">4 tiles</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB A — OPERATIONAL HEALTH
+     Always shows current snapshot (not historical)
+     ══════════════════════════════════════════════ -->
+<div id="panel-A" class="tab-panel active">
+  <p class="section-desc">
+    Current snapshot of platform operational health. Tiles A1–A3 show live counts. Tiles A4–A5 show provider status aggregations.
+    These tiles always reflect the current snapshot — not filtered by the time range selector above.
+  </p>
+
+  <!-- Row 1: Tiles 1–3 (simple KPI) + Tiles 4–5 (special) -->
+  <div class="tile-grid-5">
+
+    <!-- Tile 1: Active Providers -->
+    <div class="kpi-tile">
+      <div class="kpi-label">Active Providers</div>
+      <div class="kpi-value">248</div>
+      <div class="kpi-sub">
+        <span class="up">+12</span> new onboarded in period
+      </div>
+      <div class="tap-hint">Provider Management (FR-015)</div>
+    </div>
+
+    <!-- Tile 2: Total Inquiries -->
+    <div class="kpi-tile">
+      <div class="kpi-label">Total Inquiries</div>
+      <div class="kpi-value">4,821</div>
+      <div class="kpi-sub">
+        <span class="up">▲ +18.4%</span> vs prior period
+      </div>
+      <div class="tap-hint">Inquiries list (admin)</div>
+    </div>
+
+    <!-- Tile 3: New Patients Registered -->
+    <div class="kpi-tile">
+      <div class="kpi-label">New Patients Registered</div>
+      <div class="kpi-value">1,093</div>
+      <div class="kpi-sub" style="color:#9ca3af;">patients.created_at in period</div>
+      <div class="tap-hint">Patient Management (FR-016)</div>
+    </div>
+
+    <!-- Tile 4: Provider TTFQ Health Distribution -->
+    <div class="kpi-donut-tile">
+      <div class="kpi-label">Provider TTFQ Health Distribution</div>
+      <div class="donut-wrap">
+        <!-- SVG Donut -->
+        <svg class="donut-svg" width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#e5e7eb" stroke-width="12"/>
+          <!-- Green 55% → stroke-dasharray = 55% * 2π*28 ≈ 96.8 -->
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#10b981" stroke-width="12"
+                  stroke-dasharray="96.8 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+          <!-- Amber 30% → 52.7 -->
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#f59e0b" stroke-width="12"
+                  stroke-dasharray="52.7 175.9" stroke-dashoffset="-52.8" stroke-linecap="round"/>
+          <!-- Red 15% → 26.4 -->
+          <circle cx="36" cy="36" r="28" fill="none" stroke="#ef4444" stroke-width="12"
+                  stroke-dasharray="26.4 175.9" stroke-dashoffset="-105.5" stroke-linecap="round"/>
+          <text x="36" y="33" text-anchor="middle" font-size="9" fill="#6b7280" font-family="sans-serif">248</text>
+          <text x="36" y="44" text-anchor="middle" font-size="8" fill="#9ca3af" font-family="sans-serif">providers</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-row"><div class="legend-dot" style="background:#10b981;"></div> <span>Green</span><span class="leg-count">137</span><span class="leg-pct">55%</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#f59e0b;"></div> <span>Amber</span><span class="leg-count">74</span><span class="leg-pct">30%</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#ef4444;"></div> <span>Red</span><span class="leg-count">37</span><span class="leg-pct">15%</span></div>
+        </div>
+      </div>
+      <div class="tap-hint">Screen 8 — filtered to Red tier</div>
+    </div>
+
+    <!-- Tile 5: Provider Engagement Rate -->
+    <div class="kpi-tile engagement">
+      <div class="kpi-label">Provider Engagement Rate</div>
+      <div class="kpi-value">83.5%</div>
+      <div class="kpi-sub" style="margin-bottom:4px;">active providers with ≥1 quote in last 30 days</div>
+      <div class="dormant-badge">⚠ 41 dormant (0 quotes / 30d)</div>
+      <div class="tap-hint">Screen 8 — Engagement · Dormant filter</div>
+    </div>
+
+  </div><!-- /tile-grid-5 -->
+</div><!-- /panel-A -->
+
+
+<!-- ══════════════════════════════════════════════
+     TAB B — PERFORMANCE SIGNALS
+     Respects time range filter
+     ══════════════════════════════════════════════ -->
+<div id="panel-B" class="tab-panel">
+  <p class="section-desc">
+    Platform-wide performance aggregations. All charts respect the time range and country filters above.
+  </p>
+
+  <div class="grid-2">
+
+    <!-- B1: Platform-Wide Conversion Funnel -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">B1 — Platform-Wide Conversion Funnel</div>
+          <div class="widget-subtitle">5-stage funnel · platform totals · click stage → admin Inquiries list</div>
+        </div>
+        <div class="drill-hint">Inquiries list (admin)</div>
+      </div>
+      <div class="widget-body">
+        <div class="funnel-chart">
+
+          <!-- Stage 1: Inquiries (100%) -->
+          <div class="funnel-stage">
+            <div class="funnel-stage-label">Inquiries</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar" style="width:100%; background:linear-gradient(90deg,#3b4ef8,#7c8cf8);">
+                <span class="bar-count">4,821</span>
+              </div>
+            </div>
+            <div class="funnel-step-pct" style="color:#9ca3af;">—</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;padding-left:122px;">
+            <div style="flex:1;height:1px;border-top:1px dashed #e2e5ea;"></div>
+            <span style="font-size:10px;color:#9ca3af;">↓ step %</span>
+          </div>
+
+          <!-- Stage 2: Qualified -->
+          <div class="funnel-stage">
+            <div class="funnel-stage-label">Qualified</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar" style="width:88%; background:linear-gradient(90deg,#4f63f9,#8b9bf8);">
+                <span class="bar-count">4,242</span>
+              </div>
+            </div>
+            <div class="funnel-step-pct">88.0%</div>
+          </div>
+
+          <!-- Stage 3: Quoted -->
+          <div class="funnel-stage">
+            <div class="funnel-stage-label">Quoted</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar" style="width:71%; background:linear-gradient(90deg,#6c7ffb,#9fabf9);">
+                <span class="bar-count">3,423</span>
+              </div>
+            </div>
+            <div class="funnel-step-pct">80.7%</div>
+          </div>
+
+          <!-- Stage 4: Accepted -->
+          <div class="funnel-stage">
+            <div class="funnel-stage-label">Accepted</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar" style="width:52%; background:linear-gradient(90deg,#8a9bfc,#b3bcfa);">
+                <span class="bar-count">2,508</span>
+              </div>
+            </div>
+            <div class="funnel-step-pct">73.3%</div>
+          </div>
+
+          <!-- Stage 5: In Progress -->
+          <div class="funnel-stage">
+            <div class="funnel-stage-label">In Progress</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar" style="width:37%; background:linear-gradient(90deg,#a8b4fd,#c9d0fb);">
+                <span class="bar-count" style="color:#3b4ef8;text-shadow:none;font-weight:700;">1,783</span>
+              </div>
+            </div>
+            <div class="funnel-step-pct">71.1%</div>
+          </div>
+
+        </div>
+        <div class="funnel-footer">
+          Overall platform conversion = In Progress ÷ Inquiries &nbsp;=&nbsp;
+          <strong>37.0%</strong>
+        </div>
+      </div>
+    </div><!-- /B1 -->
+
+    <!-- B2: Platform TTFQ Distribution -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">B2 — Platform TTFQ Distribution</div>
+          <div class="widget-subtitle">Bullet chart · p50 + p90 vs SLA target · click → Screen 8 sorted by TTFQ</div>
+        </div>
+        <div class="drill-hint">Screen 8 — sorted by TTFQ</div>
+      </div>
+      <div class="widget-body">
+        <div class="bullet-chart">
+
+          <!-- p50 row -->
+          <div class="bullet-row">
+            <div class="bullet-label">p50</div>
+            <div class="bullet-track">
+              <!-- Fill: p50 = 48 min, SLA = 60 min. Scale: 0–120 min = 100% -->
+              <div class="bullet-fill fill-green" style="width:40%;"></div>
+              <!-- SLA marker at 60 min = 50% -->
+              <div class="bullet-marker" style="left:50%;">
+                <div class="bullet-marker-label">SLA&nbsp;60m</div>
+              </div>
+            </div>
+            <div class="bullet-value">48 min</div>
+          </div>
+
+          <!-- p90 row -->
+          <div class="bullet-row">
+            <div class="bullet-label">p90</div>
+            <div class="bullet-track">
+              <!-- Fill: p90 = 104 min. 2×SLA = 120 min -->
+              <div class="bullet-fill fill-amber" style="width:87%;"></div>
+              <!-- SLA marker -->
+              <div class="bullet-marker" style="left:50%;">
+                <div class="bullet-marker-label">SLA&nbsp;60m</div>
+              </div>
+              <!-- 2×SLA marker at 100% capped -->
+              <div class="bullet-marker" style="left:100%;background:#9ca3af;">
+                <div class="bullet-marker-label">2×SLA</div>
+              </div>
+            </div>
+            <div class="bullet-value">104 min</div>
+          </div>
+
+          <div style="font-size:11px;color:#6b7280;margin-top:8px;padding-top:8px;border-top:1px solid #f0f2f5;">
+            <span style="display:inline-flex;align-items:center;gap:4px;margin-right:16px;"><span style="width:10px;height:10px;border-radius:2px;background:#10b981;display:inline-block;"></span> Green: p50 ≤ SLA &amp; p90 ≤ 2×SLA</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;margin-right:16px;"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block;"></span> Amber: p90 &gt; 2×SLA</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block;"></span> Red: p50 &gt; SLA</span>
+          </div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:8px;">
+            Distribution across all active providers &nbsp;·&nbsp; SLA target: 60 min (admin-configurable)
+          </div>
+        </div>
+      </div>
+    </div><!-- /B2 -->
+
+    <!-- B3: Top Patient Origin Countries -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">B3 — Top Patient Origin Countries</div>
+          <div class="widget-subtitle">Donut · top 8 countries by inquiry volume + Other · click slice → Screen 9</div>
+        </div>
+        <div class="drill-hint">Screen 9 — country filter</div>
+      </div>
+      <div class="widget-body">
+        <div class="donut-wrap">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#e5e7eb" stroke-width="16"/>
+            <!-- Slices (approx percentages) -->
+            <!-- UK 22% = 52.5 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#3b4ef8" stroke-width="16"
+                    stroke-dasharray="52.5 238.8" stroke-dashoffset="59.7"/>
+            <!-- DE 17% = 40.6 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#7c8cf8" stroke-width="16"
+                    stroke-dasharray="40.6 238.8" stroke-dashoffset="7.2"/>
+            <!-- FR 13% = 31.0 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#a5b4fc" stroke-width="16"
+                    stroke-dasharray="31.0 238.8" stroke-dashoffset="-33.4"/>
+            <!-- NL 10% = 23.9 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#60a5fa" stroke-width="16"
+                    stroke-dasharray="23.9 238.8" stroke-dashoffset="-64.4"/>
+            <!-- SA 8% = 19.1 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#34d399" stroke-width="16"
+                    stroke-dasharray="19.1 238.8" stroke-dashoffset="-88.3"/>
+            <!-- IT 7% = 16.7 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#fbbf24" stroke-width="16"
+                    stroke-dasharray="16.7 238.8" stroke-dashoffset="-107.4"/>
+            <!-- SE 6% = 14.3 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#f87171" stroke-width="16"
+                    stroke-dasharray="14.3 238.8" stroke-dashoffset="-124.1"/>
+            <!-- AU 5% = 11.9 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#fb923c" stroke-width="16"
+                    stroke-dasharray="11.9 238.8" stroke-dashoffset="-138.4"/>
+            <!-- Other 12% = 28.7 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#d1d5db" stroke-width="16"
+                    stroke-dasharray="28.7 238.8" stroke-dashoffset="-150.3"/>
+            <text x="50" y="47" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1d23" font-family="sans-serif">4,821</text>
+            <text x="50" y="58" text-anchor="middle" font-size="8" fill="#9ca3af" font-family="sans-serif">inquiries</text>
+          </svg>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;">
+            <div class="legend-row"><div class="legend-dot" style="background:#3b4ef8;"></div> United Kingdom <span class="leg-count">1,061</span><span class="leg-pct">22%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#7c8cf8;"></div> Germany <span class="leg-count">820</span><span class="leg-pct">17%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#a5b4fc;"></div> France <span class="leg-count">627</span><span class="leg-pct">13%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#60a5fa;"></div> Netherlands <span class="leg-count">482</span><span class="leg-pct">10%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#34d399;"></div> Saudi Arabia <span class="leg-count">386</span><span class="leg-pct">8%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#fbbf24;"></div> Italy <span class="leg-count">338</span><span class="leg-pct">7%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#f87171;"></div> Sweden <span class="leg-count">289</span><span class="leg-pct">6%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#fb923c;"></div> Australia <span class="leg-count">241</span><span class="leg-pct">5%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#d1d5db;"></div> Other <span class="leg-count">579</span><span class="leg-pct">12%</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /B3 -->
+
+    <!-- B4: Treatment Type Distribution -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">B4 — Treatment Type Distribution</div>
+          <div class="widget-subtitle">Donut · inquiry share by treatment type · click slice → Screen 11</div>
+        </div>
+        <div class="drill-hint">Screen 11 — treatment filter</div>
+      </div>
+      <div class="widget-body">
+        <div class="donut-wrap">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#e5e7eb" stroke-width="16"/>
+            <!-- FUE 45% = 107.5 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#3b4ef8" stroke-width="16"
+                    stroke-dasharray="107.5 238.8" stroke-dashoffset="59.7"/>
+            <!-- FUT 28% = 66.9 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#7c8cf8" stroke-width="16"
+                    stroke-dasharray="66.9 238.8" stroke-dashoffset="-47.8"/>
+            <!-- DHI 15% = 35.8 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#a5b4fc" stroke-width="16"
+                    stroke-dasharray="35.8 238.8" stroke-dashoffset="-114.7"/>
+            <!-- PRP 7% = 16.7 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#60a5fa" stroke-width="16"
+                    stroke-dasharray="16.7 238.8" stroke-dashoffset="-150.5"/>
+            <!-- Other 5% = 11.9 -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#d1d5db" stroke-width="16"
+                    stroke-dasharray="11.9 238.8" stroke-dashoffset="-167.2"/>
+            <text x="50" y="47" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1d23" font-family="sans-serif">4,821</text>
+            <text x="50" y="58" text-anchor="middle" font-size="8" fill="#9ca3af" font-family="sans-serif">inquiries</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-row"><div class="legend-dot" style="background:#3b4ef8;"></div> FUE <span class="leg-count">2,169</span><span class="leg-pct">45%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#7c8cf8;"></div> FUT <span class="leg-count">1,350</span><span class="leg-pct">28%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#a5b4fc;"></div> DHI <span class="leg-count">723</span><span class="leg-pct">15%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#60a5fa;"></div> PRP <span class="leg-count">337</span><span class="leg-pct">7%</span></div>
+            <div class="legend-row"><div class="legend-dot" style="background:#d1d5db;"></div> Other <span class="leg-count">242</span><span class="leg-pct">5%</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /B4 -->
+
+  </div><!-- /grid-2 -->
+</div><!-- /panel-B -->
+
+
+<!-- ══════════════════════════════════════════════
+     TAB C — FINANCIAL SUMMARY
+     Respects time range filter
+     ══════════════════════════════════════════════ -->
+<div id="panel-C" class="tab-panel">
+  <p class="section-desc">
+    Platform financial summary for the selected period. All tiles drill down to Screen 12 (Financial Health &amp; Cashflow) for full detail.
+  </p>
+
+  <div class="tile-grid-4">
+
+    <!-- C1: Platform GMV (Period) -->
+    <div class="fin-tile">
+      <div class="fin-label">Platform GMV (Period)</div>
+      <div class="fin-value">$2,841,900</div>
+      <div class="fin-sub">
+        SUM(payments.amount) where payment_status = 'completed'
+        <br/><span class="up">▲ +22.1%</span> vs prior period
+      </div>
+      <div class="fin-drill">Screen 12 — Financial Health</div>
+    </div>
+
+    <!-- C2: Commission Earned (Period) -->
+    <div class="fin-tile">
+      <div class="fin-label">Commission Earned (Period)</div>
+      <div class="fin-value">$284,190</div>
+      <div class="fin-sub">
+        Effective provider commission deductions (percentage &amp; flat-rate)
+        <br/><span style="color:#374151;font-weight:600;">10.0%</span> of GMV
+      </div>
+      <div class="fin-drill">Screen 12 — Financial Health</div>
+    </div>
+
+    <!-- C3: Upcoming Provider Payout Obligations -->
+    <div class="fin-tile">
+      <div class="fin-label">Upcoming Payout Obligations</div>
+      <div class="fin-value">$1,204,600</div>
+      <div class="fin-sub">
+        Total due to providers in next 30 days
+        <br/><span style="color:#374151;font-weight:600;">164 providers</span> in next payout cycle
+      </div>
+      <div class="fin-drill">Screen 12 — Financial Health</div>
+    </div>
+
+    <!-- C4: Platform Cash-at-Risk -->
+    <div class="fin-tile">
+      <div class="fin-label">Platform Cash-at-Risk</div>
+      <div class="fin-value">$318,740</div>
+      <div class="fin-sub">
+        Accepted-but-unpaid quotes, platform-wide
+        <br/><span class="down">⚠ 87 quotes</span> &gt;14 days aging
+      </div>
+      <div class="fin-drill">Screen 12 — Financial Health</div>
+    </div>
+
+  </div><!-- /tile-grid-4 -->
+
+  <!-- Visual bar context for C4 aging -->
+  <div class="widget" style="margin-top:16px;">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Cash-at-Risk Aging Distribution (preview)</div>
+        <div class="widget-subtitle">Accepted-but-unpaid quotes by aging bucket · platform-wide · full detail on Screen 12</div>
+      </div>
+      <div class="drill-hint">Screen 12 — Cashflow</div>
+    </div>
+    <div class="widget-body">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <!-- Aging bar rows -->
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:80px;font-size:11.5px;color:#374151;text-align:right;flex-shrink:0;">0 – 24h</div>
+          <div style="flex:1;height:22px;background:#f3f4f6;border-radius:5px;overflow:hidden;">
+            <div style="height:100%;width:48%;background:#10b981;border-radius:5px;display:flex;align-items:center;padding:0 10px;">
+              <span style="font-size:11px;font-weight:600;color:#fff;">312</span>
+            </div>
+          </div>
+          <div style="width:48px;font-size:11.5px;color:#6b7280;text-align:right;">312</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:80px;font-size:11.5px;color:#374151;text-align:right;flex-shrink:0;">1 – 3d</div>
+          <div style="flex:1;height:22px;background:#f3f4f6;border-radius:5px;overflow:hidden;">
+            <div style="height:100%;width:35%;background:#60a5fa;border-radius:5px;display:flex;align-items:center;padding:0 10px;">
+              <span style="font-size:11px;font-weight:600;color:#fff;">229</span>
+            </div>
+          </div>
+          <div style="width:48px;font-size:11.5px;color:#6b7280;text-align:right;">229</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:80px;font-size:11.5px;color:#374151;text-align:right;flex-shrink:0;">4 – 7d</div>
+          <div style="flex:1;height:22px;background:#f3f4f6;border-radius:5px;overflow:hidden;">
+            <div style="height:100%;width:22%;background:#fbbf24;border-radius:5px;display:flex;align-items:center;padding:0 10px;">
+              <span style="font-size:11px;font-weight:600;color:#fff;">144</span>
+            </div>
+          </div>
+          <div style="width:48px;font-size:11.5px;color:#6b7280;text-align:right;">144</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:80px;font-size:11.5px;color:#374151;text-align:right;flex-shrink:0;">8 – 14d</div>
+          <div style="flex:1;height:22px;background:#f3f4f6;border-radius:5px;overflow:hidden;">
+            <div style="height:100%;width:14%;background:#fb923c;border-radius:5px;display:flex;align-items:center;padding:0 10px;">
+              <span style="font-size:11px;font-weight:600;color:#fff;">91</span>
+            </div>
+          </div>
+          <div style="width:48px;font-size:11.5px;color:#6b7280;text-align:right;">91</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:80px;font-size:11.5px;color:#374151;text-align:right;flex-shrink:0;">&gt; 14d</div>
+          <div style="flex:1;height:22px;background:#f3f4f6;border-radius:5px;overflow:hidden;">
+            <div style="height:100%;width:13%;background:#ef4444;border-radius:5px;display:flex;align-items:center;padding:0 10px;">
+              <span style="font-size:11px;font-weight:600;color:#fff;">87</span>
+            </div>
+          </div>
+          <div style="width:48px;font-size:11.5px;color:#ef4444;font-weight:700;text-align:right;">87 ⚠</div>
+        </div>
+
+      </div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:12px;">
+        Full aging detail with provider breakdown available on Screen 12 (Financial Health &amp; Cashflow).
+        Age = now − quote.accepted_at · excludes cancelled/expired quotes.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-C -->
+
+<!-- ── JS: Tab switching ── -->
+<script>
+  function switchTab(id, el) {
+    // Deactivate all section tabs and panels
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    // Activate clicked tab
+    el.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+</script>
+
+</body>
+</html>

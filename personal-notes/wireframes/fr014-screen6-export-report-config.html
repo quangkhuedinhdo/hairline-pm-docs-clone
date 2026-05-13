@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 6: Export Report Configuration</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo {
+      font-weight: 700;
+      font-size: 16px;
+      color: #1a1d23;
+      letter-spacing: -0.3px;
+    }
+    .top-nav .nav-items {
+      display: flex;
+      gap: 4px;
+    }
+    .top-nav .nav-item {
+      padding: 6px 12px;
+      border-radius: 6px;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .top-nav .nav-item.active {
+      background: #f0f2ff;
+      color: #3b4ef8;
+      font-weight: 600;
+    }
+    .top-nav .nav-item:hover:not(.active) { background: #f5f6f8; }
+    .top-nav .export-btn {
+      margin-left: auto;
+      padding: 7px 16px;
+      background: #3b4ef8;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ── Sub-nav (analytics tabs) ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+    }
+    .sub-nav .tab {
+      padding: 12px 18px;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .sub-nav .tab.active {
+      color: #3b4ef8;
+      border-bottom-color: #3b4ef8;
+      font-weight: 600;
+    }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1d23;
+    }
+    .page-header p {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    /* ── Content ── */
+    .content {
+      padding: 0 24px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 860px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1d23;
+    }
+    .card-subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .card-body {
+      padding: 20px;
+    }
+
+    /* ── Form sections ── */
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .form-label .required {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+    .form-hint {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    /* ── Radio group ── */
+    .radio-group {
+      display: flex;
+      gap: 10px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 16px;
+      border: 1.5px solid #e2e5ea;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1;
+      transition: border-color 0.15s;
+    }
+    .radio-option.selected {
+      border-color: #3b4ef8;
+      background: #f5f6ff;
+    }
+    .radio-option input[type="radio"] {
+      margin-top: 1px;
+      accent-color: #3b4ef8;
+      flex-shrink: 0;
+    }
+    .radio-option-content .radio-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1d23;
+    }
+    .radio-option-content .radio-desc {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* ── Checkbox grid ── */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1.5px solid #e2e5ea;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .checkbox-option.checked {
+      border-color: #3b4ef8;
+      background: #f5f6ff;
+    }
+    .checkbox-option input[type="checkbox"] {
+      accent-color: #3b4ef8;
+      flex-shrink: 0;
+    }
+    .checkbox-option-label {
+      font-size: 13px;
+      color: #1a1d23;
+      font-weight: 500;
+    }
+    .checkbox-option-badge {
+      margin-left: auto;
+      font-size: 10px;
+      color: #6b7280;
+      background: #f0f2f5;
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    /* ── Date range row ── */
+    .date-range-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 7px;
+      font-size: 12px;
+      color: #374151;
+      min-width: 140px;
+    }
+    .date-input .icon { color: #9ca3af; }
+    .date-sep { color: #9ca3af; font-size: 12px; }
+    .date-limit-note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-left: 6px;
+    }
+
+    /* ── Select-like dropdown ── */
+    .fake-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #9ca3af;
+      min-width: 200px;
+    }
+    .fake-select .caret { margin-left: auto; color: #9ca3af; font-size: 10px; }
+
+    /* ── Divider ── */
+    .form-divider {
+      border: none;
+      border-top: 1px solid #f0f2f5;
+      margin: 4px 0;
+    }
+
+    /* ── Toggle-style checkboxes ── */
+    .toggle-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.5px solid #e2e5ea;
+      border-radius: 8px;
+    }
+    .toggle-row.active {
+      border-color: #3b4ef8;
+      background: #f5f6ff;
+    }
+    .toggle-row input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: #3b4ef8;
+      flex-shrink: 0;
+    }
+    .toggle-row-content .toggle-row-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1d23;
+    }
+    .toggle-row-content .toggle-row-desc {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* ── Recurring sub-options ── */
+    .sub-options {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding-left: 2px;
+    }
+    .sub-option {
+      padding: 5px 12px;
+      border: 1px solid #e2e5ea;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #6b7280;
+      cursor: pointer;
+      background: #fff;
+    }
+    .sub-option.selected {
+      border-color: #3b4ef8;
+      color: #3b4ef8;
+      background: #eef0ff;
+      font-weight: 600;
+    }
+
+    /* ── Action row ── */
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .btn-primary {
+      padding: 9px 20px;
+      background: #3b4ef8;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      padding: 9px 20px;
+      background: #fff;
+      color: #374151;
+      border: 1px solid #e2e5ea;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .action-note {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* ── Report History section ── */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .history-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      padding: 8px 12px;
+      background: #f9fafb;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .history-table td {
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #374151;
+      border-bottom: 1px solid #f5f6f8;
+      vertical-align: middle;
+    }
+    .history-table tr:last-child td { border-bottom: none; }
+    .history-table tr:hover td { background: #fafbff; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-pdf { background: #fef2f2; color: #dc2626; }
+    .badge-csv { background: #f0fdf4; color: #16a34a; }
+    .badge-ready { background: #f0f9ff; color: #0369a1; }
+    .badge-generating { background: #fffbeb; color: #b45309; }
+    .badge-expired { background: #f9fafb; color: #9ca3af; }
+
+    .download-link {
+      color: #3b4ef8;
+      font-size: 11px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .download-link:hover { text-decoration: underline; }
+    .expired-note {
+      color: #9ca3af;
+      font-size: 11px;
+    }
+
+    /* ── Recurring config summary ── */
+    .recurring-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f0f2ff;
+      color: #3b4ef8;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ── Info note ── */
+    .info-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 7px;
+      font-size: 11px;
+      color: #0369a1;
+    }
+    .info-note .icon { flex-shrink: 0; margin-top: 1px; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 0 0 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top nav ── -->
+<nav class="top-nav">
+  <div class="logo">Hairline</div>
+  <div class="nav-items">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Inquiries</div>
+    <div class="nav-item">Quotes</div>
+    <div class="nav-item">Schedule</div>
+    <div class="nav-item active">Analytics</div>
+    <div class="nav-item">Settings</div>
+  </div>
+  <button class="export-btn">Export Report</button>
+</nav>
+
+<!-- ── Analytics sub-nav ── -->
+<div class="sub-nav">
+  <div class="tab">Performance</div>
+  <div class="tab">Patient Analytics</div>
+  <div class="tab">Finance & Payouts</div>
+  <div class="tab">Pricing & Benchmarks</div>
+  <div class="tab active">Export Report</div>
+</div>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>Export Report Configuration</h1>
+    <p>Generate PDF or CSV exports of your analytics data. Reports are stored for 7 days.</p>
+  </div>
+</div>
+
+<!-- ── Main content ── -->
+<div class="content">
+
+  <!-- ── Export Configuration Card ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">New Export</div>
+        <div class="card-subtitle">Configure the report and click Generate</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="form-section">
+
+        <!-- Report Type -->
+        <div class="form-row">
+          <div class="form-label">Report type <span class="required">*</span></div>
+          <div class="radio-group">
+            <label class="radio-option selected">
+              <input type="radio" name="report_type" checked />
+              <div class="radio-option-content">
+                <div class="radio-title">PDF Summary</div>
+                <div class="radio-desc">Visual charts and tables, includes provider logo. Ready in &lt;60 sec.</div>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="report_type" />
+              <div class="radio-option-content">
+                <div class="radio-title">CSV Detailed</div>
+                <div class="radio-desc">Raw tabular data for all selected screens. Ready in &lt;30 sec.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <hr class="form-divider" />
+
+        <!-- Screens to include -->
+        <div class="form-row">
+          <div class="form-label">Screens to include <span class="required">*</span></div>
+          <div class="form-hint">Screen 1 (Main Dashboard) is excluded — it contains real-time operational data not suitable for static reports.</div>
+          <div class="checkbox-grid" style="margin-top: 8px;">
+            <label class="checkbox-option checked">
+              <input type="checkbox" checked />
+              <div class="checkbox-option-label">Performance &amp; Conversion</div>
+              <span class="checkbox-option-badge">Screen 2</span>
+            </label>
+            <label class="checkbox-option checked">
+              <input type="checkbox" checked />
+              <div class="checkbox-option-label">Patient Analytics</div>
+              <span class="checkbox-option-badge">Screen 3</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" />
+              <div class="checkbox-option-label">Finance &amp; Payouts</div>
+              <span class="checkbox-option-badge">Screen 4</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" />
+              <div class="checkbox-option-label">Pricing &amp; Benchmarks</div>
+              <span class="checkbox-option-badge">Screen 5</span>
+            </label>
+          </div>
+        </div>
+
+        <hr class="form-divider" />
+
+        <!-- Date range -->
+        <div class="form-row">
+          <div class="form-label">Date range <span class="required">*</span></div>
+          <div class="date-range-row">
+            <div class="date-input">
+              <span class="icon">📅</span>
+              <span>2026-03-22</span>
+            </div>
+            <span class="date-sep">→</span>
+            <div class="date-input">
+              <span class="icon">📅</span>
+              <span>2026-04-22</span>
+            </div>
+            <span class="date-limit-note">Max 12-month span</span>
+          </div>
+        </div>
+
+        <hr class="form-divider" />
+
+        <!-- Country filter -->
+        <div class="form-row">
+          <div class="form-label">Country filter <span style="color:#9ca3af;font-weight:400;">(optional)</span></div>
+          <div class="fake-select">
+            <span>All countries</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <!-- Treatment filter -->
+        <div class="form-row">
+          <div class="form-label">Treatment filter <span style="color:#9ca3af;font-weight:400;">(optional)</span></div>
+          <div class="fake-select">
+            <span>All treatments</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <hr class="form-divider" />
+
+        <!-- Email delivery -->
+        <div class="form-row">
+          <div class="form-label">Email delivery <span style="color:#9ca3af;font-weight:400;">(optional)</span></div>
+          <label class="toggle-row">
+            <input type="checkbox" />
+            <div class="toggle-row-content">
+              <div class="toggle-row-title">Send to my registered email</div>
+              <div class="toggle-row-desc">PDF attachment + secure download link (link expires in 48 hours). Sent to provider@clinic.com</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Schedule recurring -->
+        <div class="form-row">
+          <div class="form-label">Schedule recurring <span style="color:#9ca3af;font-weight:400;">(optional)</span></div>
+          <label class="toggle-row active">
+            <input type="checkbox" checked />
+            <div class="toggle-row-content">
+              <div class="toggle-row-title">Automatically regenerate on a schedule</div>
+              <div class="toggle-row-desc">Uses the same screens, filters, and format. Max 5 active recurring configurations.</div>
+              <div class="sub-options">
+                <span class="sub-option">Weekly</span>
+                <span class="sub-option selected">Monthly</span>
+                <span class="sub-option">Quarterly</span>
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Info note -->
+        <div class="info-note">
+          <span class="icon">ℹ️</span>
+          <span>Generated reports are stored for <strong>7 days</strong> and available for re-download in the Report History section below. PDF reports include your clinic logo; platform colour theme is used (no custom branding in v1).</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-row">
+          <button class="btn-primary">Generate Report</button>
+          <span class="action-note">Large datasets are processed in an async queue (&lt;60 sec for PDF, &lt;30 sec for CSV).</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Report History Card ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Report History</div>
+        <div class="card-subtitle">Reports stored for 7 days · Secure links expire in 48 hours</div>
+      </div>
+    </div>
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Generated</th>
+          <th>Format</th>
+          <th>Screens</th>
+          <th>Date range</th>
+          <th>Cadence</th>
+          <th>Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>22 Apr 2026, 14:03</td>
+          <td><span class="badge badge-pdf">PDF</span></td>
+          <td>Performance, Patient Analytics</td>
+          <td>22 Mar – 22 Apr 2026</td>
+          <td><span class="recurring-badge">Monthly</span></td>
+          <td><span class="badge badge-ready">Ready</span></td>
+          <td><a class="download-link">Download</a></td>
+        </tr>
+        <tr>
+          <td>22 Apr 2026, 09:41</td>
+          <td><span class="badge badge-csv">CSV</span></td>
+          <td>Finance &amp; Payouts</td>
+          <td>1 Jan – 31 Mar 2026</td>
+          <td>—</td>
+          <td><span class="badge badge-generating">Generating…</span></td>
+          <td><span class="expired-note">—</span></td>
+        </tr>
+        <tr>
+          <td>15 Apr 2026, 10:22</td>
+          <td><span class="badge badge-pdf">PDF</span></td>
+          <td>Performance, Patient Analytics</td>
+          <td>15 Mar – 15 Apr 2026</td>
+          <td><span class="recurring-badge">Monthly</span></td>
+          <td><span class="badge badge-ready">Ready</span></td>
+          <td><a class="download-link">Download</a></td>
+        </tr>
+        <tr>
+          <td>8 Apr 2026, 08:55</td>
+          <td><span class="badge badge-pdf">PDF</span></td>
+          <td>All screens</td>
+          <td>1 Jan – 31 Mar 2026</td>
+          <td>—</td>
+          <td><span class="badge badge-expired">Expired</span></td>
+          <td><span class="expired-note">Expired</span></td>
+        </tr>
+        <tr>
+          <td>1 Apr 2026, 09:00</td>
+          <td><span class="badge badge-csv">CSV</span></td>
+          <td>Pricing &amp; Benchmarks</td>
+          <td>1 Mar – 31 Mar 2026</td>
+          <td><span class="recurring-badge">Monthly</span></td>
+          <td><span class="badge badge-expired">Expired</span></td>
+          <td><span class="expired-note">Expired</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /content -->
+
+</body>
+</html>

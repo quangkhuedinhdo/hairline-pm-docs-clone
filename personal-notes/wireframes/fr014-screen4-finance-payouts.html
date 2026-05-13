@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 4: Finance & Payouts</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo {
+      font-weight: 700;
+      font-size: 16px;
+      color: #1a1d23;
+      letter-spacing: -0.3px;
+    }
+    .top-nav .nav-items { display: flex; gap: 4px; }
+    .top-nav .nav-item {
+      padding: 6px 12px;
+      border-radius: 6px;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .top-nav .nav-item.active {
+      background: #f0f2ff;
+      color: #3b4ef8;
+      font-weight: 600;
+    }
+    .top-nav .nav-item:hover:not(.active) { background: #f5f6f8; }
+    .top-nav .export-btn {
+      margin-left: auto;
+      padding: 7px 16px;
+      background: #3b4ef8;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ── Sub-nav (analytics tabs) ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+    }
+    .sub-nav .tab {
+      padding: 12px 18px;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .sub-nav .tab.active {
+      color: #3b4ef8;
+      border-bottom-color: #3b4ef8;
+      font-weight: 600;
+    }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1d23;
+    }
+    .page-header p {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .filter-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #374151;
+    }
+    .filter-select .caret { color: #9ca3af; font-size: 10px; }
+    .filter-select .tag {
+      background: #e8f0fe;
+      color: #3b4ef8;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ── Content ── */
+    .content {
+      padding: 0 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Widget card ── */
+    .widget {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .widget-header {
+      padding: 14px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .widget-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1d23;
+    }
+    .widget-subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .widget-body { padding: 16px 18px; }
+    .widget-actions { display: flex; gap: 6px; align-items: center; }
+
+    /* 2-col grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ── Toggle buttons ── */
+    .toggle-group {
+      display: flex;
+      border: 1px solid #e2e5ea;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .toggle-btn {
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #6b7280;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      border-right: 1px solid #e2e5ea;
+    }
+    .toggle-btn:last-child { border-right: none; }
+    .toggle-btn.active {
+      background: #3b4ef8;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── Chart placeholders ── */
+    .chart-area {
+      background: #f9fafb;
+      border: 1px dashed #d1d5db;
+      border-radius: 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #9ca3af;
+      font-size: 11px;
+    }
+    .chart-area .chart-icon { font-size: 28px; }
+    .chart-area .chart-label { font-weight: 500; color: #6b7280; }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #374151;
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-rect {
+      width: 12px; height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── KPI tiles ── */
+    .kpi-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .kpi-tile {
+      flex: 1;
+      background: #f9fafb;
+      border: 1px solid #e2e5ea;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .kpi-tile .kpi-label {
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .kpi-tile .kpi-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1d23;
+      letter-spacing: -0.5px;
+    }
+    .kpi-tile .kpi-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 3px;
+    }
+    .kpi-tile .kpi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-top: 4px;
+    }
+    .kpi-badge.green { background: #dcfce7; color: #16a34a; }
+    .kpi-badge.red   { background: #fee2e2; color: #dc2626; }
+    .kpi-badge.amber { background: #fef3c7; color: #d97706; }
+
+    /* ── Commission note ── */
+    .commission-note {
+      font-size: 11px;
+      color: #6b7280;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-top: 10px;
+    }
+
+    /* ── Horizontal bar chart rows ── */
+    .hbar-list { display: flex; flex-direction: column; gap: 8px; }
+    .hbar-row { display: flex; flex-direction: column; gap: 3px; }
+    .hbar-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .hbar-name { color: #374151; font-weight: 500; }
+    .hbar-right { display: flex; gap: 12px; align-items: center; }
+    .hbar-amount { color: #1a1d23; font-weight: 600; }
+    .hbar-pct { color: #9ca3af; font-size: 11px; }
+    .hbar-track {
+      height: 8px;
+      background: #f0f2f5;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .hbar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #3b4ef8;
+    }
+    .hbar-pagination {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+    .hbar-pagination button {
+      padding: 3px 8px;
+      border: 1px solid #e2e5ea;
+      border-radius: 5px;
+      background: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      color: #374151;
+    }
+
+    /* ── Donut placeholder ── */
+    .donut-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .donut-chart {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #3b4ef8 0% 62%,
+        #a5b4fc 62% 100%
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .donut-hole {
+      width: 72px;
+      height: 72px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .donut-center-label { font-size: 11px; color: #6b7280; text-align: center; }
+    .donut-center-value { font-size: 16px; font-weight: 700; color: #1a1d23; text-align: center; }
+
+    /* ── Cash-at-risk widget ── */
+    .car-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .car-kpi {
+      flex: 0 0 200px;
+    }
+    .car-buckets {
+      flex: 1;
+    }
+    .car-bucket-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .car-bucket-label { color: #6b7280; width: 60px; font-size: 11px; }
+    .car-bucket-bar {
+      flex: 1;
+      height: 8px;
+      background: #f0f2f5;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .car-bucket-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+    .car-bucket-count { color: #374151; font-weight: 600; width: 30px; text-align: right; }
+    .car-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #3b4ef8;
+      margin-top: 10px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ── Payout table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-align: left;
+      padding: 7px 10px;
+      border-bottom: 1px solid #e2e5ea;
+      background: #f9fafb;
+      cursor: pointer;
+      user-select: none;
+    }
+    .data-table th .sort-icon { color: #d1d5db; font-size: 9px; margin-left: 3px; }
+    .data-table td {
+      font-size: 12px;
+      color: #374151;
+      padding: 8px 10px;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #f9fafb; cursor: pointer; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-badge.disbursed { background: #dcfce7; color: #16a34a; }
+    .status-badge.upcoming  { background: #e0f2fe; color: #0369a1; }
+    .status-badge.scheduled { background: #f3f4f6; color: #6b7280; }
+
+    .table-footer {
+      padding: 10px 18px;
+      border-top: 1px solid #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-footer .pagination {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+    .table-footer .pagination button {
+      padding: 3px 8px;
+      border: 1px solid #e2e5ea;
+      border-radius: 5px;
+      background: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      color: #374151;
+    }
+    .table-footer .pagination button:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── FX footer note (inline, per-widget) ── */
+    .fx-note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+
+    /* ── Page-level footer ── */
+    .page-footer {
+      margin: 24px 0 0 0;
+      padding: 14px 24px;
+      background: #fff;
+      border-top: 1px solid #e2e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .page-footer .fx-footer-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .page-footer .fx-footer-note::before {
+      content: "ℹ";
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* ── W1 Revenue Trend chart ── */
+    .w1-summary {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 14px;
+    }
+    .w1-kpi {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .w1-kpi .label { font-size: 11px; color: #6b7280; }
+    .w1-kpi .val   { font-size: 19px; font-weight: 700; color: #1a1d23; letter-spacing: -0.4px; }
+    .w1-kpi .delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+    .w1-kpi .delta.up   { background: #dcfce7; color: #16a34a; }
+    .w1-kpi .delta.down { background: #fee2e2; color: #dc2626; }
+    .w1-divider { width: 1px; background: #e2e5ea; }
+    .w1-chart-wrap { position: relative; }
+    .w1-chart-wrap svg { display: block; width: 100%; }
+    /* tooltip */
+    .w1-tooltip {
+      position: absolute;
+      background: #1a1d23;
+      color: #fff;
+      border-radius: 7px;
+      padding: 8px 11px;
+      font-size: 11px;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .w1-tooltip .tt-week  { color: #9ca3af; margin-bottom: 4px; }
+    .w1-tooltip .tt-row   { display: flex; align-items: center; gap: 7px; }
+    .w1-tooltip .tt-dot   { width: 8px; height: 8px; border-radius: 50%; background: #818cf8; flex-shrink:0; }
+    .w1-tooltip .tt-val   { font-weight: 700; font-size: 13px; }
+    .w1-tooltip .tt-delta { color: #86efac; font-size: 11px; margin-left:auto; }
+
+    /* ── W4 split layout ── */
+    .w4-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── W6 split layout ── */
+    .w6-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .w6-kpi-list { display: flex; flex-direction: column; gap: 10px; }
+    .w6-kpi-item {
+      background: #f9fafb;
+      border: 1px solid #e2e5ea;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .w6-kpi-item .label { font-size: 11px; color: #6b7280; margin-bottom: 3px; }
+    .w6-kpi-item .value { font-size: 18px; font-weight: 700; color: #1a1d23; }
+    .w6-kpi-item .sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top nav ── -->
+<nav class="top-nav">
+  <span class="logo">Hairline</span>
+  <div class="nav-items">
+    <span class="nav-item">Dashboard</span>
+    <span class="nav-item">Inquiries</span>
+    <span class="nav-item">Quotes</span>
+    <span class="nav-item">Bookings</span>
+    <span class="nav-item active">Analytics</span>
+    <span class="nav-item">Settings</span>
+  </div>
+  <button class="export-btn">Export Report</button>
+</nav>
+
+<!-- ── Analytics sub-nav ── -->
+<nav class="sub-nav">
+  <span class="tab">Performance</span>
+  <span class="tab">Patient Analytics</span>
+  <span class="tab active">Finance & Payouts</span>
+  <span class="tab">Pricing & Benchmarks</span>
+</nav>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>Finance &amp; Payouts</h1>
+    <p>Revenue breakdown, commissions, refunds, installments, and payout history</p>
+  </div>
+</div>
+
+<!-- ── Filter bar ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filters:</span>
+  <div class="filter-select">
+    📅 Last 4 weeks <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    🌍 All countries <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    💉 All treatments <span class="caret">▾</span>
+  </div>
+</div>
+
+<!-- ── Main content ── -->
+<div class="content">
+
+  <!-- Widget 1: Revenue Trend -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 1 — Revenue Trend</div>
+        <div class="widget-subtitle">Captured payments only · Excludes refunds</div>
+      </div>
+      <div class="widget-actions">
+        <div class="toggle-group">
+          <button class="toggle-btn active">Week</button>
+          <button class="toggle-btn">Month</button>
+          <button class="toggle-btn">Quarter</button>
+        </div>
+      </div>
+    </div>
+    <div class="widget-body">
+
+      <!-- Summary KPIs -->
+      <div class="w1-summary">
+        <div class="w1-kpi">
+          <span class="label">Total (8-week period)</span>
+          <span class="val">€190,500</span>
+          <span class="delta up">▲ +14% vs prior period</span>
+        </div>
+        <div class="w1-divider"></div>
+        <div class="w1-kpi">
+          <span class="label">Avg per week</span>
+          <span class="val">€23,813</span>
+        </div>
+        <div class="w1-divider"></div>
+        <div class="w1-kpi">
+          <span class="label">Latest week (21 Apr)</span>
+          <span class="val">€31,200</span>
+          <span class="delta up">▲ +17% vs prev week</span>
+        </div>
+        <div class="w1-divider"></div>
+        <div class="w1-kpi">
+          <span class="label">Peak week</span>
+          <span class="val">€31,200</span>
+          <span class="label" style="margin-top:2px;">21 Apr 2026</span>
+        </div>
+      </div>
+
+      <!-- SVG Area Line Chart -->
+      <div class="w1-chart-wrap">
+
+        <!-- Tooltip at last data point -->
+        <div class="w1-tooltip" style="right:16px; top:4px;">
+          <div class="tt-week">Week of 21 Apr 2026</div>
+          <div class="tt-row">
+            <div class="tt-dot"></div>
+            <span>Income</span>
+            <span class="tt-val">€31,200</span>
+            <span class="tt-delta">▲ +17%</span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 840 210" xmlns="http://www.w3.org/2000/svg" style="height:210px;">
+          <defs>
+            <!-- Area gradient: blue → transparent -->
+            <linearGradient id="w1-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#3b4ef8" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#3b4ef8" stop-opacity="0.01"/>
+            </linearGradient>
+            <!-- Clip chart area -->
+            <clipPath id="w1-clip">
+              <rect x="56" y="16" width="768" height="168"/>
+            </clipPath>
+          </defs>
+
+          <!-- ── Y-axis grid lines (dashed) + labels ── -->
+          <!-- €6k  y=156 -->
+          <line x1="56" y1="156" x2="824" y2="156" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="48" y="160" text-anchor="end" font-size="10" fill="#9ca3af">€6k</text>
+          <!-- €12k y=128 -->
+          <line x1="56" y1="128" x2="824" y2="128" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="48" y="132" text-anchor="end" font-size="10" fill="#9ca3af">€12k</text>
+          <!-- €18k y=100 -->
+          <line x1="56" y1="100" x2="824" y2="100" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="48" y="104" text-anchor="end" font-size="10" fill="#9ca3af">€18k</text>
+          <!-- €24k y=72 -->
+          <line x1="56" y1="72" x2="824" y2="72" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="48" y="76" text-anchor="end" font-size="10" fill="#9ca3af">€24k</text>
+          <!-- €30k y=44 -->
+          <line x1="56" y1="44" x2="824" y2="44" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="48" y="48" text-anchor="end" font-size="10" fill="#9ca3af">€30k</text>
+          <!-- €0  y=184 (baseline) -->
+          <line x1="56" y1="184" x2="824" y2="184" stroke="#d1d5db" stroke-width="1"/>
+          <text x="48" y="188" text-anchor="end" font-size="10" fill="#9ca3af">€0</text>
+
+          <!-- ── Vertical cursor line at last data point (x=824) ── -->
+          <line x1="824" y1="16" x2="824" y2="184" stroke="#3b4ef8" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+
+          <!-- ── Area fill (clipped) ── -->
+          <path clip-path="url(#w1-clip)"
+                d="M56,94 L166,84 L275,90 L385,73 L494,80 L604,65 L714,59 L824,38 L824,184 L56,184 Z"
+                fill="url(#w1-grad)"/>
+
+          <!-- ── Stroke line ── -->
+          <polyline clip-path="url(#w1-clip)"
+                    points="56,94 166,84 275,90 385,73 494,80 604,65 714,59 824,38"
+                    fill="none" stroke="#3b4ef8" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- ── Data point circles ── -->
+          <!-- W1: 3 Mar · €19,200 → (56, 94) -->
+          <circle cx="56"  cy="94"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W2: 10 Mar · €21,500 → (166, 84) -->
+          <circle cx="166" cy="84"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W3: 17 Mar · €20,100 → (275, 90) -->
+          <circle cx="275" cy="90"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W4: 24 Mar · €23,800 → (385, 73) -->
+          <circle cx="385" cy="73"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W5: 31 Mar · €22,400 → (494, 80) -->
+          <circle cx="494" cy="80"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W6: 7 Apr · €25,600 → (604, 65) -->
+          <circle cx="604" cy="65"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W7: 14 Apr · €26,700 → (714, 59) -->
+          <circle cx="714" cy="59"  r="3.5" fill="#fff" stroke="#3b4ef8" stroke-width="2"/>
+          <!-- W8: 21 Apr · €31,200 → (824, 38) — active/highlighted -->
+          <circle cx="824" cy="38"  r="6"   fill="#3b4ef8" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="824" cy="38"  r="10"  fill="#3b4ef8" fill-opacity="0.15" stroke="none"/>
+
+          <!-- ── Inline value label at highlighted point ── -->
+          <rect x="790" y="18" width="50" height="16" rx="4" fill="#3b4ef8"/>
+          <text x="815" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">€31,200</text>
+
+          <!-- ── X-axis labels ── -->
+          <text x="56"  y="200" text-anchor="middle" font-size="10" fill="#6b7280">3 Mar</text>
+          <text x="166" y="200" text-anchor="middle" font-size="10" fill="#6b7280">10 Mar</text>
+          <text x="275" y="200" text-anchor="middle" font-size="10" fill="#6b7280">17 Mar</text>
+          <text x="385" y="200" text-anchor="middle" font-size="10" fill="#6b7280">24 Mar</text>
+          <text x="494" y="200" text-anchor="middle" font-size="10" fill="#6b7280">31 Mar</text>
+          <text x="604" y="200" text-anchor="middle" font-size="10" fill="#3b4ef8" font-weight="600">7 Apr</text>
+          <text x="714" y="200" text-anchor="middle" font-size="10" fill="#3b4ef8" font-weight="600">14 Apr</text>
+          <text x="824" y="200" text-anchor="middle" font-size="10" fill="#3b4ef8" font-weight="700">21 Apr ●</text>
+
+          <!-- ── Y-axis vertical line ── -->
+          <line x1="56" y1="16" x2="56" y2="184" stroke="#e2e5ea" stroke-width="1"/>
+
+          <!-- ── X-axis tick marks ── -->
+          <line x1="56"  y1="184" x2="56"  y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="166" y1="184" x2="166" y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="275" y1="184" x2="275" y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="385" y1="184" x2="385" y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="494" y1="184" x2="494" y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="604" y1="184" x2="604" y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="714" y1="184" x2="714" y2="188" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="824" y1="184" x2="824" y2="188" stroke="#3b4ef8" stroke-width="1.5"/>
+
+          <!-- ── "Last 4 weeks" shaded region (weeks 5–8) ── -->
+          <rect x="494" y="16" width="330" height="168" fill="#3b4ef8" fill-opacity="0.03" clip-path="url(#w1-clip)"/>
+          <text x="502" y="28" font-size="9" fill="#3b4ef8" font-weight="600" opacity="0.6">◀ Last 4 weeks (active filter)</text>
+
+          <!-- ── Drill-down hint ── -->
+          <text x="56" y="210" font-size="9" fill="#9ca3af">Click any data point → Payments list filtered to that week</text>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-rect" style="background:#3b4ef8;"></div>
+          Income (completed payments, <code style="font-size:10px;">payment_status = 'completed'</code>, excludes refunds)
+        </div>
+        <div class="legend-item" style="margin-left:8px;">
+          <div class="legend-rect" style="background:#3b4ef8; opacity:0.12; width:14px;"></div>
+          Active filter window (last 4 weeks)
+        </div>
+      </div>
+      <div class="fx-note">* Historical exchange rates applied · Amounts in provider currency (EUR)</div>
+    </div>
+  </div>
+
+  <!-- Widget 2: Revenue by Treatment — Full Breakdown -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 2 — Revenue by Treatment</div>
+        <div class="widget-subtitle">Full list · Paginated if &gt;15 treatments</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="hbar-list">
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">FUE Hair Transplant</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€124,500</span>
+              <span class="hbar-pct">38%</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:38%;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">DHI Hair Transplant</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€88,200</span>
+              <span class="hbar-pct">27%</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:27%; background:#6366f1;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">Beard Transplant</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€52,100</span>
+              <span class="hbar-pct">16%</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:16%; background:#818cf8;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">Eyebrow Transplant</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€34,800</span>
+              <span class="hbar-pct">11%</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:11%; background:#a5b4fc;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">PRP Treatment</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€18,400</span>
+              <span class="hbar-pct">6%</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:6%; background:#c7d2fe;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">Other</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€8,000</span>
+              <span class="hbar-pct">2%</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:2%; background:#e0e7ff;"></div></div>
+        </div>
+      </div>
+      <div class="hbar-pagination">
+        <span>Showing 6 of 9 treatments</span>
+        <button disabled>‹ Prev</button>
+        <button>Next ›</button>
+      </div>
+      <div class="fx-note">* Click bar → Payments list filtered to that treatment · Historical exchange rates applied</div>
+    </div>
+  </div>
+
+  <!-- Widget 3: Revenue by Patient Country -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 3 — Revenue by Patient Country</div>
+        <div class="widget-subtitle">Top 10 countries + Other · Secondary metric: patient count</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="hbar-list">
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">🇬🇧 United Kingdom</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€98,700</span>
+              <span class="hbar-pct" style="color:#6b7280; font-size:11px;">142 patients</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:30%;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">🇩🇪 Germany</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€74,300</span>
+              <span class="hbar-pct" style="color:#6b7280; font-size:11px;">108 patients</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:23%; background:#6366f1;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">🇸🇦 Saudi Arabia</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€52,800</span>
+              <span class="hbar-pct" style="color:#6b7280; font-size:11px;">74 patients</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:16%; background:#818cf8;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">🇳🇱 Netherlands</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€38,600</span>
+              <span class="hbar-pct" style="color:#6b7280; font-size:11px;">55 patients</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:12%; background:#a5b4fc;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">🇺🇸 United States</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€28,900</span>
+              <span class="hbar-pct" style="color:#6b7280; font-size:11px;">41 patients</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:9%; background:#c7d2fe;"></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-meta">
+            <span class="hbar-name">Other</span>
+            <div class="hbar-right">
+              <span class="hbar-amount">€32,700</span>
+              <span class="hbar-pct" style="color:#6b7280; font-size:11px;">— patients</span>
+            </div>
+          </div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:10%; background:#e0e7ff;"></div></div>
+        </div>
+      </div>
+      <div class="fx-note">* Click bar → Payments list filtered to that country · Historical exchange rates applied</div>
+    </div>
+  </div>
+
+  <!-- Widget 4: Commission & Net Revenue -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 4 — Commission &amp; Net Revenue</div>
+        <div class="widget-subtitle">Gross income · Commission deducted · Net disbursement</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="w4-layout">
+        <!-- KPI tiles -->
+        <div>
+          <div class="kpi-tile" style="margin-bottom:10px;">
+            <div class="kpi-label">Total Income (Gross)</div>
+            <div class="kpi-value">€326,000</div>
+            <div class="kpi-sub">All completed payments in period</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-label">Commission Deducted</div>
+            <div class="kpi-value" style="color:#dc2626;">€29,340</div>
+            <div class="kpi-sub">Effective rate applied per booking</div>
+            <span class="kpi-badge red">−9.0%</span>
+          </div>
+        </div>
+        <!-- Trend chart -->
+        <div>
+          <!-- W4: Gross Income + Commission stacked area chart -->
+          <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:160px;display:block;">
+            <defs>
+              <linearGradient id="w4-net-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#3b4ef8" stop-opacity="0.14"/>
+                <stop offset="100%" stop-color="#3b4ef8" stop-opacity="0.03"/>
+              </linearGradient>
+              <linearGradient id="w4-com-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#ef4444" stop-opacity="0.50"/>
+                <stop offset="100%" stop-color="#ef4444" stop-opacity="0.20"/>
+              </linearGradient>
+              <clipPath id="w4-clip"><rect x="52" y="16" width="532" height="108"/></clipPath>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="52" y1="97" x2="584" y2="97" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="44" y="101" text-anchor="end" font-size="9" fill="#9ca3af">€9k</text>
+            <line x1="52" y1="70" x2="584" y2="70" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="44" y="74" text-anchor="end" font-size="9" fill="#9ca3af">€18k</text>
+            <line x1="52" y1="43" x2="584" y2="43" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="44" y="47" text-anchor="end" font-size="9" fill="#9ca3af">€27k</text>
+            <line x1="52" y1="124" x2="584" y2="124" stroke="#d1d5db" stroke-width="1"/>
+            <text x="44" y="128" text-anchor="end" font-size="9" fill="#9ca3af">€0</text>
+            <!-- Y-axis -->
+            <line x1="52" y1="16" x2="52" y2="124" stroke="#e2e5ea" stroke-width="1"/>
+            <!-- Net income area (bottom layer) -->
+            <path clip-path="url(#w4-clip)"
+                  d="M52,124 L52,74 L141,63 L229,54 L318,66 L407,60 L495,50 L584,39 L584,124 Z"
+                  fill="url(#w4-net-grad)"/>
+            <!-- Commission band (top layer, between net-top and gross line) -->
+            <path clip-path="url(#w4-clip)"
+                  d="M52,74 L141,63 L229,54 L318,66 L407,60 L495,50 L584,39
+                     L584,30 L495,43 L407,53 L318,60 L229,47 L141,57 L52,69 Z"
+                  fill="url(#w4-com-grad)"/>
+            <!-- Gross income line -->
+            <polyline clip-path="url(#w4-clip)"
+                      points="52,69 141,57 229,47 318,60 407,53 495,43 584,30"
+                      fill="none" stroke="#3b4ef8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+            <!-- Data point circles -->
+            <circle cx="52"  cy="69" r="3"   fill="#fff" stroke="#3b4ef8" stroke-width="1.5"/>
+            <circle cx="141" cy="57" r="3"   fill="#fff" stroke="#3b4ef8" stroke-width="1.5"/>
+            <circle cx="229" cy="47" r="3"   fill="#fff" stroke="#3b4ef8" stroke-width="1.5"/>
+            <circle cx="318" cy="60" r="3"   fill="#fff" stroke="#3b4ef8" stroke-width="1.5"/>
+            <circle cx="407" cy="53" r="3"   fill="#fff" stroke="#3b4ef8" stroke-width="1.5"/>
+            <circle cx="495" cy="43" r="3"   fill="#fff" stroke="#3b4ef8" stroke-width="1.5"/>
+            <circle cx="584" cy="30" r="5"   fill="#3b4ef8" stroke="#fff" stroke-width="2"/>
+            <circle cx="584" cy="30" r="9"   fill="#3b4ef8" fill-opacity="0.12" stroke="none"/>
+            <!-- Tooltip at last point -->
+            <rect x="452" y="12" width="130" height="52" rx="5" fill="#1a1d23"/>
+            <text x="462" y="25" font-size="8" fill="#9ca3af">Apr 2026</text>
+            <text x="462" y="36" font-size="9" fill="#fff" font-weight="600">Gross: €31,200</text>
+            <text x="462" y="47" font-size="9" fill="#fca5a5">Commission: −€2,808</text>
+            <text x="462" y="57" font-size="9" fill="#86efac">Net: €28,392</text>
+            <!-- X-axis labels -->
+            <text x="52"  y="140" text-anchor="middle" font-size="9" fill="#6b7280">Oct '25</text>
+            <text x="141" y="140" text-anchor="middle" font-size="9" fill="#6b7280">Nov</text>
+            <text x="229" y="140" text-anchor="middle" font-size="9" fill="#6b7280">Dec</text>
+            <text x="318" y="140" text-anchor="middle" font-size="9" fill="#6b7280">Jan '26</text>
+            <text x="407" y="140" text-anchor="middle" font-size="9" fill="#6b7280">Feb</text>
+            <text x="495" y="140" text-anchor="middle" font-size="9" fill="#6b7280">Mar</text>
+            <text x="584" y="140" text-anchor="middle" font-size="9" fill="#3b4ef8" font-weight="600">Apr ●</text>
+            <!-- Tick marks -->
+            <line x1="52"  y1="124" x2="52"  y2="128" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="141" y1="124" x2="141" y2="128" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="229" y1="124" x2="229" y2="128" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="318" y1="124" x2="318" y2="128" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="407" y1="124" x2="407" y2="128" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="495" y1="124" x2="495" y2="128" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="584" y1="124" x2="584" y2="128" stroke="#3b4ef8" stroke-width="1.5"/>
+            <!-- Drill-down hint -->
+            <text x="52" y="155" font-size="8" fill="#9ca3af">Click period → Payments list filtered to that month</text>
+          </svg>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#3b4ef8;"></div>
+              Gross income
+            </div>
+            <div class="legend-item">
+              <div class="legend-rect" style="background:#fca5a5;"></div>
+              Commission deducted
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="commission-note">
+        ⚠️ <strong>Commission model note:</strong> Commission deducted is calculated using your effective commission configuration for each completed payment in this period. Your model may apply <strong>percentage-based deductions</strong> (e.g. 9% of payment amount), <strong>flat-rate deductions</strong> (fixed fee per completed booking), or <strong>both</strong> — the figures above reflect the actual model in effect for your account.
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget 5: Refunds -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 5 — Refunds</div>
+        <div class="widget-subtitle">Total refund amount + refund rate trend</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="kpi-row">
+        <div class="kpi-tile">
+          <div class="kpi-label">Total Refund Amount</div>
+          <div class="kpi-value">€8,200</div>
+          <div class="kpi-sub">Period total</div>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Refund Rate</div>
+          <div class="kpi-value">3.1%</div>
+          <div class="kpi-sub">Refund count ÷ total completed payments</div>
+          <span class="kpi-badge amber">+0.4pp vs prior period</span>
+        </div>
+      </div>
+      <!-- W5: Monthly Refund Rate Trend -->
+      <svg viewBox="0 0 840 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:140px;display:block;">
+        <defs>
+          <linearGradient id="w5-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#f59e0b" stop-opacity="0.20"/>
+            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+          </linearGradient>
+          <clipPath id="w5-clip"><rect x="44" y="12" width="776" height="96"/></clipPath>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="44" y1="89" x2="820" y2="89" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="36" y="93" text-anchor="end" font-size="9" fill="#9ca3af">1%</text>
+        <line x1="44" y1="70" x2="820" y2="70" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="36" y="74" text-anchor="end" font-size="9" fill="#9ca3af">2%</text>
+        <!-- 3% warning line (amber) -->
+        <line x1="44" y1="50" x2="820" y2="50" stroke="#fde68a" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <text x="36" y="54" text-anchor="end" font-size="9" fill="#d97706" font-weight="600">3%</text>
+        <line x1="44" y1="31" x2="820" y2="31" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="36" y="35" text-anchor="end" font-size="9" fill="#9ca3af">4%</text>
+        <line x1="44" y1="108" x2="820" y2="108" stroke="#d1d5db" stroke-width="1"/>
+        <text x="36" y="112" text-anchor="end" font-size="9" fill="#9ca3af">0%</text>
+        <line x1="44" y1="12" x2="44" y2="108" stroke="#e2e5ea" stroke-width="1"/>
+        <!-- Area fill -->
+        <path clip-path="url(#w5-clip)"
+              d="M44,68 L173,54 L302,41 L431,62 L560,56 L689,52 L820,49 L820,108 L44,108 Z"
+              fill="url(#w5-grad)"/>
+        <!-- Line -->
+        <polyline clip-path="url(#w5-clip)"
+                  points="44,68 173,54 302,41 431,62 560,56 689,52 820,49"
+                  fill="none" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        <!-- Data point circles -->
+        <circle cx="44"  cy="68" r="3"   fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+        <circle cx="173" cy="54" r="3"   fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+        <!-- Dec peak (highest) -->
+        <circle cx="302" cy="41" r="4"   fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="431" cy="62" r="3"   fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+        <circle cx="560" cy="56" r="3"   fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+        <circle cx="689" cy="52" r="3"   fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+        <!-- Apr active point -->
+        <circle cx="820" cy="49" r="5"   fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+        <circle cx="820" cy="49" r="9"   fill="#f59e0b" fill-opacity="0.15" stroke="none"/>
+        <!-- Value labels -->
+        <text x="44"  y="62" text-anchor="middle" font-size="9" fill="#6b7280">2.1%</text>
+        <text x="173" y="48" text-anchor="middle" font-size="9" fill="#6b7280">2.8%</text>
+        <text x="302" y="34" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="600">3.5% ▲ peak</text>
+        <text x="431" y="56" text-anchor="middle" font-size="9" fill="#6b7280">2.4%</text>
+        <text x="560" y="50" text-anchor="middle" font-size="9" fill="#6b7280">2.7%</text>
+        <text x="689" y="46" text-anchor="middle" font-size="9" fill="#6b7280">2.9%</text>
+        <!-- Tooltip at last point -->
+        <rect x="704" y="24" width="112" height="42" rx="5" fill="#1a1d23"/>
+        <text x="714" y="37"  font-size="8"  fill="#9ca3af">Apr 2026</text>
+        <text x="714" y="48"  font-size="10" fill="#fff" font-weight="700">3.1%</text>
+        <text x="714" y="59"  font-size="8"  fill="#fbbf24">▲ +0.4pp vs Mar</text>
+        <!-- X-axis labels -->
+        <text x="44"  y="122" text-anchor="middle" font-size="9" fill="#6b7280">Oct '25</text>
+        <text x="173" y="122" text-anchor="middle" font-size="9" fill="#6b7280">Nov</text>
+        <text x="302" y="122" text-anchor="middle" font-size="9" fill="#6b7280">Dec</text>
+        <text x="431" y="122" text-anchor="middle" font-size="9" fill="#6b7280">Jan '26</text>
+        <text x="560" y="122" text-anchor="middle" font-size="9" fill="#6b7280">Feb</text>
+        <text x="689" y="122" text-anchor="middle" font-size="9" fill="#6b7280">Mar</text>
+        <text x="820" y="122" text-anchor="middle" font-size="9" fill="#d97706" font-weight="600">Apr ●</text>
+        <!-- Tick marks -->
+        <line x1="44"  y1="108" x2="44"  y2="112" stroke="#d1d5db" stroke-width="1"/>
+        <line x1="173" y1="108" x2="173" y2="112" stroke="#d1d5db" stroke-width="1"/>
+        <line x1="302" y1="108" x2="302" y2="112" stroke="#d1d5db" stroke-width="1"/>
+        <line x1="431" y1="108" x2="431" y2="112" stroke="#d1d5db" stroke-width="1"/>
+        <line x1="560" y1="108" x2="560" y2="112" stroke="#d1d5db" stroke-width="1"/>
+        <line x1="689" y1="108" x2="689" y2="112" stroke="#d1d5db" stroke-width="1"/>
+        <line x1="820" y1="108" x2="820" y2="112" stroke="#f59e0b" stroke-width="1.5"/>
+        <!-- Drill hint -->
+        <text x="44" y="136" font-size="8" fill="#9ca3af">Click data point → Payments list filtered to refund type</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Widget 6: Installment vs. Full Payment Split -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 6 — Installment vs. Full Payment Split</div>
+        <div class="widget-subtitle">Payment method breakdown · Installment adoption rate trend</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="w6-layout">
+        <!-- Donut -->
+        <div class="donut-wrap">
+          <div class="donut-chart" style="background: conic-gradient(#3b4ef8 0% 35%, #e0e7ff 35% 100%);">
+            <div class="donut-hole">
+              <div class="donut-center-value">35%</div>
+              <div class="donut-center-label">Installment</div>
+            </div>
+          </div>
+          <div class="legend" style="flex-direction:column; gap:6px; align-items:flex-start;">
+            <div class="legend-item">
+              <div class="legend-rect" style="background:#3b4ef8;"></div>
+              Installment (35%)
+            </div>
+            <div class="legend-item">
+              <div class="legend-rect" style="background:#e0e7ff;"></div>
+              Full payment (65%)
+            </div>
+          </div>
+        </div>
+        <!-- KPI + trend -->
+        <div>
+          <div class="w6-kpi-list">
+            <div class="w6-kpi-item">
+              <div class="label">Avg installments per plan</div>
+              <div class="value">3.2</div>
+              <div class="sub">For installment payment plans</div>
+            </div>
+          </div>
+          <!-- W6: Installment adoption rate line chart -->
+          <svg viewBox="0 0 500 115" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:115px;display:block;margin-top:12px;">
+            <defs>
+              <linearGradient id="w6-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#22c55e" stop-opacity="0.20"/>
+                <stop offset="100%" stop-color="#22c55e" stop-opacity="0.02"/>
+              </linearGradient>
+              <clipPath id="w6-clip"><rect x="40" y="12" width="448" height="75"/></clipPath>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="40" y1="72" x2="488" y2="72" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="32" y="76" text-anchor="end" font-size="8" fill="#9ca3af">10%</text>
+            <line x1="40" y1="57" x2="488" y2="57" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="32" y="61" text-anchor="end" font-size="8" fill="#9ca3af">20%</text>
+            <line x1="40" y1="42" x2="488" y2="42" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="32" y="46" text-anchor="end" font-size="8" fill="#9ca3af">30%</text>
+            <line x1="40" y1="27" x2="488" y2="27" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="32" y="31" text-anchor="end" font-size="8" fill="#9ca3af">40%</text>
+            <line x1="40" y1="87" x2="488" y2="87" stroke="#d1d5db" stroke-width="1"/>
+            <text x="32" y="91" text-anchor="end" font-size="8" fill="#9ca3af">0%</text>
+            <line x1="40" y1="12" x2="40" y2="87" stroke="#e2e5ea" stroke-width="1"/>
+            <!-- Area fill -->
+            <path clip-path="url(#w6-clip)"
+                  d="M40,54 L115,49 L190,45 L264,42 L339,39 L414,37 L488,34 L488,87 L40,87 Z"
+                  fill="url(#w6-grad)"/>
+            <!-- Line -->
+            <polyline clip-path="url(#w6-clip)"
+                      points="40,54 115,49 190,45 264,42 339,39 414,37 488,34"
+                      fill="none" stroke="#22c55e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+            <!-- Data points -->
+            <circle cx="40"  cy="54" r="3" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="115" cy="49" r="3" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="190" cy="45" r="3" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="264" cy="42" r="3" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="339" cy="39" r="3" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="414" cy="37" r="3" fill="#fff" stroke="#22c55e" stroke-width="1.5"/>
+            <circle cx="488" cy="34" r="5" fill="#22c55e" stroke="#fff" stroke-width="2"/>
+            <circle cx="488" cy="34" r="9" fill="#22c55e" fill-opacity="0.15" stroke="none"/>
+            <!-- Value labels -->
+            <text x="40"  y="48" text-anchor="middle" font-size="8" fill="#6b7280">22%</text>
+            <text x="488" y="28" text-anchor="middle" font-size="8" fill="#16a34a" font-weight="700">35%</text>
+            <!-- Tooltip -->
+            <rect x="376" y="12" width="104" height="38" rx="4" fill="#1a1d23"/>
+            <text x="384" y="24" font-size="7"  fill="#9ca3af">Apr 2026</text>
+            <text x="384" y="35" font-size="10" fill="#fff" font-weight="700">35% installment</text>
+            <text x="384" y="44" font-size="7"  fill="#86efac">▲ +2pp vs Mar</text>
+            <!-- X-axis labels -->
+            <text x="40"  y="100" text-anchor="middle" font-size="8" fill="#6b7280">Oct</text>
+            <text x="115" y="100" text-anchor="middle" font-size="8" fill="#6b7280">Nov</text>
+            <text x="190" y="100" text-anchor="middle" font-size="8" fill="#6b7280">Dec</text>
+            <text x="264" y="100" text-anchor="middle" font-size="8" fill="#6b7280">Jan</text>
+            <text x="339" y="100" text-anchor="middle" font-size="8" fill="#6b7280">Feb</text>
+            <text x="414" y="100" text-anchor="middle" font-size="8" fill="#6b7280">Mar</text>
+            <text x="488" y="100" text-anchor="middle" font-size="8" fill="#16a34a" font-weight="600">Apr ●</text>
+            <!-- Tick marks -->
+            <line x1="40"  y1="87" x2="40"  y2="91" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="115" y1="87" x2="115" y2="91" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="190" y1="87" x2="190" y2="91" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="264" y1="87" x2="264" y2="91" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="339" y1="87" x2="339" y2="91" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="414" y1="87" x2="414" y2="91" stroke="#d1d5db" stroke-width="1"/>
+            <line x1="488" y1="87" x2="488" y2="91" stroke="#22c55e" stroke-width="1.5"/>
+            <!-- Drill hint -->
+            <text x="40" y="111" font-size="7" fill="#9ca3af">Click segment → Payments list filtered by installment flag</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget 7: Cash-at-Risk Summary -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 7 — Cash-at-Risk Summary</div>
+        <div class="widget-subtitle">Accepted-but-unpaid quotes · Summary view only</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="car-layout">
+        <!-- KPI tile -->
+        <div class="car-kpi">
+          <div class="kpi-tile">
+            <div class="kpi-label">Total Cash-at-Risk</div>
+            <div class="kpi-value">€47,800</div>
+            <div class="kpi-sub">Accepted but unpaid quotes</div>
+            <span class="kpi-badge amber">28 quotes</span>
+          </div>
+          <div class="car-link">↗ View full aging detail (Screen 1 — Section C3)</div>
+        </div>
+        <!-- Aging buckets (count per bucket) -->
+        <div class="car-buckets">
+          <div style="font-size:11px; font-weight:600; color:#6b7280; margin-bottom:8px;">Quotes per Aging Bucket</div>
+          <div class="car-bucket-row">
+            <span class="car-bucket-label">0–24 h</span>
+            <div class="car-bucket-bar"><div class="car-bucket-fill" style="width:45%; background:#22c55e;"></div></div>
+            <span class="car-bucket-count">9</span>
+          </div>
+          <div class="car-bucket-row">
+            <span class="car-bucket-label">1–3 d</span>
+            <div class="car-bucket-bar"><div class="car-bucket-fill" style="width:35%; background:#86efac;"></div></div>
+            <span class="car-bucket-count">7</span>
+          </div>
+          <div class="car-bucket-row">
+            <span class="car-bucket-label">4–7 d</span>
+            <div class="car-bucket-bar"><div class="car-bucket-fill" style="width:25%; background:#fbbf24;"></div></div>
+            <span class="car-bucket-count">5</span>
+          </div>
+          <div class="car-bucket-row">
+            <span class="car-bucket-label">8–14 d</span>
+            <div class="car-bucket-bar"><div class="car-bucket-fill" style="width:20%; background:#f97316;"></div></div>
+            <span class="car-bucket-count">4</span>
+          </div>
+          <div class="car-bucket-row">
+            <span class="car-bucket-label">&gt;14 d</span>
+            <div class="car-bucket-bar"><div class="car-bucket-fill" style="width:15%; background:#ef4444;"></div></div>
+            <span class="car-bucket-count">3</span>
+          </div>
+          <div style="font-size:11px; color:#9ca3af; margin-top:6px;">Note: Full aging stacked bar chart is on Screen 1 — Section C3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget 8: Payout History & Schedule -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 8 — Payout History &amp; Schedule</div>
+        <div class="widget-subtitle">Last 12 months disbursed payouts + full paginated table</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <!-- W8: Monthly Payout Column Bar Chart -->
+      <svg viewBox="0 0 840 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;margin-bottom:16px;">
+        <defs>
+          <pattern id="w8-stripe" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#93c5fd" stroke-width="3"/>
+          </pattern>
+          <clipPath id="w8-clip"><rect x="56" y="16" width="764" height="120"/></clipPath>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="56" y1="112" x2="820" y2="112" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="48" y="116" text-anchor="end" font-size="9" fill="#9ca3af">€5k</text>
+        <line x1="56" y1="88"  x2="820" y2="88"  stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="48" y="92"  text-anchor="end" font-size="9" fill="#9ca3af">€10k</text>
+        <line x1="56" y1="64"  x2="820" y2="64"  stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="48" y="68"  text-anchor="end" font-size="9" fill="#9ca3af">€15k</text>
+        <line x1="56" y1="40"  x2="820" y2="40"  stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="48" y="44"  text-anchor="end" font-size="9" fill="#9ca3af">€20k</text>
+        <line x1="56" y1="16"  x2="820" y2="16"  stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="48" y="20"  text-anchor="end" font-size="9" fill="#9ca3af">€25k</text>
+        <line x1="56" y1="136" x2="820" y2="136" stroke="#d1d5db" stroke-width="1"/>
+        <text x="48" y="140" text-anchor="end" font-size="9" fill="#9ca3af">€0</text>
+        <line x1="56" y1="16"  x2="56"  y2="136" stroke="#e2e5ea" stroke-width="1"/>
+
+        <!-- Bars: Disbursed (blue) -->
+        <!-- May '25 · €14,200 · y_top=68 · h=68 -->
+        <rect x="66"  y="68" width="44" height="68" rx="3" fill="#3b4ef8" fill-opacity="0.6"/>
+        <text x="88"  y="163" text-anchor="middle" font-size="8" fill="#6b7280">May</text>
+        <!-- Jun '25 · €15,800 · y_top=60 · h=76 -->
+        <rect x="130" y="60" width="44" height="76" rx="3" fill="#3b4ef8" fill-opacity="0.65"/>
+        <text x="152" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Jun</text>
+        <!-- Jul '25 · €16,400 · y_top=57 · h=79 -->
+        <rect x="193" y="57" width="44" height="79" rx="3" fill="#3b4ef8" fill-opacity="0.70"/>
+        <text x="215" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Jul</text>
+        <!-- Aug '25 · €17,900 · y_top=50 · h=86 -->
+        <rect x="257" y="50" width="44" height="86" rx="3" fill="#3b4ef8" fill-opacity="0.75"/>
+        <text x="279" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Aug</text>
+        <!-- Sep '25 · €18,650 · y_top=47 · h=89 -->
+        <rect x="321" y="47" width="44" height="89" rx="3" fill="#3b4ef8" fill-opacity="0.80"/>
+        <text x="343" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Sep</text>
+        <!-- Oct '25 · €16,920 · y_top=55 · h=81 -->
+        <rect x="384" y="55" width="44" height="81" rx="3" fill="#3b4ef8" fill-opacity="0.75"/>
+        <text x="406" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Oct</text>
+        <!-- Nov '25 · €20,860 · y_top=36 · h=100 -->
+        <rect x="448" y="36" width="44" height="100" rx="3" fill="#3b4ef8" fill-opacity="0.85"/>
+        <text x="470" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Nov</text>
+        <!-- Dec '25 · €22,300 · y_top=29 · h=107 — PEAK, highlighted -->
+        <rect x="512" y="29" width="44" height="107" rx="3" fill="#3b4ef8"/>
+        <rect x="512" y="29" width="44" height="107" rx="3" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+        <text x="534" y="25"  text-anchor="middle" font-size="8" fill="#3b4ef8" font-weight="700">€22,300</text>
+        <text x="534" y="163" text-anchor="middle" font-size="8" fill="#3b4ef8" font-weight="600">Dec</text>
+        <!-- Jan '26 · €17,450 · y_top=52 · h=84 -->
+        <rect x="575" y="52" width="44" height="84" rx="3" fill="#3b4ef8" fill-opacity="0.75"/>
+        <text x="597" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Jan</text>
+        <!-- Feb '26 · €19,100 · y_top=44 · h=92 -->
+        <rect x="639" y="44" width="44" height="92" rx="3" fill="#3b4ef8" fill-opacity="0.80"/>
+        <text x="661" y="163" text-anchor="middle" font-size="8" fill="#6b7280">Feb</text>
+        <!-- Mar '26 · €21,580 · y_top=32 · h=104 — most recent disbursed -->
+        <rect x="703" y="32" width="44" height="104" rx="3" fill="#3b4ef8" fill-opacity="0.90"/>
+        <text x="725" y="28"  text-anchor="middle" font-size="8" fill="#3b4ef8" font-weight="700">€21,580</text>
+        <text x="725" y="163" text-anchor="middle" font-size="8" fill="#3b4ef8" font-weight="600">Mar ✓</text>
+        <!-- Apr '26 · €18,240 · y_top=48 · h=88 — UPCOMING (striped) -->
+        <rect x="766" y="48" width="44" height="88" rx="3" fill="#dbeafe"/>
+        <rect x="766" y="48" width="44" height="88" rx="3" fill="none" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="4 2"/>
+        <text x="788" y="163" text-anchor="middle" font-size="8" fill="#0369a1" font-weight="600">Apr</text>
+        <!-- Apr label: Upcoming badge -->
+        <rect x="762" y="34" width="52" height="12" rx="3" fill="#e0f2fe"/>
+        <text x="788" y="43" text-anchor="middle" font-size="7" fill="#0369a1" font-weight="600">Upcoming</text>
+        <!-- Tooltip at Dec (peak) -->
+        <rect x="482" y="56" width="110" height="42" rx="5" fill="#1a1d23"/>
+        <text x="492" y="69"  font-size="8"  fill="#9ca3af">Dec 2025 — Peak</text>
+        <text x="492" y="80"  font-size="9"  fill="#fff" font-weight="700">€22,300</text>
+        <text x="492" y="91"  font-size="8"  fill="#86efac">↗ Click for statement</text>
+        <!-- Year labels -->
+        <text x="88"  y="174" text-anchor="middle" font-size="8" fill="#9ca3af" font-weight="600">2025</text>
+        <text x="661" y="174" text-anchor="middle" font-size="8" fill="#9ca3af" font-weight="600">2026</text>
+        <!-- Separator line 2025/2026 -->
+        <line x1="557" y1="140" x2="557" y2="172" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="3 2"/>
+        <!-- Drill hint -->
+        <text x="56" y="179" font-size="8" fill="#9ca3af">Click any bar → Payout statement detail (CSV / PDF export)</text>
+      </svg>
+      <!-- Paginated payout table -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Period <span class="sort-icon">↕</span></th>
+            <th>Amount <span class="sort-icon">↕</span></th>
+            <th>Status <span class="sort-icon">↕</span></th>
+            <th>Disbursed Date <span class="sort-icon">↕</span></th>
+            <th>Cadence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Apr 2026</td>
+            <td><strong>€18,240</strong></td>
+            <td><span class="status-badge upcoming">● Upcoming</span></td>
+            <td>30 Apr 2026</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Mar 2026</td>
+            <td><strong>€21,580</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>31 Mar 2026</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Feb 2026</td>
+            <td><strong>€19,100</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>28 Feb 2026</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Jan 2026</td>
+            <td><strong>€17,450</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>31 Jan 2026</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Dec 2025</td>
+            <td><strong>€22,300</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>31 Dec 2025</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Nov 2025</td>
+            <td><strong>€20,860</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>30 Nov 2025</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Oct 2025</td>
+            <td><strong>€16,920</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>31 Oct 2025</td>
+            <td>Monthly</td>
+          </tr>
+          <tr>
+            <td>Sep 2025</td>
+            <td><strong>€18,650</strong></td>
+            <td><span class="status-badge disbursed">● Disbursed</span></td>
+            <td>30 Sep 2025</td>
+            <td>Monthly</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span style="font-size:11px; color:#6b7280;">Showing 8 of 14 payouts · Full history only (no projected future payouts beyond next scheduled)</span>
+      <div class="pagination">
+        <button disabled>‹ Prev</button>
+        <span>Page 1 of 2</span>
+        <button>Next ›</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ── Page-level footer ── -->
+<footer class="page-footer">
+  <div class="fx-footer-note">
+    Historical exchange rates applied — all amounts converted using the FX rate locked at each payment's creation date. Amounts displayed in provider currency (EUR).
+  </div>
+  <div>FR-014 Screen 4 · Finance &amp; Payouts</div>
+</footer>
+
+</body>
+</html>

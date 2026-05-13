@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 8: Provider Performance &amp; Engagement (Admin)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #1a1d23;
+      border-bottom: 1px solid #2d3240;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo { font-weight: 700; font-size: 15px; color: #fff; letter-spacing: -0.3px; }
+    .top-nav .logo span { color: #7c8cf8; }
+    .top-nav .nav-items { display: flex; gap: 4px; }
+    .top-nav .nav-item {
+      padding: 6px 12px; border-radius: 6px; color: #9ca3af; cursor: pointer; font-size: 13px;
+    }
+    .top-nav .nav-item.active { background: rgba(124,140,248,0.15); color: #a5b4fc; font-weight: 600; }
+    .top-nav .nav-item:hover:not(.active) { background: rgba(255,255,255,0.06); color: #e5e7eb; }
+    .top-nav .admin-badge {
+      margin-left: auto;
+      background: rgba(124,140,248,0.18);
+      color: #a5b4fc;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; letter-spacing: 0.3px;
+    }
+
+    /* ── Sub-nav (admin analytics tabs) ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .sub-nav .tab {
+      padding: 12px 16px; font-size: 12.5px; color: #6b7280;
+      cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    .sub-nav .tab.active { color: #3b4ef8; border-bottom-color: #3b4ef8; font-weight: 600; }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 18px; font-weight: 700; color: #1a1d23; }
+    .page-header p { font-size: 12px; color: #6b7280; margin-top: 3px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 16px;
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; color: #6b7280; font-weight: 500; }
+    .filter-select {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 7px;
+      cursor: pointer; font-size: 12px; color: #374151;
+    }
+    .filter-select .caret { color: #9ca3af; font-size: 10px; }
+    .filter-select .tag {
+      background: #e8f0fe; color: #3b4ef8;
+      border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 600;
+    }
+    .filter-select .tag-red { background: #fef2f2; color: #dc2626; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 600; }
+    .filter-divider { width: 1px; height: 20px; background: #e2e5ea; margin: 0 4px; }
+
+    /* ── Section tabs (A / B) ── */
+    .section-tabs-bar {
+      padding: 0 24px;
+      margin-bottom: 16px;
+      display: flex; gap: 0;
+      border-bottom: 2px solid #e2e5ea;
+    }
+    .section-tab {
+      padding: 10px 20px; font-size: 13px; font-weight: 500; color: #6b7280;
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+      transition: color .15s;
+    }
+    .section-tab.active { color: #3b4ef8; border-bottom-color: #3b4ef8; font-weight: 700; }
+    .section-tab:hover:not(.active) { color: #374151; }
+    .section-tab .badge {
+      display: inline-block; margin-left: 6px;
+      padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600;
+    }
+    .section-tab.active .badge { background: #e8f0fe; color: #3b4ef8; }
+    .section-tab:not(.active) .badge { background: #f3f4f6; color: #9ca3af; }
+
+    /* ── Tab panels ── */
+    .tab-panel { display: none; padding: 0 24px 32px; }
+    .tab-panel.active { display: block; }
+
+    /* ── Widget card ── */
+    .widget {
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 10px;
+      overflow: hidden; margin-bottom: 16px;
+    }
+    .widget-header {
+      padding: 14px 18px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .widget-title { font-size: 13px; font-weight: 600; color: #1a1d23; }
+    .widget-subtitle { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+    .widget-body { padding: 16px 18px; }
+    .drill-hint {
+      font-size: 10.5px; color: #9ca3af;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .drill-hint::before { content: '↗'; font-size: 11px; }
+
+    /* ── Sortable table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 9px 12px; text-align: left;
+      font-size: 11px; font-weight: 600; color: #6b7280;
+      background: #f8f9fb; border-bottom: 1px solid #e2e5ea;
+      white-space: nowrap; cursor: pointer; user-select: none;
+    }
+    .data-table thead th:hover { color: #374151; }
+    .data-table thead th .sort-icon { color: #d1d5db; margin-left: 4px; font-size: 10px; }
+    .data-table thead th.sort-asc .sort-icon::after { content: '↑'; color: #3b4ef8; }
+    .data-table thead th.sort-desc .sort-icon::after { content: '↓'; color: #3b4ef8; }
+    .data-table thead th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: '↕'; }
+    .data-table tbody tr {
+      border-bottom: 1px solid #f0f2f5; cursor: pointer; transition: background .1s;
+    }
+    .data-table tbody tr:hover { background: #f8f9fb; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 11px 12px; font-size: 12px; color: #374151; vertical-align: middle; }
+
+    /* ── Provider cell ── */
+    .provider-cell { display: flex; align-items: center; gap: 8px; }
+    .provider-avatar {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: linear-gradient(135deg, #c7d2fe, #818cf8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .provider-name { font-weight: 600; color: #1a1d23; font-size: 12.5px; }
+    .provider-country { font-size: 11px; color: #6b7280; }
+    .country-flag { font-size: 14px; }
+
+    /* ── TTFQ badge ── */
+    .ttfq-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 8px; border-radius: 5px; font-size: 11.5px; font-weight: 600;
+    }
+    .ttfq-badge .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .ttfq-green { background: #ecfdf5; color: #059669; }
+    .ttfq-green .dot { background: #10b981; }
+    .ttfq-amber { background: #fffbeb; color: #d97706; }
+    .ttfq-amber .dot { background: #f59e0b; }
+    .ttfq-red { background: #fef2f2; color: #dc2626; }
+    .ttfq-red .dot { background: #ef4444; }
+
+    /* ── Status badge ── */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600;
+    }
+    .status-green { background: #ecfdf5; color: #059669; }
+    .status-amber { background: #fffbeb; color: #d97706; }
+    .status-red { background: #fef2f2; color: #dc2626; }
+
+    /* ── Engagement status badge ── */
+    .eng-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600;
+    }
+    .eng-active { background: #ecfdf5; color: #059669; }
+    .eng-atrisk { background: #fffbeb; color: #d97706; }
+    .eng-dormant { background: #fef2f2; color: #dc2626; }
+
+    /* ── Star rating ── */
+    .star-rating { color: #f59e0b; font-size: 12px; letter-spacing: 1px; }
+    .star-rating span { color: #6b7280; font-size: 11px; margin-left: 3px; }
+
+    /* ── Variance cell ── */
+    .variance-pos { color: #10b981; font-weight: 600; }
+    .variance-neg { color: #ef4444; font-weight: 600; }
+    .variance-neutral { color: #6b7280; }
+
+    /* ── Table footer (pagination) ── */
+    .table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-top: 1px solid #f0f2f5;
+      font-size: 11.5px; color: #6b7280;
+    }
+    .pagination { display: flex; gap: 4px; }
+    .page-btn {
+      min-width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; border: 1px solid #e2e5ea; background: #fff;
+      cursor: pointer; font-size: 12px; color: #374151;
+    }
+    .page-btn.active { background: #3b4ef8; color: #fff; border-color: #3b4ef8; font-weight: 600; }
+    .page-btn:hover:not(.active) { background: #f8f9fb; }
+
+    /* ── Scatter plot (SVG-based) ── */
+    .scatter-wrap { position: relative; }
+    .scatter-svg { width: 100%; display: block; }
+
+    /* ── 2-col grid ── */
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── KPI tiles row ── */
+    .tile-grid-3 {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    }
+    @media (max-width: 900px) { .tile-grid-3 { grid-template-columns: 1fr 1fr; } }
+
+    .kpi-tile {
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 10px;
+      padding: 18px; cursor: pointer; transition: box-shadow .15s;
+    }
+    .kpi-tile:hover { box-shadow: 0 2px 10px rgba(0,0,0,.07); }
+    .kpi-tile .kpi-label { font-size: 11.5px; color: #6b7280; font-weight: 500; margin-bottom: 8px; }
+    .kpi-tile .kpi-value { font-size: 32px; font-weight: 700; line-height: 1; }
+    .kpi-tile .kpi-sub { font-size: 11px; color: #6b7280; margin-top: 6px; }
+    .kpi-tile .tap-hint {
+      font-size: 10px; color: #9ca3af; margin-top: 10px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .kpi-tile .tap-hint::before { content: '↗'; }
+
+    .kpi-tile-active .kpi-value { color: #059669; }
+    .kpi-tile-atrisk .kpi-value { color: #d97706; }
+    .kpi-tile-dormant .kpi-value { color: #dc2626; }
+    .kpi-tile-active { border-left: 3px solid #10b981; }
+    .kpi-tile-atrisk { border-left: 3px solid #f59e0b; }
+    .kpi-tile-dormant { border-left: 3px solid #ef4444; }
+
+    /* ── Line chart placeholder ── */
+    .chart-area {
+      width: 100%; border-radius: 8px; overflow: hidden;
+      background: #f8f9fb; position: relative;
+    }
+    .chart-svg { width: 100%; display: block; }
+
+    /* ── Axis labels ── */
+    .axis-x-label, .axis-y-label {
+      font-size: 10px; fill: #9ca3af;
+    }
+
+    /* ── Legend ── */
+    .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #374151; }
+    .legend-line { width: 20px; height: 2px; border-radius: 1px; }
+    .legend-dash { width: 20px; height: 0; border-top: 2px dashed; }
+
+    /* ── Widget toolbar ── */
+    .widget-toolbar { display: flex; gap: 8px; align-items: center; }
+    .toolbar-btn {
+      padding: 5px 10px; border-radius: 5px; border: 1px solid #e2e5ea;
+      background: #fff; cursor: pointer; font-size: 11.5px; color: #374151;
+    }
+    .toolbar-btn.active { background: #e8f0fe; color: #3b4ef8; border-color: #c7d2fe; font-weight: 600; }
+    .toolbar-btn:hover:not(.active) { background: #f8f9fb; }
+
+    /* ── Section description ── */
+    .section-desc {
+      font-size: 12px; color: #6b7280; margin-bottom: 16px; line-height: 1.5;
+    }
+
+    /* ── Quadrant labels ── */
+    .quadrant-label {
+      font-size: 10px; fill: #9ca3af; font-style: italic;
+    }
+
+    /* ── Stale banner ── */
+    .stale-banner {
+      display: flex; align-items: center; gap: 8px;
+      background: #fffbeb; border: 1px solid #fde68a; border-radius: 7px;
+      padding: 7px 14px; font-size: 11.5px; color: #92400e;
+      margin: 0 24px 8px;
+    }
+    .stale-banner .dot { width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; }
+
+    /* ── Skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f2f5 25%, #e8eaed 50%, #f0f2f5 75%);
+      background-size: 400% 100%;
+      animation: shimmer 1.6s infinite; border-radius: 6px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* ── Last active time ── */
+    .last-active-fresh { color: #059669; font-weight: 600; }
+    .last-active-warn { color: #d97706; font-weight: 600; }
+    .last-active-old { color: #dc2626; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top nav ── -->
+<nav class="top-nav">
+  <div class="logo">hair<span>line</span></div>
+  <div class="nav-items">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Providers</div>
+    <div class="nav-item">Patients</div>
+    <div class="nav-item">Inquiries</div>
+    <div class="nav-item active">Analytics</div>
+    <div class="nav-item">Finance</div>
+    <div class="nav-item">Settings</div>
+  </div>
+  <div class="admin-badge">ADMIN</div>
+</nav>
+
+<!-- ── Sub-nav (admin analytics screens) ── -->
+<div class="sub-nav">
+  <div class="tab">Platform Overview</div>
+  <div class="tab active">Provider Performance</div>
+  <div class="tab">Patient Acquisition</div>
+  <div class="tab">Geographic Intelligence</div>
+  <div class="tab">Treatment Outcomes</div>
+  <div class="tab">Financial Health</div>
+  <div class="tab">Pricing Intelligence</div>
+</div>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>Provider Performance &amp; Engagement</h1>
+    <p>Monitor conversion quality and activity levels across all providers · Last updated 3 min ago</p>
+  </div>
+</div>
+
+<!-- ── Filter bar ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filters:</span>
+
+  <div class="filter-select">
+    📅 Last 4 weeks <span class="caret">▾</span>
+  </div>
+
+  <div class="filter-select">
+    🌍 All Countries <span class="caret">▾</span>
+  </div>
+
+  <div class="filter-divider"></div>
+
+  <div class="filter-select">
+    TTFQ Health: <span class="tag-red">Red</span> <span class="caret">▾</span>
+  </div>
+
+  <div class="filter-select">
+    Engagement: All <span class="caret">▾</span>
+  </div>
+</div>
+
+<!-- ── Section tabs (A: Performance / B: Engagement) ── -->
+<div class="section-tabs-bar">
+  <div class="section-tab active" onclick="switchTab('perf', this)">
+    Section A — Performance
+    <span class="badge">2 widgets</span>
+  </div>
+  <div class="section-tab" onclick="switchTab('eng', this)">
+    Section B — Engagement
+    <span class="badge">3 widgets</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB A: PERFORMANCE
+════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-perf">
+
+  <p class="section-desc">
+    How effectively are providers converting inquiries to bookings? Identify underperformers by TTFQ and conversion rate.
+  </p>
+
+  <!-- Widget 1: Provider League Table -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 1 — Provider League Table</div>
+        <div class="widget-subtitle">Sortable by any column · Default: Red TTFQ first, then conversion rate ascending · 20 per page</div>
+      </div>
+      <div class="drill-hint">Click row → provider analytics (admin read-only view)</div>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Provider <span class="sort-icon"></span></th>
+            <th class="sort-desc">TTFQ p50 <span class="sort-icon"></span></th>
+            <th>Conversion Rate <span class="sort-icon"></span></th>
+            <th>Quote Acceptance Rate <span class="sort-icon"></span></th>
+            <th>Avg Overall Rating <span class="sort-icon"></span></th>
+            <th>Quote Response Rate <span class="sort-icon"></span></th>
+            <th>vs. Platform <span class="sort-icon"></span></th>
+            <th>Status <span class="sort-icon"></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Red tier providers first -->
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar">IH</div>
+                <div>
+                  <div class="provider-name">Istanbul Hair Clinic</div>
+                  <div class="provider-country"><span class="country-flag">🇹🇷</span> Turkey</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-red"><span class="dot"></span>4h 32m</span></td>
+            <td>12.4%</td>
+            <td>38.1%</td>
+            <td><span class="star-rating">★★★☆☆<span>3.2</span></span></td>
+            <td>54.0%</td>
+            <td><span class="variance-neg">−18.6%</span></td>
+            <td><span class="status-badge status-red">Red</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fca5a5,#f87171);">BH</div>
+                <div>
+                  <div class="provider-name">Berlin Hair Institute</div>
+                  <div class="provider-country"><span class="country-flag">🇩🇪</span> Germany</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-red"><span class="dot"></span>5h 10m</span></td>
+            <td>9.8%</td>
+            <td>29.5%</td>
+            <td><span class="star-rating">★★★☆☆<span>3.0</span></span></td>
+            <td>48.2%</td>
+            <td><span class="variance-neg">−21.2%</span></td>
+            <td><span class="status-badge status-red">Red</span></td>
+          </tr>
+          <!-- Amber tier -->
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fcd34d,#f59e0b);">AC</div>
+                <div>
+                  <div class="provider-name">Athens Care Center</div>
+                  <div class="provider-country"><span class="country-flag">🇬🇷</span> Greece</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-amber"><span class="dot"></span>2h 14m</span></td>
+            <td>24.1%</td>
+            <td>61.3%</td>
+            <td><span class="star-rating">★★★★☆<span>3.9</span></span></td>
+            <td>76.5%</td>
+            <td><span class="variance-neg">−6.9%</span></td>
+            <td><span class="status-badge status-amber">Amber</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fcd34d,#f59e0b);">DH</div>
+                <div>
+                  <div class="provider-name">Dubai Hair Solutions</div>
+                  <div class="provider-country"><span class="country-flag">🇦🇪</span> UAE</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-amber"><span class="dot"></span>1h 58m</span></td>
+            <td>27.3%</td>
+            <td>58.8%</td>
+            <td><span class="star-rating">★★★★☆<span>4.1</span></span></td>
+            <td>81.0%</td>
+            <td><span class="variance-neg">−3.7%</span></td>
+            <td><span class="status-badge status-amber">Amber</span></td>
+          </tr>
+          <!-- Green tier -->
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#6ee7b7,#10b981);">LH</div>
+                <div>
+                  <div class="provider-name">London Hair Experts</div>
+                  <div class="provider-country"><span class="country-flag">🇬🇧</span> United Kingdom</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-green"><span class="dot"></span>45m</span></td>
+            <td>38.7%</td>
+            <td>74.2%</td>
+            <td><span class="star-rating">★★★★★<span>4.7</span></span></td>
+            <td>92.3%</td>
+            <td><span class="variance-pos">+7.7%</span></td>
+            <td><span class="status-badge status-green">Green</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#6ee7b7,#10b981);">MA</div>
+                <div>
+                  <div class="provider-name">Madrid Advanced Clinic</div>
+                  <div class="provider-country"><span class="country-flag">🇪🇸</span> Spain</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-green"><span class="dot"></span>52m</span></td>
+            <td>35.2%</td>
+            <td>70.8%</td>
+            <td><span class="star-rating">★★★★★<span>4.5</span></span></td>
+            <td>88.7%</td>
+            <td><span class="variance-pos">+4.2%</span></td>
+            <td><span class="status-badge status-green">Green</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#6ee7b7,#10b981);">PA</div>
+                <div>
+                  <div class="provider-name">Prague Advanced Hair</div>
+                  <div class="provider-country"><span class="country-flag">🇨🇿</span> Czech Republic</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ttfq-badge ttfq-green"><span class="dot"></span>1h 08m</span></td>
+            <td>31.0%</td>
+            <td>67.4%</td>
+            <td><span class="star-rating">★★★★☆<span>4.3</span></span></td>
+            <td>85.1%</td>
+            <td><span class="variance-pos">+0.0%</span></td>
+            <td><span class="status-badge status-green">Green</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span>Showing 7 of 84 providers</span>
+      <div class="pagination">
+        <div class="page-btn active">1</div>
+        <div class="page-btn">2</div>
+        <div class="page-btn">3</div>
+        <div class="page-btn">…</div>
+        <div class="page-btn">5</div>
+        <div class="page-btn">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget 2: Performance Distribution Scatter Plot -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 2 — Performance Distribution</div>
+        <div class="widget-subtitle">TTFQ p50 vs. Conversion Rate · One point per provider (anonymised) · Click point → provider detail</div>
+      </div>
+      <div class="drill-hint">Click point → provider detail</div>
+    </div>
+    <div class="widget-body">
+      <div class="scatter-wrap">
+        <svg class="scatter-svg" viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background zones -->
+          <!-- Quadrant shading -->
+          <rect x="60" y="20" width="320" height="150" fill="#f0fdf4" opacity="0.6" rx="4"/>
+          <rect x="380" y="20" width="340" height="150" fill="#fff7ed" opacity="0.5" rx="4"/>
+          <rect x="60" y="170" width="320" height="130" fill="#fff7ed" opacity="0.5" rx="4"/>
+          <rect x="380" y="170" width="340" height="130" fill="#fef2f2" opacity="0.6" rx="4"/>
+
+          <!-- Grid lines -->
+          <line x1="60" y1="20" x2="60" y2="300" stroke="#e2e5ea" stroke-width="1"/>
+          <line x1="60" y1="300" x2="720" y2="300" stroke="#e2e5ea" stroke-width="1"/>
+          <line x1="60" y1="170" x2="720" y2="170" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="380" y1="20" x2="380" y2="300" stroke="#e2e5ea" stroke-width="1" stroke-dasharray="4,3"/>
+
+          <!-- Reference lines (platform medians) -->
+          <line x1="280" y1="20" x2="280" y2="300" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <line x1="60" y1="205" x2="720" y2="205" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+          <!-- Reference line labels -->
+          <text x="282" y="16" font-size="10" fill="#6b7280">Platform median TTFQ</text>
+          <text x="62" y="200" font-size="10" fill="#6b7280">Platform median conversion</text>
+
+          <!-- Quadrant labels -->
+          <text x="72" y="40" class="quadrant-label" font-size="11" fill="#059669">Fast + High conversion (Ideal)</text>
+          <text x="390" y="40" class="quadrant-label" font-size="11" fill="#d97706">Slow + High conversion</text>
+          <text x="72" y="292" class="quadrant-label" font-size="11" fill="#d97706">Fast + Low conversion</text>
+          <text x="390" y="292" class="quadrant-label" font-size="11" fill="#dc2626">Slow + Low conversion (Support needed)</text>
+
+          <!-- Y axis label -->
+          <text x="14" y="175" font-size="11" fill="#6b7280" transform="rotate(-90, 14, 175)">Conversion Rate (%)</text>
+
+          <!-- X axis label -->
+          <text x="380" y="325" font-size="11" fill="#6b7280" text-anchor="middle">TTFQ p50 (minutes)</text>
+
+          <!-- Y axis ticks -->
+          <text x="55" y="24" font-size="10" fill="#9ca3af" text-anchor="end">45%</text>
+          <text x="55" y="85" font-size="10" fill="#9ca3af" text-anchor="end">35%</text>
+          <text x="55" y="145" font-size="10" fill="#9ca3af" text-anchor="end">25%</text>
+          <text x="55" y="205" font-size="10" fill="#9ca3af" text-anchor="end">20%</text>
+          <text x="55" y="255" font-size="10" fill="#9ca3af" text-anchor="end">10%</text>
+          <text x="55" y="300" font-size="10" fill="#9ca3af" text-anchor="end">0%</text>
+
+          <!-- X axis ticks -->
+          <text x="60" y="315" font-size="10" fill="#9ca3af" text-anchor="middle">0</text>
+          <text x="160" y="315" font-size="10" fill="#9ca3af" text-anchor="middle">60</text>
+          <text x="280" y="315" font-size="10" fill="#9ca3af" text-anchor="middle">120</text>
+          <text x="400" y="315" font-size="10" fill="#9ca3af" text-anchor="middle">200</text>
+          <text x="550" y="315" font-size="10" fill="#9ca3af" text-anchor="middle">300</text>
+          <text x="700" y="315" font-size="10" fill="#9ca3af" text-anchor="middle">400m</text>
+
+          <!-- Data points (Green = good, Amber = medium, Red = poor) -->
+          <!-- Green tier - top-left quadrant -->
+          <circle cx="115" cy="55" r="7" fill="#10b981" opacity="0.85" cursor="pointer"/>
+          <text x="124" y="52" font-size="10" fill="#374151">Provider A</text>
+
+          <circle cx="145" cy="80" r="7" fill="#10b981" opacity="0.85" cursor="pointer"/>
+          <text x="154" y="77" font-size="10" fill="#374151">Provider B</text>
+
+          <circle cx="175" cy="95" r="7" fill="#10b981" opacity="0.85" cursor="pointer"/>
+
+          <circle cx="200" cy="70" r="7" fill="#10b981" opacity="0.85" cursor="pointer"/>
+          <text x="209" y="67" font-size="10" fill="#374151">Provider C</text>
+
+          <circle cx="230" cy="115" r="7" fill="#10b981" opacity="0.85" cursor="pointer"/>
+
+          <!-- Amber tier - middle -->
+          <circle cx="305" cy="130" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+          <text x="314" y="127" font-size="10" fill="#374151">Provider D</text>
+
+          <circle cx="340" cy="150" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+
+          <circle cx="260" cy="175" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+          <text x="269" y="172" font-size="10" fill="#374151">Provider E</text>
+
+          <circle cx="420" cy="135" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+
+          <circle cx="460" cy="160" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+          <text x="469" y="157" font-size="10" fill="#374151">Provider F</text>
+
+          <!-- Red tier - bottom-right quadrant -->
+          <circle cx="490" cy="245" r="7" fill="#ef4444" opacity="0.85" cursor="pointer"/>
+          <text x="499" y="242" font-size="10" fill="#374151">Provider G</text>
+
+          <circle cx="580" cy="260" r="7" fill="#ef4444" opacity="0.85" cursor="pointer"/>
+          <text x="589" y="257" font-size="10" fill="#374151">Provider H</text>
+
+          <circle cx="620" cy="240" r="7" fill="#ef4444" opacity="0.85" cursor="pointer"/>
+
+          <circle cx="660" cy="270" r="7" fill="#ef4444" opacity="0.85" cursor="pointer"/>
+          <text x="669" y="267" font-size="10" fill="#374151">Provider I</text>
+
+          <!-- Borderline cases -->
+          <circle cx="350" cy="200" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+          <circle cx="155" cy="220" r="7" fill="#f59e0b" opacity="0.85" cursor="pointer"/>
+        </svg>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-line" style="background:#10b981;"></div> Green tier
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#f59e0b;"></div> Amber tier
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#ef4444;"></div> Red tier
+        </div>
+        <div class="legend-item">
+          <div class="legend-dash" style="border-color:#6b7280;"></div> Platform median
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-perf -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     TAB B: ENGAGEMENT
+════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-eng">
+
+  <p class="section-desc">
+    Are providers actively working? Track last activity, quote submission frequency, and identify dormant providers before they churn.
+  </p>
+
+  <!-- Widget 5: Engagement Health Summary (KPI tiles — shown at top for quick scan) -->
+  <div class="tile-grid-3" style="margin-bottom: 16px;">
+    <div class="kpi-tile kpi-tile-active">
+      <div class="kpi-label">Active Providers</div>
+      <div class="kpi-value">61</div>
+      <div class="kpi-sub">Activity in last 7 days</div>
+      <div class="tap-hint">→ Filter table to Active</div>
+    </div>
+    <div class="kpi-tile kpi-tile-atrisk">
+      <div class="kpi-label">At-Risk Providers</div>
+      <div class="kpi-value">14</div>
+      <div class="kpi-sub">7–30 days no activity</div>
+      <div class="tap-hint">→ Filter table to At Risk</div>
+    </div>
+    <div class="kpi-tile kpi-tile-dormant">
+      <div class="kpi-label">Dormant Providers</div>
+      <div class="kpi-value">9</div>
+      <div class="kpi-sub">&gt;30 days no activity</div>
+      <div class="tap-hint">→ Filter table to Dormant</div>
+    </div>
+  </div>
+
+  <!-- Widget 3: Provider Activity Table -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 3 — Provider Activity Table</div>
+        <div class="widget-subtitle">
+          Last active = MAX(action_at) from provider_activity_logs · Thresholds: Active &lt;7d · At Risk 7–30d · Dormant &gt;30d (admin-configurable)
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <div class="toolbar-btn active">All</div>
+        <div class="toolbar-btn">Active</div>
+        <div class="toolbar-btn">At Risk</div>
+        <div class="toolbar-btn">Dormant</div>
+        <div class="drill-hint" style="margin-left:8px;">Click row → provider detail (FR-015)</div>
+      </div>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Provider <span class="sort-icon"></span></th>
+            <th>Last Active <span class="sort-icon"></span></th>
+            <th>Quotes This Month <span class="sort-icon"></span></th>
+            <th>Inquiry Response Rate <span class="sort-icon"></span></th>
+            <th>Status <span class="sort-icon"></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Active providers -->
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#6ee7b7,#10b981);">LH</div>
+                <div>
+                  <div class="provider-name">London Hair Experts</div>
+                  <div class="provider-country"><span class="country-flag">🇬🇧</span> United Kingdom</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-fresh">2 hours ago</span></td>
+            <td>47</td>
+            <td>92.3%</td>
+            <td><span class="eng-badge eng-active">Active</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#6ee7b7,#10b981);">MA</div>
+                <div>
+                  <div class="provider-name">Madrid Advanced Clinic</div>
+                  <div class="provider-country"><span class="country-flag">🇪🇸</span> Spain</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-fresh">Yesterday</span></td>
+            <td>38</td>
+            <td>88.7%</td>
+            <td><span class="eng-badge eng-active">Active</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#c7d2fe,#818cf8);">IH</div>
+                <div>
+                  <div class="provider-name">Istanbul Hair Clinic</div>
+                  <div class="provider-country"><span class="country-flag">🇹🇷</span> Turkey</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-fresh">3 days ago</span></td>
+            <td>22</td>
+            <td>54.0%</td>
+            <td><span class="eng-badge eng-active">Active</span></td>
+          </tr>
+          <!-- At Risk -->
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fcd34d,#f59e0b);">AC</div>
+                <div>
+                  <div class="provider-name">Athens Care Center</div>
+                  <div class="provider-country"><span class="country-flag">🇬🇷</span> Greece</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-warn">12 days ago</span></td>
+            <td>4</td>
+            <td>31.5%</td>
+            <td><span class="eng-badge eng-atrisk">At Risk</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fcd34d,#f59e0b);">PA</div>
+                <div>
+                  <div class="provider-name">Prague Advanced Hair</div>
+                  <div class="provider-country"><span class="country-flag">🇨🇿</span> Czech Republic</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-warn">19 days ago</span></td>
+            <td>2</td>
+            <td>26.8%</td>
+            <td><span class="eng-badge eng-atrisk">At Risk</span></td>
+          </tr>
+          <!-- Dormant -->
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fca5a5,#f87171);">BH</div>
+                <div>
+                  <div class="provider-name">Berlin Hair Institute</div>
+                  <div class="provider-country"><span class="country-flag">🇩🇪</span> Germany</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-old">48 days ago</span></td>
+            <td>0</td>
+            <td>0.0% <span style="font-size:10px;color:#9ca3af;">(no quotes)</span></td>
+            <td><span class="eng-badge eng-dormant">Dormant</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="provider-cell">
+                <div class="provider-avatar" style="background: linear-gradient(135deg,#fca5a5,#f87171);">DH</div>
+                <div>
+                  <div class="provider-name">Dubai Hair Solutions</div>
+                  <div class="provider-country"><span class="country-flag">🇦🇪</span> UAE</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="last-active-old">63 days ago</span></td>
+            <td>0</td>
+            <td>0.0% <span style="font-size:10px;color:#9ca3af;">(no quotes)</span></td>
+            <td><span class="eng-badge eng-dormant">Dormant</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span>Showing 7 of 84 providers · <span style="color:#9ca3af;font-size:11px;">Inquiry response rate = quotes submitted ÷ inquiries distributed (last 30d)</span></span>
+      <div class="pagination">
+        <div class="page-btn active">1</div>
+        <div class="page-btn">2</div>
+        <div class="page-btn">3</div>
+        <div class="page-btn">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget 4: New Provider Ramp -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 4 — New Provider Ramp</div>
+        <div class="widget-subtitle">Cumulative quotes submitted vs. days since onboarding (0–90 days) · Providers onboarded in selected period</div>
+      </div>
+      <div class="drill-hint">Identify new providers struggling to ramp up</div>
+    </div>
+    <div class="widget-body">
+      <svg class="chart-svg" viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- Axes -->
+        <line x1="60" y1="20" x2="60" y2="220" stroke="#e2e5ea" stroke-width="1"/>
+        <line x1="60" y1="220" x2="700" y2="220" stroke="#e2e5ea" stroke-width="1"/>
+
+        <!-- Grid lines -->
+        <line x1="60" y1="170" x2="700" y2="170" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="60" y1="120" x2="700" y2="120" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="60" y1="70" x2="700" y2="70" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- Y axis ticks -->
+        <text x="55" y="24" font-size="10" fill="#9ca3af" text-anchor="end">50</text>
+        <text x="55" y="74" font-size="10" fill="#9ca3af" text-anchor="end">40</text>
+        <text x="55" y="124" font-size="10" fill="#9ca3af" text-anchor="end">30</text>
+        <text x="55" y="174" font-size="10" fill="#9ca3af" text-anchor="end">20</text>
+        <text x="55" y="220" font-size="10" fill="#9ca3af" text-anchor="end">0</text>
+
+        <!-- X axis ticks -->
+        <text x="60" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">0</text>
+        <text x="135" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">15</text>
+        <text x="210" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">30</text>
+        <text x="285" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">45</text>
+        <text x="380" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">60</text>
+        <text x="540" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">75</text>
+        <text x="700" y="235" font-size="10" fill="#9ca3af" text-anchor="middle">90d</text>
+
+        <!-- Axis labels -->
+        <text x="380" y="252" font-size="11" fill="#6b7280" text-anchor="middle">Days since onboarding</text>
+        <text x="14" y="130" font-size="11" fill="#6b7280" transform="rotate(-90, 14, 130)">Cumulative quotes</text>
+
+        <!-- Platform average ramp (dashed grey reference line) -->
+        <polyline points="60,220 135,195 210,175 285,155 380,130 540,100 700,80"
+          fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="602" y="72" font-size="10" fill="#9ca3af">Platform avg</text>
+
+        <!-- New provider ramp lines (anonymised, individual) -->
+        <!-- Provider A (good ramp - above average) -->
+        <polyline points="60,220 135,185 210,155 285,125 380,95 540,65 700,45"
+          fill="none" stroke="#10b981" stroke-width="2" opacity="0.8"/>
+        <circle cx="700" cy="45" r="4" fill="#10b981"/>
+        <text x="706" y="48" font-size="10" fill="#10b981">A</text>
+
+        <!-- Provider B (tracking average) -->
+        <polyline points="60,220 135,196 210,172 285,148 380,122 540,96 700,78"
+          fill="none" stroke="#3b4ef8" stroke-width="2" opacity="0.8"/>
+        <circle cx="700" cy="78" r="4" fill="#3b4ef8"/>
+        <text x="706" y="81" font-size="10" fill="#3b4ef8">B</text>
+
+        <!-- Provider C (struggling - only onboarded 40 days, below average) -->
+        <polyline points="60,220 135,215 210,208 285,200"
+          fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.8"/>
+        <circle cx="285" cy="200" r="4" fill="#f59e0b"/>
+        <text x="291" y="198" font-size="10" fill="#f59e0b">C (day 45)</text>
+
+        <!-- Provider D (very slow ramp) -->
+        <polyline points="60,220 135,218 210,214 285,210 380,206"
+          fill="none" stroke="#ef4444" stroke-width="2" opacity="0.8"/>
+        <circle cx="380" cy="206" r="4" fill="#ef4444"/>
+        <text x="386" y="204" font-size="10" fill="#ef4444">D (struggling)</text>
+
+        <!-- Provider E (recently onboarded, on track) -->
+        <polyline points="60,220 135,193 210,162"
+          fill="none" stroke="#10b981" stroke-width="2" opacity="0.6" stroke-dasharray="3,2"/>
+        <circle cx="210" cy="162" r="4" fill="#10b981"/>
+        <text x="216" y="160" font-size="10" fill="#10b981">E (day 30)</text>
+      </svg>
+      <div class="chart-legend" style="margin-top:8px;">
+        <div class="legend-item">
+          <div class="legend-line" style="background:#10b981;"></div> Above avg ramp
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#3b4ef8;"></div> On-track ramp
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#f59e0b;"></div> Below avg
+        </div>
+        <div class="legend-item">
+          <div class="legend-line" style="background:#ef4444;"></div> Struggling
+        </div>
+        <div class="legend-item">
+          <div class="legend-dash" style="border-color:#9ca3af;"></div> Platform avg ramp
+        </div>
+      </div>
+      <div style="font-size:11px; color:#9ca3af; margin-top:10px;">
+        Data source: providers.created_at within selected period · quotes.created_at − providers.created_at for days-since-onboarding offset
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-eng -->
+
+
+<!-- ── Tab switching script ── -->
+<script>
+  function switchTab(panel, el) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + panel).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

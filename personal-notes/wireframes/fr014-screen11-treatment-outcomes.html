@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 11: Treatment Outcomes (Admin)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #1a1d23;
+      border-bottom: 1px solid #2d3240;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo { font-weight: 700; font-size: 15px; color: #fff; letter-spacing: -0.3px; }
+    .top-nav .logo span { color: #7c8cf8; }
+    .top-nav .nav-items { display: flex; gap: 4px; }
+    .top-nav .nav-item {
+      padding: 6px 12px; border-radius: 6px; color: #9ca3af; cursor: pointer; font-size: 13px;
+    }
+    .top-nav .nav-item.active { background: rgba(124,140,248,0.15); color: #a5b4fc; font-weight: 600; }
+    .top-nav .nav-item:hover:not(.active) { background: rgba(255,255,255,0.06); color: #e5e7eb; }
+    .top-nav .admin-badge {
+      margin-left: auto;
+      background: rgba(124,140,248,0.18);
+      color: #a5b4fc;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; letter-spacing: 0.3px;
+    }
+
+    /* ── Sub-nav ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .sub-nav .tab {
+      padding: 12px 16px; font-size: 12.5px; color: #6b7280;
+      cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    .sub-nav .tab.active { color: #3b4ef8; border-bottom-color: #3b4ef8; font-weight: 600; }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 18px; font-weight: 700; color: #1a1d23; }
+    .page-header p { font-size: 12px; color: #6b7280; margin-top: 3px; }
+
+    /* ── Info banner ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 7px;
+      padding: 9px 14px; font-size: 11.5px; color: #3730a3;
+      margin: 0 24px 14px;
+      line-height: 1.5;
+    }
+    .info-banner .icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 16px;
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; color: #6b7280; font-weight: 500; }
+    .filter-select {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 7px;
+      cursor: pointer; font-size: 12px; color: #374151;
+    }
+    .filter-select .caret { color: #9ca3af; font-size: 10px; }
+    .filter-divider { width: 1px; height: 20px; background: #e2e5ea; margin: 0 4px; }
+
+    /* ── Page content ── */
+    .page-content { padding: 0 24px 40px; }
+
+    /* ── Widget card ── */
+    .widget {
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 10px;
+      overflow: hidden; margin-bottom: 16px;
+    }
+    .widget-header {
+      padding: 14px 18px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .widget-title { font-size: 13px; font-weight: 600; color: #1a1d23; }
+    .widget-subtitle { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+    .widget-body { padding: 16px 18px; }
+    .drill-hint {
+      font-size: 10.5px; color: #9ca3af;
+      display: flex; align-items: center; gap: 4px;
+      flex-shrink: 0;
+    }
+    .drill-hint::before { content: '↗'; font-size: 11px; }
+
+    /* ── Chart SVG ── */
+    .chart-svg { width: 100%; display: block; }
+
+    /* ── 2-col grid ── */
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Widget toolbar ── */
+    .widget-toolbar { display: flex; gap: 8px; align-items: center; }
+    .toolbar-btn {
+      padding: 5px 10px; border-radius: 5px; border: 1px solid #e2e5ea;
+      background: #fff; cursor: pointer; font-size: 11.5px; color: #374151;
+    }
+    .toolbar-btn.active { background: #e8f0fe; color: #3b4ef8; border-color: #c7d2fe; font-weight: 600; }
+
+    /* ── Reference line legend ── */
+    .ref-line-label {
+      font-size: 10.5px; color: #6b7280; margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ref-line-dash {
+      display: inline-block; width: 18px; height: 2px;
+      border-top: 2px dashed #6b7280;
+    }
+
+    /* ── Legend row ── */
+    .legend {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 11.5px; color: #6b7280; margin-bottom: 10px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ── Source note ── */
+    .source-note {
+      font-size: 10.5px; color: #9ca3af; margin-top: 10px; line-height: 1.5;
+    }
+
+    /* ── Min sample note ── */
+    .min-sample-note {
+      font-size: 10.5px; color: #9ca3af; margin-top: 8px; font-style: italic;
+    }
+
+    /* ── KPI tiles ── */
+    .kpi-row {
+      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .kpi-tile {
+      flex: 1; min-width: 160px;
+      background: #f8f9fb; border: 1px solid #e2e5ea; border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .kpi-label { font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+    .kpi-value { font-size: 22px; font-weight: 700; color: #1a1d23; line-height: 1.1; }
+    .kpi-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .kpi-badge {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-top: 4px;
+    }
+    .kpi-badge.green { background: #dcfce7; color: #16a34a; }
+    .kpi-badge.amber { background: #fef3c7; color: #b45309; }
+    .kpi-badge.red   { background: #fee2e2; color: #dc2626; }
+
+    /* ── Inline sparkline ── */
+    .sparkline-svg { width: 100%; display: block; margin-top: 8px; }
+
+    /* ── Stacked area chart ── */
+    .area-chart-wrap { position: relative; }
+
+    /* ── Horizontal bar row ── */
+    .hbar-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 9px;
+    }
+    .hbar-label { width: 140px; font-size: 12px; color: #374151; text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hbar-track {
+      flex: 1; height: 16px; background: #f0f2f5; border-radius: 4px; overflow: hidden; position: relative;
+    }
+    .hbar-fill {
+      height: 100%; border-radius: 4px; transition: width .3s;
+    }
+    .hbar-val { font-size: 11.5px; font-weight: 600; color: #1a1d23; min-width: 32px; }
+
+    /* ── Stacked horizontal bar (for widget 6) ── */
+    .shbar-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 9px;
+    }
+    .shbar-label { width: 140px; font-size: 12px; color: #374151; text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .shbar-track {
+      flex: 1; height: 16px; background: #f0f2f5; border-radius: 4px; overflow: hidden;
+      display: flex;
+    }
+    .shbar-seg { height: 100%; }
+    .shbar-val { font-size: 11.5px; font-weight: 600; color: #1a1d23; min-width: 32px; }
+
+    /* ── Grouped bar axis labels ── */
+    .axis-label-row {
+      display: flex; gap: 6px; justify-content: flex-end;
+      font-size: 10.5px; color: #6b7280; margin-bottom: 4px;
+    }
+
+    /* ── Stale banner ── */
+    .stale-banner {
+      display: flex; align-items: center; gap: 8px;
+      background: #fffbeb; border: 1px solid #fde68a; border-radius: 7px;
+      padding: 7px 14px; font-size: 11.5px; color: #92400e;
+      margin: 0 24px 8px;
+    }
+    .stale-banner .dot { width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px; font-weight: 600; color: #9ca3af; letter-spacing: 0.6px;
+      text-transform: uppercase; margin: 20px 0 10px;
+    }
+
+    /* ── No data state ── */
+    .no-data {
+      text-align: center; padding: 32px 16px; color: #9ca3af; font-size: 12px;
+    }
+    .no-data .no-data-icon { font-size: 28px; margin-bottom: 8px; }
+
+    /* ── Data table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 9px 12px; text-align: left;
+      font-size: 11px; font-weight: 600; color: #6b7280;
+      background: #f8f9fb; border-bottom: 1px solid #e2e5ea;
+      white-space: nowrap;
+    }
+    .data-table tbody tr {
+      border-bottom: 1px solid #f0f2f5; cursor: pointer; transition: background .1s;
+    }
+    .data-table tbody tr:hover { background: #f8f9fb; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 10px 12px; font-size: 12px; color: #374151; vertical-align: middle; }
+
+    /* ── Score badge ── */
+    .score-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 600;
+    }
+    .score-star { color: #f59e0b; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top nav ── -->
+<nav class="top-nav">
+  <div class="logo">Hair<span>line</span></div>
+  <div class="nav-items">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Providers</div>
+    <div class="nav-item">Patients</div>
+    <div class="nav-item">Inquiries</div>
+    <div class="nav-item">Bookings</div>
+    <div class="nav-item active">Analytics</div>
+    <div class="nav-item">Settings</div>
+  </div>
+  <div class="admin-badge">ADMIN</div>
+</nav>
+
+<!-- ── Analytics sub-nav ── -->
+<nav class="sub-nav">
+  <div class="tab">Platform Overview</div>
+  <div class="tab">Provider Performance</div>
+  <div class="tab">Patient Acquisition</div>
+  <div class="tab">Geographic Intelligence</div>
+  <div class="tab active">Treatment Outcomes</div>
+  <div class="tab">Financial Health</div>
+  <div class="tab">Pricing Intelligence</div>
+</nav>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>Treatment Outcomes</h1>
+    <p>Operational and satisfaction-based performance across treatment types — no clinical outcomes included.</p>
+  </div>
+</div>
+
+<!-- ── Scope info banner ── -->
+<div class="info-banner">
+  <div class="icon">ℹ️</div>
+  <div>
+    <strong>Scope note:</strong> This screen covers operational completion rates, cancellation/no-show rates, booking volume trends, review sub-scores, aftercare activation, and provider specialisation. Clinical outcomes (graft survival, hair density, complication rates) are not tracked in the database and are not shown here.
+  </div>
+</div>
+
+<!-- ── Filter bar ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filters:</span>
+  <div class="filter-select">
+    Last 4 weeks <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    All Countries <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    All Providers <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    All Treatment Types <span class="caret">▾</span>
+  </div>
+</div>
+
+<!-- ── Page content ── -->
+<div class="page-content">
+
+  <!-- ── Widget 1: Treatment Completion Rate ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 1 — Treatment Completion Rate</div>
+        <div class="widget-subtitle">Completion rate = quotes reaching <code>completed</code> ÷ quotes reaching <code>confirmed</code>, per treatment type</div>
+      </div>
+      <div class="drill-hint">Click bar → admin Quotes list</div>
+    </div>
+    <div class="widget-body">
+      <div class="ref-line-label">
+        <span class="ref-line-dash"></span>
+        Platform average completion rate: 87.4%
+      </div>
+      <!-- Bar chart SVG -->
+      <svg class="chart-svg" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y axis labels -->
+        <text x="30" y="28" font-size="9" fill="#9ca3af" text-anchor="middle">100%</text>
+        <text x="30" y="70" font-size="9" fill="#9ca3af" text-anchor="middle">80%</text>
+        <text x="30" y="112" font-size="9" fill="#9ca3af" text-anchor="middle">60%</text>
+        <text x="30" y="154" font-size="9" fill="#9ca3af" text-anchor="middle">40%</text>
+        <text x="30" y="196" font-size="9" fill="#9ca3af" text-anchor="middle">20%</text>
+
+        <!-- Grid lines -->
+        <line x1="45" y1="25" x2="670" y2="25" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="67" x2="670" y2="67" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="109" x2="670" y2="109" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="151" x2="670" y2="151" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="193" x2="670" y2="193" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- Platform avg reference line (87.4% = ~18px from top of 0-100% scale) -->
+        <!-- Scale: 0%=193, 100%=25 → 87.4% = 25 + (1-0.874)*(193-25) = 25 + 0.126*168 = 25+21.2 ≈ 46 -->
+        <line x1="45" y1="46" x2="670" y2="46" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="672" y="50" font-size="9" fill="#6b7280">Avg</text>
+
+        <!-- FUE Hair Transplant: 92% -->
+        <rect x="65" y="32" width="70" height="161" rx="4" fill="#6366f1"/>
+        <text x="100" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">FUE</text>
+        <text x="100" y="27" font-size="10" fill="#6366f1" font-weight="600" text-anchor="middle">92%</text>
+
+        <!-- FUT Strip: 88% -->
+        <rect x="165" y="52" width="70" height="141" rx="4" fill="#6366f1"/>
+        <text x="200" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">FUT Strip</text>
+        <text x="200" y="47" font-size="10" fill="#6366f1" font-weight="600" text-anchor="middle">88%</text>
+
+        <!-- DHI: 90% -->
+        <rect x="265" y="42" width="70" height="151" rx="4" fill="#6366f1"/>
+        <text x="300" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">DHI</text>
+        <text x="300" y="37" font-size="10" fill="#6366f1" font-weight="600" text-anchor="middle">90%</text>
+
+        <!-- Eyebrow Transplant: 85% -->
+        <rect x="365" y="58" width="70" height="135" rx="4" fill="#818cf8"/>
+        <text x="400" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">Eyebrow</text>
+        <text x="400" y="53" font-size="10" fill="#818cf8" font-weight="600" text-anchor="middle">85%</text>
+
+        <!-- Beard Transplant: 79% -->
+        <rect x="465" y="73" width="70" height="120" rx="4" fill="#f87171"/>
+        <text x="500" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">Beard</text>
+        <text x="500" y="68" font-size="10" fill="#ef4444" font-weight="600" text-anchor="middle">79%</text>
+
+        <!-- PRP: 83% -->
+        <rect x="565" y="63" width="70" height="130" rx="4" fill="#818cf8"/>
+        <text x="600" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">PRP</text>
+        <text x="600" y="58" font-size="10" fill="#818cf8" font-weight="600" text-anchor="middle">83%</text>
+      </svg>
+      <p class="min-sample-note">Only providers with ≥5 confirmed bookings in the period are included. Beard Transplant falls below platform average — consider reviewing booking or post-booking process.</p>
+    </div>
+  </div>
+
+  <!-- ── Widget 2: Cancellation & No-Show Rate by Treatment ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 2 — Cancellation &amp; No-Show Rate by Treatment</div>
+        <div class="widget-subtitle">Post-confirmed cancellations and no-shows per treatment type</div>
+      </div>
+      <div class="drill-hint">Click bar → admin Quotes list</div>
+    </div>
+    <div class="widget-body">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171;"></div>Cancellation rate</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>No-show rate</div>
+      </div>
+      <!-- Grouped bar chart SVG -->
+      <svg class="chart-svg" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y axis labels -->
+        <text x="30" y="28" font-size="9" fill="#9ca3af" text-anchor="middle">25%</text>
+        <text x="30" y="78" font-size="9" fill="#9ca3af" text-anchor="middle">15%</text>
+        <text x="30" y="128" font-size="9" fill="#9ca3af" text-anchor="middle">10%</text>
+        <text x="30" y="153" font-size="9" fill="#9ca3af" text-anchor="middle">5%</text>
+        <text x="30" y="193" font-size="9" fill="#9ca3af" text-anchor="middle">0%</text>
+
+        <!-- Grid lines -->
+        <line x1="45" y1="25" x2="670" y2="25" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="75" x2="670" y2="75" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="125" x2="670" y2="125" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="150" x2="670" y2="150" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="193" x2="670" y2="193" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- Scale: 0%=193, 25%=25 → 1% = (193-25)/25 = 6.72px -->
+
+        <!-- FUE: Cancel 6%, No-show 3% -->
+        <rect x="60" y="153" width="28" height="40" rx="3" fill="#f87171"/>
+        <rect x="91" y="173" width="28" height="20" rx="3" fill="#fbbf24"/>
+        <text x="90" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">FUE</text>
+
+        <!-- FUT: Cancel 8%, No-show 4% -->
+        <rect x="160" y="139" width="28" height="54" rx="3" fill="#f87171"/>
+        <rect x="191" y="166" width="28" height="27" rx="3" fill="#fbbf24"/>
+        <text x="190" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">FUT Strip</text>
+
+        <!-- DHI: Cancel 5%, No-show 2% -->
+        <rect x="260" y="160" width="28" height="33" rx="3" fill="#f87171"/>
+        <rect x="291" y="179" width="28" height="14" rx="3" fill="#fbbf24"/>
+        <text x="290" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">DHI</text>
+
+        <!-- Eyebrow: Cancel 14%, No-show 7% -->
+        <rect x="360" y="99" width="28" height="94" rx="3" fill="#f87171"/>
+        <rect x="391" y="146" width="28" height="47" rx="3" fill="#fbbf24"/>
+        <text x="390" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">Eyebrow</text>
+
+        <!-- Beard: Cancel 18%, No-show 9% -->
+        <rect x="460" y="72" width="28" height="121" rx="3" fill="#f87171"/>
+        <rect x="491" y="132" width="28" height="61" rx="3" fill="#fbbf24"/>
+        <text x="490" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">Beard</text>
+
+        <!-- PRP: Cancel 10%, No-show 5% -->
+        <rect x="560" y="126" width="28" height="67" rx="3" fill="#f87171"/>
+        <rect x="591" y="159" width="28" height="34" rx="3" fill="#fbbf24"/>
+        <text x="590" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">PRP</text>
+      </svg>
+      <p class="min-sample-note">No-show status tracked via quote status label. If no-show status is not implemented in the data model, this widget shows cancellation rate only.</p>
+    </div>
+  </div>
+
+  <!-- ── Widget 3: Treatment Volume Trend ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 3 — Treatment Volume Trend</div>
+        <div class="widget-subtitle">Monthly booking count per treatment type — top 5 + Other</div>
+      </div>
+      <div class="drill-hint">Click area → admin Bookings list</div>
+    </div>
+    <div class="widget-body">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div>FUE</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#818cf8;"></div>FUT Strip</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#a78bfa;"></div>DHI</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Eyebrow</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#34d399;"></div>Beard</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;"></div>Other</div>
+      </div>
+      <!-- Stacked area chart SVG -->
+      <svg class="chart-svg" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- X labels -->
+        <text x="70" y="210" font-size="9.5" fill="#9ca3af" text-anchor="middle">Nov</text>
+        <text x="170" y="210" font-size="9.5" fill="#9ca3af" text-anchor="middle">Dec</text>
+        <text x="270" y="210" font-size="9.5" fill="#9ca3af" text-anchor="middle">Jan</text>
+        <text x="370" y="210" font-size="9.5" fill="#9ca3af" text-anchor="middle">Feb</text>
+        <text x="470" y="210" font-size="9.5" fill="#9ca3af" text-anchor="middle">Mar</text>
+        <text x="570" y="210" font-size="9.5" fill="#9ca3af" text-anchor="middle">Apr</text>
+
+        <!-- Y axis labels -->
+        <text x="35" y="30" font-size="9" fill="#9ca3af" text-anchor="end">600</text>
+        <text x="35" y="75" font-size="9" fill="#9ca3af" text-anchor="end">450</text>
+        <text x="35" y="120" font-size="9" fill="#9ca3af" text-anchor="end">300</text>
+        <text x="35" y="165" font-size="9" fill="#9ca3af" text-anchor="end">150</text>
+        <text x="35" y="198" font-size="9" fill="#9ca3af" text-anchor="end">0</text>
+
+        <!-- Grid lines -->
+        <line x1="45" y1="27" x2="660" y2="27" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="72" x2="660" y2="72" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="117" x2="660" y2="117" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="162" x2="660" y2="162" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="197" x2="660" y2="197" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- Stacked area (simplified polygon shapes per layer) -->
+        <!-- Other layer (bottom) -->
+        <polygon points="45,197 145,197 245,197 345,197 445,197 545,197 645,197 645,185 545,183 445,181 345,186 245,188 145,184 45,197" fill="#d1d5db" opacity="0.8"/>
+        <!-- Beard on top -->
+        <polygon points="45,197 145,184 245,188 345,186 445,181 545,183 645,185 645,171 545,169 445,163 345,170 245,174 145,165 45,180" fill="#34d399" opacity="0.8"/>
+        <!-- Eyebrow on top -->
+        <polygon points="45,180 145,165 245,174 345,170 445,163 545,169 645,171 645,152 545,148 445,140 345,149 245,155 145,142 45,160" fill="#f59e0b" opacity="0.8"/>
+        <!-- DHI on top -->
+        <polygon points="45,160 145,142 245,155 345,149 445,140 545,148 645,152 645,118 545,112 445,100 345,110 245,120 145,105 45,130" fill="#a78bfa" opacity="0.8"/>
+        <!-- FUT on top -->
+        <polygon points="45,130 145,105 245,120 345,110 445,100 545,112 645,118 645,75 545,68 445,58 345,68 245,78 145,62 45,88" fill="#818cf8" opacity="0.8"/>
+        <!-- FUE on top -->
+        <polygon points="45,88 145,62 245,78 345,68 445,58 545,68 645,75 645,28 545,25 445,20 345,28 245,34 145,22 45,40" fill="#6366f1" opacity="0.85"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Widget 4: Average Review Scores by Treatment ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 4 — Average Review Scores by Treatment</div>
+        <div class="widget-subtitle">5 sub-scores per treatment type: Overall · Results · Staff · Facility · Value (scale 1–5)</div>
+      </div>
+      <div class="drill-hint">Click bar → Reviews list</div>
+    </div>
+    <div class="widget-body">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div>Overall</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#818cf8;"></div>Results</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#34d399;"></div>Staff</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Facility</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171;"></div>Value</div>
+      </div>
+      <!-- Grouped bar chart SVG — scores 1-5 -->
+      <svg class="chart-svg" viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y axis labels -->
+        <text x="30" y="28" font-size="9" fill="#9ca3af" text-anchor="middle">5.0</text>
+        <text x="30" y="68" font-size="9" fill="#9ca3af" text-anchor="middle">4.0</text>
+        <text x="30" y="108" font-size="9" fill="#9ca3af" text-anchor="middle">3.0</text>
+        <text x="30" y="148" font-size="9" fill="#9ca3af" text-anchor="middle">2.0</text>
+        <text x="30" y="188" font-size="9" fill="#9ca3af" text-anchor="middle">1.0</text>
+
+        <!-- Grid lines -->
+        <line x1="45" y1="25" x2="670" y2="25" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="65" x2="670" y2="65" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="105" x2="670" y2="105" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="145" x2="670" y2="145" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="45" y1="185" x2="670" y2="185" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- Scale: 1=185, 5=25 → 1 score = 40px. score 4.5 → 185-(4.5-1)*40=185-140=45 -->
+
+        <!-- FUE: Overall 4.6, Results 4.5, Staff 4.7, Facility 4.4, Value 4.2 -->
+        <rect x="50" y="41" width="13" height="144" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="65" y="45" width="13" height="140" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="80" y="37" width="13" height="148" rx="2" fill="#34d399" opacity="0.9"/>
+        <rect x="95" y="49" width="13" height="136" rx="2" fill="#f59e0b" opacity="0.9"/>
+        <rect x="110" y="57" width="13" height="128" rx="2" fill="#f87171" opacity="0.9"/>
+        <text x="95" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">FUE</text>
+
+        <!-- FUT Strip: 4.3, 4.2, 4.5, 4.3, 4.0 -->
+        <rect x="155" y="53" width="13" height="132" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="170" y="57" width="13" height="128" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="185" y="45" width="13" height="140" rx="2" fill="#34d399" opacity="0.9"/>
+        <rect x="200" y="53" width="13" height="132" rx="2" fill="#f59e0b" opacity="0.9"/>
+        <rect x="215" y="65" width="13" height="120" rx="2" fill="#f87171" opacity="0.9"/>
+        <text x="197" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">FUT Strip</text>
+
+        <!-- DHI: 4.7, 4.6, 4.8, 4.5, 4.3 -->
+        <rect x="260" y="37" width="13" height="148" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="275" y="41" width="13" height="144" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="290" y="33" width="13" height="152" rx="2" fill="#34d399" opacity="0.9"/>
+        <rect x="305" y="45" width="13" height="140" rx="2" fill="#f59e0b" opacity="0.9"/>
+        <rect x="320" y="53" width="13" height="132" rx="2" fill="#f87171" opacity="0.9"/>
+        <text x="299" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">DHI</text>
+
+        <!-- Eyebrow: 4.1, 4.0, 4.2, 4.1, 3.8 -->
+        <rect x="365" y="61" width="13" height="124" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="380" y="65" width="13" height="120" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="395" y="57" width="13" height="128" rx="2" fill="#34d399" opacity="0.9"/>
+        <rect x="410" y="61" width="13" height="124" rx="2" fill="#f59e0b" opacity="0.9"/>
+        <rect x="425" y="73" width="13" height="112" rx="2" fill="#f87171" opacity="0.9"/>
+        <text x="403" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">Eyebrow</text>
+
+        <!-- Beard: 3.9, 3.8, 4.1, 3.8, 3.5 -->
+        <rect x="465" y="69" width="13" height="116" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="480" y="73" width="13" height="112" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="495" y="61" width="13" height="124" rx="2" fill="#34d399" opacity="0.9"/>
+        <rect x="510" y="73" width="13" height="112" rx="2" fill="#f59e0b" opacity="0.9"/>
+        <rect x="525" y="85" width="13" height="100" rx="2" fill="#f87171" opacity="0.9"/>
+        <text x="503" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">Beard</text>
+
+        <!-- PRP: 4.2, 4.0, 4.3, 4.1, 3.9 -->
+        <rect x="565" y="57" width="13" height="128" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="580" y="65" width="13" height="120" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="595" y="53" width="13" height="132" rx="2" fill="#34d399" opacity="0.9"/>
+        <rect x="610" y="61" width="13" height="124" rx="2" fill="#f59e0b" opacity="0.9"/>
+        <rect x="625" y="69" width="13" height="116" rx="2" fill="#f87171" opacity="0.9"/>
+        <text x="603" y="205" font-size="9.5" fill="#6b7280" text-anchor="middle">PRP</text>
+      </svg>
+      <p class="source-note">Source: <code>reviews</code> table — overall_rating, results_rating, staff_rating, facility_rating, value_rating joined via reviews.quote_id → quotes.treatment_id</p>
+    </div>
+  </div>
+
+  <!-- ── Widget 5: Aftercare Activation Rate ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 5 — Aftercare Activation Rate</div>
+        <div class="widget-subtitle">Platform-wide KPI + trend + breakdown by treatment type</div>
+      </div>
+      <div class="drill-hint">Click bar → Aftercare records list</div>
+    </div>
+    <div class="widget-body">
+      <!-- KPI tile row -->
+      <div class="kpi-row">
+        <div class="kpi-tile">
+          <div class="kpi-label">Platform-wide Aftercare Activation Rate</div>
+          <div class="kpi-value">68.4%</div>
+          <div class="kpi-sub">Aftercare records created ÷ completed treatments</div>
+          <span class="kpi-badge amber">▲ 3.1% vs prior period</span>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Aftercare Plans Activated (Period)</div>
+          <div class="kpi-value">1,248</div>
+          <div class="kpi-sub">Out of 1,824 completed treatments</div>
+        </div>
+      </div>
+
+      <!-- Trend line SVG -->
+      <div class="ref-line-label" style="margin-bottom:4px;">Activation rate trend — last 6 months</div>
+      <svg class="chart-svg" viewBox="0 0 680 80" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:16px;">
+        <polyline points="50,60 150,55 250,48 350,44 450,38 550,32 650,28"
+          fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="50"  cy="60" r="4" fill="#6366f1"/>
+        <circle cx="150" cy="55" r="4" fill="#6366f1"/>
+        <circle cx="250" cy="48" r="4" fill="#6366f1"/>
+        <circle cx="350" cy="44" r="4" fill="#6366f1"/>
+        <circle cx="450" cy="38" r="4" fill="#6366f1"/>
+        <circle cx="550" cy="32" r="4" fill="#6366f1"/>
+        <circle cx="650" cy="28" r="4" fill="#6366f1"/>
+        <text x="50"  y="75" font-size="9" fill="#9ca3af" text-anchor="middle">Nov</text>
+        <text x="150" y="75" font-size="9" fill="#9ca3af" text-anchor="middle">Dec</text>
+        <text x="250" y="75" font-size="9" fill="#9ca3af" text-anchor="middle">Jan</text>
+        <text x="350" y="75" font-size="9" fill="#9ca3af" text-anchor="middle">Feb</text>
+        <text x="450" y="75" font-size="9" fill="#9ca3af" text-anchor="middle">Mar</text>
+        <text x="550" y="75" font-size="9" fill="#9ca3af" text-anchor="middle">Apr</text>
+        <text x="650" y="75" font-size="9" fill="#9ca3af" text-anchor="middle">May</text>
+        <text x="50"  y="56" font-size="9" fill="#6366f1" text-anchor="middle">61%</text>
+        <text x="650" y="24" font-size="9" fill="#6366f1" text-anchor="middle">68%</text>
+      </svg>
+
+      <!-- Bar by treatment type -->
+      <div class="ref-line-label">Activation rate by treatment type</div>
+
+      <div class="hbar-row">
+        <div class="hbar-label">DHI</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:81%;background:#6366f1;"></div>
+        </div>
+        <div class="hbar-val">81%</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">FUE</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:76%;background:#6366f1;"></div>
+        </div>
+        <div class="hbar-val">76%</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">FUT Strip</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:72%;background:#818cf8;"></div>
+        </div>
+        <div class="hbar-val">72%</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">PRP</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:65%;background:#818cf8;"></div>
+        </div>
+        <div class="hbar-val">65%</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Eyebrow Transplant</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:58%;background:#f59e0b;"></div>
+        </div>
+        <div class="hbar-val">58%</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Beard Transplant</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:49%;background:#f87171;"></div>
+        </div>
+        <div class="hbar-val">49%</div>
+      </div>
+
+      <p class="source-note">Source: aftercare records created, joined to quotes with status <code>completed</code>.</p>
+    </div>
+  </div>
+
+  <!-- ── Widget 6: Provider Distribution by Treatment Specialisation ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 6 — Provider Distribution by Treatment Specialisation</div>
+        <div class="widget-subtitle">Number of providers offering each treatment — stacked horizontal bar</div>
+      </div>
+      <div class="drill-hint">Click bar → Provider list</div>
+    </div>
+    <div class="widget-body">
+      <div class="legend" style="margin-bottom:14px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div>Turkey</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#818cf8;"></div>UK</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#34d399;"></div>Germany</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Spain</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d1d5db;"></div>Other</div>
+      </div>
+
+      <!-- FUE: 186 providers -->
+      <div class="shbar-row">
+        <div class="shbar-label">FUE</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="width:48%;background:#6366f1;"></div>
+          <div class="shbar-seg" style="width:18%;background:#818cf8;"></div>
+          <div class="shbar-seg" style="width:14%;background:#34d399;"></div>
+          <div class="shbar-seg" style="width:10%;background:#f59e0b;"></div>
+          <div class="shbar-seg" style="width:10%;background:#d1d5db;"></div>
+        </div>
+        <div class="shbar-val">186</div>
+      </div>
+
+      <!-- FUT Strip: 142 providers -->
+      <div class="shbar-row">
+        <div class="shbar-label">FUT Strip</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="width:45%;background:#6366f1;"></div>
+          <div class="shbar-seg" style="width:20%;background:#818cf8;"></div>
+          <div class="shbar-seg" style="width:16%;background:#34d399;"></div>
+          <div class="shbar-seg" style="width:9%;background:#f59e0b;"></div>
+          <div class="shbar-seg" style="width:10%;background:#d1d5db;"></div>
+        </div>
+        <div class="shbar-val">142</div>
+      </div>
+
+      <!-- DHI: 121 providers -->
+      <div class="shbar-row">
+        <div class="shbar-label">DHI</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="width:52%;background:#6366f1;"></div>
+          <div class="shbar-seg" style="width:15%;background:#818cf8;"></div>
+          <div class="shbar-seg" style="width:12%;background:#34d399;"></div>
+          <div class="shbar-seg" style="width:11%;background:#f59e0b;"></div>
+          <div class="shbar-seg" style="width:10%;background:#d1d5db;"></div>
+        </div>
+        <div class="shbar-val">121</div>
+      </div>
+
+      <!-- PRP: 98 providers -->
+      <div class="shbar-row">
+        <div class="shbar-label">PRP</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="width:40%;background:#6366f1;"></div>
+          <div class="shbar-seg" style="width:22%;background:#818cf8;"></div>
+          <div class="shbar-seg" style="width:18%;background:#34d399;"></div>
+          <div class="shbar-seg" style="width:10%;background:#f59e0b;"></div>
+          <div class="shbar-seg" style="width:10%;background:#d1d5db;"></div>
+        </div>
+        <div class="shbar-val">98</div>
+      </div>
+
+      <!-- Eyebrow Transplant: 57 providers -->
+      <div class="shbar-row">
+        <div class="shbar-label">Eyebrow Transplant</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="width:44%;background:#6366f1;"></div>
+          <div class="shbar-seg" style="width:19%;background:#818cf8;"></div>
+          <div class="shbar-seg" style="width:14%;background:#34d399;"></div>
+          <div class="shbar-seg" style="width:12%;background:#f59e0b;"></div>
+          <div class="shbar-seg" style="width:11%;background:#d1d5db;"></div>
+        </div>
+        <div class="shbar-val">57</div>
+      </div>
+
+      <!-- Beard Transplant: 44 providers -->
+      <div class="shbar-row">
+        <div class="shbar-label">Beard Transplant</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="width:41%;background:#6366f1;"></div>
+          <div class="shbar-seg" style="width:18%;background:#818cf8;"></div>
+          <div class="shbar-seg" style="width:15%;background:#34d399;"></div>
+          <div class="shbar-seg" style="width:14%;background:#f59e0b;"></div>
+          <div class="shbar-seg" style="width:12%;background:#d1d5db;"></div>
+        </div>
+        <div class="shbar-val">44</div>
+      </div>
+
+      <p class="source-note">Source: quotes.treatment_id grouped by provider_id. A provider "offers" a treatment if they submitted ≥1 quote for it in the last 12 months.</p>
+    </div>
+  </div>
+
+</div><!-- /page-content -->
+
+</body>
+</html>

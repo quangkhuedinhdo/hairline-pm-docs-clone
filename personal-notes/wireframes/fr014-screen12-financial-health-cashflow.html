@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 12: Financial Health &amp; Cashflow (Admin)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #1a1d23;
+      border-bottom: 1px solid #2d3240;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo { font-weight: 700; font-size: 15px; color: #fff; letter-spacing: -0.3px; }
+    .top-nav .logo span { color: #7c8cf8; }
+    .top-nav .nav-items { display: flex; gap: 4px; }
+    .top-nav .nav-item {
+      padding: 6px 12px; border-radius: 6px; color: #9ca3af; cursor: pointer; font-size: 13px;
+    }
+    .top-nav .nav-item.active { background: rgba(124,140,248,0.15); color: #a5b4fc; font-weight: 600; }
+    .top-nav .nav-item:hover:not(.active) { background: rgba(255,255,255,0.06); color: #e5e7eb; }
+    .top-nav .admin-badge {
+      margin-left: auto;
+      background: rgba(124,140,248,0.18);
+      color: #a5b4fc;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; letter-spacing: 0.3px;
+    }
+
+    /* ── Sub-nav ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .sub-nav .tab {
+      padding: 12px 16px; font-size: 12.5px; color: #6b7280;
+      cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    .sub-nav .tab.active { color: #3b4ef8; border-bottom-color: #3b4ef8; font-weight: 600; }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 18px; font-weight: 700; color: #1a1d23; }
+    .page-header p { font-size: 12px; color: #6b7280; margin-top: 3px; }
+    .page-header .header-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Permission badge ── */
+    .perm-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: #fef3c7; border: 1px solid #fde68a; border-radius: 5px;
+      padding: 5px 10px; font-size: 11px; color: #92400e; font-weight: 600;
+    }
+
+    /* ── Info banner ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 7px;
+      padding: 9px 14px; font-size: 11.5px; color: #3730a3;
+      margin: 0 24px 14px;
+      line-height: 1.5;
+    }
+    .info-banner .icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 16px;
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; color: #6b7280; font-weight: 500; }
+    .filter-select {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 7px;
+      cursor: pointer; font-size: 12px; color: #374151;
+    }
+    .filter-select .caret { color: #9ca3af; font-size: 10px; }
+    .filter-divider { width: 1px; height: 20px; background: #e2e5ea; margin: 0 4px; }
+
+    /* ── Stale banner ── */
+    .stale-banner {
+      display: flex; align-items: center; gap: 8px;
+      background: #fffbeb; border: 1px solid #fde68a; border-radius: 7px;
+      padding: 7px 14px; font-size: 11.5px; color: #92400e;
+      margin: 0 24px 8px;
+    }
+    .stale-banner .dot { width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; }
+
+    /* ── Page content ── */
+    .page-content { padding: 0 24px 40px; }
+
+    /* ── Widget card ── */
+    .widget {
+      background: #fff; border: 1px solid #e2e5ea; border-radius: 10px;
+      overflow: hidden; margin-bottom: 16px;
+    }
+    .widget-header {
+      padding: 14px 18px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .widget-title { font-size: 13px; font-weight: 600; color: #1a1d23; }
+    .widget-subtitle { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+    .widget-body { padding: 16px 18px; }
+    .drill-hint {
+      font-size: 10.5px; color: #9ca3af;
+      display: flex; align-items: center; gap: 4px;
+      flex-shrink: 0;
+    }
+    .drill-hint::before { content: '↗'; font-size: 11px; }
+
+    /* ── Chart SVG ── */
+    .chart-svg { width: 100%; display: block; }
+
+    /* ── 2-col grid ── */
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-2 .widget { margin-bottom: 0; }
+
+    /* ── Legend row ── */
+    .legend {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 11.5px; color: #6b7280; margin-bottom: 10px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .legend-dot.circle { border-radius: 50%; }
+
+    /* ── Reference line legend ── */
+    .ref-line-label {
+      font-size: 10.5px; color: #6b7280; margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ref-line-dash {
+      display: inline-block; width: 18px; height: 2px;
+      border-top: 2px dashed #6b7280;
+    }
+
+    /* ── Source note ── */
+    .source-note {
+      font-size: 10.5px; color: #9ca3af; margin-top: 10px; line-height: 1.5;
+    }
+
+    /* ── KPI tiles ── */
+    .kpi-row {
+      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .kpi-tile {
+      flex: 1; min-width: 150px;
+      background: #f8f9fb; border: 1px solid #e2e5ea; border-radius: 8px;
+      padding: 14px 16px; cursor: pointer; transition: border-color .15s;
+    }
+    .kpi-tile:hover { border-color: #a5b4fc; }
+    .kpi-label { font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+    .kpi-value { font-size: 22px; font-weight: 700; color: #1a1d23; line-height: 1.1; }
+    .kpi-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .kpi-badge {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-top: 4px;
+    }
+    .kpi-badge.green { background: #dcfce7; color: #16a34a; }
+    .kpi-badge.amber { background: #fef3c7; color: #b45309; }
+    .kpi-badge.red   { background: #fee2e2; color: #dc2626; }
+    .kpi-badge.blue  { background: #dbeafe; color: #1d4ed8; }
+
+    /* ── KPI highlight tile (large, top of widget) ── */
+    .kpi-highlight {
+      background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px;
+      padding: 14px 18px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .kpi-highlight .kh-main { }
+    .kpi-highlight .kh-label { font-size: 11px; color: #4338ca; font-weight: 500; }
+    .kpi-highlight .kh-value { font-size: 26px; font-weight: 700; color: #1a1d23; }
+    .kpi-highlight .kh-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
+    .kpi-highlight .kh-divider { width: 1px; height: 40px; background: #c7d2fe; }
+
+    /* ── Data table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 9px 12px; text-align: left;
+      font-size: 11px; font-weight: 600; color: #6b7280;
+      background: #f8f9fb; border-bottom: 1px solid #e2e5ea;
+      white-space: nowrap;
+    }
+    .data-table tbody tr {
+      border-bottom: 1px solid #f0f2f5; cursor: pointer; transition: background .1s;
+    }
+    .data-table tbody tr:hover { background: #f8f9fb; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 10px 12px; font-size: 12px; color: #374151; vertical-align: middle; }
+
+    /* ── Status pill ── */
+    .status-pill {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 12px;
+    }
+    .status-pill.scheduled { background: #dbeafe; color: #1d4ed8; }
+    .status-pill.processing { background: #fef3c7; color: #b45309; }
+    .status-pill.pending    { background: #f3f4f6; color: #6b7280; }
+    .status-pill.completed  { background: #dcfce7; color: #16a34a; }
+
+    /* ── Donut chart wrapper ── */
+    .donut-wrap {
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .donut-svg-wrap { flex-shrink: 0; }
+    .donut-legend { display: flex; flex-direction: column; gap: 10px; }
+    .donut-legend-item {
+      display: flex; align-items: center; gap: 8px; font-size: 12px;
+    }
+    .donut-legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .donut-legend-label { color: #374151; font-weight: 500; }
+    .donut-legend-val { color: #6b7280; font-size: 11px; margin-left: 4px; }
+    .donut-center-label {
+      font-size: 10px; fill: #6b7280; text-anchor: middle;
+    }
+    .donut-center-value {
+      font-size: 15px; font-weight: 700; fill: #1a1d23; text-anchor: middle;
+    }
+
+    /* ── Stacked horizontal bar ── */
+    .shbar-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .shbar-label { width: 90px; font-size: 11.5px; color: #374151; text-align: right; flex-shrink: 0; }
+    .shbar-track {
+      flex: 1; height: 18px; background: #f0f2f5; border-radius: 4px; overflow: hidden;
+      display: flex;
+    }
+    .shbar-seg { height: 100%; }
+    .shbar-total { font-size: 11.5px; font-weight: 600; color: #374151; min-width: 36px; }
+
+    /* ── Inline sparkline ── */
+    .sparkline-svg { width: 100%; display: block; margin-top: 8px; }
+
+    /* ── Widget toolbar ── */
+    .widget-toolbar { display: flex; gap: 8px; align-items: center; }
+    .toolbar-btn {
+      padding: 5px 10px; border-radius: 5px; border: 1px solid #e2e5ea;
+      background: #fff; cursor: pointer; font-size: 11.5px; color: #374151;
+    }
+    .toolbar-btn.active { background: #e8f0fe; color: #3b4ef8; border-color: #c7d2fe; font-weight: 600; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px; font-weight: 600; color: #9ca3af; letter-spacing: 0.6px;
+      text-transform: uppercase; margin: 20px 0 10px;
+    }
+
+    /* ── Tooltip note ── */
+    .tooltip-note {
+      font-size: 10.5px; color: #9ca3af; margin-top: 10px; font-style: italic; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top nav ── -->
+<nav class="top-nav">
+  <div class="logo">Hair<span>line</span></div>
+  <div class="nav-items">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Providers</div>
+    <div class="nav-item">Patients</div>
+    <div class="nav-item">Inquiries</div>
+    <div class="nav-item">Bookings</div>
+    <div class="nav-item active">Analytics</div>
+    <div class="nav-item">Settings</div>
+  </div>
+  <div class="admin-badge">ADMIN</div>
+</nav>
+
+<!-- ── Analytics sub-nav ── -->
+<nav class="sub-nav">
+  <div class="tab">Platform Overview</div>
+  <div class="tab">Provider Performance</div>
+  <div class="tab">Patient Acquisition</div>
+  <div class="tab">Geographic Intelligence</div>
+  <div class="tab">Treatment Outcomes</div>
+  <div class="tab active">Financial Health</div>
+  <div class="tab">Pricing Intelligence</div>
+</nav>
+
+<!-- ── Page header ── -->
+<div class="page-header">
+  <div>
+    <h1>Financial Health &amp; Cashflow</h1>
+    <p>Platform financial risk monitoring and revenue health — "Is money flowing correctly, what do we owe, and where are the risks?"</p>
+  </div>
+  <div class="header-right">
+    <div class="perm-badge">&#128274; Financial Data Permission Required</div>
+  </div>
+</div>
+
+<!-- ── Info banner ── -->
+<div class="info-banner">
+  <div class="icon">ℹ️</div>
+  <div>
+    <strong>Currency note:</strong> All amounts are converted to the platform base reporting currency (GBP) using daily FX rates. Raw currency amounts are available in tooltips. Net revenue excludes provider payouts still in <strong>Scheduled</strong> status (not yet disbursed).
+  </div>
+</div>
+
+<!-- ── Stale data banner ── -->
+<div class="stale-banner">
+  <div class="dot"></div>
+  Analytics data last updated 22 minutes ago — refresh pending. Data older than 20 min shown with this indicator.
+</div>
+
+<!-- ── Filter bar ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filters:</span>
+  <div class="filter-select">
+    Last 4 weeks <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    All Countries <span class="caret">▾</span>
+  </div>
+  <div class="filter-select">
+    All Currencies <span class="caret">▾</span>
+  </div>
+</div>
+
+<!-- ── Page content ── -->
+<div class="page-content">
+
+  <!-- ── Widget 1: Platform GMV & Net Revenue ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 1 — Platform GMV &amp; Net Revenue</div>
+        <div class="widget-subtitle">
+          GMV = SUM(payments.amount) where payment_status = 'completed' &nbsp;|&nbsp;
+          Net revenue = GMV − total disbursed provider payouts (Scheduled payouts excluded)
+        </div>
+      </div>
+      <div class="drill-hint">Click period → detailed payment records</div>
+    </div>
+    <div class="widget-body">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div>Platform GMV</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div>Net Revenue</div>
+      </div>
+      <!-- Dual-line area chart SVG -->
+      <svg class="chart-svg" viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y axis labels -->
+        <text x="42" y="28" font-size="9" fill="#9ca3af" text-anchor="end">£1.2M</text>
+        <text x="42" y="73" font-size="9" fill="#9ca3af" text-anchor="end">£900K</text>
+        <text x="42" y="118" font-size="9" fill="#9ca3af" text-anchor="end">£600K</text>
+        <text x="42" y="163" font-size="9" fill="#9ca3af" text-anchor="end">£300K</text>
+        <text x="42" y="198" font-size="9" fill="#9ca3af" text-anchor="end">£0</text>
+
+        <!-- Grid lines -->
+        <line x1="48" y1="25" x2="690" y2="25" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="70" x2="690" y2="70" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="115" x2="690" y2="115" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="160" x2="690" y2="160" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="196" x2="690" y2="196" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- X labels: Nov Dec Jan Feb Mar Apr -->
+        <text x="108" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Nov</text>
+        <text x="218" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Dec</text>
+        <text x="328" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Jan</text>
+        <text x="438" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Feb</text>
+        <text x="548" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Mar</text>
+        <text x="658" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Apr</text>
+
+        <!-- GMV area (higher) — approx values: 820K 870K 950K 1020K 1100K 1180K -->
+        <!-- Scale: 0=196, 1.2M=25 → 1K = 0.1425px → 820K=196-116.8=79.2 -->
+        <defs>
+          <linearGradient id="gmvGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6366f1" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#6366f1" stop-opacity="0.03"/>
+          </linearGradient>
+          <linearGradient id="netGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0.03"/>
+          </linearGradient>
+        </defs>
+
+        <!-- GMV area fill -->
+        <polygon points="48,196 108,79 218,73 328,62 438,50 548,38 658,28 658,196" fill="url(#gmvGrad)"/>
+        <!-- GMV line -->
+        <polyline points="108,79 218,73 328,62 438,50 548,38 658,28" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linejoin="round"/>
+
+        <!-- Net Revenue area fill: ~480K 510K 560K 610K 660K 710K -->
+        <!-- 480K=196-68.4=127.6; 710K=196-101=95 -->
+        <polygon points="48,196 108,127 218,121 328,113 438,105 548,96 658,88 658,196" fill="url(#netGrad)"/>
+        <!-- Net Revenue line -->
+        <polyline points="108,127 218,121 328,113 438,105 548,96 658,88" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="0"/>
+
+        <!-- Data point dots — GMV -->
+        <circle cx="108" cy="79" r="3.5" fill="#6366f1"/>
+        <circle cx="218" cy="73" r="3.5" fill="#6366f1"/>
+        <circle cx="328" cy="62" r="3.5" fill="#6366f1"/>
+        <circle cx="438" cy="50" r="3.5" fill="#6366f1"/>
+        <circle cx="548" cy="38" r="3.5" fill="#6366f1"/>
+        <circle cx="658" cy="28" r="3.5" fill="#6366f1"/>
+
+        <!-- Data point dots — Net Revenue -->
+        <circle cx="108" cy="127" r="3.5" fill="#10b981"/>
+        <circle cx="218" cy="121" r="3.5" fill="#10b981"/>
+        <circle cx="328" cy="113" r="3.5" fill="#10b981"/>
+        <circle cx="438" cy="105" r="3.5" fill="#10b981"/>
+        <circle cx="548" cy="96" r="3.5" fill="#10b981"/>
+        <circle cx="658" cy="88" r="3.5" fill="#10b981"/>
+
+        <!-- Value labels — GMV -->
+        <text x="108" y="72" font-size="9" fill="#6366f1" font-weight="600" text-anchor="middle">£820K</text>
+        <text x="658" y="21" font-size="9" fill="#6366f1" font-weight="600" text-anchor="middle">£1.18M</text>
+
+        <!-- Value labels — Net Revenue -->
+        <text x="108" y="120" font-size="9" fill="#10b981" font-weight="600" text-anchor="middle">£480K</text>
+        <text x="658" y="81" font-size="9" fill="#10b981" font-weight="600" text-anchor="middle">£710K</text>
+      </svg>
+      <p class="tooltip-note">Tooltip shows raw currency amounts per transaction. Net revenue excludes Scheduled (not-yet-disbursed) payout amounts.</p>
+    </div>
+  </div>
+
+  <!-- ── Widget 2: Commission Earned Trend ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 2 — Commission Earned Trend</div>
+        <div class="widget-subtitle">
+          Monthly bar chart · Commission = sum of effective provider commission deductions (percentage or flat-rate model) for completed payments
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="widget-toolbar">
+          <button class="toolbar-btn">&#9998; Set Target</button>
+        </div>
+        <div class="drill-hint">Click bar → payment records with commission breakdown</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="ref-line-label">
+        <span class="ref-line-dash"></span>
+        Target monthly commission (admin-configurable): £65,000
+      </div>
+      <svg class="chart-svg" viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y axis -->
+        <text x="42" y="28" font-size="9" fill="#9ca3af" text-anchor="end">£80K</text>
+        <text x="42" y="73" font-size="9" fill="#9ca3af" text-anchor="end">£60K</text>
+        <text x="42" y="118" font-size="9" fill="#9ca3af" text-anchor="end">£40K</text>
+        <text x="42" y="163" font-size="9" fill="#9ca3af" text-anchor="end">£20K</text>
+        <text x="42" y="198" font-size="9" fill="#9ca3af" text-anchor="end">£0</text>
+
+        <!-- Grid lines -->
+        <line x1="48" y1="25" x2="690" y2="25" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="70" x2="690" y2="70" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="115" x2="690" y2="115" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="160" x2="690" y2="160" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="196" x2="690" y2="196" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- Target reference line at £65K — scale: 0=196, 80K=25 → 65K: 25+(80-65)/80*(196-25)=25+32=57 -->
+        <line x1="48" y1="57" x2="690" y2="57" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="692" y="61" font-size="8.5" fill="#6b7280" text-anchor="start">Target</text>
+
+        <!-- X labels -->
+        <text x="108" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Nov</text>
+        <text x="218" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Dec</text>
+        <text x="328" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Jan</text>
+        <text x="438" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Feb</text>
+        <text x="548" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Mar</text>
+        <text x="658" y="213" font-size="9.5" fill="#9ca3af" text-anchor="middle">Apr</text>
+
+        <!-- Scale: 0=196, 80K=25 → 1K=(196-25)/80=2.1375px -->
+        <!-- Nov 48K → 196-48*2.14=93; Dec 52K → 196-111=85; Jan 61K → 66; Feb 67K → 53; Mar 72K → 42; Apr 78K → 29 -->
+
+        <!-- Nov 48K — below target -->
+        <rect x="78" y="93" width="60" height="103" rx="4" fill="#818cf8"/>
+        <text x="108" y="87" font-size="9.5" fill="#818cf8" font-weight="600" text-anchor="middle">£48K</text>
+
+        <!-- Dec 52K — below target -->
+        <rect x="188" y="85" width="60" height="111" rx="4" fill="#818cf8"/>
+        <text x="218" y="79" font-size="9.5" fill="#818cf8" font-weight="600" text-anchor="middle">£52K</text>
+
+        <!-- Jan 61K — below target -->
+        <rect x="298" y="66" width="60" height="130" rx="4" fill="#818cf8"/>
+        <text x="328" y="60" font-size="9.5" fill="#818cf8" font-weight="600" text-anchor="middle">£61K</text>
+
+        <!-- Feb 67K — above target, highlight -->
+        <rect x="408" y="53" width="60" height="143" rx="4" fill="#6366f1"/>
+        <text x="438" y="47" font-size="9.5" fill="#6366f1" font-weight="600" text-anchor="middle">£67K</text>
+
+        <!-- Mar 72K — above target -->
+        <rect x="518" y="42" width="60" height="154" rx="4" fill="#6366f1"/>
+        <text x="548" y="36" font-size="9.5" fill="#6366f1" font-weight="600" text-anchor="middle">£72K</text>
+
+        <!-- Apr 78K — above target -->
+        <rect x="628" y="29" width="60" height="167" rx="4" fill="#6366f1"/>
+        <text x="658" y="23" font-size="9.5" fill="#6366f1" font-weight="600" text-anchor="middle">£78K</text>
+      </svg>
+      <div class="legend" style="margin-top:8px;margin-bottom:0;">
+        <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div>At or above target</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#818cf8;"></div>Below target</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Widget 3: Refund & Failed Payment Health ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 3 — Refund &amp; Failed Payment Health</div>
+        <div class="widget-subtitle">Four KPI tiles + monthly dual-line trend (refund rate &amp; failed payment rate)</div>
+      </div>
+      <div class="drill-hint">Click tile → filtered Payments list</div>
+    </div>
+    <div class="widget-body">
+      <!-- 4 KPI tiles -->
+      <div class="kpi-row">
+        <div class="kpi-tile">
+          <div class="kpi-label">Tile 1 — Refund Volume (Period)</div>
+          <div class="kpi-value">£18,240</div>
+          <div class="kpi-sub">312 refund transactions</div>
+          <span class="kpi-badge amber">↑ +8% vs prior period</span>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Tile 2 — Refund Rate</div>
+          <div class="kpi-value">3.4%</div>
+          <div class="kpi-sub">Refund count ÷ total completed payments</div>
+          <span class="kpi-badge amber">↑ +0.4pp vs prior</span>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Tile 3 — Failed Payment Count (Period)</div>
+          <div class="kpi-value">87</div>
+          <div class="kpi-sub">Failed payment attempts</div>
+          <span class="kpi-badge green">↓ −12 vs prior period</span>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Tile 4 — Failed Payment Rate</div>
+          <div class="kpi-value">1.7%</div>
+          <div class="kpi-sub">Failed ÷ total attempted payments</div>
+          <span class="kpi-badge green">↓ −0.3pp vs prior</span>
+        </div>
+      </div>
+
+      <!-- Trend: dual line chart -->
+      <div class="ref-line-label" style="margin-bottom:4px;">Monthly trend — refund rate &amp; failed payment rate</div>
+      <div class="legend" style="margin-bottom:6px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Refund rate</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171;"></div>Failed payment rate</div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- Y axis -->
+        <text x="42" y="22" font-size="9" fill="#9ca3af" text-anchor="end">6%</text>
+        <text x="42" y="55" font-size="9" fill="#9ca3af" text-anchor="end">4%</text>
+        <text x="42" y="88" font-size="9" fill="#9ca3af" text-anchor="end">2%</text>
+        <text x="42" y="120" font-size="9" fill="#9ca3af" text-anchor="end">0%</text>
+
+        <!-- Grid lines -->
+        <line x1="48" y1="20" x2="690" y2="20" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="53" x2="690" y2="53" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="86" x2="690" y2="86" stroke="#f0f2f5" stroke-width="1"/>
+        <line x1="48" y1="118" x2="690" y2="118" stroke="#f0f2f5" stroke-width="1"/>
+
+        <!-- X labels -->
+        <text x="108" y="134" font-size="9.5" fill="#9ca3af" text-anchor="middle">Nov</text>
+        <text x="218" y="134" font-size="9.5" fill="#9ca3af" text-anchor="middle">Dec</text>
+        <text x="328" y="134" font-size="9.5" fill="#9ca3af" text-anchor="middle">Jan</text>
+        <text x="438" y="134" font-size="9.5" fill="#9ca3af" text-anchor="middle">Feb</text>
+        <text x="548" y="134" font-size="9.5" fill="#9ca3af" text-anchor="middle">Mar</text>
+        <text x="658" y="134" font-size="9.5" fill="#9ca3af" text-anchor="middle">Apr</text>
+
+        <!-- Scale: 0%=118, 6%=20 → 1% = 16.33px -->
+        <!-- Refund rate: 2.6 3.0 3.2 3.1 3.3 3.4 → y: 118-42.5=75.5; 118-49=69; ... -->
+        <polyline points="108,75 218,69 328,66 438,67 548,64 658,62"
+          fill="none" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="108" cy="75" r="3" fill="#f59e0b"/>
+        <circle cx="218" cy="69" r="3" fill="#f59e0b"/>
+        <circle cx="328" cy="66" r="3" fill="#f59e0b"/>
+        <circle cx="438" cy="67" r="3" fill="#f59e0b"/>
+        <circle cx="548" cy="64" r="3" fill="#f59e0b"/>
+        <circle cx="658" cy="62" r="3" fill="#f59e0b"/>
+
+        <!-- Failed rate: 2.0 2.1 1.9 2.2 1.8 1.7 → y: 118-32.7=85.3 ... -->
+        <polyline points="108,85 218,84 328,87 438,82 548,88 658,90"
+          fill="none" stroke="#f87171" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="108" cy="85" r="3" fill="#f87171"/>
+        <circle cx="218" cy="84" r="3" fill="#f87171"/>
+        <circle cx="328" cy="87" r="3" fill="#f87171"/>
+        <circle cx="438" cy="82" r="3" fill="#f87171"/>
+        <circle cx="548" cy="88" r="3" fill="#f87171"/>
+        <circle cx="658" cy="90" r="3" fill="#f87171"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Widget 4: Cash-at-Risk — Platform-Wide Aging ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 4 — Cash-at-Risk: Platform-Wide Aging</div>
+        <div class="widget-subtitle">
+          Stacked horizontal bar · Accepted-but-unpaid quotes (all providers) · X axis: count of quotes · Optional legend: by provider country
+        </div>
+      </div>
+      <div class="drill-hint">Click bucket → admin Quotes list (accepted + aging bucket)</div>
+    </div>
+    <div class="widget-body">
+      <div class="legend" style="margin-bottom:14px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#6ee7b7;"></div>0–24h</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fcd34d;"></div>1–3d</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fb923c;"></div>4–7d</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171;"></div>8–14d</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>&gt;14d</div>
+      </div>
+
+      <!-- Stacked horizontal bars by provider country -->
+      <!-- Turkey -->
+      <div class="shbar-row">
+        <div class="shbar-label">Turkey</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="background:#6ee7b7;width:38%;"></div>
+          <div class="shbar-seg" style="background:#fcd34d;width:25%;"></div>
+          <div class="shbar-seg" style="background:#fb923c;width:18%;"></div>
+          <div class="shbar-seg" style="background:#f87171;width:12%;"></div>
+          <div class="shbar-seg" style="background:#dc2626;width:7%;"></div>
+        </div>
+        <div class="shbar-total">214 quotes</div>
+      </div>
+
+      <!-- United Kingdom -->
+      <div class="shbar-row">
+        <div class="shbar-label">UK</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="background:#6ee7b7;width:45%;"></div>
+          <div class="shbar-seg" style="background:#fcd34d;width:28%;"></div>
+          <div class="shbar-seg" style="background:#fb923c;width:14%;"></div>
+          <div class="shbar-seg" style="background:#f87171;width:9%;"></div>
+          <div class="shbar-seg" style="background:#dc2626;width:4%;"></div>
+        </div>
+        <div class="shbar-total">138 quotes</div>
+      </div>
+
+      <!-- Germany -->
+      <div class="shbar-row">
+        <div class="shbar-label">Germany</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="background:#6ee7b7;width:42%;"></div>
+          <div class="shbar-seg" style="background:#fcd34d;width:22%;"></div>
+          <div class="shbar-seg" style="background:#fb923c;width:16%;"></div>
+          <div class="shbar-seg" style="background:#f87171;width:13%;"></div>
+          <div class="shbar-seg" style="background:#dc2626;width:7%;"></div>
+        </div>
+        <div class="shbar-total">89 quotes</div>
+      </div>
+
+      <!-- Spain -->
+      <div class="shbar-row">
+        <div class="shbar-label">Spain</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="background:#6ee7b7;width:50%;"></div>
+          <div class="shbar-seg" style="background:#fcd34d;width:24%;"></div>
+          <div class="shbar-seg" style="background:#fb923c;width:14%;"></div>
+          <div class="shbar-seg" style="background:#f87171;width:8%;"></div>
+          <div class="shbar-seg" style="background:#dc2626;width:4%;"></div>
+        </div>
+        <div class="shbar-total">61 quotes</div>
+      </div>
+
+      <!-- Thailand -->
+      <div class="shbar-row">
+        <div class="shbar-label">Thailand</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="background:#6ee7b7;width:33%;"></div>
+          <div class="shbar-seg" style="background:#fcd34d;width="20%;"></div>
+          <div class="shbar-seg" style="background:#fb923c;width:22%;"></div>
+          <div class="shbar-seg" style="background:#f87171;width:16%;"></div>
+          <div class="shbar-seg" style="background:#dc2626;width:9%;"></div>
+        </div>
+        <div class="shbar-total">47 quotes</div>
+      </div>
+
+      <!-- Other -->
+      <div class="shbar-row">
+        <div class="shbar-label">Other</div>
+        <div class="shbar-track">
+          <div class="shbar-seg" style="background:#6ee7b7;width:40%;"></div>
+          <div class="shbar-seg" style="background:#fcd34d;width:25%;"></div>
+          <div class="shbar-seg" style="background:#fb923c;width:18%;"></div>
+          <div class="shbar-seg" style="background:#f87171;width:11%;"></div>
+          <div class="shbar-seg" style="background:#dc2626;width:6%;"></div>
+        </div>
+        <div class="shbar-total">52 quotes</div>
+      </div>
+
+      <p class="tooltip-note">Buckets: 0–24h · 1–3d · 4–7d · 8–14d · &gt;14d. Click any segment to open admin Quotes list filtered to accepted status + that aging bucket.</p>
+    </div>
+  </div>
+
+  <!-- ── Widget 5: Upcoming Provider Payout Obligations ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 5 — Upcoming Provider Payout Obligations</div>
+        <div class="widget-subtitle">KPI tile + table · Next 30 days · Sorted by payout date ascending</div>
+      </div>
+      <div class="drill-hint">Click row → provider payout detail (FR-017)</div>
+    </div>
+    <div class="widget-body">
+      <!-- KPI highlight -->
+      <div class="kpi-highlight">
+        <div class="kh-main">
+          <div class="kh-label">Total Upcoming Payout Amount (Next 30 Days)</div>
+          <div class="kh-value">£248,430</div>
+          <div class="kh-sub">Across all providers in next payout cycle</div>
+        </div>
+        <div class="kh-divider"></div>
+        <div class="kh-main">
+          <div class="kh-label">Providers in Next Cycle</div>
+          <div class="kh-value" style="font-size:20px;">34</div>
+          <div class="kh-sub">providers due within 30 days</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Amount</th>
+            <th>Payout Date</th>
+            <th>Cadence</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Istanbul Hair Clinic</td>
+            <td>£12,840</td>
+            <td>2026-05-09</td>
+            <td>Weekly</td>
+            <td><span class="status-pill processing">Processing</span></td>
+          </tr>
+          <tr>
+            <td>Harley Street Specialists</td>
+            <td>£9,200</td>
+            <td>2026-05-09</td>
+            <td>Bi-weekly</td>
+            <td><span class="status-pill scheduled">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td>Berlin Trichology Center</td>
+            <td>£7,650</td>
+            <td>2026-05-12</td>
+            <td>Monthly</td>
+            <td><span class="status-pill scheduled">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td>Madrid Hair Restoration</td>
+            <td>£5,380</td>
+            <td>2026-05-14</td>
+            <td>Bi-weekly</td>
+            <td><span class="status-pill pending">Pending</span></td>
+          </tr>
+          <tr>
+            <td>Bangkok DHI Centre</td>
+            <td>£8,910</td>
+            <td>2026-05-16</td>
+            <td>Weekly</td>
+            <td><span class="status-pill scheduled">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td>Vienna Hair Institute</td>
+            <td>£4,220</td>
+            <td>2026-05-19</td>
+            <td>Monthly</td>
+            <td><span class="status-pill scheduled">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td colspan="5" style="text-align:center;color:#9ca3af;font-size:11.5px;padding:10px;">
+              + 28 more providers · Showing first 6 of 34
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Widget 6 + Widget 8 in 2-col grid ── -->
+  <div class="grid-2">
+
+    <!-- Widget 6: Installment Plan Health -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Widget 6 — Installment Plan Health</div>
+          <div class="widget-subtitle">Donut + KPI · Data source: installment_plans table status</div>
+        </div>
+        <div class="drill-hint">Click segment → filtered Installment plans list</div>
+      </div>
+      <div class="widget-body">
+        <!-- KPI: Total outstanding installment balance -->
+        <div style="margin-bottom:14px;">
+          <div class="kpi-label">Total Outstanding Installment Balance</div>
+          <div style="font-size:24px;font-weight:700;color:#1a1d23;">£94,310</div>
+          <div class="kpi-sub">Across all active installment plans</div>
+        </div>
+
+        <div class="donut-wrap">
+          <!-- Donut SVG — circumference of r=52 circle ≈ 326.7 -->
+          <!-- On-time 68% = 222.2; Overdue 21% = 68.6; Defaulted 11% = 35.9 -->
+          <div class="donut-svg-wrap">
+            <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- On-time 68% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#10b981" stroke-width="20"
+                stroke-dasharray="222.2 326.7" stroke-dashoffset="81.7" transform="rotate(-90 75 75)"/>
+              <!-- Overdue 21% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#f59e0b" stroke-width="20"
+                stroke-dasharray="68.6 326.7" stroke-dashoffset="-140.5" transform="rotate(-90 75 75)"/>
+              <!-- Defaulted 11% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#ef4444" stroke-width="20"
+                stroke-dasharray="35.9 326.7" stroke-dashoffset="-209.1" transform="rotate(-90 75 75)"/>
+              <!-- Center text -->
+              <text x="75" y="71" class="donut-center-label">Plans</text>
+              <text x="75" y="87" class="donut-center-value">1,248</text>
+            </svg>
+          </div>
+          <div class="donut-legend">
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#10b981;"></div>
+              <span class="donut-legend-label">On-time</span>
+              <span class="donut-legend-val">68% · 848 plans</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#f59e0b;"></div>
+              <span class="donut-legend-label">Overdue</span>
+              <span class="donut-legend-val">21% · 262 plans</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#ef4444;"></div>
+              <span class="donut-legend-label">Defaulted</span>
+              <span class="donut-legend-val">11% · 138 plans</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget 8: Revenue by Currency -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Widget 8 — Revenue by Currency</div>
+          <div class="widget-subtitle">Donut · GMV by currency code (payments.currency) · FX exposure visibility</div>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div style="margin-bottom:14px;">
+          <div class="kpi-label">Total Platform GMV (Current Period)</div>
+          <div style="font-size:24px;font-weight:700;color:#1a1d23;">£1,180,000</div>
+          <div class="kpi-sub">Base reporting currency: GBP · Tooltip shows raw currency amounts</div>
+        </div>
+
+        <div class="donut-wrap">
+          <!-- Donut SVG — r=52, circumference≈326.7 -->
+          <!-- GBP 38%=124.1; EUR 28%=91.5; USD 18%=58.8; TRY 10%=32.7; Other 6%=19.6 -->
+          <div class="donut-svg-wrap">
+            <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- GBP 38% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#6366f1" stroke-width="20"
+                stroke-dasharray="124.1 326.7" stroke-dashoffset="81.7" transform="rotate(-90 75 75)"/>
+              <!-- EUR 28% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#818cf8" stroke-width="20"
+                stroke-dasharray="91.5 326.7" stroke-dashoffset="-42.4" transform="rotate(-90 75 75)"/>
+              <!-- USD 18% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#a78bfa" stroke-width="20"
+                stroke-dasharray="58.8 326.7" stroke-dashoffset="-133.9" transform="rotate(-90 75 75)"/>
+              <!-- TRY 10% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#f59e0b" stroke-width="20"
+                stroke-dasharray="32.7 326.7" stroke-dashoffset="-192.7" transform="rotate(-90 75 75)"/>
+              <!-- Other 6% -->
+              <circle cx="75" cy="75" r="52" fill="none" stroke="#d1d5db" stroke-width="20"
+                stroke-dasharray="19.6 326.7" stroke-dashoffset="-225.4" transform="rotate(-90 75 75)"/>
+              <!-- Center -->
+              <text x="75" y="71" class="donut-center-label">GMV</text>
+              <text x="75" y="87" class="donut-center-value">5 CCY</text>
+            </svg>
+          </div>
+          <div class="donut-legend">
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#6366f1;"></div>
+              <span class="donut-legend-label">GBP</span>
+              <span class="donut-legend-val">38% · £448K</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#818cf8;"></div>
+              <span class="donut-legend-label">EUR</span>
+              <span class="donut-legend-val">28% · £330K</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#a78bfa;"></div>
+              <span class="donut-legend-label">USD</span>
+              <span class="donut-legend-val">18% · £212K</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#f59e0b;"></div>
+              <span class="donut-legend-label">TRY</span>
+              <span class="donut-legend-val">10% · £118K</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:#d1d5db;"></div>
+              <span class="donut-legend-label">Other</span>
+              <span class="donut-legend-val">6% · £72K</span>
+            </div>
+          </div>
+        </div>
+        <p class="tooltip-note">Non-GBP amounts converted using daily FX rates. On FX API failure, previous day's rates used (max 48h). Beyond 48h: "FX data unavailable" shown.</p>
+      </div>
+    </div>
+
+  </div><!-- end .grid-2 -->
+
+  <!-- ── Widget 7: Affiliate Commission Obligations ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 7 — Affiliate Commission Obligations</div>
+        <div class="widget-subtitle">KPI tile + upcoming payout table · Total affiliate commission owed (pending payout)</div>
+      </div>
+      <div class="drill-hint">Click row → FR-017 affiliate billing</div>
+    </div>
+    <div class="widget-body">
+      <!-- KPI -->
+      <div class="kpi-highlight" style="margin-bottom:14px;">
+        <div class="kh-main">
+          <div class="kh-label">Total Affiliate Commission Owed (Pending Payout)</div>
+          <div class="kh-value">£31,680</div>
+          <div class="kh-sub">Across all active affiliate partners</div>
+        </div>
+        <div class="kh-divider"></div>
+        <div class="kh-main">
+          <div class="kh-label">Affiliates Pending Payout</div>
+          <div class="kh-value" style="font-size:20px;">12</div>
+          <div class="kh-sub">partners with outstanding commissions</div>
+        </div>
+      </div>
+
+      <!-- Table: Affiliate · Commission owed · Next payout date -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Affiliate</th>
+            <th>Commission Owed</th>
+            <th>Next Payout Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>HairTravelGuide.com</td>
+            <td>£8,240</td>
+            <td>2026-05-15</td>
+          </tr>
+          <tr>
+            <td>TurkeyClinicReviews</td>
+            <td>£6,110</td>
+            <td>2026-05-15</td>
+          </tr>
+          <tr>
+            <td>BeforeAfterHair</td>
+            <td>£4,880</td>
+            <td>2026-05-30</td>
+          </tr>
+          <tr>
+            <td>HairLossForums.net</td>
+            <td>£3,420</td>
+            <td>2026-05-30</td>
+          </tr>
+          <tr>
+            <td>EuropeanTransplantHub</td>
+            <td>£2,990</td>
+            <td>2026-06-01</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align:center;color:#9ca3af;font-size:11.5px;padding:10px;">
+              + 7 more affiliates · Showing first 5 of 12
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end .page-content -->
+
+</body>
+</html>

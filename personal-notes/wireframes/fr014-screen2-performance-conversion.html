@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-014 — Screen 2: Performance & Conversion</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f5f6f8;
+      color: #1a1d23;
+    }
+
+    /* ── Top nav ── */
+    .top-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 52px;
+    }
+    .top-nav .logo {
+      font-weight: 700;
+      font-size: 16px;
+      color: #1a1d23;
+      letter-spacing: -0.3px;
+    }
+    .top-nav .nav-items {
+      display: flex;
+      gap: 4px;
+    }
+    .top-nav .nav-item {
+      padding: 6px 12px;
+      border-radius: 6px;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .top-nav .nav-item.active {
+      background: #f0f2ff;
+      color: #3b4ef8;
+      font-weight: 600;
+    }
+    .top-nav .nav-item:hover:not(.active) { background: #f5f6f8; }
+    .top-nav .export-btn {
+      margin-left: auto;
+      padding: 7px 16px;
+      background: #3b4ef8;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ── Sub-nav (analytics tabs) ── */
+    .sub-nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e5ea;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+    }
+    .sub-nav .tab {
+      padding: 12px 18px;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .sub-nav .tab.active {
+      color: #3b4ef8;
+      border-bottom-color: #3b4ef8;
+      font-weight: 600;
+    }
+    .sub-nav .tab:hover:not(.active) { color: #374151; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 20px 24px 12px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1d23;
+    }
+    .page-header p {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 0 24px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .filter-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #374151;
+    }
+    .filter-select .caret { color: #9ca3af; font-size: 10px; }
+    .filter-select .tag {
+      background: #e8f0fe;
+      color: #3b4ef8;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ── Content ── */
+    .content {
+      padding: 0 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Widget card ── */
+    .widget {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .widget-header {
+      padding: 14px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .widget-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1d23;
+    }
+    .widget-subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .widget-body {
+      padding: 16px 18px;
+    }
+    .widget-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .toggle-btn {
+      display: flex;
+      background: #f5f6f8;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .toggle-btn span {
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #6b7280;
+      cursor: pointer;
+    }
+    .toggle-btn span.active {
+      background: #fff;
+      color: #3b4ef8;
+      font-weight: 600;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+
+    /* 2-col grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ── Chart placeholders ── */
+    .chart-area {
+      background: #f9fafb;
+      border: 1px dashed #d1d5db;
+      border-radius: 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #9ca3af;
+      font-size: 11px;
+    }
+    .chart-area .chart-icon { font-size: 28px; }
+    .chart-area .chart-label { font-weight: 500; color: #6b7280; }
+
+    /* ── Multi-line chart (W1) ── */
+    .chart-multiline { height: 200px; position: relative; }
+    .chart-multiline svg { width: 100%; height: 100%; }
+    .legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #374151;
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Grouped bar (W2) ── */
+    .chart-grouped-bar { height: 180px; }
+
+    /* ── Horizontal ranked bar (W3) ── */
+    .ranked-bar-list { display: flex; flex-direction: column; gap: 8px; }
+    .ranked-bar-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 70px;
+      align-items: center;
+      gap: 8px;
+    }
+    .ranked-bar-label { font-size: 11px; color: #374151; text-align: right; }
+    .ranked-bar-track {
+      background: #f0f2f5;
+      border-radius: 4px;
+      height: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .ranked-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding-left: 6px;
+    }
+    .ranked-bar-fill span { font-size: 10px; color: #fff; font-weight: 600; }
+    .ranked-bar-secondary {
+      font-size: 10px;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    /* ── Line chart (W4) ── */
+    .chart-line { height: 160px; }
+
+    /* ── Dual-line TTFQ (W5) ── */
+    .chart-ttfq { height: 180px; position: relative; }
+
+    /* TTFQ color bands */
+    .ttfq-bands {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .ttfq-band {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #6b7280;
+    }
+    .band-swatch {
+      width: 12px; height: 8px; border-radius: 2px;
+    }
+
+    /* ── KPI tiles (W6) ── */
+    .kpi-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .kpi-tile {
+      background: #f9fafb;
+      border: 1px solid #e2e5ea;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .kpi-label {
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .kpi-value.green { color: #16a34a; }
+    .kpi-value.amber { color: #d97706; }
+    .kpi-value.red   { color: #dc2626; }
+    .kpi-sublabel {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+    .sparkline {
+      margin-top: 10px;
+      height: 36px;
+    }
+    .sparkline svg { width: 100%; height: 100%; }
+
+    /* ── Benchmark table (W7) ── */
+    .bench-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .bench-table thead th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f5f6f8;
+      color: #6b7280;
+      font-weight: 600;
+      border-bottom: 1px solid #e2e5ea;
+      font-size: 11px;
+    }
+    .bench-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #374151;
+    }
+    .bench-table tbody tr:last-child td { border-bottom: none; }
+    .bench-table tbody tr:hover td { background: #fafbff; }
+    .variance {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 600;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .variance.positive { background: #dcfce7; color: #16a34a; }
+    .variance.negative { background: #fee2e2; color: #dc2626; }
+    .percentile-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .percentile-badge.top    { background: #dcfce7; color: #15803d; }
+    .percentile-badge.mid    { background: #fef3c7; color: #92400e; }
+    .percentile-badge.bottom { background: #fee2e2; color: #b91c1c; }
+
+    /* annotation callouts */
+    .annotation {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #1e40af;
+      margin-top: 8px;
+    }
+    .annotation .icon { flex-shrink: 0; }
+
+    /* stale banner */
+    .stale-banner {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 7px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #92400e;
+      margin-bottom: 4px;
+    }
+
+    /* ── Axis ticks helper ── */
+    .axis-x {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4px;
+      margin-top: 4px;
+    }
+    .axis-x span { font-size: 10px; color: #9ca3af; }
+
+    /* ── SVG chart helpers drawn inline ── */
+  </style>
+</head>
+<body>
+
+<!-- Top navigation -->
+<nav class="top-nav">
+  <div class="logo">Hairline</div>
+  <div class="nav-items">
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item">Inquiries</div>
+    <div class="nav-item">Quotes</div>
+    <div class="nav-item">Bookings</div>
+    <div class="nav-item">Payments</div>
+    <div class="nav-item active">Analytics</div>
+  </div>
+  <button class="export-btn">⬇ Export Report</button>
+</nav>
+
+<!-- Analytics sub-tabs -->
+<div class="sub-nav">
+  <div class="tab active">Performance &amp; Conversion</div>
+  <div class="tab">Patient Analytics</div>
+  <div class="tab">Finance &amp; Payouts</div>
+  <div class="tab">Pricing &amp; Benchmarks</div>
+</div>
+
+<!-- Page header -->
+<div class="page-header">
+  <div>
+    <h1>Performance &amp; Conversion</h1>
+    <p>Funnel efficiency, TTFQ trends, and platform benchmarks</p>
+  </div>
+</div>
+
+<!-- Filter bar -->
+<div class="filter-bar">
+  <span class="filter-label">Filters:</span>
+
+  <div class="filter-select">
+    📅 Last 4 weeks <span class="caret">▾</span>
+  </div>
+
+  <div class="filter-select">
+    🌍 All countries <span class="caret">▾</span>
+  </div>
+
+  <div class="filter-select">
+    💉 All treatments <span class="tag">multi-select</span> <span class="caret">▾</span>
+  </div>
+
+  <div class="annotation" style="margin-top:0; padding: 5px 10px;">
+    <span class="icon">ℹ️</span>
+    Treatment filter applies to conversion widgets only — not to TTFQ widgets.
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="content">
+
+  <!-- ── Widget 1: Funnel Conversion Trend ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 1 — Funnel Conversion Trend</div>
+        <div class="widget-subtitle">Conversion % to each funnel stage from Inquiries over time · Click a point → Inquiries list (stage + period)</div>
+      </div>
+      <div class="widget-actions">
+        <div class="toggle-btn">
+          <span class="active">Week</span>
+          <span>Month</span>
+        </div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <!-- SVG multi-line chart -->
+      <div class="chart-multiline">
+        <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+          <!-- Grid lines -->
+          <line x1="40" y1="10" x2="40" y2="170" stroke="#e5e7eb" stroke-width="1"/>
+          <line x1="40" y1="170" x2="668" y2="170" stroke="#e5e7eb" stroke-width="1"/>
+          <line x1="40" y1="130" x2="668" y2="130" stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="40" y1="90"  x2="668" y2="90"  stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="40" y1="50"  x2="668" y2="50"  stroke="#f3f4f6" stroke-width="1" stroke-dasharray="4,3"/>
+          <!-- Y labels -->
+          <text x="35" y="174" font-size="9" fill="#9ca3af" text-anchor="end">0%</text>
+          <text x="35" y="134" font-size="9" fill="#9ca3af" text-anchor="end">25%</text>
+          <text x="35" y="94"  font-size="9" fill="#9ca3af" text-anchor="end">50%</text>
+          <text x="35" y="54"  font-size="9" fill="#9ca3af" text-anchor="end">75%</text>
+          <!-- X labels -->
+          <text x="90"  y="183" font-size="9" fill="#9ca3af" text-anchor="middle">W14</text>
+          <text x="195" y="183" font-size="9" fill="#9ca3af" text-anchor="middle">W15</text>
+          <text x="300" y="183" font-size="9" fill="#9ca3af" text-anchor="middle">W16</text>
+          <text x="405" y="183" font-size="9" fill="#9ca3af" text-anchor="middle">W17</text>
+          <text x="510" y="183" font-size="9" fill="#9ca3af" text-anchor="middle">W18</text>
+          <text x="620" y="183" font-size="9" fill="#9ca3af" text-anchor="middle">W19</text>
+
+          <!-- Qualified % line (blue) -->
+          <polyline points="90,42 195,38 300,44 405,36 510,40 620,35"
+            fill="none" stroke="#3b4ef8" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="90"  cy="42" r="3.5" fill="#3b4ef8"/>
+          <circle cx="195" cy="38" r="3.5" fill="#3b4ef8"/>
+          <circle cx="300" cy="44" r="3.5" fill="#3b4ef8"/>
+          <circle cx="405" cy="36" r="3.5" fill="#3b4ef8"/>
+          <circle cx="510" cy="40" r="3.5" fill="#3b4ef8"/>
+          <circle cx="620" cy="35" r="3.5" fill="#3b4ef8"/>
+
+          <!-- Quoted % line (green) -->
+          <polyline points="90,72 195,68 300,74 405,65 510,70 620,63"
+            fill="none" stroke="#16a34a" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="90"  cy="72" r="3.5" fill="#16a34a"/>
+          <circle cx="195" cy="68" r="3.5" fill="#16a34a"/>
+          <circle cx="300" cy="74" r="3.5" fill="#16a34a"/>
+          <circle cx="405" cy="65" r="3.5" fill="#16a34a"/>
+          <circle cx="510" cy="70" r="3.5" fill="#16a34a"/>
+          <circle cx="620" cy="63" r="3.5" fill="#16a34a"/>
+
+          <!-- Accepted % line (amber) -->
+          <polyline points="90,108 195,102 300,112 405,98 510,105 620,96"
+            fill="none" stroke="#d97706" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="90"  cy="108" r="3.5" fill="#d97706"/>
+          <circle cx="195" cy="102" r="3.5" fill="#d97706"/>
+          <circle cx="300" cy="112" r="3.5" fill="#d97706"/>
+          <circle cx="405" cy="98"  r="3.5" fill="#d97706"/>
+          <circle cx="510" cy="105" r="3.5" fill="#d97706"/>
+          <circle cx="620" cy="96"  r="3.5" fill="#d97706"/>
+
+          <!-- In progress % line (red) -->
+          <polyline points="90,138 195,132 300,142 405,128 510,135 620,126"
+            fill="none" stroke="#dc2626" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="90"  cy="138" r="3.5" fill="#dc2626"/>
+          <circle cx="195" cy="132" r="3.5" fill="#dc2626"/>
+          <circle cx="300" cy="142" r="3.5" fill="#dc2626"/>
+          <circle cx="405" cy="128" r="3.5" fill="#dc2626"/>
+          <circle cx="510" cy="135" r="3.5" fill="#dc2626"/>
+          <circle cx="620" cy="126" r="3.5" fill="#dc2626"/>
+        </svg>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3b4ef8"></div> Qualified %</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Quoted %</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div> Accepted %</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> In progress %</div>
+      </div>
+      <div class="annotation">
+        <span class="icon">📌</span>
+        Each stage % = inquiries reaching that stage in period ÷ total inquiries in period. Inquiry counted at highest stage reached within selected range.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Widget 2 + Widget 3 side by side ── -->
+  <div class="grid-2">
+
+    <!-- Widget 2: Conversion Breakdown by Treatment Type -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Widget 2 — Conversion by Treatment Type</div>
+          <div class="widget-subtitle">Grouped bar · Click bar → Inquiries (treatment filter)</div>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div class="chart-area chart-grouped-bar" style="height:200px;">
+          <svg viewBox="0 0 700 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+            <!-- Grid -->
+            <line x1="40" y1="10" x2="40"  y2="155" stroke="#e5e7eb"/>
+            <line x1="40" y1="155" x2="692" y2="155" stroke="#e5e7eb"/>
+            <line x1="40" y1="115" x2="692" y2="115" stroke="#f3f4f6" stroke-dasharray="3,2"/>
+            <line x1="40" y1="75"  x2="692" y2="75"  stroke="#f3f4f6" stroke-dasharray="3,2"/>
+            <line x1="40" y1="35"  x2="692" y2="35"  stroke="#f3f4f6" stroke-dasharray="3,2"/>
+            <!-- Y -->
+            <text x="36" y="158" font-size="8" fill="#9ca3af" text-anchor="end">0</text>
+            <text x="36" y="118" font-size="8" fill="#9ca3af" text-anchor="end">100</text>
+            <text x="36" y="78"  font-size="8" fill="#9ca3af" text-anchor="end">200</text>
+            <text x="36" y="38"  font-size="8" fill="#9ca3af" text-anchor="end">300</text>
+
+            <!-- FUE -->
+            <rect x="50"  y="35"  width="10" height="120" fill="#3b4ef8" rx="2"/>
+            <rect x="62"  y="65"  width="10" height="90"  fill="#16a34a" rx="2"/>
+            <rect x="74"  y="105" width="10" height="50"  fill="#dc2626" rx="2"/>
+            <text x="67" y="168" font-size="8" fill="#6b7280" text-anchor="middle">FUE</text>
+
+            <!-- FUT -->
+            <rect x="132" y="55"  width="10" height="100" fill="#3b4ef8" rx="2"/>
+            <rect x="144" y="80"  width="10" height="75"  fill="#16a34a" rx="2"/>
+            <rect x="156" y="110" width="10" height="45"  fill="#dc2626" rx="2"/>
+            <text x="149" y="168" font-size="8" fill="#6b7280" text-anchor="middle">FUT</text>
+
+            <!-- DHI -->
+            <rect x="214" y="50"  width="10" height="105" fill="#3b4ef8" rx="2"/>
+            <rect x="226" y="78"  width="10" height="77"  fill="#16a34a" rx="2"/>
+            <rect x="238" y="108" width="10" height="47"  fill="#dc2626" rx="2"/>
+            <text x="231" y="168" font-size="8" fill="#6b7280" text-anchor="middle">DHI</text>
+
+            <!-- PRP -->
+            <rect x="296" y="75"  width="10" height="80"  fill="#3b4ef8" rx="2"/>
+            <rect x="308" y="98"  width="10" height="57"  fill="#16a34a" rx="2"/>
+            <rect x="320" y="118" width="10" height="37"  fill="#dc2626" rx="2"/>
+            <text x="313" y="168" font-size="8" fill="#6b7280" text-anchor="middle">PRP</text>
+
+            <!-- Beard Transplant -->
+            <rect x="378" y="60"  width="10" height="95"  fill="#3b4ef8" rx="2"/>
+            <rect x="390" y="85"  width="10" height="70"  fill="#16a34a" rx="2"/>
+            <rect x="402" y="115" width="10" height="40"  fill="#dc2626" rx="2"/>
+            <text x="395" y="168" font-size="8" fill="#6b7280" text-anchor="middle">Beard</text>
+
+            <!-- Eyebrow Transplant -->
+            <rect x="460" y="70"  width="10" height="85"  fill="#3b4ef8" rx="2"/>
+            <rect x="472" y="92"  width="10" height="63"  fill="#16a34a" rx="2"/>
+            <rect x="484" y="120" width="10" height="35"  fill="#dc2626" rx="2"/>
+            <text x="477" y="168" font-size="8" fill="#6b7280" text-anchor="middle">Eyebrow</text>
+
+            <!-- SMP (Scalp Micropigmentation) -->
+            <rect x="542" y="65"  width="10" height="90"  fill="#3b4ef8" rx="2"/>
+            <rect x="554" y="88"  width="10" height="67"  fill="#16a34a" rx="2"/>
+            <rect x="566" y="115" width="10" height="40"  fill="#dc2626" rx="2"/>
+            <text x="559" y="168" font-size="8" fill="#6b7280" text-anchor="middle">SMP</text>
+
+            <!-- Mesotherapy -->
+            <rect x="624" y="80"  width="10" height="75"  fill="#3b4ef8" rx="2"/>
+            <rect x="636" y="102" width="10" height="53"  fill="#16a34a" rx="2"/>
+            <rect x="648" y="125" width="10" height="30"  fill="#dc2626" rx="2"/>
+            <text x="641" y="168" font-size="8" fill="#6b7280" text-anchor="middle">Meso</text>
+
+            <!-- Y axis label -->
+            <text x="8" y="90" font-size="8" fill="#9ca3af" transform="rotate(-90,8,90)">Conversion %</text>
+          </svg>
+        </div>
+        <div class="legend" style="margin-top:8px">
+          <div class="legend-item"><div class="legend-dot" style="background:#3b4ef8"></div> Inquiries</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Quoted</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> In progress</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget 3: Conversion Breakdown by Patient Country -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Widget 3 — Conversion by Patient Country</div>
+          <div class="widget-subtitle">Top 10 by inquiry volume · Click bar → Inquiries (country filter)</div>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div class="ranked-bar-list">
+          <!-- Row template: Country | bar | inquiry count -->
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇬🇧 United Kingdom</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:72%;background:#3b4ef8"><span>72%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">324 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇩🇪 Germany</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:65%;background:#3b4ef8"><span>65%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">210 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇸🇦 Saudi Arabia</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:58%;background:#3b4ef8"><span>58%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">187 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇫🇷 France</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:52%;background:#3b4ef8"><span>52%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">156 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇳🇱 Netherlands</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:47%;background:#3b4ef8"><span>47%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">132 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇮🇹 Italy</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:41%;background:#6b7280"><span>41%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">98 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇧🇪 Belgium</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:38%;background:#6b7280"><span>38%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">74 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇦🇪 UAE</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:34%;background:#6b7280"><span>34%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">62 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇺🇸 USA</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:29%;background:#6b7280"><span>29%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">51 inq</div>
+          </div>
+          <div class="ranked-bar-row">
+            <div class="ranked-bar-label">🇨🇦 Canada</div>
+            <div class="ranked-bar-track">
+              <div class="ranked-bar-fill" style="width:22%;background:#9ca3af"><span>22%</span></div>
+            </div>
+            <div class="ranked-bar-secondary">38 inq</div>
+          </div>
+        </div>
+        <div class="annotation" style="margin-top:10px">
+          <span class="icon">ℹ️</span>
+          Conversion % = Inquiries → In progress. Secondary bar shows inquiry count for context.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Widget 4 + Widget 5 side by side ── -->
+  <div class="grid-2">
+
+    <!-- Widget 4: Quote Acceptance Rate Trend -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Widget 4 — Quote Acceptance Rate Trend</div>
+          <div class="widget-subtitle">Accepted ÷ Quoted · Click point → Quotes list (period)</div>
+        </div>
+        <div class="widget-actions">
+          <div class="toggle-btn">
+            <span class="active">Week</span>
+            <span>Month</span>
+          </div>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div class="chart-line" style="height:160px;">
+          <svg viewBox="0 0 340 155" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+            <line x1="30" y1="10" x2="30" y2="130" stroke="#e5e7eb"/>
+            <line x1="30" y1="130" x2="330" y2="130" stroke="#e5e7eb"/>
+            <line x1="30" y1="90"  x2="330" y2="90"  stroke="#f3f4f6" stroke-dasharray="3,2"/>
+            <line x1="30" y1="50"  x2="330" y2="50"  stroke="#f3f4f6" stroke-dasharray="3,2"/>
+            <text x="27" y="133" font-size="8" fill="#9ca3af" text-anchor="end">0%</text>
+            <text x="27" y="93"  font-size="8" fill="#9ca3af" text-anchor="end">40%</text>
+            <text x="27" y="53"  font-size="8" fill="#9ca3af" text-anchor="end">80%</text>
+
+            <!-- Acceptance rate line -->
+            <polyline points="70,55 120,50 170,60 220,45 270,48 320,42"
+              fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="70"  cy="55" r="4" fill="#16a34a"/>
+            <circle cx="120" cy="50" r="4" fill="#16a34a"/>
+            <circle cx="170" cy="60" r="4" fill="#16a34a"/>
+            <circle cx="220" cy="45" r="4" fill="#16a34a"/>
+            <circle cx="270" cy="48" r="4" fill="#16a34a"/>
+            <circle cx="320" cy="42" r="4" fill="#16a34a"/>
+
+            <!-- X labels -->
+            <text x="70"  y="142" font-size="8" fill="#9ca3af" text-anchor="middle">W14</text>
+            <text x="120" y="142" font-size="8" fill="#9ca3af" text-anchor="middle">W15</text>
+            <text x="170" y="142" font-size="8" fill="#9ca3af" text-anchor="middle">W16</text>
+            <text x="220" y="142" font-size="8" fill="#9ca3af" text-anchor="middle">W17</text>
+            <text x="270" y="142" font-size="8" fill="#9ca3af" text-anchor="middle">W18</text>
+            <text x="320" y="142" font-size="8" fill="#9ca3af" text-anchor="middle">W19</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget 5: TTFQ Trend Over Time -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Widget 5 — TTFQ Trend Over Time</div>
+          <div class="widget-subtitle">p50 + p90 lines · SLA reference · Click → Inquiries sorted by TTFQ</div>
+        </div>
+        <div class="widget-actions">
+          <div class="toggle-btn">
+            <span class="active">Week</span>
+            <span>Month</span>
+          </div>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div class="chart-ttfq">
+          <svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;overflow:visible">
+            <!-- color bands (green/amber/red zones) -->
+            <rect x="30" y="10"  width="300" height="40" fill="#dcfce7" opacity="0.5" rx="2"/>
+            <rect x="30" y="50"  width="300" height="40" fill="#fef3c7" opacity="0.5" rx="2"/>
+            <rect x="30" y="90"  width="300" height="50" fill="#fee2e2" opacity="0.5" rx="2"/>
+
+            <line x1="30" y1="140" x2="330" y2="140" stroke="#e5e7eb"/>
+            <!-- SLA reference line -->
+            <line x1="30" y1="50" x2="330" y2="50" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <text x="332" y="53" font-size="8" fill="#d97706" font-weight="600">SLA</text>
+
+            <!-- Y labels -->
+            <text x="26" y="28"  font-size="8" fill="#9ca3af" text-anchor="end">0h</text>
+            <text x="26" y="68"  font-size="8" fill="#9ca3af" text-anchor="end">2h</text>
+            <text x="26" y="108" font-size="8" fill="#9ca3af" text-anchor="end">4h</text>
+            <text x="26" y="143" font-size="8" fill="#9ca3af" text-anchor="end">6h</text>
+
+            <!-- p50 line (solid, darker) -->
+            <polyline points="70,38 120,35 170,42 220,32 270,36 320,30"
+              fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="70"  cy="38" r="3.5" fill="#16a34a"/>
+            <circle cx="120" cy="35" r="3.5" fill="#16a34a"/>
+            <circle cx="170" cy="42" r="3.5" fill="#16a34a"/>
+            <circle cx="220" cy="32" r="3.5" fill="#16a34a"/>
+            <circle cx="270" cy="36" r="3.5" fill="#16a34a"/>
+            <circle cx="320" cy="30" r="3.5" fill="#16a34a"/>
+
+            <!-- p90 line (dashed, amber) -->
+            <polyline points="70,58 120,52 170,68 220,55 270,62 320,50"
+              fill="none" stroke="#d97706" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="5,3"/>
+            <circle cx="70"  cy="58" r="3.5" fill="#d97706"/>
+            <circle cx="120" cy="52" r="3.5" fill="#d97706"/>
+            <circle cx="170" cy="68" r="3.5" fill="#d97706"/>
+            <circle cx="220" cy="55" r="3.5" fill="#d97706"/>
+            <circle cx="270" cy="62" r="3.5" fill="#d97706"/>
+            <circle cx="320" cy="50" r="3.5" fill="#d97706"/>
+
+            <!-- X labels -->
+            <text x="70"  y="152" font-size="8" fill="#9ca3af" text-anchor="middle">W14</text>
+            <text x="120" y="152" font-size="8" fill="#9ca3af" text-anchor="middle">W15</text>
+            <text x="170" y="152" font-size="8" fill="#9ca3af" text-anchor="middle">W16</text>
+            <text x="220" y="152" font-size="8" fill="#9ca3af" text-anchor="middle">W17</text>
+            <text x="270" y="152" font-size="8" fill="#9ca3af" text-anchor="middle">W18</text>
+            <text x="320" y="152" font-size="8" fill="#9ca3af" text-anchor="middle">W19</text>
+          </svg>
+        </div>
+        <div class="legend" style="gap:16px">
+          <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> p50 (median)</div>
+          <div class="legend-item">
+            <svg width="16" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke="#d97706" stroke-width="2" stroke-dasharray="4,2"/></svg>
+            &nbsp;p90
+          </div>
+          <div class="legend-item">
+            <svg width="16" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3"/></svg>
+            &nbsp;SLA target
+          </div>
+        </div>
+        <div class="ttfq-bands">
+          <div class="ttfq-band"><div class="band-swatch" style="background:#dcfce7;border:1px solid #bbf7d0"></div> Green zone (≤ SLA)</div>
+          <div class="ttfq-band"><div class="band-swatch" style="background:#fef3c7;border:1px solid #fde68a"></div> Amber zone</div>
+          <div class="ttfq-band"><div class="band-swatch" style="background:#fee2e2;border:1px solid #fecaca"></div> Red zone (&gt; 2× SLA)</div>
+        </div>
+        <div class="annotation" style="margin-top:8px">
+          <span class="icon">📌</span>
+          TTFQ = first_quote.sent_at − inquiry.created_at (wall time, provider timezone). Excludes auto-acks.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Widget 6: Cancellation & No-Show Rate ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 6 — Cancellation &amp; No-Show Rate</div>
+        <div class="widget-subtitle">Post-confirmation cancellations + no-shows vs. confirmed bookings · Click tile → Quotes/Bookings list</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div class="kpi-pair">
+
+        <!-- Tile 1: Cancellation rate -->
+        <div class="kpi-tile">
+          <div class="kpi-label">Cancellation Rate</div>
+          <div class="kpi-value amber">8.2%</div>
+          <div class="kpi-sublabel">Cancelled (post-confirmed) ÷ Confirmed bookings</div>
+          <div class="sparkline">
+            <svg viewBox="0 0 200 36" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <polyline points="0,28 33,24 66,30 100,18 133,22 166,16 200,12"
+                fill="none" stroke="#d97706" stroke-width="2"/>
+              <polyline points="0,28 33,24 66,30 100,18 133,22 166,16 200,12 200,36 0,36"
+                fill="#fef3c7" opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Tile 2: No-show rate -->
+        <div class="kpi-tile">
+          <div class="kpi-label">No-Show Rate</div>
+          <div class="kpi-value green">3.1%</div>
+          <div class="kpi-sublabel">No-shows ÷ Confirmed bookings</div>
+          <div class="sparkline">
+            <svg viewBox="0 0 200 36" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+              <polyline points="0,20 33,22 66,18 100,24 133,16 166,18 200,14"
+                fill="none" stroke="#16a34a" stroke-width="2"/>
+              <polyline points="0,20 33,22 66,18 100,24 133,16 166,18 200,14 200,36 0,36"
+                fill="#dcfce7" opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="annotation" style="margin-top:12px">
+        <span class="icon">📌</span>
+        Cancellation = quotes.status = 'cancelled' after reaching confirmed/inprogress. No-show tracked via status label.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Widget 7: Platform Benchmarks ── -->
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Widget 7 — Platform Benchmarks (Anonymised)</div>
+        <div class="widget-subtitle">Your metrics vs. platform median · Benchmark pool: all active providers, same quarter · Min 5 providers required</div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Your Value</th>
+            <th>Platform Median</th>
+            <th>Variance</th>
+            <th>Percentile</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>TTFQ p50</strong></td>
+            <td>1h 24m</td>
+            <td>2h 10m</td>
+            <td><span class="variance positive">▲ +36%</span></td>
+            <td><span class="percentile-badge top">Top 25%</span></td>
+          </tr>
+          <tr>
+            <td><strong>Conversion Rate</strong></td>
+            <td>28.4%</td>
+            <td>24.1%</td>
+            <td><span class="variance positive">▲ +18%</span></td>
+            <td><span class="percentile-badge top">Top 25%</span></td>
+          </tr>
+          <tr>
+            <td><strong>Quote Acceptance Rate</strong></td>
+            <td>61.2%</td>
+            <td>63.5%</td>
+            <td><span class="variance negative">▼ −4%</span></td>
+            <td><span class="percentile-badge mid">Mid 50%</span></td>
+          </tr>
+          <tr>
+            <td><strong>Avg Rating</strong></td>
+            <td>4.3</td>
+            <td>4.1</td>
+            <td><span class="variance positive">▲ +5%</span></td>
+            <td><span class="percentile-badge top">Top 25%</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="annotation" style="margin-top:10px">
+        <span class="icon">🔒</span>
+        Benchmark pool requires minimum 5 providers. If insufficient: "Benchmark unavailable — not enough providers in your segment."
+        Platform median calculated from all active providers in the same quarter. Your identity is fully anonymised.
+      </div>
+    </div>
+  </div>
+
+  <!-- Low-sample state note -->
+  <div class="stale-banner">
+    ⚠️ <strong>Low sample notice:</strong> Fewer than 30 inquiries in this period. Data is still shown but treat results with caution.
+  </div>
+
+</div><!-- /content -->
+
+</body>
+</html>
