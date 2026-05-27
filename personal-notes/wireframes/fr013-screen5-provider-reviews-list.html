@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-013 Screen 5 – Provider: Reviews List &amp; Filters</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+
+  /* ── Ratings Summary ── */
+  .ratings-summary {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 20px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    flex-shrink: 0;
+  }
+  .rating-overall {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 100px;
+  }
+  .rating-big-num {
+    font-size: 40px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+  }
+  .star-row {
+    display: flex;
+    gap: 2px;
+  }
+  .star { color: #f59e0b; font-size: 15px; }
+  .star-empty { color: #d1d5db; font-size: 15px; }
+  .rating-count {
+    font-size: 11px;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  .rating-divider {
+    width: 1px;
+    background: #e4e8f0;
+    align-self: stretch;
+  }
+  .rating-distribution {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 260px;
+  }
+  .dist-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .dist-label { color: #6b7280; width: 32px; text-align: right; flex-shrink: 0; }
+  .dist-bar-bg {
+    flex: 1;
+    height: 7px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .dist-bar { height: 100%; background: #f59e0b; border-radius: 4px; }
+  .dist-count { color: #9ca3af; width: 28px; text-align: right; flex-shrink: 0; }
+
+  /* ── Filter Panel ── */
+  .filter-panel {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 14px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .filter-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .filter-group-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .filter-input {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    height: 34px;
+    min-width: 180px;
+  }
+  .filter-input .icon { color: #9ca3af; font-style: normal; font-size: 12px; }
+  .filter-input input {
+    border: none;
+    outline: none;
+    font-size: 12px;
+    color: #374151;
+    background: transparent;
+    width: 100%;
+  }
+  .filter-input input::placeholder { color: #9ca3af; }
+  .filter-select {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    height: 34px;
+    min-width: 160px;
+  }
+  .filter-select .caret { margin-left: auto; color: #9ca3af; font-size: 10px; }
+  .filter-date-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    height: 34px;
+    min-width: 210px;
+  }
+  .filter-date-range .icon { color: #9ca3af; font-style: normal; }
+  .date-sep { color: #9ca3af; }
+  .filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .result-count { font-size: 13px; font-weight: 600; color: #111827; }
+  .result-count span { color: #0ea5e9; }
+  .filter-actions { display: flex; gap: 8px; align-items: center; }
+  .link-btn {
+    font-size: 12px;
+    color: #0ea5e9;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .sort-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #374151;
+  }
+  .sort-control span { color: #6b7280; }
+  .sort-select {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #111827;
+    cursor: pointer;
+    height: 30px;
+  }
+  .sort-select .caret { color: #9ca3af; font-size: 10px; }
+
+  /* ── Content ── */
+  .content { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+
+  /* ── Table Card ── */
+  .table-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .table-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .table-hint { font-size: 12px; color: #9ca3af; }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fafafa;
+    white-space: nowrap;
+  }
+  .data-table th.sort-active { color: #1a1a2e; }
+  .data-table th .sort-icon { margin-left: 4px; color: #9ca3af; font-size: 10px; }
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f9fafb;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafbfc; cursor: pointer; }
+
+  /* ── Reviewer alias cell ── */
+  .reviewer-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .reviewer-alias { font-weight: 500; color: #111827; }
+
+  /* ── Star display inline ── */
+  .star-inline { color: #f59e0b; font-size: 12px; }
+  .star-inline-empty { color: #d1d5db; font-size: 12px; }
+  .rating-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .rating-num { font-weight: 600; color: #111827; font-size: 12px; }
+
+  /* ── Case/treatment context ── */
+  .case-context { color: #374151; }
+  .case-treatment { color: #6b7280; font-size: 11px; margin-top: 2px; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-patient { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+  .badge-offplatform { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+  .badge-responded { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-no-response { background: #fafafa; color: #6b7280; border: 1px solid #e5e7eb; }
+
+  /* ── Open detail action ── */
+  .action-link {
+    color: #0ea5e9;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .action-link:hover { text-decoration: underline; }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid #f3f4f6;
+    background: #fafafa;
+  }
+  .page-info { font-size: 12px; color: #6b7280; }
+  .page-btns { display: flex; align-items: center; gap: 4px; }
+  .page-btn {
+    min-width: 30px;
+    height: 30px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .page-btn.active { background: #0ea5e9; color: #fff; border-color: #0ea5e9; }
+  .page-btn:hover:not(.active) { background: #f3f4f6; }
+
+  /* ── Annotation strip ── */
+  .annotation-strip {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 11px;
+    color: #92400e;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .annotation-strip strong { color: #78350f; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Provider</div>
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">⊞</i> Dashboard
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">📋</i> Treatment Cases
+    </div>
+    <div class="sidebar-section">Patient</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">💬</i> Quotes & Offers
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">📅</i> Appointments
+    </div>
+    <div class="sidebar-section">Profile</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">★</i> Reviews
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">👤</i> Profile Settings
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">🔔</i> Notifications
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Top bar ── -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Provider Dashboard</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Reviews</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">⬇ Export</button>
+      </div>
+    </div>
+
+    <!-- ── Ratings Summary ── -->
+    <div class="ratings-summary">
+      <!-- Overall avg + stars -->
+      <div class="rating-overall">
+        <div class="rating-big-num">4.6</div>
+        <div class="star-row">
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star" style="opacity:0.5">★</span>
+        </div>
+        <div class="rating-count">128 reviews</div>
+      </div>
+
+      <div class="rating-divider"></div>
+
+      <!-- Distribution bars -->
+      <div class="rating-distribution">
+        <div class="dist-row">
+          <span class="dist-label">5 ★</span>
+          <div class="dist-bar-bg"><div class="dist-bar" style="width:72%"></div></div>
+          <span class="dist-count">92</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-label">4 ★</span>
+          <div class="dist-bar-bg"><div class="dist-bar" style="width:18%"></div></div>
+          <span class="dist-count">23</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-label">3 ★</span>
+          <div class="dist-bar-bg"><div class="dist-bar" style="width:6%"></div></div>
+          <span class="dist-count">8</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-label">2 ★</span>
+          <div class="dist-bar-bg"><div class="dist-bar" style="width:2%"></div></div>
+          <span class="dist-count">3</span>
+        </div>
+        <div class="dist-row">
+          <span class="dist-label">1 ★</span>
+          <div class="dist-bar-bg"><div class="dist-bar" style="width:1%"></div></div>
+          <span class="dist-count">2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Filter Panel ── -->
+    <div class="filter-panel">
+      <div class="filter-row">
+        <!-- Patient filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Patient</div>
+          <div class="filter-input">
+            <i class="icon">🔍</i>
+            <input type="text" placeholder="Search patient alias…" />
+          </div>
+        </div>
+
+        <!-- Case filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Case</div>
+          <div class="filter-select">
+            <span>All Cases</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <!-- Rating range filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Rating Range</div>
+          <div class="filter-select">
+            <span>All Ratings</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <!-- Date range filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Date Range</div>
+          <div class="filter-date-range">
+            <i class="icon">📅</i>
+            <span>Start date</span>
+            <span class="date-sep">–</span>
+            <span>End date</span>
+          </div>
+        </div>
+
+        <!-- Response status filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Response Status</div>
+          <div class="filter-select">
+            <span>All</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <!-- Source type filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Source Type</div>
+          <div class="filter-select">
+            <span>All Sources</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-footer">
+        <div class="result-count">Showing <span>128</span> reviews</div>
+        <div class="filter-actions">
+          <button class="link-btn">Clear filters</button>
+          <div class="sort-control">
+            <span>Sort:</span>
+            <div class="sort-select">
+              <span>Most recent first</span>
+              <span class="caret">▾</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Content ── -->
+    <div class="content">
+
+      <!-- Annotation -->
+      <div class="annotation-strip">
+        <strong>Screen 5 – Provider: Reviews List &amp; Filters</strong>
+        <span>FR-013 · Provider Platform · Only published reviews appear in this list. One patient may have multiple treatment cases; list supports case-specific filtering. Navigates to Screen 6 (Review Detail &amp; Response) on row click.</span>
+      </div>
+
+      <!-- Review list table -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-title">All Published Reviews</div>
+          <div class="table-hint">Paginated · newest first by default</div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Reviewer</th>
+              <th class="sort-active">Rating <span class="sort-icon">↕</span></th>
+              <th>Case / Treatment</th>
+              <th>Source Type</th>
+              <th>Response Status</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 -->
+            <tr>
+              <td>
+                <div class="reviewer-cell">
+                  <div class="avatar">SM</div>
+                  <span class="reviewer-alias">Sarah M.</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-cell">
+                  <span class="rating-num">5.0</span>
+                  <span class="star-inline">★★★★★</span>
+                </div>
+              </td>
+              <td>
+                <div class="case-context">Case #10042</div>
+                <div class="case-treatment">FUE Hair Transplant – 2,500 grafts</div>
+              </td>
+              <td><span class="badge badge-patient">Patient-submitted</span></td>
+              <td><span class="badge badge-responded">Responded</span></td>
+              <td>12 May 2026</td>
+              <td><span class="action-link">View detail →</span></td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+              <td>
+                <div class="reviewer-cell">
+                  <div class="avatar" style="background:#fef3c7;color:#92400e;">JL</div>
+                  <span class="reviewer-alias">James L.</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-cell">
+                  <span class="rating-num">4.0</span>
+                  <span class="star-inline">★★★★</span><span class="star-inline-empty">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="case-context">Case #09981</div>
+                <div class="case-treatment">DHI Hair Transplant – 1,800 grafts</div>
+              </td>
+              <td><span class="badge badge-patient">Patient-submitted</span></td>
+              <td><span class="badge badge-no-response">No response</span></td>
+              <td>8 May 2026</td>
+              <td><span class="action-link">View detail →</span></td>
+            </tr>
+
+            <!-- Row 3 – Verified Off-platform -->
+            <tr>
+              <td>
+                <div class="reviewer-cell">
+                  <div class="avatar" style="background:#f5f3ff;color:#6d28d9;">RP</div>
+                  <span class="reviewer-alias">Robert P.</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-cell">
+                  <span class="rating-num">5.0</span>
+                  <span class="star-inline">★★★★★</span>
+                </div>
+              </td>
+              <td>
+                <div class="case-context">Case #09854</div>
+                <div class="case-treatment">FUE Hair Transplant – 3,000 grafts</div>
+              </td>
+              <td><span class="badge badge-offplatform">Verified Off-platform</span></td>
+              <td><span class="badge badge-no-response">No response</span></td>
+              <td>1 May 2026</td>
+              <td><span class="action-link">View detail →</span></td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr>
+              <td>
+                <div class="reviewer-cell">
+                  <div class="avatar" style="background:#fce7f3;color:#9d174d;">KA</div>
+                  <span class="reviewer-alias">Karen A.</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-cell">
+                  <span class="rating-num">3.0</span>
+                  <span class="star-inline">★★★</span><span class="star-inline-empty">★★</span>
+                </div>
+              </td>
+              <td>
+                <div class="case-context">Case #09712</div>
+                <div class="case-treatment">PRP Therapy – Full scalp</div>
+              </td>
+              <td><span class="badge badge-patient">Patient-submitted</span></td>
+              <td><span class="badge badge-responded">Responded</span></td>
+              <td>22 Apr 2026</td>
+              <td><span class="action-link">View detail →</span></td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr>
+              <td>
+                <div class="reviewer-cell">
+                  <div class="avatar" style="background:#ecfdf5;color:#065f46;">TN</div>
+                  <span class="reviewer-alias">Thomas N.</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-cell">
+                  <span class="rating-num">5.0</span>
+                  <span class="star-inline">★★★★★</span>
+                </div>
+              </td>
+              <td>
+                <div class="case-context">Case #09650</div>
+                <div class="case-treatment">FUE Hair Transplant – 2,000 grafts</div>
+              </td>
+              <td><span class="badge badge-patient">Patient-submitted</span></td>
+              <td><span class="badge badge-no-response">No response</span></td>
+              <td>15 Apr 2026</td>
+              <td><span class="action-link">View detail →</span></td>
+            </tr>
+
+            <!-- Row 6 – same patient, different case -->
+            <tr>
+              <td>
+                <div class="reviewer-cell">
+                  <div class="avatar">SM</div>
+                  <span class="reviewer-alias">Sarah M. 2</span>
+                </div>
+              </td>
+              <td>
+                <div class="rating-cell">
+                  <span class="rating-num">4.0</span>
+                  <span class="star-inline">★★★★</span><span class="star-inline-empty">★</span>
+                </div>
+              </td>
+              <td>
+                <div class="case-context">Case #09210</div>
+                <div class="case-treatment">PRP Therapy – Crown area</div>
+              </td>
+              <td><span class="badge badge-patient">Patient-submitted</span></td>
+              <td><span class="badge badge-responded">Responded</span></td>
+              <td>3 Apr 2026</td>
+              <td><span class="action-link">View detail →</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="page-info">Showing 1–6 of 128 reviews</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="font-size:12px;color:#9ca3af;padding:0 4px;">…</span>
+            <button class="page-btn">22</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>

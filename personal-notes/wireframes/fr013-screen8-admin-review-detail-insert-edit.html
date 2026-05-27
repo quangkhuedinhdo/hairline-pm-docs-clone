@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-013 Screen 8 – Admin: Review Detail, Insert &amp; Edit</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #0ea5e9; color: #fff; }
+  .btn-primary:hover { background: #0284c7; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-outline:hover { background: #f9fafb; }
+  .btn-danger { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
+  .btn-danger:hover { background: #fef2f2; }
+  .btn-success { background: #fff; color: #16a34a; border: 1px solid #86efac; }
+  .btn-success:hover { background: #f0fdf4; }
+  .btn-amber { background: #fff; color: #d97706; border: 1px solid #fcd34d; }
+  .btn-amber:hover { background: #fffbeb; }
+
+  /* ── Page content ── */
+  .page-content {
+    padding: 20px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .page-title { font-size: 18px; font-weight: 700; color: #111827; }
+  .page-subtitle { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .page-header-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* ── Two-column layout ── */
+  .detail-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .detail-main { flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .detail-side { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card-header-left { display: flex; align-items: center; gap: 8px; }
+  .card-title { font-size: 13px; font-weight: 700; color: #111827; }
+  .card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-teal { background: #ccfbf1; color: #0f766e; }
+  .badge-gray { background: #f3f4f6; color: #6b7280; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-red { background: #fee2e2; color: #dc2626; }
+  .badge-purple { background: #f3e8ff; color: #7e22ce; }
+  .badge-orange { background: #ffedd5; color: #c2410c; }
+
+  /* ── Field row ── */
+  .field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field-value {
+    font-size: 13px;
+    color: #111827;
+  }
+  .field-value.muted { color: #6b7280; }
+
+  /* ── Info grid ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .info-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* ── Reviewer row ── */
+  .reviewer-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .reviewer-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0369a1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .reviewer-info { display: flex; flex-direction: column; gap: 3px; }
+  .reviewer-name { font-size: 14px; font-weight: 700; color: #111827; }
+  .reviewer-meta { font-size: 11px; color: #9ca3af; display: flex; align-items: center; gap: 6px; }
+  .reviewer-meta-dot { color: #d1d5db; }
+
+  /* ── Star rating ── */
+  .stars { display: flex; align-items: center; gap: 2px; }
+  .star { font-size: 14px; }
+  .star.filled { color: #f59e0b; }
+  .star.empty { color: #e5e7eb; }
+  .rating-score { font-size: 13px; font-weight: 700; color: #111827; margin-left: 5px; }
+  .rating-label { font-size: 12px; color: #6b7280; margin-left: 3px; }
+
+  /* ── Rating breakdown ── */
+  .ratings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+  }
+  .rating-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .rating-category { font-size: 12px; color: #6b7280; flex-shrink: 0; }
+  .rating-stars-sm { display: flex; gap: 2px; }
+  .star-sm { font-size: 12px; }
+  .star-sm.filled { color: #f59e0b; }
+  .star-sm.empty { color: #e5e7eb; }
+
+  /* ── Feedback block ── */
+  .feedback-text {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.7;
+    padding: 14px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 3px solid #e5e7eb;
+  }
+
+  /* ── Photo gallery ── */
+  .photos-label { font-size: 11px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+  .photos-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .photo-thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .photo-thumb:hover { border-color: #0ea5e9; }
+
+  /* ── Section divider ── */
+  .divider { height: 1px; background: #f3f4f6; margin: 0 -20px; }
+
+  /* ── Flagged alert banner ── */
+  .flag-banner {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .flag-banner-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .flag-banner-body { flex: 1; }
+  .flag-banner-title { font-size: 12px; font-weight: 700; color: #92400e; }
+  .flag-banner-desc { font-size: 12px; color: #78350f; margin-top: 2px; }
+  .flag-banner-actions { display: flex; gap: 6px; margin-top: 8px; }
+
+  /* ── Audit timeline ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    padding: 0 0 16px 0;
+    position: relative;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 24px;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #bae6fd;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .timeline-dot.dot-gray {
+    background: #9ca3af;
+    box-shadow: 0 0 0 2px #e5e7eb;
+  }
+  .timeline-dot.dot-red {
+    background: #ef4444;
+    box-shadow: 0 0 0 2px #fecaca;
+  }
+  .timeline-dot.dot-green {
+    background: #22c55e;
+    box-shadow: 0 0 0 2px #bbf7d0;
+  }
+  .timeline-dot.dot-amber {
+    background: #f59e0b;
+    box-shadow: 0 0 0 2px #fde68a;
+  }
+  .timeline-line {
+    flex: 1;
+    width: 2px;
+    background: #e5e7eb;
+    margin-top: 4px;
+    min-height: 20px;
+  }
+  .timeline-item:last-child .timeline-line { display: none; }
+  .timeline-body { flex: 1; min-width: 0; }
+  .timeline-action { font-size: 12px; font-weight: 600; color: #111827; }
+  .timeline-meta { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .timeline-reason {
+    font-size: 11px;
+    color: #374151;
+    background: #f9fafb;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 6px;
+    border-left: 2px solid #e5e7eb;
+  }
+
+  /* ── Action zone ── */
+  .action-zone {
+    background: #fff;
+    border: 1px solid #e4e8f0;
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .action-zone-title { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 2px; }
+  .action-zone-desc { font-size: 11px; color: #6b7280; line-height: 1.5; }
+  .action-zone-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ── Meta info list ── */
+  .meta-list { display: flex; flex-direction: column; gap: 10px; }
+  .meta-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .meta-key { font-size: 11px; color: #9ca3af; flex-shrink: 0; }
+  .meta-val { font-size: 12px; color: #111827; font-weight: 500; text-align: right; }
+
+  /* ── Separator label ── */
+  .section-sep {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 4px 0 0;
+  }
+  .section-sep-line { flex: 1; height: 1px; background: #f3f4f6; }
+  .section-sep-label { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; }
+
+  /* ── Annotation note ── */
+  .annotation {
+    background: #f0f9ff;
+    border: 1px dashed #7dd3fc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #0369a1;
+    line-height: 1.5;
+  }
+  .annotation strong { font-weight: 700; }
+
+  /* ─────────────────────────────────────────────
+     MODAL OVERLAYS
+  ───────────────────────────────────────────── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,32,39,0.55);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 100;
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 680px;
+    max-width: 100%;
+    flex-shrink: 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    padding: 18px 24px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 15px; font-weight: 700; color: #111827; }
+  .modal-subtitle { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .modal-close {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #6b7280;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: #e5e7eb; }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* ── Form elements ── */
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .form-label .required { color: #ef4444; }
+  .form-label .cond { color: #9ca3af; font-weight: 400; font-size: 11px; }
+  .form-input {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    outline: none;
+  }
+  .form-input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 2px #e0f2fe; }
+  .form-input.readonly { background: #f9fafb; color: #6b7280; cursor: not-allowed; }
+  .form-select {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+  .form-textarea {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+  .form-textarea:focus { border-color: #0ea5e9; box-shadow: 0 0 0 2px #e0f2fe; }
+  .form-hint { font-size: 11px; color: #9ca3af; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* ── File upload zone ── */
+  .upload-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .upload-zone:hover { border-color: #0ea5e9; background: #f0f9ff; }
+  .upload-icon { font-size: 26px; }
+  .upload-label { font-size: 12px; font-weight: 600; color: #374151; }
+  .upload-hint { font-size: 11px; color: #9ca3af; }
+  .upload-files-preview {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .upload-file-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 20px;
+    font-size: 11px;
+    color: #0369a1;
+  }
+
+  /* ── Checkbox ── */
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+  }
+  .checkbox-box {
+    width: 16px; height: 16px;
+    border: 2px solid #d97706;
+    border-radius: 3px;
+    background: #fef3c7;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    color: #d97706;
+    margin-top: 1px;
+  }
+  .checkbox-label { font-size: 12px; color: #78350f; line-height: 1.5; }
+  .checkbox-label strong { font-weight: 700; }
+
+  /* ── Sub-section within modal ── */
+  .modal-sub-section {
+    background: #f8fafc;
+    border: 1px solid #e4e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-sub-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .modal-sub-title .badge { font-size: 10px; }
+
+  /* ── Stars interactive ── */
+  .stars-input { display: flex; gap: 4px; }
+  .star-inp { font-size: 20px; cursor: pointer; color: #f59e0b; }
+  .star-inp.empty { color: #e5e7eb; }
+
+  /* ── Scrollable area note ── */
+  .scroll-note {
+    text-align: center;
+    padding: 8px 0 0;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  /* ─────────────────────────────────────────────
+     ANNOTATION SYSTEM (wireframe callouts)
+  ───────────────────────────────────────────── */
+  .wf-note {
+    font-size: 10px;
+    color: #7c3aed;
+    font-style: italic;
+    margin-top: 3px;
+  }
+
+  /* ── Mode tabs (View / Edit / Add) ── */
+  .mode-tabs {
+    display: flex;
+    gap: 0;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 7px 14px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mode-tab.active { background: #fff; color: #0ea5e9; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* ── No-print helpers ── */
+  @media print { .modal-backdrop { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ───────── Sidebar ───────── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Admin</div>
+
+    <div class="sidebar-section">Patient Ops</div>
+    <div class="sidebar-item"><i class="sidebar-icon">👥</i> Patients</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📋</i> Cases</div>
+
+    <div class="sidebar-section">Reviews</div>
+    <div class="sidebar-item active"><i class="sidebar-icon">⭐</i> Review Management</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🚩</i> Takedown Requests</div>
+    <div class="sidebar-item"><i class="sidebar-icon">⚙️</i> Review Settings</div>
+
+    <div class="sidebar-section">Platform</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🏥</i> Providers</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📊</i> Analytics</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🔧</i> Settings</div>
+  </nav>
+
+  <!-- ───────── Main ───────── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Review Management</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Review Detail — RVW-00481</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">← Back to List</button>
+        <div style="width:1px;height:20px;background:#e4e8f0;"></div>
+        <span style="font-size:12px;color:#6b7280;">Admin: Sarah W.</span>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="page-content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">Review Detail, Insert &amp; Edit</div>
+          <div class="page-subtitle">Screen 8 · Admin Platform · FR-013</div>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-success" onclick="document.getElementById('modal-add').style.display='flex'">
+            ＋ Add Review
+          </button>
+          <button class="btn btn-amber" onclick="document.getElementById('modal-edit').style.display='flex'">
+            ✏️ Edit Review
+          </button>
+          <button class="btn btn-danger" onclick="document.getElementById('modal-remove').style.display='flex'">
+            🗑 Remove Review
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Flagged status banner (conditional) ── -->
+      <div class="flag-banner">
+        <div class="flag-banner-icon">⚠️</div>
+        <div class="flag-banner-body">
+          <div class="flag-banner-title">Review Flagged — Keyword Match</div>
+          <div class="flag-banner-desc">Auto-detected: possible promotional language ("best clinic ever, guaranteed"). Queued for admin review. Flag state is read-only; resolve by editing or removing the review.</div>
+          <div class="flag-banner-actions">
+            <span class="badge badge-amber">🚩 Flagged</span>
+            <span style="font-size:11px;color:#78350f;margin-left:4px;">Flagged 2026-05-18 · Auto</span>
+          </div>
+        </div>
+      </div>
+      <p class="wf-note">⬆ Flagged status banner — shown only when review has an auto/manual flag; read-only unless admin resolves flag via Edit/Remove actions.</p>
+
+      <!-- ── Two-column body ── -->
+      <div class="detail-layout">
+
+        <!-- ── LEFT: Review detail payload ── -->
+        <div class="detail-main">
+
+          <!-- Review detail payload card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-title">Review Detail Payload</div>
+                <span class="badge badge-green">Published</span>
+                <span class="badge badge-blue">Patient-submitted</span>
+                <span class="badge badge-amber">🚩 Flagged</span>
+              </div>
+              <span style="font-size:11px;color:#9ca3af;">RVW-00481</span>
+            </div>
+            <div class="card-body">
+
+              <!-- Reviewer row -->
+              <div class="reviewer-row">
+                <div class="reviewer-avatar">S</div>
+                <div class="reviewer-info">
+                  <div class="reviewer-name">Sarah M. <span style="font-size:11px;font-weight:400;color:#9ca3af;">(alias)</span></div>
+                  <div class="reviewer-meta">
+                    <span>Patient ID: PAT-1042</span>
+                    <span class="reviewer-meta-dot">·</span>
+                    <span>Case: CASE-2291</span>
+                    <span class="reviewer-meta-dot">·</span>
+                    <span>Submitted: 14 May 2026, 10:32 AM</span>
+                  </div>
+                </div>
+              </div>
+              <p class="wf-note">⬆ Reviewer alias shown publicly; admin can unmask full identity per RBAC (not depicted here).</p>
+
+              <div class="divider"></div>
+
+              <!-- Context fields (read-only) -->
+              <div class="info-grid">
+                <div class="field-row">
+                  <div class="field-label">Clinic Name</div>
+                  <div class="field-value">Melbourne Hair Restoration Centre</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Treatment Name</div>
+                  <div class="field-value">FUE Hair Transplant – 3,000 Grafts</div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Overall rating -->
+              <div class="field-row">
+                <div class="field-label">Overall Rating</div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                  <div class="stars">
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star empty">★</span>
+                  </div>
+                  <span class="rating-score">4/5</span>
+                </div>
+              </div>
+
+              <!-- Category ratings -->
+              <div class="field-row">
+                <div class="field-label">Category Ratings</div>
+                <div class="ratings-grid" style="margin-top:6px;">
+                  <div class="rating-row">
+                    <span class="rating-category">Facility</span>
+                    <div class="rating-stars-sm">
+                      <span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span>
+                    </div>
+                    <span style="font-size:11px;color:#374151;font-weight:600;">5/5</span>
+                  </div>
+                  <div class="rating-row">
+                    <span class="rating-category">Staff</span>
+                    <div class="rating-stars-sm">
+                      <span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm empty">★</span>
+                    </div>
+                    <span style="font-size:11px;color:#374151;font-weight:600;">4/5</span>
+                  </div>
+                  <div class="rating-row">
+                    <span class="rating-category">Results</span>
+                    <div class="rating-stars-sm">
+                      <span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm empty">★</span>
+                    </div>
+                    <span style="font-size:11px;color:#374151;font-weight:600;">4/5</span>
+                  </div>
+                  <div class="rating-row">
+                    <span class="rating-category">Value</span>
+                    <div class="rating-stars-sm">
+                      <span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm filled">★</span><span class="star-sm empty">★</span><span class="star-sm empty">★</span>
+                    </div>
+                    <span style="font-size:11px;color:#374151;font-weight:600;">3/5</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Feedback -->
+              <div class="field-row">
+                <div class="field-label">Feedback</div>
+                <div class="feedback-text" style="margin-top:4px;">
+                  The results have been absolutely remarkable — I can already see significant growth coming in around the 4-month mark. The clinic was pristine, and the nursing team put me completely at ease. The post-op care instructions were thorough. Would genuinely recommend this clinic to anyone considering a hair transplant. Best clinic ever, guaranteed results no matter what.
+                  <div style="font-size:11px;color:#d97706;margin-top:6px;">⚠ Flagged phrase: "Best clinic ever, guaranteed"</div>
+                </div>
+              </div>
+
+              <!-- Photos -->
+              <div>
+                <div class="photos-label">Photos (3 attached)</div>
+                <div class="photos-grid">
+                  <div class="photo-thumb">🖼️</div>
+                  <div class="photo-thumb">🖼️</div>
+                  <div class="photo-thumb">🖼️</div>
+                  <div class="photo-thumb" style="border-style:dashed;font-size:13px;color:#9ca3af;">+2 more</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- end review detail payload card -->
+
+          <!-- Source type card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-title">Source Type</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="annotation">
+                <strong>Source type</strong> is read-only for existing patient-submitted reviews. For admin-seeded reviews (Add Review flow), source type is set to <em>Verified Off-platform</em> with full source verification provenance.
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="badge badge-blue" style="font-size:12px;padding:5px 12px;">Patient-submitted</span>
+                <span style="font-size:12px;color:#6b7280;">Read-only for existing patient reviews</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit fields card (shown in edit mode) -->
+          <div class="card" style="border:2px solid #fcd34d;">
+            <div class="card-header" style="background:#fffbeb;">
+              <div class="card-header-left">
+                <span style="font-size:14px;">✏️</span>
+                <div class="card-title">Edit Fields</div>
+                <span class="badge badge-amber">Edit Mode</span>
+              </div>
+              <span class="wf-note">Opens inline when admin clicks "Edit Review"</span>
+            </div>
+            <div class="card-body">
+              <div class="annotation">
+                Edit fields allow admin to redact or correct the existing review content. Every edit requires a reason. The edit modal (see "Edit Review" button above) is the primary edit surface; these fields are illustrated below for spec completeness.
+              </div>
+              <div class="form-group">
+                <label class="form-label">Feedback <span class="required">*</span> <span class="cond">(redaction/correction)</span></label>
+                <textarea class="form-textarea" rows="4" placeholder="Edit or redact feedback text here…">The results have been absolutely remarkable — I can already see significant growth coming in around the 4-month mark. The clinic was pristine, and the nursing team put me completely at ease. The post-op care instructions were thorough. Would genuinely recommend this clinic to anyone considering a hair transplant. [Redacted: promotional language removed per moderation policy.]</textarea>
+                <div class="form-hint">Reason for edit is required before saving (see Removal/Edit Reason below).</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Removal/Edit Reason <span class="required">*</span></label>
+                <select class="form-select">
+                  <option>Select reason…</option>
+                  <option selected>Promotional / Advertorial Language</option>
+                  <option>Inappropriate Content</option>
+                  <option>Privacy Violation</option>
+                  <option>Factual Inaccuracy</option>
+                  <option>Spam / Duplicate</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Additional Details <span class="cond">(optional)</span></label>
+                <textarea class="form-textarea" rows="2" placeholder="Provide additional context for the edit…">Removed the phrase "best clinic ever, guaranteed" as it constitutes an unsubstantiated promotional claim.</textarea>
+              </div>
+            </div>
+          </div>
+          <!-- end edit fields card -->
+
+        </div>
+        <!-- end detail-main -->
+
+        <!-- ── RIGHT: Sidebar panels ── -->
+        <div class="detail-side">
+
+          <!-- Admin actions card -->
+          <div class="action-zone">
+            <div class="action-zone-title">Admin Actions</div>
+            <div class="action-zone-desc">All actions are audit-logged with admin identity, timestamp, and reason.</div>
+            <div class="action-zone-btns" style="flex-direction:column;gap:8px;">
+              <button class="btn btn-success" style="justify-content:center;" onclick="document.getElementById('modal-add').style.display='flex'">
+                ＋ Add Review (Insert New)
+              </button>
+              <button class="btn btn-amber" style="justify-content:center;" onclick="document.getElementById('modal-edit').style.display='flex'">
+                ✏️ Edit Review
+              </button>
+              <button class="btn btn-danger" style="justify-content:center;" onclick="document.getElementById('modal-remove').style.display='flex'">
+                🗑 Remove Review
+              </button>
+            </div>
+            <div class="form-hint" style="margin-top:4px;">
+              • <strong>Remove</strong>: unpublish + archive (not hard deleted). Reason min 10 chars.<br>
+              • <strong>Edit</strong>: redact/correct content. Reason required.<br>
+              • <strong>Add</strong>: insert authenticated off-platform review with provenance.
+            </div>
+          </div>
+
+          <!-- Review metadata -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Review Metadata</div>
+            </div>
+            <div class="card-body">
+              <div class="meta-list">
+                <div class="meta-item">
+                  <span class="meta-key">Review ID</span>
+                  <span class="meta-val">RVW-00481</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Status</span>
+                  <span class="meta-val"><span class="badge badge-green">Published</span></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Source Type</span>
+                  <span class="meta-val"><span class="badge badge-blue">Patient-submitted</span></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Flagged Status</span>
+                  <span class="meta-val"><span class="badge badge-amber">🚩 Flagged</span></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Submitted</span>
+                  <span class="meta-val">14 May 2026, 10:32</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Last Edited</span>
+                  <span class="meta-val">—</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Edit Count</span>
+                  <span class="meta-val">0</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-key">Provider Response</span>
+                  <span class="meta-val"><span class="badge badge-gray">No Response</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audit trail preview -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <div class="card-title">Audit Trail Preview</div>
+              </div>
+              <button class="btn btn-outline" style="font-size:11px;padding:4px 10px;">View Full Audit</button>
+            </div>
+            <div class="card-body">
+              <p class="wf-note" style="margin-bottom:8px;">Read-only; full audit retained. Shows recent admin actions and state changes.</p>
+              <div class="timeline">
+
+                <div class="timeline-item">
+                  <div class="timeline-spine">
+                    <div class="timeline-dot dot-amber"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+                  <div class="timeline-body">
+                    <div class="timeline-action">Auto-flagged by system</div>
+                    <div class="timeline-meta">System · 18 May 2026, 14:07</div>
+                    <div class="timeline-reason">Trigger: keyword match — "guaranteed". Queued for admin review.</div>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-spine">
+                    <div class="timeline-dot dot-green"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+                  <div class="timeline-body">
+                    <div class="timeline-action">Review published</div>
+                    <div class="timeline-meta">System (patient submit) · 14 May 2026, 10:32</div>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-spine">
+                    <div class="timeline-dot dot-gray"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+                  <div class="timeline-body">
+                    <div class="timeline-action">Review created</div>
+                    <div class="timeline-meta">Patient: Sarah M. · 14 May 2026, 10:28</div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="annotation" style="margin-top:8px;">
+                Full audit is immutable and retained for <strong>10 years</strong> per Constitution §VI. Review content retained for 7 years minimum.
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- end detail-side -->
+
+      </div>
+      <!-- end detail-layout -->
+
+    </div>
+    <!-- end page-content -->
+
+  </div>
+  <!-- end main -->
+
+</div>
+<!-- end layout -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL 1: ADD REVIEW (Insert New Authenticated Review)
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-add" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Add Review — Insert Authenticated Review</div>
+        <div class="modal-subtitle">Creates a new "Verified Off-platform" review for a provider profile. All fields are audit-logged.</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modal-add').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+
+      <!-- Review payload section -->
+      <div class="modal-sub-section">
+        <div class="modal-sub-title">Review Payload <span class="badge badge-teal">Verified Off-platform</span></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Clinic / Provider <span class="required">*</span></label>
+            <select class="form-select">
+              <option>Select provider…</option>
+              <option selected>Melbourne Hair Restoration Centre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Treatment Name <span class="required">*</span></label>
+            <input class="form-input" type="text" placeholder="e.g. FUE Hair Transplant" value="FUE Hair Transplant – 3,000 Grafts" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Overall Rating <span class="required">*</span></label>
+          <div class="stars-input">
+            <span class="star-inp">★</span><span class="star-inp">★</span><span class="star-inp">★</span><span class="star-inp">★</span><span class="star-inp empty">★</span>
+          </div>
+          <div class="form-hint">Integer 1–5</div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Facility <span class="required">*</span></label>
+            <div class="stars-input" style="gap:2px;">
+              <span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp empty" style="font-size:16px;">★</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Staff <span class="required">*</span></label>
+            <div class="stars-input" style="gap:2px;">
+              <span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp empty" style="font-size:16px;">★</span><span class="star-inp empty" style="font-size:16px;">★</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Results <span class="required">*</span></label>
+            <div class="stars-input" style="gap:2px;">
+              <span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp empty" style="font-size:16px;">★</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" style="grid-template-columns:1fr 2fr;">
+          <div class="form-group">
+            <label class="form-label">Value <span class="required">*</span></label>
+            <div class="stars-input" style="gap:2px;">
+              <span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp" style="font-size:16px;">★</span><span class="star-inp empty" style="font-size:16px;">★</span><span class="star-inp empty" style="font-size:16px;">★</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Feedback <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="4" placeholder="Enter the review feedback text… (100–2000 chars)"></textarea>
+          <div class="form-hint">100–2000 characters</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Patient/Reviewer Photo <span class="cond">(optional)</span></label>
+          <div class="upload-zone">
+            <div class="upload-icon">📷</div>
+            <div class="upload-label">Upload reviewer photo</div>
+            <div class="upload-hint">jpg/png · max 10MB · must follow media policy</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- end review payload section -->
+
+      <!-- Source verification section -->
+      <div class="modal-sub-section">
+        <div class="modal-sub-title">Source Verification <span class="badge badge-red">Required for Add</span></div>
+        <p class="wf-note">Structured source_metadata payload — all required sub-fields must be provided. Persisted to Review.source_metadata.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Source Platform <span class="required">*</span></label>
+            <select class="form-select">
+              <option>Select platform…</option>
+              <option selected>Google</option>
+              <option>Trustpilot</option>
+              <option>Doctolify</option>
+              <option>Provider Website</option>
+              <option>Email Testimonial</option>
+              <option>Other</option>
+            </select>
+            <div class="form-hint">Select "Other" to enter a free-text platform name</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Source URL <span class="cond">(required unless Email Testimonial)</span></label>
+            <input class="form-input" type="url" placeholder="https://…" value="https://g.co/review/abc123" />
+            <div class="form-hint">Valid URL; required unless source_platform = Email Testimonial</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Capture Date <span class="required">*</span></label>
+            <input class="form-input" type="date" value="2026-05-10" />
+            <div class="form-hint">ISO date; must not be in the future</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reviewer Display Name <span class="required">*</span></label>
+            <input class="form-input" type="text" placeholder="e.g. James T." value="James T." />
+            <div class="form-hint">PII-safe alias — no full last name, no contact info</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Evidence File(s) <span class="required">*</span></label>
+          <div class="upload-zone">
+            <div class="upload-icon">📎</div>
+            <div class="upload-label">Upload evidence (screenshot / PDF / email)</div>
+            <div class="upload-hint">1–5 files · jpg/png/pdf · max 10MB each · stored via S-05</div>
+          </div>
+          <div class="upload-files-preview">
+            <div class="upload-file-chip">📄 google-review-screenshot.png</div>
+            <div class="upload-file-chip">📄 consent-email.pdf</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Permission Record <span class="required">*</span></label>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <button class="btn btn-outline" style="font-size:12px;">📎 Upload file (signed consent / email screenshot)</button>
+            <span style="font-size:12px;color:#6b7280;align-self:center;">— or —</span>
+            <button class="btn btn-outline" style="font-size:12px;">📝 Enter text reference</button>
+          </div>
+          <input class="form-input" type="text" placeholder="e.g. Consent email from james.t@email.com on 10 May 2026" />
+          <div class="form-hint">Either a file upload OR a text reference is required, plus mandatory admin attestation below.</div>
+        </div>
+
+        <div class="checkbox-row">
+          <div class="checkbox-box">✓</div>
+          <div class="checkbox-label">
+            <strong>Admin Attestation (required)</strong> — I confirm that patient/reviewer consent was obtained for this seeded review and the evidence provided is accurate. I understand this action is audit-logged under my identity.
+          </div>
+        </div>
+
+      </div>
+      <!-- end source verification section -->
+
+    </div>
+    <div class="modal-footer">
+      <span style="font-size:11px;color:#9ca3af;">Review will be published as "Verified Off-platform" immediately upon save.</span>
+      <button class="btn btn-outline" onclick="document.getElementById('modal-add').style.display='none'">Cancel</button>
+      <button class="btn btn-primary">Publish Authenticated Review</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL 2: EDIT REVIEW
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-edit" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Edit Review — RVW-00481</div>
+        <div class="modal-subtitle">Redact or correct existing review content. A reason is required. Before/after values are audit-logged.</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modal-edit').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+
+      <div class="annotation">
+        <strong>Edit fields</strong> — redaction/correction fields for existing review. Every admin edit records before/after values, reason, and admin identity. Source type is read-only for patient-submitted reviews.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Feedback <span class="required">*</span></label>
+        <textarea class="form-textarea" rows="5">The results have been absolutely remarkable — I can already see significant growth coming in around the 4-month mark. The clinic was pristine, and the nursing team put me completely at ease. The post-op care instructions were thorough. Would genuinely recommend this clinic to anyone considering a hair transplant. Best clinic ever, guaranteed results no matter what.</textarea>
+        <div class="form-hint">Edit or redact content as required by policy.</div>
+      </div>
+
+      <div class="section-sep">
+        <div class="section-sep-line"></div>
+        <div class="section-sep-label">Removal / Edit Reason</div>
+        <div class="section-sep-line"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reason Category <span class="required">*</span></label>
+        <select class="form-select">
+          <option>Select reason…</option>
+          <option selected>Promotional / Advertorial Language</option>
+          <option>Inappropriate Content</option>
+          <option>Privacy Violation</option>
+          <option>Factual Inaccuracy</option>
+          <option>Spam / Duplicate</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Additional Details <span class="cond">(optional)</span></label>
+        <textarea class="form-textarea" rows="3" placeholder="Provide additional context for the edit…"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('modal-edit').style.display='none'">Cancel</button>
+      <button class="btn btn-primary">Save Edit</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL 3: REMOVE REVIEW
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-remove" style="display:none;">
+  <div class="modal" style="width:520px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Remove Review — RVW-00481</div>
+        <div class="modal-subtitle">Unpublish and archive this review. This action cannot be reversed by the admin; a separate reinstatement process applies.</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modal-remove').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="flag-banner" style="background:#fee2e2;border-color:#fca5a5;">
+        <div class="flag-banner-icon">🗑</div>
+        <div class="flag-banner-body">
+          <div class="flag-banner-title" style="color:#991b1b;">Removal is irreversible via standard admin tooling</div>
+          <div class="flag-banner-desc" style="color:#7f1d1d;">Removed reviews are unpublished + archived (not hard deleted). Provider rating metrics will be recalculated. Patient will be notified with the removal reason you provide below.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reason Category <span class="required">*</span></label>
+        <select class="form-select">
+          <option>Select reason…</option>
+          <option selected>Promotional / Advertorial Language</option>
+          <option>Inappropriate Content</option>
+          <option>Privacy Violation</option>
+          <option>Spam / Duplicate</option>
+          <option>Policy Violation</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Removal Reason <span class="required">*</span> <span class="cond">(patient-facing)</span></label>
+        <textarea class="form-textarea" rows="4" placeholder="Describe the removal reason in clear terms — this will be shown to the patient on their Review Detail screen…"></textarea>
+        <div class="form-hint">Minimum 10 characters required. This reason is stored on the removed review and shown to the patient in Screen 3.</div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('modal-remove').style.display='none'">Cancel</button>
+      <button class="btn btn-danger" style="background:#dc2626;color:#fff;border:none;">Confirm Remove Review</button>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

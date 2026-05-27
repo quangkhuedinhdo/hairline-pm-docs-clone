@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-019 Screen 4 – Admin: Provider Promotion Portfolio</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-link { color: #4a90d9; cursor: pointer; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-danger-outline { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
+
+  /* ── Content ── */
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+
+  /* ── Provider Header Panel ── */
+  .provider-header {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 20px 24px;
+  }
+  .provider-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .provider-identity { display: flex; align-items: center; gap: 14px; }
+  .provider-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: #1e2d50;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .provider-name-group { display: flex; flex-direction: column; gap: 4px; }
+  .provider-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9ca3af;
+  }
+  .provider-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .provider-contact {
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 2px;
+  }
+  .provider-contact-item { display: flex; align-items: center; gap: 4px; }
+  .provider-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .meta-item-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .meta-item-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111827;
+  }
+
+  /* ── KPI Strip ── */
+  .kpi-strip {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .kpi-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 150px;
+  }
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+  }
+  .kpi-value.blue { color: #1d4ed8; }
+  .kpi-value.green { color: #15803d; }
+  .kpi-sub {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+  .kpi-period-tabs {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .kpi-period-tab {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #e4e8f0;
+    color: #6b7280;
+    background: #f9fafb;
+  }
+  .kpi-period-tab.active {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+  }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+    white-space: nowrap;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .filter-field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    white-space: nowrap;
+  }
+  .filter-select {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    min-width: 160px;
+  }
+  .filter-date {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .filter-divider {
+    width: 1px;
+    height: 24px;
+    background: #e4e8f0;
+  }
+  .filter-reset {
+    font-size: 12px;
+    color: #4a90d9;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── Badge chips in filter (simulating multi-select selections) ── */
+  .chip-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #1d4ed8;
+    cursor: pointer;
+  }
+  .chip-x { font-size: 12px; color: #93c5fd; }
+
+  /* ── Table Card ── */
+  .table-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .table-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .table-hint { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+
+  /* ── Data Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead tr {
+    background: #f9fafb;
+    border-bottom: 1px solid #e4e8f0;
+  }
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
+  tbody td {
+    padding: 13px 16px;
+    font-size: 12px;
+    color: #374151;
+    vertical-align: middle;
+  }
+  .cell-primary { font-weight: 500; color: #111827; }
+  .cell-secondary { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .cell-empty { color: #d1d5db; font-style: italic; }
+  .cell-link { color: #4a90d9; cursor: pointer; font-weight: 500; }
+
+  /* ── Revenue impact split ── */
+  .revenue-split {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .revenue-total { font-weight: 600; color: #111827; font-size: 12px; }
+  .revenue-breakdown { font-size: 10px; color: #9ca3af; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .badge-active    { background: #f0fdf4; color: #15803d; }
+  .badge-active .badge-dot { background: #22c55e; }
+  .badge-draft     { background: #f9fafb; color: #374151; }
+  .badge-draft .badge-dot { background: #9ca3af; }
+  .badge-paused    { background: #fff7ed; color: #c2410c; }
+  .badge-paused .badge-dot { background: #f97316; }
+  .badge-expired   { background: #f3f4f6; color: #6b7280; }
+  .badge-expired .badge-dot { background: #9ca3af; }
+  .badge-archived  { background: #fdf4ff; color: #7e22ce; }
+  .badge-archived .badge-dot { background: #a855f7; }
+
+  .badge-adopted   { background: #eff6ff; color: #1d4ed8; }
+  .badge-self      { background: #fdf4ff; color: #7e22ce; }
+
+  .badge-both-fees { background: #eff6ff; color: #1d4ed8; }
+  .badge-provider-only { background: #fdf4ff; color: #7e22ce; }
+
+  /* ── Row Actions ── */
+  .row-actions { display: flex; align-items: center; gap: 6px; }
+  .action-btn {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .action-view   { color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff; }
+  .action-pause  { color: #c2410c; border-color: #fed7aa; background: #fff7ed; }
+  .action-archive { color: #7e22ce; border-color: #e9d5ff; background: #fdf4ff; }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 480px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .modal-desc {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 6px; }
+  .modal-field label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #374151;
+  }
+  .modal-field textarea {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    resize: vertical;
+    min-height: 90px;
+    color: #111827;
+    font-family: inherit;
+  }
+  .modal-field textarea::placeholder { color: #9ca3af; }
+  .modal-field .char-hint { font-size: 11px; color: #9ca3af; text-align: right; }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .modal-warning {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #c2410c;
+    line-height: 1.5;
+  }
+  .modal-warning strong { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Admin</div>
+    <div class="sidebar-section">Promotions</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">🎟</i> Promotions & Discounts
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">📊</i> Analytics
+    </div>
+    <div class="sidebar-section">Platform</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">👥</i> Providers
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">🧑‍⚕️</i> Patients
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">💰</i> Billing & Finance
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">⚙️</i> Settings
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link">Promotions & Discounts</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-link">Providers</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-link">Istanbul Hair Clinic</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Promotion Portfolio</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">← Back to Providers</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Provider Header Panel ── -->
+      <div class="provider-header">
+        <div class="provider-header-top">
+          <div class="provider-identity">
+            <div class="provider-avatar">IH</div>
+            <div class="provider-name-group">
+              <div class="provider-label">Provider</div>
+              <div class="provider-name">Istanbul Hair Clinic</div>
+              <div class="provider-contact">
+                <div class="provider-contact-item">📍 Istanbul, TR</div>
+                <div class="provider-contact-item">✉️ contact@istanbulhair.com</div>
+                <div class="provider-contact-item">📞 +90 212 555 0101</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="provider-meta-row">
+          <div class="meta-item">
+            <div class="meta-item-label">Provider ID</div>
+            <div class="meta-item-value">PRV-00412</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Region</div>
+            <div class="meta-item-value">Istanbul, TR</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Contact</div>
+            <div class="meta-item-value">Dr. Emre Aydın</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Adoption Rate</div>
+            <div class="meta-item-value" style="color:#15803d;">75% (9 of 12 offered)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── KPI Header Strip ── -->
+      <div class="kpi-strip">
+        <div class="kpi-card">
+          <div class="kpi-label">Adoption Rate</div>
+          <div class="kpi-value blue">75%</div>
+          <div class="kpi-sub">9 of 12 admin programs accepted</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Self-Created Active Count</div>
+          <div class="kpi-value green">4</div>
+          <div class="kpi-sub">Active self-created programs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Redemptions</div>
+          <div class="kpi-value">138</div>
+          <div class="kpi-period-tabs">
+            <div class="kpi-period-tab active">30d</div>
+            <div class="kpi-period-tab">90d</div>
+            <div class="kpi-period-tab">365d</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Discount Issued</div>
+          <div class="kpi-value">£24,610</div>
+          <div class="kpi-sub">Across all programs</div>
+        </div>
+      </div>
+
+      <!-- ── Filter Bar ── -->
+      <div class="filter-bar">
+        <span class="filter-label">Filters</span>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="filter-field-label">Record Type</span>
+          <div class="chip-group">
+            <div class="chip">Adopted-Admin <span class="chip-x">×</span></div>
+            <div class="chip">Self-Created <span class="chip-x">×</span></div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="filter-field-label">Status</span>
+          <select class="filter-select" multiple size="1">
+            <option>Draft</option>
+            <option selected>Active</option>
+            <option>Paused</option>
+            <option>Expired</option>
+            <option>Archived</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="filter-field-label">Date Range</span>
+          <div class="filter-date">
+            📅 01 Jan 2026 – 31 Dec 2026
+          </div>
+        </div>
+
+        <span class="filter-reset">Reset Filters</span>
+      </div>
+
+      <!-- ── Results Table ── -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div>
+            <div class="table-title">Promotion Records</div>
+            <div class="table-hint">Showing 7 records for Istanbul Hair Clinic</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Program Name</th>
+              <th>Record Type</th>
+              <th>Funding Model</th>
+              <th>Status</th>
+              <th>Active Window</th>
+              <th>Redemptions</th>
+              <th>Revenue Impact</th>
+              <th>Row Action</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 – Adopted-Admin, Active -->
+            <tr>
+              <td>
+                <div class="cell-primary">Summer Hair Restore 2026</div>
+              </td>
+              <td>
+                <span class="badge badge-adopted">Adopted-Admin</span>
+              </td>
+              <td>
+                <span class="badge badge-both-fees">Both Fees</span>
+              </td>
+              <td>
+                <span class="badge badge-active">
+                  <span class="badge-dot"></span>Active
+                </span>
+              </td>
+              <td>1 Jun 2026 – 31 Aug 2026</td>
+              <td>18</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£3,240</div>
+                  <div class="revenue-breakdown">Hairline: £1,620 · Provider: £1,620</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 – Adopted-Admin, Active -->
+            <tr>
+              <td>
+                <div class="cell-primary">New Patient Welcome Offer</div>
+              </td>
+              <td>
+                <span class="badge badge-adopted">Adopted-Admin</span>
+              </td>
+              <td>
+                <span class="badge badge-both-fees">Both Fees</span>
+              </td>
+              <td>
+                <span class="badge badge-active">
+                  <span class="badge-dot"></span>Active
+                </span>
+              </td>
+              <td>1 Jan 2026 – 31 Dec 2026</td>
+              <td>34</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£5,100</div>
+                  <div class="revenue-breakdown">Hairline: £2,550 · Provider: £2,550</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 – Adopted-Admin, Paused -->
+            <tr>
+              <td>
+                <div class="cell-primary">Winter Graft Campaign</div>
+              </td>
+              <td>
+                <span class="badge badge-adopted">Adopted-Admin</span>
+              </td>
+              <td>
+                <span class="badge badge-both-fees">Both Fees</span>
+              </td>
+              <td>
+                <span class="badge badge-paused">
+                  <span class="badge-dot"></span>Paused
+                </span>
+              </td>
+              <td>1 Nov 2025 – 28 Feb 2026</td>
+              <td>11</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£1,980</div>
+                  <div class="revenue-breakdown">Hairline: £990 · Provider: £990</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 – Self-Created, Active -->
+            <tr>
+              <td>
+                <div class="cell-primary">Loyalty 15% — Returning Patients</div>
+              </td>
+              <td>
+                <span class="badge badge-self">Self-Created</span>
+              </td>
+              <td>
+                <span class="badge badge-provider-only">Provider Only</span>
+              </td>
+              <td>
+                <span class="badge badge-active">
+                  <span class="badge-dot"></span>Active
+                </span>
+              </td>
+              <td>1 Mar 2026 – 31 Dec 2026</td>
+              <td>22</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£6,050</div>
+                  <div class="revenue-breakdown">Hairline: £0 · Provider: £6,050</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                  <button class="action-btn action-pause">Pause</button>
+                  <button class="action-btn action-archive">Archive</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 – Self-Created, Active -->
+            <tr>
+              <td>
+                <div class="cell-primary">Referral Bonus — Fixed £200 Off</div>
+              </td>
+              <td>
+                <span class="badge badge-self">Self-Created</span>
+              </td>
+              <td>
+                <span class="badge badge-provider-only">Provider Only</span>
+              </td>
+              <td>
+                <span class="badge badge-active">
+                  <span class="badge-dot"></span>Active
+                </span>
+              </td>
+              <td>15 Apr 2026 – 15 Oct 2026</td>
+              <td>9</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£1,800</div>
+                  <div class="revenue-breakdown">Hairline: £0 · Provider: £1,800</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                  <button class="action-btn action-pause">Pause</button>
+                  <button class="action-btn action-archive">Archive</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6 – Self-Created, Expired -->
+            <tr>
+              <td>
+                <div class="cell-primary">Early Bird Spring 2026</div>
+              </td>
+              <td>
+                <span class="badge badge-self">Self-Created</span>
+              </td>
+              <td>
+                <span class="badge badge-provider-only">Provider Only</span>
+              </td>
+              <td>
+                <span class="badge badge-expired">
+                  <span class="badge-dot"></span>Expired
+                </span>
+              </td>
+              <td>1 Feb 2026 – 31 Mar 2026</td>
+              <td>28</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£5,600</div>
+                  <div class="revenue-breakdown">Hairline: £0 · Provider: £5,600</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                  <button class="action-btn action-archive">Archive</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 7 – Self-Created, Draft -->
+            <tr>
+              <td>
+                <div class="cell-primary">VIP Package Upgrade — Q3</div>
+              </td>
+              <td>
+                <span class="badge badge-self">Self-Created</span>
+              </td>
+              <td>
+                <span class="badge badge-provider-only">Provider Only</span>
+              </td>
+              <td>
+                <span class="badge badge-draft">
+                  <span class="badge-dot"></span>Draft
+                </span>
+              </td>
+              <td>1 Jul 2026 – 30 Sep 2026</td>
+              <td>0</td>
+              <td>
+                <div class="revenue-split">
+                  <div class="revenue-total">£0</div>
+                  <div class="revenue-breakdown">Not yet active</div>
+                </div>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View Detail</button>
+                  <button class="action-btn action-archive">Archive</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Pause Modal (static reference) ── -->
+<div class="modal-overlay" id="pauseModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Pause Promotion Program</div>
+    <div class="modal-desc">
+      You are about to pause <strong>Loyalty 15% — Returning Patients</strong> for
+      <strong>Istanbul Hair Clinic</strong>. New redemptions will be blocked immediately.
+      Existing applied discounts on in-progress quotes will be preserved.
+    </div>
+    <div class="modal-warning">
+      <strong>Note:</strong> This action will be logged in the audit trail with your
+      reason. The provider will be notified of the pause.
+    </div>
+    <div class="modal-field">
+      <label>Reason (required)</label>
+      <textarea placeholder="Enter a mandatory reason for pausing this program…"></textarea>
+      <div class="char-hint">0 / 500</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn" style="background:#f97316;color:#fff;">Confirm Pause</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Archive Modal (static reference) ── -->
+<div class="modal-overlay" id="archiveModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Archive Promotion Program</div>
+    <div class="modal-desc">
+      You are about to archive <strong>Loyalty 15% — Returning Patients</strong> for
+      <strong>Istanbul Hair Clinic</strong>. The program will be moved to Archived state
+      and will no longer be available for new redemptions.
+    </div>
+    <div class="modal-warning">
+      <strong>Note:</strong> Archiving is a governance action. It will be logged in the
+      audit trail with your mandatory reason.
+    </div>
+    <div class="modal-field">
+      <label>Reason (required)</label>
+      <textarea placeholder="Enter a mandatory reason for archiving this program…"></textarea>
+      <div class="char-hint">0 / 500</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn" style="background:#7e22ce;color:#fff;">Confirm Archive</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

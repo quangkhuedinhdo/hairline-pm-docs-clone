@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-019 Screen 9 – Provider: Promotion Detail (Create / Edit)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #0ea5e9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-ghost { background: transparent; color: #6b7280; border: 1px solid transparent; }
+
+  /* ── Mode Banner ── */
+  .mode-banner {
+    margin: 20px 28px 0;
+    border-radius: 10px;
+    border: 1px solid;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mode-banner.mode-1 {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .mode-banner.mode-2 {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .mode-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .mode-content { flex: 1; }
+  .mode-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .mode-1 .mode-title { color: #1e40af; }
+  .mode-2 .mode-title { color: #92400e; }
+  .mode-desc { font-size: 12px; line-height: 1.5; }
+  .mode-1 .mode-desc { color: #3b82f6; }
+  .mode-2 .mode-desc { color: #b45309; }
+  .mode-badge {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+  .mode-1 .mode-badge { background: #dbeafe; color: #1d4ed8; }
+  .mode-2 .mode-badge { background: #fef3c7; color: #92400e; }
+
+  /* ── Page content area ── */
+  .page-content {
+    padding: 16px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+
+  /* ── Two-column layout ── */
+  .form-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  /* ── Form column ── */
+  .form-col { flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+  /* ── Right sidebar column ── */
+  .sidebar-col { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title { font-size: 13px; font-weight: 700; color: #111827; }
+  .card-subtitle { font-size: 11px; color: #9ca3af; }
+  .card-body { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+
+  /* ── Form Fields ── */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field-row { display: flex; gap: 16px; }
+  .field-row .field { flex: 1; }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .required-star { color: #ef4444; }
+  .optional-tag {
+    font-size: 10px;
+    font-weight: 400;
+    color: #9ca3af;
+    background: #f3f4f6;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .field-input {
+    height: 36px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    outline: none;
+  }
+  .field-input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+  .field-input.has-value { border-color: #d1d5db; }
+  .field-input.readonly {
+    background: #f9fafb;
+    color: #6b7280;
+    cursor: default;
+  }
+  .field-input.error { border-color: #ef4444; }
+
+  .field-select {
+    height: 36px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239ca3af' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+  .field-select:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+
+  .field-textarea {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+  .field-textarea:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+
+  .field-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    line-height: 1.4;
+  }
+  .field-error {
+    font-size: 11px;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .char-count {
+    font-size: 11px;
+    color: #9ca3af;
+    text-align: right;
+  }
+
+  /* ── Value + suffix inline input ── */
+  .input-with-suffix {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .input-with-suffix:focus-within { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+  .input-with-suffix input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 12px;
+    height: 36px;
+    font-size: 13px;
+    color: #111827;
+    background: transparent;
+  }
+  .input-suffix {
+    padding: 0 12px;
+    background: #f3f4f6;
+    border-left: 1px solid #e5e7eb;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ── Code input with copy button ── */
+  .input-with-action {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .input-with-action:focus-within { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+  .input-with-action input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 12px;
+    height: 36px;
+    font-size: 13px;
+    color: #111827;
+    background: transparent;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    letter-spacing: 0.5px;
+  }
+  .input-with-action input::placeholder { font-family: inherit; letter-spacing: 0; color: #9ca3af; }
+  .input-action-btn {
+    padding: 0 12px;
+    background: #f3f4f6;
+    border-left: 1px solid #e5e7eb;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    color: #6b7280;
+    cursor: pointer;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .input-action-btn:hover { background: #e9ecef; color: #374151; }
+
+  /* ── Date range fields ── */
+  .date-pair {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .date-pair .field { flex: 1; }
+  .date-sep-label {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 20px;
+    flex-shrink: 0;
+  }
+
+  /* ── Toggle ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    gap: 16px;
+  }
+  .toggle-label-group { display: flex; flex-direction: column; gap: 3px; }
+  .toggle-label { font-size: 13px; font-weight: 600; color: #111827; }
+  .toggle-desc { font-size: 11px; color: #92400e; line-height: 1.4; }
+  .toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 100px;
+    background: #d1d5db;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle-switch input:checked + .toggle-track { background: #0ea5e9; }
+  .toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); }
+
+  /* ── Mode-2 forced limit note ── */
+  .forced-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 6px;
+  }
+  .forced-note-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .forced-note-text { font-size: 11px; color: #9a3412; line-height: 1.5; }
+
+  /* ── Right sidebar: Meta card ── */
+  .meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .meta-value { font-size: 13px; color: #111827; font-weight: 500; }
+  .meta-value.fixed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #166534;
+    font-weight: 600;
+    width: fit-content;
+  }
+  .meta-value.state {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: #f3f4f6;
+    border-radius: 100px;
+    font-size: 11px;
+    color: #374151;
+    font-weight: 600;
+    width: fit-content;
+  }
+  .meta-value.state::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #9ca3af;
+    display: inline-block;
+  }
+  .meta-divider { border: none; border-top: 1px solid #f3f4f6; margin: 2px 0; }
+
+  /* ── Validation info box ── */
+  .validation-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .validation-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .validation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+  .vi-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #d1d5db;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* ── Action buttons in sidebar ── */
+  .action-group { display: flex; flex-direction: column; gap: 8px; }
+  .btn-full { width: 100%; justify-content: center; padding: 10px 14px; font-size: 13px; }
+  .btn-danger { background: #fff; color: #dc2626; border: 1px solid #fecaca; }
+  .btn-danger:hover { background: #fef2f2; }
+
+  /* ── App mode helper ── */
+  .app-mode-note {
+    margin-top: 4px;
+    padding: 8px 10px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 5px;
+    font-size: 11px;
+    color: #0369a1;
+    line-height: 1.4;
+  }
+
+  /* ── Section divider label ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 2px 0;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: #f3f4f6; }
+  .section-divider-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #9ca3af;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Provider</div>
+
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item"><i class="sidebar-icon">▦</i> Dashboard</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💬</i> Inquiries</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📋</i> Quotes &amp; Bookings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🏥</i> Treatments</div>
+
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💰</i> Earnings &amp; Payouts</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📊</i> Reports</div>
+
+    <div class="sidebar-section">Promotions</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📣</i> Admin Campaigns</div>
+    <div class="sidebar-item active"><i class="sidebar-icon">🏷</i> My Promotions</div>
+
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">⚙</i> Clinic Profile</div>
+    <div class="sidebar-item"><i class="sidebar-icon">👥</i> Team</div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Top bar ── -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Promotions</span>
+        <span class="breadcrumb-sep">›</span>
+        <span>My Promotions</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">New Promotion</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-outline">Save as Draft</button>
+        <button class="btn btn-primary">Publish</button>
+      </div>
+    </div>
+
+    <!-- ── Mode 1 Banner (Standalone — from PR-02 / PR-05 navigation) ── -->
+    <div class="mode-banner mode-1" style="margin-bottom: 0;">
+      <div class="mode-icon">📌</div>
+      <div class="mode-content">
+        <div class="mode-title">Mode 1 — Standalone</div>
+        <div class="mode-desc">
+          Creating a reusable promotion ahead of time. Once published, it will be available for list-selection during quote creation (FR-004 Screen 1) within its active window.
+          <br/>Scope will be set to <strong>REUSABLE</strong> on submit.
+        </div>
+      </div>
+      <span class="mode-badge">Standalone</span>
+    </div>
+
+    <!-- ─────────────────────────────────────── -->
+    <!-- NOTE: Mode 2 Banner shown for reference -->
+    <!-- Uncomment to show Mode 2 state          -->
+    <!-- ─────────────────────────────────────── -->
+    <!--
+    <div class="mode-banner mode-2" style="margin-bottom: 0;">
+      <div class="mode-icon">⚡</div>
+      <div class="mode-content">
+        <div class="mode-title">Mode 2 — Inline (from Quote)</div>
+        <div class="mode-desc">
+          Creating an on-the-spot promotion attached to <strong>Quote #QT-20260519-0042</strong>.
+          Scope will be set to <strong>AD_HOC_QUOTE_BOUND</strong> unless "Save as reusable" is enabled.
+          Active window defaults to the bound quote's window. Total usage limit is forced to 1.
+        </div>
+      </div>
+      <span class="mode-badge">Inline – Quote Bound</span>
+    </div>
+    -->
+
+    <!-- ── Page content ── -->
+    <div class="page-content">
+      <div class="form-layout">
+
+        <!-- ── Left: Form ── -->
+        <div class="form-col">
+
+          <!-- Section: Basic Information -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Basic Information</span>
+            </div>
+            <div class="card-body">
+
+              <!-- Promotion Name -->
+              <div class="field">
+                <label class="field-label">
+                  Promotion Name <span class="required-star">*</span>
+                </label>
+                <input class="field-input has-value" type="text" value="Summer Hair Restoration" />
+                <div class="field-hint">3–120 characters. This is the display name shown during quote creation.</div>
+              </div>
+
+              <!-- Description -->
+              <div class="field">
+                <label class="field-label">
+                  Description <span class="optional-tag">optional</span>
+                </label>
+                <textarea class="field-textarea" rows="3" placeholder="Patient-facing copy — briefly describe the promotion…">Get 15% off your full hair restoration package this summer.</textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div class="field-hint">≤ 1000 characters. Shown to patients on quote and booking screens.</div>
+                  <div class="char-count">62 / 1000</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Section: Discount Details -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Discount Details</span>
+            </div>
+            <div class="card-body">
+
+              <!-- Discount Type + Value -->
+              <div class="field-row">
+                <div class="field">
+                  <label class="field-label">Discount Type <span class="required-star">*</span></label>
+                  <select class="field-select">
+                    <option selected>Percentage</option>
+                    <option>Fixed amount</option>
+                    <option>Package upgrade</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="field-label">Value <span class="required-star">*</span></label>
+                  <div class="input-with-suffix">
+                    <input type="number" value="15" min="0" />
+                    <span class="input-suffix">%</span>
+                  </div>
+                  <div class="field-hint">Per type rules and policy caps.</div>
+                </div>
+              </div>
+
+              <!-- Applies To -->
+              <div class="field">
+                <label class="field-label">Applies To <span class="required-star">*</span></label>
+                <select class="field-select">
+                  <option selected>Whole price</option>
+                  <option>Treatment cost only</option>
+                  <option>Travel cost only</option>
+                  <option>Other component</option>
+                </select>
+                <div class="field-hint">Determines which price component the discount reduces.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Section: Distribution -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Distribution</span>
+            </div>
+            <div class="card-body">
+
+              <!-- Code -->
+              <div class="field">
+                <label class="field-label">
+                  Code <span class="optional-tag">optional</span>
+                </label>
+                <div class="input-with-action">
+                  <input type="text" placeholder="e.g. SUMMER15 — leave blank for list-selection only" />
+                  <span class="input-action-btn">⚡ Generate</span>
+                </div>
+                <div class="field-hint">
+                  Leave blank if you only want patients to select this promotion from a list during quote creation.
+                  Enter a code to also enable marketing distribution (flyers, partner promos, etc.).
+                  Must be unique platform-wide.
+                </div>
+              </div>
+
+              <!-- Application Mode -->
+              <div class="field">
+                <label class="field-label">Application Mode <span class="required-star">*</span></label>
+                <select class="field-select">
+                  <option selected>List-selection during quote (default)</option>
+                  <option>Code-only entry</option>
+                  <option>Either (list-selection or code entry)</option>
+                </select>
+                <div class="app-mode-note">
+                  <strong>List-selection during quote</strong> — promotion appears in the provider's promotion picker on the quote creation screen (FR-004 Screen 1). No code required.<br/>
+                  <strong>Code-only entry</strong> — promotion is not shown in the picker; only redeemable when the patient enters the code. Requires the Code field above.<br/>
+                  <strong>Either</strong> — available both via list-selection and code entry. Requires the Code field above.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Section: Active Window & Limits -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Active Window &amp; Limits</span>
+            </div>
+            <div class="card-body">
+
+              <!-- Start / End Date -->
+              <div class="field">
+                <label class="field-label">Active Window <span class="required-star">*</span></label>
+                <div class="date-pair">
+                  <div class="field">
+                    <label class="field-label" style="font-weight:400; color:#6b7280;">Start date &amp; time</label>
+                    <input class="field-input has-value" type="datetime-local" value="2026-06-01T00:00" />
+                  </div>
+                  <div class="date-sep-label">→</div>
+                  <div class="field">
+                    <label class="field-label" style="font-weight:400; color:#6b7280;">End date &amp; time</label>
+                    <input class="field-input has-value" type="datetime-local" value="2026-08-31T23:59" />
+                  </div>
+                </div>
+                <div class="field-hint">End date must be on or after start date. (Mode 1: set freely. Mode 2: defaults to the bound quote's active window.)</div>
+              </div>
+
+              <div class="section-divider">
+                <div class="section-divider-line"></div>
+                <div class="section-divider-label">Usage Caps</div>
+                <div class="section-divider-line"></div>
+              </div>
+
+              <!-- Total Usage Limit -->
+              <div class="field-row">
+                <div class="field">
+                  <label class="field-label">
+                    Total Usage Limit <span class="optional-tag">optional</span>
+                  </label>
+                  <div class="input-with-suffix">
+                    <input type="number" placeholder="Unlimited" min="0" />
+                    <span class="input-suffix">redemptions</span>
+                  </div>
+                  <div class="field-hint">≥ 0. Leave blank for unlimited total redemptions.</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">
+                    Per-User Usage Limit <span class="optional-tag">optional</span>
+                  </label>
+                  <div class="input-with-suffix">
+                    <input type="number" placeholder="Unlimited" min="0" />
+                    <span class="input-suffix">per patient</span>
+                  </div>
+                  <div class="field-hint">≥ 0. Leave blank for unlimited per-patient uses.</div>
+                </div>
+              </div>
+
+              <!-- Mode 2 forced limit note — shown only in Mode 2 -->
+              <!--
+              <div class="forced-note">
+                <span class="forced-note-icon">⚠️</span>
+                <div class="forced-note-text">
+                  <strong>Mode 2 (Inline):</strong> Total Usage Limit is automatically set to <strong>1</strong> because this promotion is bound to a single quote. Enable "Save as reusable" below to remove this restriction.
+                </div>
+              </div>
+              -->
+
+            </div>
+          </div>
+
+          <!-- Section: Mode 2 only — Ad-hoc Options -->
+          <!-- This section is shown only in Mode 2 (Inline from Quote) -->
+          <!--
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Ad-hoc Options</span>
+              <span class="card-subtitle" style="margin-left:auto; font-size:11px; background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:4px;">Mode 2 only</span>
+            </div>
+            <div class="card-body">
+              <div class="toggle-row">
+                <div class="toggle-label-group">
+                  <div class="toggle-label">Save as reusable program for future quotes</div>
+                  <div class="toggle-desc">
+                    When enabled, scope is promoted from AD_HOC_QUOTE_BOUND to REUSABLE on submit.
+                    The promotion will appear in the list-selection picker on future quote creation screens
+                    and Total Usage Limit will no longer be forced to 1.
+                  </div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" />
+                  <span class="toggle-track"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          -->
+
+        </div>
+        <!-- /form-col -->
+
+        <!-- ── Right: Sidebar ── -->
+        <div class="sidebar-col">
+
+          <!-- Meta card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Promotion Info</span>
+            </div>
+            <div class="card-body" style="padding:16px 20px;">
+              <div class="meta-row">
+
+                <div class="meta-item">
+                  <div class="meta-label">Lifecycle State</div>
+                  <div class="meta-value state">Draft</div>
+                </div>
+
+                <hr class="meta-divider" />
+
+                <div class="meta-item">
+                  <div class="meta-label">Funding Model</div>
+                  <div class="meta-value fixed">🔒 Provider Only</div>
+                  <div class="field-hint" style="margin-top:4px;">Fixed. Provider self-created promotions affect provider fees only. Not user-editable.</div>
+                </div>
+
+                <hr class="meta-divider" />
+
+                <div class="meta-item">
+                  <div class="meta-label">Program Type</div>
+                  <div class="meta-value">Provider Self-Created</div>
+                </div>
+
+                <div class="meta-item">
+                  <div class="meta-label">Scope</div>
+                  <div class="meta-value">REUSABLE (Mode 1)</div>
+                </div>
+
+                <div class="meta-item">
+                  <div class="meta-label">Approval Required</div>
+                  <div class="meta-value">No — auto-active per dates/limits</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Actions</span>
+            </div>
+            <div class="card-body" style="padding:16px 20px;">
+              <div class="action-group">
+                <button class="btn btn-primary btn-full">Publish</button>
+                <button class="btn btn-outline btn-full">Save as Draft</button>
+                <button class="btn btn-ghost btn-full">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Validation Rules -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Validation Rules</span>
+            </div>
+            <div class="card-body" style="padding:16px 20px;">
+              <div class="validation-box" style="border:none; background:transparent; padding:0; gap:10px;">
+                <div class="validation-title">Field Rules</div>
+
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>Promotion Name:</strong> 3–120 characters, required.</span>
+                </div>
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>Description:</strong> ≤ 1000 characters, optional.</span>
+                </div>
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>Code:</strong> Optional. If provided, must be unique platform-wide (no collision with admin or other provider codes).</span>
+                </div>
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>Application Mode = Code-only</strong> requires the Code field to be filled.</span>
+                </div>
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>End date</strong> must be on or after start date.</span>
+                </div>
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>Total / Per-User Usage Limit:</strong> ≥ 0. Blank = unlimited.</span>
+                </div>
+                <div class="validation-item">
+                  <div class="vi-dot"></div>
+                  <span><strong>Mode 2 only:</strong> Total Usage Limit forced to 1 unless "Save as reusable" is enabled.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /sidebar-col -->
+
+      </div>
+    </div><!-- /page-content -->
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>

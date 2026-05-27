@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-013 Screen 6 – Provider: Review Detail &amp; Response</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #0ea5e9; color: #fff; }
+  .btn-primary:hover { background: #0284c7; }
+  .btn-primary:disabled { background: #bae6fd; color: #fff; cursor: not-allowed; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-outline:hover { background: #f9fafb; }
+  .btn-ghost { background: transparent; color: #6b7280; border: 1px solid transparent; }
+  .btn-respond {
+    background: #fff;
+    color: #0ea5e9;
+    border: 1.5px solid #0ea5e9;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-respond:hover { background: #f0f9ff; }
+
+  /* ── Page content ── */
+  .page-content {
+    padding: 20px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+
+  /* ── Two-column layout ── */
+  .detail-layout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .detail-main { flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .detail-side { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card-header-left { display: flex; align-items: center; gap: 8px; }
+  .card-title { font-size: 13px; font-weight: 700; color: #111827; }
+  .card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-teal { background: #ccfbf1; color: #0f766e; }
+  .badge-gray { background: #f3f4f6; color: #6b7280; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-purple { background: #f3e8ff; color: #7e22ce; }
+
+  /* ── Reviewer row ── */
+  .reviewer-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .reviewer-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0369a1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .reviewer-info { display: flex; flex-direction: column; gap: 3px; }
+  .reviewer-name { font-size: 14px; font-weight: 700; color: #111827; }
+  .reviewer-meta { font-size: 11px; color: #9ca3af; display: flex; align-items: center; gap: 6px; }
+  .reviewer-meta-dot { color: #d1d5db; }
+
+  /* ── Star rating ── */
+  .stars { display: flex; align-items: center; gap: 2px; }
+  .star { font-size: 14px; }
+  .star.filled { color: #f59e0b; }
+  .star.empty { color: #e5e7eb; }
+  .rating-score { font-size: 13px; font-weight: 700; color: #111827; margin-left: 5px; }
+  .rating-label { font-size: 12px; color: #6b7280; margin-left: 3px; }
+
+  /* ── Rating breakdown ── */
+  .ratings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+  }
+  .rating-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .rating-category { font-size: 12px; color: #6b7280; flex-shrink: 0; }
+  .rating-stars-sm { display: flex; gap: 2px; }
+  .star-sm { font-size: 12px; }
+  .star-sm.filled { color: #f59e0b; }
+  .star-sm.empty { color: #e5e7eb; }
+
+  /* ── Feedback block ── */
+  .feedback-text {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.7;
+    padding: 14px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 3px solid #e5e7eb;
+  }
+
+  /* ── Photo gallery ── */
+  .photos-label { font-size: 11px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+  .photos-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .photo-thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .photo-thumb:hover { border-color: #0ea5e9; }
+
+  /* ── Section divider ── */
+  .divider { height: 1px; background: #f3f4f6; margin: 0 -20px; }
+
+  /* ── Response card ── */
+  .response-card {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .response-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .response-author {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .response-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .response-author-info { display: flex; flex-direction: column; gap: 2px; }
+  .response-author-name { font-size: 13px; font-weight: 700; color: #0c4a6e; }
+  .response-timestamp { font-size: 11px; color: #7dd3fc; }
+  .response-text { font-size: 13px; color: #075985; line-height: 1.6; }
+  .response-immutable-note {
+    font-size: 11px;
+    color: #7dd3fc;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Response section ── */
+  .respond-section { display: flex; flex-direction: column; gap: 0; }
+  .respond-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .respond-prompt-text { font-size: 12px; color: #9ca3af; }
+
+  /* ── Composer ── */
+  .composer {
+    border-top: 1px solid #e4e8f0;
+    background: #fafbfc;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .composer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .composer-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .composer-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #111827;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    background: #fff;
+  }
+  .composer-textarea:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+  .composer-textarea.error { border-color: #ef4444; }
+  .composer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .composer-footer-left { display: flex; align-items: center; gap: 10px; }
+  .char-counter { font-size: 11px; color: #9ca3af; }
+  .char-counter.warn { color: #f59e0b; }
+  .char-counter.error { color: #ef4444; }
+  .char-counter.ok { color: #22c55e; }
+  .composer-hint { font-size: 11px; color: #9ca3af; }
+  .validation-msg {
+    font-size: 11px;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .composer-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* ── Info rows ── */
+  .info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .info-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af; }
+  .info-value { font-size: 13px; color: #111827; font-weight: 500; }
+  .info-value.sub { font-size: 12px; color: #6b7280; font-weight: 400; }
+
+  /* ── State legend ── */
+  .legend-bar {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .legend-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .legend-body { font-size: 11px; color: #92400e; line-height: 1.5; }
+  .legend-body strong { font-weight: 700; }
+
+  /* ── Toggle demo tabs ── */
+  .demo-tabs {
+    display: flex;
+    gap: 0;
+    border: 1px solid #e4e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+    margin-bottom: 4px;
+  }
+  .demo-tab {
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    background: #fff;
+    cursor: pointer;
+    border: none;
+    border-right: 1px solid #e4e8f0;
+    transition: all 0.15s;
+  }
+  .demo-tab:last-child { border-right: none; }
+  .demo-tab.active { background: #0ea5e9; color: #fff; }
+
+  /* ── State panels ── */
+  .state-panel { display: none; }
+  .state-panel.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hairline<span>.io</span></div>
+
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#9783;</i> Dashboard
+    </div>
+
+    <div class="sidebar-section">Patients</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#128100;</i> My Patients
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#128203;</i> Treatment Cases
+    </div>
+
+    <div class="sidebar-section">Reputation</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">&#9733;</i> Reviews
+    </div>
+
+    <div class="sidebar-section">Business</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#128200;</i> Analytics
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#128176;</i> Billing &amp; Payouts
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#127381;</i> Promotions
+    </div>
+
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">&#9881;</i> Profile &amp; Settings
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Reviews</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Review Detail</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">&#8592; Back to Reviews</button>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="page-content">
+
+      <!-- Legend / wireframe note -->
+      <div class="legend-bar">
+        <span class="legend-icon">&#9432;</span>
+        <div class="legend-body">
+          <strong>Wireframe: FR-013 Screen 6 — Provider: Review Detail &amp; Response.</strong>
+          Use the tabs below to switch between the two conditional states:
+          <strong>State A</strong> — no provider response yet (shows "Respond as Provider" button);
+          <strong>State B</strong> — response composer open (inline, non-navigating);
+          <strong>State C</strong> — response already submitted (shows persisted response card, composer hidden).
+        </div>
+      </div>
+
+      <!-- State switcher -->
+      <div>
+        <div class="demo-tabs">
+          <button class="demo-tab active" onclick="switchState('A', this)">State A – No Response</button>
+          <button class="demo-tab" onclick="switchState('B', this)">State B – Composer Open</button>
+          <button class="demo-tab" onclick="switchState('C', this)">State C – Response Exists</button>
+        </div>
+      </div>
+
+      <!-- ── DETAIL LAYOUT ── -->
+      <div class="detail-layout">
+
+        <!-- Left: main content -->
+        <div class="detail-main">
+
+          <!-- Review detail payload card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <span class="card-title">Review Detail</span>
+                <!-- Review source type badge -->
+                <span class="badge badge-blue">&#128100; Patient-submitted</span>
+              </div>
+              <!-- Could also show: badge-teal "Verified Off-platform" -->
+            </div>
+            <div class="card-body">
+
+              <!-- Reviewer alias + overall rating -->
+              <div class="reviewer-row">
+                <div class="reviewer-avatar">S</div>
+                <div class="reviewer-info">
+                  <!-- Reviewer alias: first_name + last_initial format -->
+                  <div class="reviewer-name">Sarah M.</div>
+                  <div class="reviewer-meta">
+                    <span>Submitted 14 Jan 2026</span>
+                    <span class="reviewer-meta-dot">•</span>
+                    <span>Case #TC-2024-0891</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Overall rating -->
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="stars">
+                  <span class="star filled">&#9733;</span>
+                  <span class="star filled">&#9733;</span>
+                  <span class="star filled">&#9733;</span>
+                  <span class="star filled">&#9733;</span>
+                  <span class="star empty">&#9734;</span>
+                </div>
+                <span class="rating-score">4</span>
+                <span class="rating-label">/ 5 Overall</span>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Category ratings grid -->
+              <div>
+                <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">Category Ratings</div>
+                <div class="ratings-grid">
+                  <!-- Facility Rating -->
+                  <div class="rating-row">
+                    <span class="rating-category">Facility</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                      <div class="rating-stars-sm">
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                      </div>
+                      <span style="font-size:11px; font-weight:600; color:#111827;">5</span>
+                    </div>
+                  </div>
+                  <!-- Staff Rating -->
+                  <div class="rating-row">
+                    <span class="rating-category">Staff</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                      <div class="rating-stars-sm">
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm empty">&#9734;</span>
+                      </div>
+                      <span style="font-size:11px; font-weight:600; color:#111827;">4</span>
+                    </div>
+                  </div>
+                  <!-- Results Rating -->
+                  <div class="rating-row">
+                    <span class="rating-category">Results</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                      <div class="rating-stars-sm">
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm empty">&#9734;</span>
+                      </div>
+                      <span style="font-size:11px; font-weight:600; color:#111827;">4</span>
+                    </div>
+                  </div>
+                  <!-- Value Rating -->
+                  <div class="rating-row">
+                    <span class="rating-category">Value</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                      <div class="rating-stars-sm">
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm filled">&#9733;</span>
+                        <span class="star-sm empty">&#9734;</span>
+                        <span class="star-sm empty">&#9734;</span>
+                      </div>
+                      <span style="font-size:11px; font-weight:600; color:#111827;">3</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Feedback text -->
+              <div>
+                <div style="font-size:11px; font-weight:600; color:#374151; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Patient Feedback</div>
+                <div class="feedback-text">
+                  I had my FUE hair transplant done here and overall I'm very happy with the experience.
+                  The facility was spotless — modern and professional throughout. Dr. Chen and the team were welcoming
+                  and clearly explained every step of the procedure. My results at the 6-month mark are looking great,
+                  though I'll update once I hit the full 12 months. My only minor note is that the aftercare
+                  check-in scheduling could be a little more flexible. Would recommend to anyone considering
+                  hair restoration in this area.
+                </div>
+              </div>
+
+              <!-- Photos -->
+              <div>
+                <div class="photos-label">Photos (3)</div>
+                <div class="photos-grid">
+                  <div class="photo-thumb">&#128247;</div>
+                  <div class="photo-thumb">&#128247;</div>
+                  <div class="photo-thumb">&#128247;</div>
+                </div>
+              </div>
+
+            </div><!-- /card-body -->
+
+            <!-- ── RESPONSE SECTION — conditional states ── -->
+
+            <!-- STATE A: No response — show "Respond as Provider" button -->
+            <div id="stateA" class="state-panel visible respond-section">
+              <div class="respond-prompt">
+                <span class="respond-prompt-text">You haven't responded to this review yet.</span>
+                <button class="btn-respond" onclick="switchState('B', document.querySelectorAll('.demo-tab')[1])">
+                  &#128172; Respond as Provider
+                </button>
+              </div>
+            </div>
+
+            <!-- STATE B: Response composer open (inline, non-navigating) -->
+            <div id="stateB" class="state-panel composer">
+              <div class="composer-header">
+                <div class="composer-avatar">H</div>
+                <span>Responding as <strong>Hairline Istanbul Clinic</strong></span>
+                <span class="badge badge-gray" style="margin-left:auto;">Provider</span>
+              </div>
+
+              <!-- Response text textarea -->
+              <textarea class="composer-textarea" id="composerTextarea"
+                placeholder="Write a professional public response to this review (50–1,000 characters)…"
+                oninput="updateCharCount(this)">Thank you so much for taking the time to share your experience, Sarah. We're thrilled that you're happy with your results and found our team professional and welcoming. Your feedback about aftercare scheduling flexibility is genuinely appreciated — we're actively working on improving that. Wishing you continued excellent progress!</textarea>
+
+              <!-- Validation message (shown when outside limits) -->
+              <div class="validation-msg" id="validationMsg" style="display:none;">
+                &#9888; Response must be between 50 and 1,000 characters.
+              </div>
+
+              <!-- Character counter + actions -->
+              <div class="composer-footer">
+                <div class="composer-footer-left">
+                  <span class="char-counter ok" id="charCounter">356 / 1,000</span>
+                  <span class="composer-hint">Min 50 · Max 1,000 chars</span>
+                </div>
+                <div class="composer-actions">
+                  <!-- Cancel response button -->
+                  <button class="btn btn-outline" onclick="switchState('A', document.querySelectorAll('.demo-tab')[0])">
+                    Cancel
+                  </button>
+                  <!-- Submit response button — enabled only when validation passes -->
+                  <button class="btn btn-primary" id="submitBtn">
+                    &#10003; Submit Response
+                  </button>
+                </div>
+              </div>
+
+              <div style="font-size:11px; color:#9ca3af; line-height:1.5;">
+                &#9432; Your response will be published publicly under your clinic's name and cannot be edited after submission. Encourage a professional and constructive tone.
+              </div>
+            </div>
+
+            <!-- STATE C: Response already submitted -->
+            <div id="stateC" class="state-panel" style="padding: 0 20px 20px;">
+              <!-- Provider response card -->
+              <div class="response-card">
+                <div class="response-header">
+                  <div class="response-author">
+                    <div class="response-avatar">H</div>
+                    <div class="response-author-info">
+                      <span class="response-author-name">Hairline Istanbul Clinic</span>
+                      <span class="response-timestamp">Responded · 18 Jan 2026, 10:24</span>
+                    </div>
+                    <span class="badge badge-blue" style="margin-left:8px;">Provider</span>
+                  </div>
+                </div>
+                <!-- Persisted provider response content -->
+                <div class="response-text">
+                  Thank you so much for taking the time to share your experience, Sarah. We're thrilled that you're happy
+                  with your results and found our team professional and welcoming. Your feedback about aftercare scheduling
+                  flexibility is genuinely appreciated — we're actively working on improving that. Wishing you continued
+                  excellent progress!
+                </div>
+                <!-- Immutability note -->
+                <div class="response-immutable-note">
+                  &#128274; Response published — immutable while active. Contact support for policy concerns.
+                </div>
+              </div>
+              <!-- "Respond as Provider" button hidden — response already exists -->
+            </div>
+
+          </div><!-- /card -->
+
+        </div><!-- /detail-main -->
+
+        <!-- Right sidebar: Treatment case context + Review metadata -->
+        <div class="detail-side">
+
+          <!-- Treatment case context -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">&#128203; Treatment Case Context</span>
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">Case ID</span>
+                <span class="info-value">#TC-2024-0891</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Treatment / Procedure</span>
+                <span class="info-value">FUE Hair Transplant</span>
+                <span class="info-value sub">3,200 grafts</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Procedure Completed</span>
+                <span class="info-value">14 Jul 2025</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Review Submitted</span>
+                <span class="info-value">14 Jan 2026</span>
+                <span class="info-value sub">6 months post-procedure</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review metadata -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">&#9432; Review Metadata</span>
+            </div>
+            <div class="card-body">
+              <!-- Reviewer alias -->
+              <div class="info-row">
+                <span class="info-label">Reviewer Alias</span>
+                <span class="info-value">Sarah M.</span>
+                <span class="info-value sub">Public display name (aliased)</span>
+              </div>
+              <!-- Review source type -->
+              <div class="info-row">
+                <span class="info-label">Source Type</span>
+                <span class="badge badge-blue" style="width:fit-content;">&#128100; Patient-submitted</span>
+              </div>
+              <!-- Response status (dynamic per state) -->
+              <div class="info-row">
+                <span class="info-label">Response Status</span>
+                <span id="responseBadge" class="badge badge-amber" style="width:fit-content;">&#9675; No Response</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conditional state note -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">&#9888; Conditional Logic</span>
+            </div>
+            <div class="card-body" style="gap:10px;">
+              <div style="font-size:12px; color:#374151; line-height:1.6;">
+                <strong>"Respond as Provider"</strong> button appears only when:
+              </div>
+              <ul style="font-size:12px; color:#6b7280; padding-left:16px; line-height:1.8;">
+                <li>Review is <em>Published</em></li>
+                <li>No active provider response exists</li>
+              </ul>
+              <div style="font-size:12px; color:#374151; line-height:1.6;">
+                <strong>Response composer</strong> is an inline state of this screen — no navigation.
+              </div>
+              <div style="font-size:12px; color:#374151; line-height:1.6;">
+                <strong>Provider response card</strong> shown when response exists; marked immutable.
+              </div>
+              <div style="font-size:12px; color:#6b7280; line-height:1.6;">
+                One replacement allowed only after admin removes a prior response for policy violation.
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /detail-side -->
+
+      </div><!-- /detail-layout -->
+
+    </div><!-- /page-content -->
+  </div><!-- /main -->
+
+</div><!-- /layout -->
+
+<script>
+  function switchState(state, tabEl) {
+    // Update tabs
+    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+    if (tabEl) tabEl.classList.add('active');
+
+    // Show/hide panels
+    document.querySelectorAll('.state-panel').forEach(p => p.classList.remove('visible'));
+    const panel = document.getElementById('state' + state);
+    if (panel) panel.classList.add('visible');
+
+    // Update response badge in sidebar
+    const badge = document.getElementById('responseBadge');
+    if (state === 'A') {
+      badge.className = 'badge badge-amber';
+      badge.textContent = '○ No Response';
+    } else if (state === 'B') {
+      badge.className = 'badge badge-purple';
+      badge.textContent = '✎ Composing…';
+    } else if (state === 'C') {
+      badge.className = 'badge badge-green';
+      badge.textContent = '✓ Responded';
+    }
+  }
+
+  function updateCharCount(el) {
+    const len = el.value.length;
+    const counter = document.getElementById('charCounter');
+    const submitBtn = document.getElementById('submitBtn');
+    const validMsg = document.getElementById('validationMsg');
+
+    counter.textContent = len + ' / 1,000';
+
+    if (len < 50) {
+      counter.className = 'char-counter error';
+      submitBtn.disabled = true;
+      validMsg.style.display = 'flex';
+    } else if (len > 1000) {
+      counter.className = 'char-counter error';
+      submitBtn.disabled = true;
+      validMsg.style.display = 'flex';
+    } else if (len >= 900) {
+      counter.className = 'char-counter warn';
+      submitBtn.disabled = false;
+      validMsg.style.display = 'none';
+    } else {
+      counter.className = 'char-counter ok';
+      submitBtn.disabled = false;
+      validMsg.style.display = 'none';
+    }
+  }
+
+  // Initialize char count on load
+  window.addEventListener('load', function() {
+    const ta = document.getElementById('composerTextarea');
+    if (ta) updateCharCount(ta);
+  });
+</script>
+
+</body>
+</html>

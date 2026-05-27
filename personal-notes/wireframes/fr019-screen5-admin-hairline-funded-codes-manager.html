@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-019 Screen 5 – Admin: Hairline-Funded & Direct-Issued Codes Manager</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-link { color: #4a90d9; cursor: pointer; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary   { background: #4a90d9; color: #fff; }
+  .btn-outline   { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-danger    { background: #dc2626; color: #fff; }
+  .btn-danger-outline { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
+  .btn-green     { background: #15803d; color: #fff; }
+
+  /* ── Content ── */
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+
+  /* ── Program Selector Panel ── */
+  .selector-panel {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .selector-panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+  }
+  .selector-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .selector-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 260px;
+  }
+  .selector-field label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #374151;
+  }
+  .selector-select {
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111827;
+    background: #fff;
+    cursor: pointer;
+    width: 100%;
+  }
+  .channel-label-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .channel-label-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #374151;
+  }
+  .channel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    height: 38px;
+  }
+  .channel-affiliate  { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .channel-open       { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .channel-segment    { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .channel-individual { background: #fdf4ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+
+  /* ── Program Info Meta ── */
+  .program-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .meta-item-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .meta-item-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111827;
+  }
+  .meta-item-value.green { color: #15803d; }
+  .meta-item-value.orange { color: #c2410c; }
+
+  /* ── Table Card ── */
+  .table-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .table-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .table-hint { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+  .table-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  /* ── Data Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead tr {
+    background: #f9fafb;
+    border-bottom: 1px solid #e4e8f0;
+  }
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  thead th.checkbox-col { width: 40px; }
+  tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
+  tbody td {
+    padding: 13px 16px;
+    font-size: 12px;
+    color: #374151;
+    vertical-align: middle;
+  }
+  .cell-primary { font-weight: 600; color: #111827; font-family: 'Courier New', monospace; font-size: 12px; }
+  .cell-secondary { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .cell-empty { color: #d1d5db; font-style: italic; }
+  .cell-link { color: #4a90d9; cursor: pointer; font-weight: 500; }
+
+  .checkbox-input {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .badge-unused     { background: #f9fafb; color: #374151; border: 1px solid #e4e8f0; }
+  .badge-unused .badge-dot { background: #9ca3af; }
+  .badge-inprogress { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+  .badge-inprogress .badge-dot { background: #f59e0b; }
+  .badge-redeemed   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-redeemed .badge-dot { background: #22c55e; }
+  .badge-revoked    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .badge-revoked .badge-dot { background: #ef4444; }
+  .badge-expired    { background: #f3f4f6; color: #6b7280; border: 1px solid #e4e8f0; }
+  .badge-expired .badge-dot { background: #9ca3af; }
+
+  .binding-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .binding-affiliate  { background: #fff7ed; color: #c2410c; }
+  .binding-open       { background: #f0fdf4; color: #15803d; }
+  .binding-segment    { background: #eff6ff; color: #1d4ed8; }
+  .binding-individual { background: #fdf4ff; color: #7e22ce; }
+
+  /* ── Row Actions ── */
+  .row-actions { display: flex; align-items: center; gap: 6px; }
+  .action-btn {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .action-revoke  { color: #dc2626; border-color: #fecaca; background: #fef2f2; }
+  .action-view    { color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff; }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 520px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .modal-desc {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 6px; }
+  .modal-field label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #374151;
+  }
+  .modal-field input[type="number"],
+  .modal-field select,
+  .modal-field textarea {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #111827;
+    font-family: inherit;
+    width: 100%;
+  }
+  .modal-field textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  .modal-field textarea::placeholder,
+  .modal-field input::placeholder { color: #9ca3af; }
+  .modal-field .field-hint { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .modal-field .char-hint { font-size: 11px; color: #9ca3af; text-align: right; }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .modal-warning {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #c2410c;
+    line-height: 1.5;
+  }
+  .modal-warning strong { font-weight: 600; }
+  .modal-info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #1d4ed8;
+    line-height: 1.5;
+  }
+  .modal-info strong { font-weight: 600; }
+
+  /* ── Selected count bar ── */
+  .selected-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: #eff6ff;
+    border-bottom: 1px solid #bfdbfe;
+    font-size: 12px;
+    color: #1d4ed8;
+    font-weight: 500;
+  }
+  .selected-bar .sel-count { font-weight: 700; }
+  .selected-bar .sel-action {
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #dc2626;
+  }
+  .selected-bar .sel-clear {
+    margin-left: auto;
+    font-size: 11px;
+    color: #6b7280;
+    cursor: pointer;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Admin</div>
+    <div class="sidebar-section">Promotions</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">🎟</i> Promotions & Discounts
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">📊</i> Analytics
+    </div>
+    <div class="sidebar-section">Platform</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">👥</i> Providers
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">🧑‍⚕️</i> Patients
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">💰</i> Billing & Finance
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">⚙️</i> Settings
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link">Promotions & Discounts</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Hairline-Funded & Direct-Issued Codes Manager</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">← Back to Hub</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Program Selector Panel ── -->
+      <div class="selector-panel">
+        <div class="selector-panel-title">Program Selection</div>
+
+        <div class="selector-row">
+          <!-- Program Selector -->
+          <div class="selector-field">
+            <label>Program Selector</label>
+            <select class="selector-select">
+              <option>Affiliate Partner Spring 2026 — 15% Off (Affiliate-bound)</option>
+              <option>Open Welcome Code — £200 Off (Open)</option>
+              <option>New Patient Segment Q2 — 10% Off (Segment-bound)</option>
+              <option>VIP Individual Voucher — £500 Off (Individually-issued)</option>
+            </select>
+          </div>
+
+          <!-- Issuance Channel (label, read-only from program definition) -->
+          <div class="channel-label-wrapper">
+            <div class="channel-label-title">Issuance Channel</div>
+            <div class="channel-badge channel-affiliate">
+              🔗 Affiliate-bound
+            </div>
+          </div>
+        </div>
+
+        <!-- Program meta info -->
+        <div class="program-meta">
+          <div class="meta-item">
+            <div class="meta-item-label">Program ID</div>
+            <div class="meta-item-value">PRG-20260511-047</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Discount Value</div>
+            <div class="meta-item-value">15% off — Treatment cost only</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Active Window</div>
+            <div class="meta-item-value">1 Apr 2026 – 30 Jun 2026</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Total Usage Limit</div>
+            <div class="meta-item-value">200 codes</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Per-User Usage Limit</div>
+            <div class="meta-item-value">1 per patient</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Codes Issued</div>
+            <div class="meta-item-value">50 of 200</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Redeemed</div>
+            <div class="meta-item-value green">12</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Revoked</div>
+            <div class="meta-item-value orange">2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Codes Table ── -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div>
+            <div class="table-title">Codes Table</div>
+            <div class="table-hint">Showing 50 codes — Affiliate Partner Spring 2026</div>
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-green">⊕ Bulk Generate</button>
+            <button class="btn btn-danger-outline">✕ Bulk Revoke</button>
+            <button class="btn btn-outline">↓ Export CSV</button>
+            <button class="btn btn-outline">↓ Export XLSX</button>
+          </div>
+        </div>
+
+        <!-- Selected codes bar (shown when rows are checked) -->
+        <div class="selected-bar">
+          <span>Selected: <span class="sel-count">3</span> codes</span>
+          <button class="sel-action">Revoke Selected</button>
+          <span class="sel-clear">Clear selection</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th class="checkbox-col"><input type="checkbox" class="checkbox-input" /></th>
+              <th>Code</th>
+              <th>Recipient Binding</th>
+              <th>Issued At</th>
+              <th>Issued By</th>
+              <th>Redemption Status</th>
+              <th>Redeemed By</th>
+              <th>Redeemed At</th>
+              <th>Discount Issued</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 – Redeemed -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" /></td>
+              <td><div class="cell-primary">AFF-SPR26-A1B2C3</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 HairMedia Group</span></td>
+              <td>
+                <div>11 May 2026</div>
+                <div class="cell-secondary">09:14 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-redeemed">
+                  <span class="badge-dot"></span>Redeemed
+                </span>
+              </td>
+              <td><span class="cell-link">PAT-00891</span></td>
+              <td>
+                <div>14 May 2026</div>
+                <div class="cell-secondary">11:32 UTC</div>
+              </td>
+              <td style="font-weight:600;color:#15803d;">£342.00</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 – In-Progress -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" checked /></td>
+              <td><div class="cell-primary">AFF-SPR26-D4E5F6</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 HairMedia Group</span></td>
+              <td>
+                <div>11 May 2026</div>
+                <div class="cell-secondary">09:14 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-inprogress">
+                  <span class="badge-dot"></span>In-Progress
+                </span>
+              </td>
+              <td><span class="cell-link">PAT-00934</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View</button>
+                  <button class="action-btn action-revoke">Revoke</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 – Unused -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" checked /></td>
+              <td><div class="cell-primary">AFF-SPR26-G7H8I9</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 HairMedia Group</span></td>
+              <td>
+                <div>11 May 2026</div>
+                <div class="cell-secondary">09:14 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-unused">
+                  <span class="badge-dot"></span>Unused
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Revoke</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 – Unused -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" /></td>
+              <td><div class="cell-primary">AFF-SPR26-J1K2L3</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 BeautyReach AU</span></td>
+              <td>
+                <div>12 May 2026</div>
+                <div class="cell-secondary">14:05 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-unused">
+                  <span class="badge-dot"></span>Unused
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Revoke</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 – Redeemed -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" /></td>
+              <td><div class="cell-primary">AFF-SPR26-M4N5O6</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 BeautyReach AU</span></td>
+              <td>
+                <div>12 May 2026</div>
+                <div class="cell-secondary">14:05 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-redeemed">
+                  <span class="badge-dot"></span>Redeemed
+                </span>
+              </td>
+              <td><span class="cell-link">PAT-00812</span></td>
+              <td>
+                <div>15 May 2026</div>
+                <div class="cell-secondary">08:47 UTC</div>
+              </td>
+              <td style="font-weight:600;color:#15803d;">£285.00</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6 – Revoked -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" /></td>
+              <td><div class="cell-primary">AFF-SPR26-P7Q8R9</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 HairMedia Group</span></td>
+              <td>
+                <div>11 May 2026</div>
+                <div class="cell-secondary">09:14 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-revoked">
+                  <span class="badge-dot"></span>Revoked
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 7 – Unused -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" checked /></td>
+              <td><div class="cell-primary">AFF-SPR26-S1T2U3</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 BeautyReach AU</span></td>
+              <td>
+                <div>12 May 2026</div>
+                <div class="cell-secondary">14:05 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-unused">
+                  <span class="badge-dot"></span>Unused
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Revoke</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 8 – Expired -->
+            <tr>
+              <td><input type="checkbox" class="checkbox-input" /></td>
+              <td><div class="cell-primary">AFF-SPR26-V4W5X6</div></td>
+              <td><span class="binding-badge binding-affiliate">🔗 HairMedia Group</span></td>
+              <td>
+                <div>11 May 2026</div>
+                <div class="cell-secondary">09:14 UTC</div>
+              </td>
+              <td>admin@hairline.com</td>
+              <td>
+                <span class="badge badge-expired">
+                  <span class="badge-dot"></span>Expired
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-view">View</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Bulk Generate Modal ── -->
+<div class="modal-overlay" id="generateModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Bulk Generate Codes</div>
+    <div class="modal-desc">
+      Generate unique codes for
+      <strong>Affiliate Partner Spring 2026</strong>.
+      All generated codes will be bound to the program's affiliated issuance channel.
+    </div>
+    <div class="modal-info">
+      <strong>Remaining capacity:</strong> 150 codes (200 total limit – 50 already issued).
+      Generated codes will be created with status = <strong>Unused</strong>.
+    </div>
+    <div class="modal-field">
+      <label>Number of Codes to Generate</label>
+      <input type="number" min="1" max="150" placeholder="e.g. 50" value="50" />
+      <div class="field-hint">Quantity 1–10,000; cannot exceed program total-limit remaining (150).</div>
+    </div>
+    <div class="modal-field">
+      <label>Affiliate Binding</label>
+      <select>
+        <option>HairMedia Group</option>
+        <option>BeautyReach AU</option>
+        <option>GraftConnect UK</option>
+      </select>
+      <div class="field-hint">All generated codes will be bound to the selected affiliate.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn btn-green">Generate 50 Codes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Bulk Revoke Modal ── -->
+<div class="modal-overlay" id="revokeModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Bulk Revoke Codes</div>
+    <div class="modal-desc">
+      You are about to revoke <strong>3 selected codes</strong> from
+      <strong>Affiliate Partner Spring 2026</strong>.
+    </div>
+    <div class="modal-warning">
+      <strong>Warning:</strong> 1 of the selected codes is currently
+      <strong>In-Progress</strong> (entered at quote stage). Revoking it will cancel the
+      in-progress quote application and notify the patient. This action cannot be undone.
+    </div>
+    <div class="modal-field">
+      <label>Reason (required)</label>
+      <textarea placeholder="Enter a mandatory reason for revoking these codes…"></textarea>
+      <div class="char-hint">0 / 500</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn btn-danger">Confirm Revoke (3 codes)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Single Revoke Modal ── -->
+<div class="modal-overlay" id="singleRevokeModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Revoke Code</div>
+    <div class="modal-desc">
+      You are about to revoke code <strong>AFF-SPR26-D4E5F6</strong>.
+    </div>
+    <div class="modal-warning">
+      <strong>Warning:</strong> This code is currently <strong>In-Progress</strong> — a
+      patient has entered it at the quote stage. Revoking will cancel the in-progress
+      quote application and send a notification to the patient.
+    </div>
+    <div class="modal-field">
+      <label>Reason (required)</label>
+      <textarea placeholder="Enter a mandatory reason for revoking this code…"></textarea>
+      <div class="char-hint">0 / 500</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn btn-danger">Confirm Revoke</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

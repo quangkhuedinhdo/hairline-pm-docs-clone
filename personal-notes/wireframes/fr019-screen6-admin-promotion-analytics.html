@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-019 Screen 6 — Admin: Promotion Analytics & Applications</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      background: #f0f2f5;
+      color: #1a1a1a;
+    }
+
+    /* ── Layout shell ── */
+    .shell { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #1e2330;
+      color: #c8cdd8;
+      padding: 20px 0;
+    }
+    .sidebar-logo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #2e3547;
+    }
+    .sidebar-section {
+      padding: 14px 20px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #6b7280;
+    }
+    .sidebar-item {
+      padding: 8px 20px;
+      cursor: pointer;
+      color: #9ca3af;
+      font-size: 12.5px;
+    }
+    .sidebar-item.active {
+      background: #2a3147;
+      color: #fff;
+      border-left: 3px solid #6366f1;
+      padding-left: 17px;
+    }
+
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .breadcrumb { color: #6b7280; font-size: 12px; }
+    .breadcrumb span { color: #1a1a1a; font-weight: 600; }
+    .topbar-actions { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      font-weight: 500;
+    }
+    .btn-outline { background: #fff; border: 1px solid #d1d5db; color: #374151; }
+    .btn-primary { background: #6366f1; color: #fff; }
+
+    /* ── Page body ── */
+    .page-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+    .page-header { margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #111827; }
+    .page-subtitle { font-size: 12px; color: #6b7280; margin-top: 3px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid #e5e7eb; margin-bottom: 24px; }
+    .tab {
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab.active { color: #6366f1; border-bottom-color: #6366f1; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 22px;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-label { font-size: 11px; font-weight: 600; color: #6b7280; }
+    .filter-input {
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #374151;
+      background: #f9fafb;
+      height: 32px;
+    }
+    .filter-input.wide { width: 180px; }
+    .filter-input.mid  { width: 140px; }
+    .filter-input.sm   { width: 110px; }
+    .filter-actions { display: flex; gap: 8px; align-items: flex-end; }
+
+    /* ── KPI cards ── */
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .kpi-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px; }
+    .kpi-value { font-size: 26px; font-weight: 700; color: #111827; line-height: 1.1; }
+    .kpi-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .kpi-breakdown { display: flex; gap: 14px; margin-top: 10px; }
+    .kpi-breakdown-item { display: flex; flex-direction: column; gap: 2px; }
+    .kpi-breakdown-item .bk-label { font-size: 10px; color: #9ca3af; }
+    .kpi-breakdown-item .bk-val { font-size: 13px; font-weight: 600; color: #374151; }
+    .time-pills { display: flex; gap: 4px; margin-top: 8px; }
+    .pill {
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      cursor: pointer;
+      border: 1px solid #d1d5db;
+      color: #6b7280;
+      background: #f9fafb;
+    }
+    .pill.active { background: #eef2ff; border-color: #a5b4fc; color: #4f46e5; }
+
+    /* Active programs mini-breakdown */
+    .prog-type-row { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .prog-type-item { display: flex; align-items: center; justify-content: space-between; }
+    .prog-type-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; display: inline-block; }
+    .prog-type-name { font-size: 11px; color: #374151; }
+    .prog-type-count { font-size: 12px; font-weight: 600; color: #111827; }
+
+    /* ── Funnel ── */
+    .funnel-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+    .funnel-title { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 16px; }
+    .funnel-steps { display: flex; align-items: stretch; gap: 0; }
+    .funnel-step {
+      flex: 1;
+      text-align: center;
+      padding: 14px 8px;
+      background: #f3f4f6;
+      border-right: 3px solid #fff;
+      position: relative;
+    }
+    .funnel-step:last-child { border-right: none; }
+    .funnel-step:first-child { border-radius: 8px 0 0 8px; }
+    .funnel-step:last-child { border-radius: 0 8px 8px 0; }
+    .funnel-step-name { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; margin-bottom: 6px; }
+    .funnel-step-num { font-size: 20px; font-weight: 700; color: #111827; }
+    .funnel-step-pct { font-size: 10px; color: #9ca3af; margin-top: 2px; }
+    .funnel-arrow {
+      width: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d1d5db;
+      font-size: 16px;
+    }
+    .funnel-step.highlight { background: #eef2ff; }
+    .funnel-step.completed { background: #f0fdf4; }
+
+    /* ── Charts row ── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .chart-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .chart-title { font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 14px; }
+
+    /* ROI chart – horizontal bars */
+    .roi-bar-list { display: flex; flex-direction: column; gap: 10px; }
+    .roi-bar-item { }
+    .roi-bar-header { display: flex; justify-content: space-between; font-size: 11px; color: #374151; margin-bottom: 3px; }
+    .roi-bar-track { height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
+    .roi-bar-fill { height: 100%; border-radius: 4px; }
+
+    /* Top 10 list */
+    .top-list { display: flex; flex-direction: column; gap: 8px; }
+    .top-list-item { display: flex; align-items: center; gap: 8px; }
+    .top-rank { font-size: 10px; font-weight: 700; color: #9ca3af; width: 16px; text-align: right; }
+    .top-bar-track { flex: 1; height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+    .top-bar-fill { height: 100%; border-radius: 3px; }
+    .top-name { font-size: 11px; color: #374151; width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-val { font-size: 11px; font-weight: 600; color: #111827; width: 40px; text-align: right; }
+
+    /* ── Table panel ── */
+    .table-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .table-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .table-card-title { font-size: 13px; font-weight: 600; color: #111827; }
+    .result-count { font-size: 11px; color: #6b7280; }
+    .table-toolbar { display: flex; gap: 8px; align-items: center; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead tr { background: #f9fafb; }
+    th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-applied   { background: #fef3c7; color: #92400e; }
+    .badge-completed { background: #d1fae5; color: #065f46; }
+    .badge-active    { background: #ede9fe; color: #5b21b6; }
+    .badge-reversed  { background: #fee2e2; color: #991b1b; }
+    .badge-refunded  { background: #fce7f3; color: #9d174d; }
+    .badge-voided    { background: #f3f4f6; color: #6b7280; }
+    .badge-type-admin    { background: #dbeafe; color: #1e40af; }
+    .badge-type-provider { background: #fef3c7; color: #78350f; }
+    .badge-type-hairline { background: #f0fdf4; color: #14532d; }
+
+    .link { color: #6366f1; text-decoration: underline; cursor: pointer; }
+    .split-cell { display: flex; flex-direction: column; gap: 1px; }
+    .split-cell .split-h { font-size: 10px; color: #6b7280; }
+    .split-cell .split-p { font-size: 10px; color: #9ca3af; }
+
+    .action-btns { display: flex; gap: 5px; }
+    .action-btn {
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      font-size: 10px;
+      color: #374151;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .action-btn.danger { border-color: #fca5a5; color: #dc2626; }
+    .action-btn.warn   { border-color: #fcd34d; color: #d97706; }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .page-btns { display: flex; gap: 4px; }
+    .page-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      background: #fff;
+      color: #374151;
+    }
+    .page-btn.active { background: #6366f1; color: #fff; border-color: #6366f1; }
+
+    /* ── Utility ── */
+    .hidden { display: none; }
+    .mono { font-family: 'Courier New', monospace; font-size: 11px; }
+    .text-muted { color: #9ca3af; }
+
+    /* tab 2 filter bar – inherits .filter-bar */
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Hairline Admin</div>
+    <div class="sidebar-section">Promotions</div>
+    <div class="sidebar-item">Promotion Program Hub</div>
+    <div class="sidebar-item">Provider Adoption Manager</div>
+    <div class="sidebar-item">Provider Promotion Portfolio</div>
+    <div class="sidebar-item">Hairline-Funded Codes Manager</div>
+    <div class="sidebar-item active">Analytics &amp; Applications</div>
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item">Billing &amp; Reconciliation</div>
+    <div class="sidebar-item">Reports</div>
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item">Access Control</div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        A-06 Promotions &rsaquo; <span>Analytics &amp; Applications</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">Export CSV</button>
+        <button class="btn btn-outline">Export XLSX</button>
+      </div>
+    </div>
+
+    <!-- Page body -->
+    <div class="page-body">
+
+      <div class="page-header">
+        <div class="page-title">Promotion Analytics &amp; Applications</div>
+        <div class="page-subtitle">Screen 6 — Combined operational + analytical surface for all promotion redemptions (FR-019)</div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" id="tab-btn-overview" onclick="switchTab('overview')">Overview (Analytics)</div>
+        <div class="tab" id="tab-btn-applications" onclick="switchTab('applications')">Applications (Redemption Log)</div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 1 — OVERVIEW (ANALYTICS)
+      ══════════════════════════════════════════ -->
+      <div id="tab-overview">
+
+        <!-- Global Filters -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <div class="filter-label">Date Range</div>
+            <input type="text" class="filter-input wide" placeholder="2026-01-01 – 2026-05-16" />
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Program Type</div>
+            <select class="filter-input mid">
+              <option>All Types</option>
+              <option>Admin-via-Provider</option>
+              <option>Provider Self-Created</option>
+              <option>Hairline-Funded &amp; Direct-Issued</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Funding Model</div>
+            <select class="filter-input mid">
+              <option>All Models</option>
+              <option>Both Fees</option>
+              <option>Hairline Only</option>
+              <option>Provider Only</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Provider</div>
+            <select class="filter-input mid">
+              <option>All Providers</option>
+              <option>Istanbul Hair Clinic</option>
+              <option>Cappadocia Hair Center</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Region</div>
+            <select class="filter-input sm">
+              <option>All Regions</option>
+              <option>Istanbul</option>
+              <option>Ankara</option>
+              <option>Antalya</option>
+            </select>
+          </div>
+          <div class="filter-actions">
+            <button class="btn btn-primary">Apply</button>
+            <button class="btn btn-outline">Reset</button>
+          </div>
+        </div>
+
+        <!-- ── KPI Cards ── -->
+        <div class="kpi-row">
+
+          <!-- KPI 1: Active Programs -->
+          <div class="kpi-card">
+            <div class="kpi-label">Active Programs</div>
+            <div class="kpi-value">47</div>
+            <div class="kpi-sub">Across all program types</div>
+            <div class="prog-type-row">
+              <div class="prog-type-item">
+                <div style="display:flex;align-items:center;">
+                  <span class="prog-type-dot" style="background:#6366f1;"></span>
+                  <span class="prog-type-name">Admin-via-Provider</span>
+                </div>
+                <span class="prog-type-count">18</span>
+              </div>
+              <div class="prog-type-item">
+                <div style="display:flex;align-items:center;">
+                  <span class="prog-type-dot" style="background:#f59e0b;"></span>
+                  <span class="prog-type-name">Provider Self-Created</span>
+                </div>
+                <span class="prog-type-count">24</span>
+              </div>
+              <div class="prog-type-item">
+                <div style="display:flex;align-items:center;">
+                  <span class="prog-type-dot" style="background:#10b981;"></span>
+                  <span class="prog-type-name">Hairline-Funded &amp; Direct-Issued</span>
+                </div>
+                <span class="prog-type-count">5</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI 2: Total Redemptions -->
+          <div class="kpi-card">
+            <div class="kpi-label">Total Redemptions</div>
+            <div class="kpi-value">1,284</div>
+            <div class="time-pills">
+              <span class="pill">7d</span>
+              <span class="pill active">30d</span>
+              <span class="pill">90d</span>
+              <span class="pill">365d</span>
+            </div>
+            <div class="kpi-breakdown">
+              <div class="kpi-breakdown-item">
+                <span class="bk-label">Applied</span>
+                <span class="bk-val">1,108</span>
+              </div>
+              <div class="kpi-breakdown-item">
+                <span class="bk-label">Completed</span>
+                <span class="bk-val">891</span>
+              </div>
+              <div class="kpi-breakdown-item">
+                <span class="bk-label">Voided / Reversed</span>
+                <span class="bk-val">217</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI 3: Total Discount Value Issued -->
+          <div class="kpi-card">
+            <div class="kpi-label">Total Discount Value Issued</div>
+            <div class="kpi-value">£184,320</div>
+            <div class="time-pills">
+              <span class="pill">7d</span>
+              <span class="pill active">30d</span>
+              <span class="pill">90d</span>
+              <span class="pill">365d</span>
+            </div>
+            <div class="kpi-breakdown">
+              <div class="kpi-breakdown-item">
+                <span class="bk-label">Hairline Portion</span>
+                <span class="bk-val">£72,440</span>
+              </div>
+              <div class="kpi-breakdown-item">
+                <span class="bk-label">Provider Portion</span>
+                <span class="bk-val">£111,880</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Redemption Funnel ── -->
+        <div class="funnel-card">
+          <div class="funnel-title">Redemption Funnel &mdash; Issued → Code Entered → Validated → In-Progress → Completed</div>
+          <div class="funnel-steps">
+            <div class="funnel-step">
+              <div class="funnel-step-name">Issued</div>
+              <div class="funnel-step-num">3,890</div>
+              <div class="funnel-step-pct">100%</div>
+            </div>
+            <div class="funnel-arrow">›</div>
+            <div class="funnel-step">
+              <div class="funnel-step-name">Code Entered</div>
+              <div class="funnel-step-num">2,140</div>
+              <div class="funnel-step-pct">55.0%</div>
+            </div>
+            <div class="funnel-arrow">›</div>
+            <div class="funnel-step highlight">
+              <div class="funnel-step-name">Validated</div>
+              <div class="funnel-step-num">1,976</div>
+              <div class="funnel-step-pct">50.8%</div>
+            </div>
+            <div class="funnel-arrow">›</div>
+            <div class="funnel-step highlight">
+              <div class="funnel-step-name">In-Progress</div>
+              <div class="funnel-step-num">1,284</div>
+              <div class="funnel-step-pct">33.0%</div>
+            </div>
+            <div class="funnel-arrow">›</div>
+            <div class="funnel-step completed">
+              <div class="funnel-step-name">Completed</div>
+              <div class="funnel-step-num">891</div>
+              <div class="funnel-step-pct">22.9%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Charts row ── -->
+        <div class="charts-row">
+
+          <!-- ROI by Program Type -->
+          <div class="chart-card">
+            <div class="chart-title">ROI by Program Type</div>
+            <div class="roi-bar-list">
+              <div class="roi-bar-item">
+                <div class="roi-bar-header">
+                  <span>Admin-via-Provider</span><span>3.8×</span>
+                </div>
+                <div class="roi-bar-track">
+                  <div class="roi-bar-fill" style="width:95%;background:#6366f1;"></div>
+                </div>
+              </div>
+              <div class="roi-bar-item">
+                <div class="roi-bar-header">
+                  <span>Hairline-Funded</span><span>2.9×</span>
+                </div>
+                <div class="roi-bar-track">
+                  <div class="roi-bar-fill" style="width:73%;background:#10b981;"></div>
+                </div>
+              </div>
+              <div class="roi-bar-item">
+                <div class="roi-bar-header">
+                  <span>Provider Self-Created</span><span>2.1×</span>
+                </div>
+                <div class="roi-bar-track">
+                  <div class="roi-bar-fill" style="width:53%;background:#f59e0b;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 10 by Redemptions -->
+          <div class="chart-card">
+            <div class="chart-title">Top 10 Programs — Redemptions</div>
+            <div class="top-list">
+              <div class="top-list-item">
+                <span class="top-rank">1</span>
+                <span class="top-name">SUMMER2026</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:100%;background:#6366f1;"></div></div>
+                <span class="top-val">218</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">2</span>
+                <span class="top-name">ISTANBUL-20</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:80%;background:#6366f1;"></div></div>
+                <span class="top-val">174</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">3</span>
+                <span class="top-name">HAIRBACK15</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:63%;background:#6366f1;"></div></div>
+                <span class="top-val">138</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">4</span>
+                <span class="top-name">NEWPATIENT</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:51%;background:#6366f1;"></div></div>
+                <span class="top-val">111</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">5</span>
+                <span class="top-name">Q2PROMO</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:42%;background:#6366f1;"></div></div>
+                <span class="top-val">92</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">6</span>
+                <span class="top-name">AFFILIATEX</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:36%;background:#6366f1;"></div></div>
+                <span class="top-val">79</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">7</span>
+                <span class="top-name">SPRING10</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:30%;background:#6366f1;"></div></div>
+                <span class="top-val">65</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">8</span>
+                <span class="top-name">FAMILY5</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:24%;background:#6366f1;"></div></div>
+                <span class="top-val">53</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">9</span>
+                <span class="top-name">ANKARADEAL</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:19%;background:#6366f1;"></div></div>
+                <span class="top-val">42</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">10</span>
+                <span class="top-name">WELCOME25</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:15%;background:#6366f1;"></div></div>
+                <span class="top-val">33</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 10 by Discount Value -->
+          <div class="chart-card">
+            <div class="chart-title">Top 10 Programs — Discount Value</div>
+            <div class="top-list">
+              <div class="top-list-item">
+                <span class="top-rank">1</span>
+                <span class="top-name">ISTANBUL-20</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:100%;background:#10b981;"></div></div>
+                <span class="top-val">£42k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">2</span>
+                <span class="top-name">SUMMER2026</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:81%;background:#10b981;"></div></div>
+                <span class="top-val">£34k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">3</span>
+                <span class="top-name">HAIRBACK15</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:67%;background:#10b981;"></div></div>
+                <span class="top-val">£28k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">4</span>
+                <span class="top-name">Q2PROMO</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:52%;background:#10b981;"></div></div>
+                <span class="top-val">£22k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">5</span>
+                <span class="top-name">AFFILIATEX</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:43%;background:#10b981;"></div></div>
+                <span class="top-val">£18k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">6</span>
+                <span class="top-name">NEWPATIENT</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:35%;background:#10b981;"></div></div>
+                <span class="top-val">£15k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">7</span>
+                <span class="top-name">SPRING10</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:26%;background:#10b981;"></div></div>
+                <span class="top-val">£11k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">8</span>
+                <span class="top-name">WELCOME25</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:21%;background:#10b981;"></div></div>
+                <span class="top-val">£9k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">9</span>
+                <span class="top-name">ANKARADEAL</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:16%;background:#10b981;"></div></div>
+                <span class="top-val">£7k</span>
+              </div>
+              <div class="top-list-item">
+                <span class="top-rank">10</span>
+                <span class="top-name">FAMILY5</span>
+                <div class="top-bar-track"><div class="top-bar-fill" style="width:10%;background:#10b981;"></div></div>
+                <span class="top-val">£4k</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- end charts-row -->
+
+      </div>
+      <!-- end tab-overview -->
+
+
+      <!-- ══════════════════════════════════════════
+           TAB 2 — APPLICATIONS (REDEMPTION LOG)
+      ══════════════════════════════════════════ -->
+      <div id="tab-applications" class="hidden">
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <div class="filter-label">Date Range</div>
+            <input type="text" class="filter-input wide" placeholder="2026-01-01 – 2026-05-16" />
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Program Type</div>
+            <select class="filter-input mid">
+              <option>All Types</option>
+              <option>Admin-via-Provider</option>
+              <option>Provider Self-Created</option>
+              <option>Hairline-Funded &amp; Direct-Issued</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Funding Model</div>
+            <select class="filter-input mid">
+              <option>All Models</option>
+              <option>Both Fees</option>
+              <option>Hairline Only</option>
+              <option>Provider Only</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">State</div>
+            <select class="filter-input sm">
+              <option>All</option>
+              <option>Applied</option>
+              <option>Completed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Status</div>
+            <select class="filter-input sm">
+              <option>All</option>
+              <option>Active</option>
+              <option>Reversed</option>
+              <option>Refunded</option>
+              <option>Voided</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Provider</div>
+            <select class="filter-input mid">
+              <option>All Providers</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Region</div>
+            <select class="filter-input sm">
+              <option>All Regions</option>
+            </select>
+          </div>
+          <div class="filter-actions">
+            <button class="btn btn-primary">Apply</button>
+            <button class="btn btn-outline">Reset</button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <div>
+              <div class="table-card-title">Redemption Log</div>
+              <div class="result-count">1,284 redemptions found</div>
+            </div>
+            <div class="table-toolbar">
+              <button class="btn btn-outline">Export CSV</button>
+              <button class="btn btn-outline">Export XLSX</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Redemption ID</th>
+                <th>Code</th>
+                <th>Program</th>
+                <th>State</th>
+                <th>Patient</th>
+                <th>Provider</th>
+                <th>Quote / Booking ID</th>
+                <th>Discount Value</th>
+                <th>Funding Split</th>
+                <th>Applied At</th>
+                <th>Completed At</th>
+                <th>Status</th>
+                <th>Admin Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                <td class="mono">RDM-004821</td>
+                <td class="mono">SUMMER2026</td>
+                <td>
+                  <div>Summer 2026 Campaign</div>
+                  <span class="badge badge-type-admin">Admin-via-Provider</span>
+                </td>
+                <td><span class="badge badge-completed">Completed</span></td>
+                <td>PAT-00912</td>
+                <td>Istanbul Hair Clinic</td>
+                <td><span class="link">BKG-77431</span></td>
+                <td>£1,200</td>
+                <td>
+                  <div class="split-cell">
+                    <span class="split-h">Hairline: £480</span>
+                    <span class="split-p">Provider: £720</span>
+                  </div>
+                </td>
+                <td>2026-05-14 10:22</td>
+                <td>2026-05-15 09:01</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn">View Detail</button>
+                    <button class="action-btn warn">Reverse</button>
+                    <button class="action-btn danger">Refund</button>
+                    <button class="action-btn danger">Void</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="mono">RDM-004820</td>
+                <td class="mono text-muted">— auto-applied —</td>
+                <td>
+                  <div>Istanbul Spring Promo</div>
+                  <span class="badge badge-type-provider">Provider Self-Created</span>
+                </td>
+                <td><span class="badge badge-applied">Applied</span></td>
+                <td>PAT-01048</td>
+                <td>Cappadocia Hair Center</td>
+                <td><span class="link">QT-22904</span></td>
+                <td>£800</td>
+                <td>
+                  <div class="split-cell">
+                    <span class="split-h">Hairline: £0</span>
+                    <span class="split-p">Provider: £800</span>
+                  </div>
+                </td>
+                <td>2026-05-15 14:07</td>
+                <td class="text-muted">—</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn">View Detail</button>
+                    <button class="action-btn warn">Reverse</button>
+                    <button class="action-btn danger">Void</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="mono">RDM-004815</td>
+                <td class="mono">AFFILIATEX</td>
+                <td>
+                  <div>Affiliate Partner X Promo</div>
+                  <span class="badge badge-type-hairline">Hairline-Funded</span>
+                </td>
+                <td><span class="badge badge-completed">Completed</span></td>
+                <td>PAT-00783</td>
+                <td class="text-muted">N/A</td>
+                <td><span class="link">BKG-77388</span></td>
+                <td>£650</td>
+                <td>
+                  <div class="split-cell">
+                    <span class="split-h">Hairline: £650</span>
+                    <span class="split-p">Provider: £0</span>
+                  </div>
+                </td>
+                <td>2026-05-12 08:55</td>
+                <td>2026-05-13 11:30</td>
+                <td><span class="badge badge-refunded">Refunded</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn">View Detail</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="mono">RDM-004809</td>
+                <td class="mono">HAIRBACK15</td>
+                <td>
+                  <div>HairBack 15% Off</div>
+                  <span class="badge badge-type-admin">Admin-via-Provider</span>
+                </td>
+                <td><span class="badge badge-applied">Applied</span></td>
+                <td>PAT-00671</td>
+                <td>Ankara Restoration Group</td>
+                <td><span class="link">QT-22891</span></td>
+                <td>£975</td>
+                <td>
+                  <div class="split-cell">
+                    <span class="split-h">Hairline: £390</span>
+                    <span class="split-p">Provider: £585</span>
+                  </div>
+                </td>
+                <td>2026-05-15 16:44</td>
+                <td class="text-muted">—</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn">View Detail</button>
+                    <button class="action-btn warn">Reverse</button>
+                    <button class="action-btn danger">Void</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="mono">RDM-004801</td>
+                <td class="mono">WELCOME25</td>
+                <td>
+                  <div>Welcome 25 New Patient</div>
+                  <span class="badge badge-type-hairline">Hairline-Funded</span>
+                </td>
+                <td><span class="badge badge-completed">Completed</span></td>
+                <td>PAT-01102</td>
+                <td class="text-muted">N/A</td>
+                <td><span class="link">BKG-77350</span></td>
+                <td>£500</td>
+                <td>
+                  <div class="split-cell">
+                    <span class="split-h">Hairline: £500</span>
+                    <span class="split-p">Provider: £0</span>
+                  </div>
+                </td>
+                <td>2026-05-10 09:18</td>
+                <td>2026-05-11 13:00</td>
+                <td><span class="badge badge-reversed">Reversed</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn">View Detail</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="mono">RDM-004799</td>
+                <td class="mono text-muted">— auto-applied —</td>
+                <td>
+                  <div>Family Referral 5%</div>
+                  <span class="badge badge-type-provider">Provider Self-Created</span>
+                </td>
+                <td><span class="badge badge-completed">Completed</span></td>
+                <td>PAT-00554</td>
+                <td>Istanbul Hair Clinic</td>
+                <td><span class="link">BKG-77288</span></td>
+                <td>£340</td>
+                <td>
+                  <div class="split-cell">
+                    <span class="split-h">Hairline: £0</span>
+                    <span class="split-p">Provider: £340</span>
+                  </div>
+                </td>
+                <td>2026-05-09 11:30</td>
+                <td>2026-05-10 10:05</td>
+                <td><span class="badge badge-voided">Voided</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn">View Detail</button>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+          </div>
+
+          <div class="pagination">
+            <span>Showing 1–6 of 1,284 records</span>
+            <div class="page-btns">
+              <div class="page-btn">‹</div>
+              <div class="page-btn active">1</div>
+              <div class="page-btn">2</div>
+              <div class="page-btn">3</div>
+              <div class="page-btn">…</div>
+              <div class="page-btn">215</div>
+              <div class="page-btn">›</div>
+            </div>
+          </div>
+
+        </div>
+        <!-- end table-card -->
+
+      </div>
+      <!-- end tab-applications -->
+
+    </div>
+    <!-- end page-body -->
+  </div>
+  <!-- end main -->
+
+</div>
+<!-- end shell -->
+
+<script>
+  function switchTab(name) {
+    document.getElementById('tab-overview').classList.toggle('hidden', name !== 'overview');
+    document.getElementById('tab-applications').classList.toggle('hidden', name !== 'applications');
+    document.getElementById('tab-btn-overview').classList.toggle('active', name === 'overview');
+    document.getElementById('tab-btn-applications').classList.toggle('active', name === 'applications');
+  }
+</script>
+
+</body>
+</html>

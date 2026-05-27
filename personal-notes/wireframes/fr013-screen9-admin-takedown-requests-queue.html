@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-013 Screen 9 – Admin: Takedown Requests Queue</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-logo sub {
+    font-size: 9px;
+    font-weight: 400;
+    color: #64748b;
+    display: block;
+    letter-spacing: 0.8px;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-item.sub {
+    padding-left: 38px;
+    font-size: 12px;
+    color: #7a8fa0;
+  }
+  .sidebar-item.sub.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; min-width: 0; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ── Nav tabs ── */
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #374151;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-tab.active {
+    background: #0ea5e9;
+    color: #fff;
+    border-color: #0ea5e9;
+  }
+  .nav-tab .count {
+    font-size: 10px;
+    background: #fef2f2;
+    color: #dc2626;
+    border-radius: 100px;
+    padding: 1px 6px;
+    font-weight: 600;
+  }
+  .nav-tab.active .count {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 14px 28px;
+    display: flex;
+    gap: 0;
+    flex-shrink: 0;
+  }
+  .stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 20px;
+    border-right: 1px solid #f3f4f6;
+  }
+  .stat-item:first-child { padding-left: 0; }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-size: 22px; font-weight: 700; color: #111827; line-height: 1.2; }
+  .stat-num.warn { color: #dc2626; }
+  .stat-num.ok { color: #15803d; }
+  .stat-label { font-size: 11px; color: #6b7280; }
+
+  /* ── Filter panel ── */
+  .filter-panel {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 14px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .filter-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .filter-group-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .filter-select {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    height: 34px;
+    min-width: 160px;
+  }
+  .filter-select .caret { margin-left: auto; color: #9ca3af; font-size: 10px; }
+  .filter-date-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    height: 34px;
+    min-width: 210px;
+  }
+  .filter-date-range .icon { color: #9ca3af; font-style: normal; }
+  .date-sep { color: #9ca3af; }
+  .filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .result-count { font-size: 13px; font-weight: 600; color: #111827; }
+  .result-count span { color: #0ea5e9; }
+  .filter-actions { display: flex; gap: 8px; align-items: center; }
+  .link-btn {
+    font-size: 12px;
+    color: #0ea5e9;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .sort-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #374151;
+  }
+  .sort-control span { color: #6b7280; }
+  .sort-select {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #111827;
+    cursor: pointer;
+    height: 30px;
+  }
+  .sort-select .caret { color: #9ca3af; font-size: 10px; }
+
+  /* ── Content (split layout) ── */
+  .content {
+    padding: 20px 28px;
+    display: flex;
+    gap: 16px;
+    flex: 1;
+    align-items: flex-start;
+    min-height: 0;
+  }
+
+  /* ── Queue list (left panel) ── */
+  .queue-panel {
+    width: 400px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    padding: 0 2px 4px;
+  }
+
+  .queue-card {
+    background: #fff;
+    border: 1px solid #e4e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: box-shadow 0.12s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .queue-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .queue-card.selected {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 2px #bae6fd;
+  }
+
+  .queue-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .request-id {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0ea5e9;
+    font-family: monospace;
+  }
+  .request-date { font-size: 11px; color: #9ca3af; }
+
+  .request-meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .meta-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #374151;
+  }
+  .meta-label { color: #9ca3af; font-size: 11px; min-width: 70px; flex-shrink: 0; }
+
+  .review-preview-mini {
+    background: #f8fafc;
+    border: 1px solid #e4e8f0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .preview-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .preview-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+  }
+  .star-inline { color: #f59e0b; font-size: 12px; }
+  .star-inline-empty { color: #d1d5db; font-size: 12px; }
+  .preview-excerpt {
+    font-size: 11px;
+    color: #6b7280;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-published  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-removed    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .badge-pending    { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+  .badge-approved   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-rejected   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+  /* ── Detail panel (right) ── */
+  .detail-panel {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .detail-card {
+    background: #fff;
+    border: 1px solid #e4e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .detail-card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .detail-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .detail-card-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── Metadata grid ── */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .meta-field-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .meta-field-value {
+    font-size: 13px;
+    color: #111827;
+    font-weight: 500;
+  }
+  .meta-field-value.mono {
+    font-family: monospace;
+    color: #0ea5e9;
+    font-size: 12px;
+  }
+  .meta-field-value.muted { color: #6b7280; font-weight: 400; }
+
+  /* ── Review preview card ── */
+  .review-preview-card {
+    border: 1px solid #e4e8f0;
+    border-radius: 8px;
+    padding: 14px;
+    background: #fafbfc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .review-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .reviewer-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .reviewer-name { font-weight: 600; font-size: 13px; color: #111827; }
+  .reviewer-sub  { font-size: 11px; color: #6b7280; margin-top: 1px; }
+  .review-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .rating-num { font-weight: 700; color: #111827; }
+  .review-treatment {
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .review-feedback-preview {
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.6;
+    border-left: 3px solid #e4e8f0;
+    padding-left: 10px;
+  }
+  .review-status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .review-status-label { font-size: 11px; color: #9ca3af; }
+
+  /* ── Request reason ── */
+  .reason-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .reason-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+
+  /* ── Decision controls ── */
+  .decision-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .decision-btn-row {
+    display: flex;
+    gap: 10px;
+  }
+  .btn {
+    padding: 9px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.88; }
+  .btn-approve {
+    background: #16a34a;
+    color: #fff;
+    flex: 1;
+  }
+  .btn-reject {
+    background: #fff;
+    color: #dc2626;
+    border: 1.5px solid #dc2626;
+    flex: 1;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .field-label .required { color: #dc2626; font-size: 12px; }
+  .field-label .conditional {
+    font-size: 10px;
+    font-weight: 400;
+    color: #9ca3af;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .textarea-mock {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #374151;
+    min-height: 72px;
+    background: #fff;
+    line-height: 1.5;
+    position: relative;
+  }
+  .textarea-mock.conditional {
+    background: #fff8f0;
+    border-color: #fdba74;
+  }
+  .char-counter {
+    text-align: right;
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+  .conditional-note {
+    font-size: 11px;
+    color: #b45309;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 5px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  /* ── Decision history / timeline ── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    position: relative;
+  }
+  .timeline-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 18px;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .timeline-dot.green { background: #16a34a; }
+  .timeline-dot.red   { background: #dc2626; }
+  .timeline-dot.gray  { background: #d1d5db; }
+  .timeline-line {
+    flex: 1;
+    width: 2px;
+    background: #f3f4f6;
+    margin: 4px 0;
+    min-height: 24px;
+  }
+  .timeline-content {
+    padding-bottom: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+  .timeline-event { font-size: 12px; font-weight: 600; color: #111827; }
+  .timeline-actor { font-size: 11px; color: #6b7280; margin-top: 1px; }
+  .timeline-time  { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+
+  /* ── Decision timestamp (resolved) ── */
+  .resolved-banner {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .resolved-banner.rejected {
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+  .resolved-icon { font-size: 18px; }
+  .resolved-text { display: flex; flex-direction: column; gap: 2px; }
+  .resolved-label { font-size: 12px; font-weight: 600; color: #15803d; }
+  .resolved-label.red { color: #dc2626; }
+  .resolved-ts { font-size: 11px; color: #6b7280; }
+
+  /* ── Annotation strip ── */
+  .annotation-strip {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 11px;
+    color: #92400e;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .annotation-strip strong { color: #78350f; }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: #f3f4f6;
+    margin: 0 -20px;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      Hair<span>line</span>
+      <sub>Admin Platform</sub>
+    </div>
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">⊞</i> Dashboard
+    </div>
+    <div class="sidebar-section">Management</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">👥</i> Patient Management
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">🏥</i> Provider Management
+    </div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">★</i> Reviews
+    </div>
+    <div class="sidebar-item sub">
+      Review Management
+    </div>
+    <div class="sidebar-item sub active">
+      Takedown Requests
+    </div>
+    <div class="sidebar-item sub">
+      Review Settings
+    </div>
+    <div class="sidebar-section">Analytics</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">📊</i> Analytics
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">💰</i> Billing &amp; Payouts
+    </div>
+    <div class="sidebar-section">System</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">⚙</i> Settings
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">🔔</i> Notifications
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Top bar ── -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Admin</span>
+        <span class="breadcrumb-sep">›</span>
+        <span>Reviews</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Takedown Requests</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="nav-tabs">
+          <button class="nav-tab">
+            ☰ Review Management
+          </button>
+          <button class="nav-tab active">
+            🚩 Takedown Requests
+            <span class="count">7</span>
+          </button>
+          <button class="nav-tab">
+            ⚙ Review Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Stats bar ── -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-num warn">7</div>
+        <div class="stat-label">Pending Requests</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num ok">43</div>
+        <div class="stat-label">Approved (All Time)</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">28</div>
+        <div class="stat-label">Rejected (All Time)</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">78</div>
+        <div class="stat-label">Total Requests</div>
+      </div>
+    </div>
+
+    <!-- ── Filter panel ── -->
+    <div class="filter-panel">
+      <div class="filter-row">
+
+        <!-- Request status filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Status</div>
+          <div class="filter-select">
+            <span>Pending</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <!-- Date range filter -->
+        <div class="filter-group">
+          <div class="filter-group-label">Date Range</div>
+          <div class="filter-date-range">
+            <i class="icon">📅</i>
+            <span>Start date</span>
+            <span class="date-sep">–</span>
+            <span>End date</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="filter-footer">
+        <div class="result-count">
+          Showing <span>7</span> requests
+        </div>
+        <div class="filter-actions">
+          <button class="link-btn">Clear filters</button>
+          <div class="sort-control">
+            <span>Sort by</span>
+            <div class="sort-select">
+              Oldest first (SLA priority)
+              <span class="caret">▾</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Content: Split layout ── -->
+    <div class="content">
+
+      <!-- ── LEFT: Request queue list ── -->
+      <div class="queue-panel">
+        <div class="panel-title">Request Queue</div>
+
+        <!-- Queue card 1 — selected / Pending -->
+        <div class="queue-card selected">
+          <div class="queue-card-header">
+            <span class="request-id">TDR-20260501-001</span>
+            <span class="request-date">01 May 2026 · 09:12</span>
+          </div>
+          <!-- Request metadata -->
+          <div class="request-meta-row">
+            <div class="meta-line">
+              <span class="meta-label">Requester</span>
+              <span>Sarah M.</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Provider</span>
+              <span>Dr. Ahmet Yilmaz</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Case</span>
+              <span>CASE-20241102 · FUE Hair Transplant</span>
+            </div>
+          </div>
+          <!-- Linked review preview (mini) -->
+          <div class="review-preview-mini">
+            <div class="preview-top">
+              <div class="preview-rating">
+                <span class="star-inline">★★★★</span><span class="star-inline-empty">★</span>
+                <span style="font-size:11px;color:#6b7280;margin-left:2px">4/5</span>
+              </div>
+              <span class="badge badge-published">Published</span>
+            </div>
+            <div class="preview-excerpt">"The procedure itself went well but the aftercare communication was inconsistent. I had to chase the clinic multiple times…"</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="badge badge-pending">⏳ Pending</span>
+            <span style="font-size:11px;color:#9ca3af">24 days ago</span>
+          </div>
+        </div>
+
+        <!-- Queue card 2 — Pending -->
+        <div class="queue-card">
+          <div class="queue-card-header">
+            <span class="request-id">TDR-20260508-002</span>
+            <span class="request-date">08 May 2026 · 14:33</span>
+          </div>
+          <div class="request-meta-row">
+            <div class="meta-line">
+              <span class="meta-label">Requester</span>
+              <span>Raj N.</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Provider</span>
+              <span>Dr. Ahmet Yilmaz</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Case</span>
+              <span>CASE-20241030 · FUE Hair Transplant</span>
+            </div>
+          </div>
+          <div class="review-preview-mini">
+            <div class="preview-top">
+              <div class="preview-rating">
+                <span class="star-inline">★</span><span class="star-inline-empty">★★★★</span>
+                <span style="font-size:11px;color:#6b7280;margin-left:2px">1/5</span>
+              </div>
+              <span class="badge badge-published">Published</span>
+            </div>
+            <div class="preview-excerpt">"Extremely poor experience. Results were not what was promised and the staff dismissed my concerns completely…"</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="badge badge-pending">⏳ Pending</span>
+            <span style="font-size:11px;color:#9ca3af">17 days ago</span>
+          </div>
+        </div>
+
+        <!-- Queue card 3 — Resolved: Approved -->
+        <div class="queue-card">
+          <div class="queue-card-header">
+            <span class="request-id">TDR-20260412-044</span>
+            <span class="request-date">12 Apr 2026 · 11:05</span>
+          </div>
+          <div class="request-meta-row">
+            <div class="meta-line">
+              <span class="meta-label">Requester</span>
+              <span>Laura T.</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Provider</span>
+              <span>Dr. Kemal Özcan</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Case</span>
+              <span>CASE-20240805 · PRP Therapy</span>
+            </div>
+          </div>
+          <div class="review-preview-mini">
+            <div class="preview-top">
+              <div class="preview-rating">
+                <span class="star-inline">★★</span><span class="star-inline-empty">★★★</span>
+                <span style="font-size:11px;color:#6b7280;margin-left:2px">2/5</span>
+              </div>
+              <span class="badge badge-removed">Removed</span>
+            </div>
+            <div class="preview-excerpt">"PRP sessions were rushed with no explanation of what to expect. I felt like just a number in a conveyor belt…"</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="badge badge-approved">✓ Approved</span>
+            <span style="font-size:11px;color:#9ca3af">Resolved 20 Apr 2026</span>
+          </div>
+        </div>
+
+        <!-- Queue card 4 — Resolved: Rejected -->
+        <div class="queue-card">
+          <div class="queue-card-header">
+            <span class="request-id">TDR-20260403-038</span>
+            <span class="request-date">03 Apr 2026 · 16:20</span>
+          </div>
+          <div class="request-meta-row">
+            <div class="meta-line">
+              <span class="meta-label">Requester</span>
+              <span>Peter W.</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Provider</span>
+              <span>Dr. Elena Morozova</span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Case</span>
+              <span>CASE-20241115 · DHI Hair Transplant</span>
+            </div>
+          </div>
+          <div class="review-preview-mini">
+            <div class="preview-top">
+              <div class="preview-rating">
+                <span class="star-inline">★★★★★</span>
+                <span style="font-size:11px;color:#6b7280;margin-left:2px">5/5</span>
+              </div>
+              <span class="badge badge-published">Published</span>
+            </div>
+            <div class="preview-excerpt">"Outstanding results. The team was incredibly professional and the recovery was much smoother than expected…"</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="badge badge-rejected">✕ Rejected</span>
+            <span style="font-size:11px;color:#9ca3af">Resolved 08 Apr 2026</span>
+          </div>
+        </div>
+
+      </div><!-- /queue-panel -->
+
+      <!-- ── RIGHT: Request detail + decision ── -->
+      <div class="detail-panel">
+
+        <!-- ── Request Metadata ── -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <div class="detail-card-title">
+              🚩 Request Details
+              <span style="font-size:12px;font-weight:400;color:#9ca3af;font-family:monospace">TDR-20260501-001</span>
+            </div>
+            <span class="badge badge-pending">⏳ Pending</span>
+          </div>
+          <div class="detail-card-body">
+
+            <!-- Request metadata group -->
+            <div class="meta-grid">
+              <div class="meta-field">
+                <div class="meta-field-label">Request ID</div>
+                <div class="meta-field-value mono">TDR-20260501-001</div>
+              </div>
+              <div class="meta-field">
+                <div class="meta-field-label">Created Date</div>
+                <div class="meta-field-value">01 May 2026, 09:12</div>
+              </div>
+              <div class="meta-field">
+                <div class="meta-field-label">Requester (Patient)</div>
+                <div class="meta-field-value">Sarah M.</div>
+              </div>
+              <div class="meta-field">
+                <div class="meta-field-label">Provider</div>
+                <div class="meta-field-value">Dr. Ahmet Yilmaz</div>
+              </div>
+              <div class="meta-field">
+                <div class="meta-field-label">Treatment Case</div>
+                <div class="meta-field-value">CASE-20241102</div>
+              </div>
+              <div class="meta-field">
+                <div class="meta-field-label">Treatment</div>
+                <div class="meta-field-value muted">FUE Hair Transplant</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Linked review preview card -->
+            <div>
+              <div class="field-label" style="margin-bottom:8px">Linked Review</div>
+              <div class="review-preview-card">
+                <div class="review-preview-header">
+                  <div class="reviewer-cell">
+                    <div class="avatar">SM</div>
+                    <div>
+                      <div class="reviewer-name">Sarah M.</div>
+                      <div class="reviewer-sub">CASE-20241102 · FUE Hair Transplant</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                    <!-- Current review status -->
+                    <div class="review-status-row">
+                      <span class="review-status-label">Review status:</span>
+                      <span class="badge badge-published">Published</span>
+                    </div>
+                    <span style="font-size:11px;color:#9ca3af">Submitted 14 May 2026</span>
+                  </div>
+                </div>
+                <div class="review-rating-row">
+                  <span class="star-inline">★★★★</span><span class="star-inline-empty">★</span>
+                  <span class="rating-num">4</span>
+                  <span style="color:#9ca3af;font-size:11px">/ 5 overall</span>
+                </div>
+                <div class="review-feedback-preview">
+                  "The procedure itself went well but the aftercare communication was inconsistent. I had to chase the clinic multiple times for follow-up appointments. The results are visible but I no longer feel comfortable having this review linked to my name publicly."
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Request reason -->
+            <div>
+              <div class="reason-label">Patient Request Reason</div>
+              <div class="reason-box">
+                "I submitted this review in good faith but I am now concerned that it may be used out of context to identify me. I did not consent to my personal experience being used for marketing purposes. Please remove this review from the public listing."
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Decision Controls ── -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <div class="detail-card-title">⚖ Decision</div>
+            <span style="font-size:12px;color:#9ca3af">Decision note required for both actions</span>
+          </div>
+          <div class="detail-card-body">
+
+            <div class="decision-section">
+
+              <!-- Decision action buttons -->
+              <div>
+                <div class="field-label" style="margin-bottom:8px">Decision Action <span class="required">*</span></div>
+                <div class="decision-btn-row">
+                  <button class="btn btn-approve">✓ Approve Takedown</button>
+                  <button class="btn btn-reject">✕ Reject Takedown</button>
+                </div>
+              </div>
+
+              <!-- Decision note -->
+              <div class="field-group">
+                <div class="field-label">
+                  Decision Note <span class="required">*</span>
+                  <span class="conditional">(Admin-internal justification · 10–1000 chars)</span>
+                </div>
+                <div class="textarea-mock" style="color:#9ca3af">
+                  Enter admin justification for this decision…
+                </div>
+                <div class="char-counter">0 / 1000</div>
+              </div>
+
+              <!-- Admin removal reason (conditional: required when approving) -->
+              <div class="field-group">
+                <div class="field-label">
+                  Admin Removal Reason
+                  <span class="conditional">(Conditional — required when approving · shown to patient on Screen 3)</span>
+                </div>
+                <div class="conditional-note">
+                  ⚠ Required when approving takedown. This reason is persisted to the removed review record and displayed to the patient in their Review Detail (Screen 3).
+                </div>
+                <div class="textarea-mock conditional" style="color:#9ca3af;margin-top:4px">
+                  Enter patient-facing removal reason…
+                </div>
+                <div class="char-counter">0 / 1000</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Decision History (resolved requests) ── -->
+        <div class="detail-card">
+          <div class="detail-card-header">
+            <div class="detail-card-title">📋 Decision History</div>
+            <span style="font-size:12px;color:#9ca3af">Read-only · Audit trail</span>
+          </div>
+          <div class="detail-card-body">
+            <div class="timeline">
+
+              <!-- Event 1: Request created -->
+              <div class="timeline-item">
+                <div class="timeline-dot-col">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">Takedown request submitted</div>
+                  <div class="timeline-actor">Patient: Sarah M.</div>
+                  <div class="timeline-time">01 May 2026, 09:12</div>
+                </div>
+              </div>
+
+              <!-- Event 2: Admin opened -->
+              <div class="timeline-item">
+                <div class="timeline-dot-col">
+                  <div class="timeline-dot gray"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">Request opened by admin</div>
+                  <div class="timeline-actor">Admin: jessica.admin@hairline.com</div>
+                  <div class="timeline-time">03 May 2026, 10:45</div>
+                </div>
+              </div>
+
+              <!-- Event 3: Pending (current state) -->
+              <div class="timeline-item">
+                <div class="timeline-dot-col">
+                  <div class="timeline-dot" style="background:#f59e0b"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-event">Awaiting decision</div>
+                  <div class="timeline-actor">Status: Pending</div>
+                  <div class="timeline-time">Current state — no decision timestamp yet</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Decision timestamp placeholder (shown after decision) -->
+            <div style="margin-top:12px;border-top:1px solid #f3f4f6;padding-top:12px">
+              <div class="field-label" style="margin-bottom:6px">Decision Timestamp <span class="conditional">(Conditional — populated after decision)</span></div>
+              <div style="font-size:12px;color:#9ca3af;font-style:italic">— No decision recorded yet —</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Annotation strip ── -->
+        <div class="annotation-strip">
+          <strong>Screen 9 – Admin: Takedown Requests Queue · Field Coverage</strong>
+          <span>• <strong>Request queue</strong> — left panel; filterable by status (Pending / Approved / Rejected) and date; sorted by oldest first (SLA priority)</span>
+          <span>• <strong>Request metadata</strong> — Request ID, created date, requester (patient alias), provider, treatment case; read-only</span>
+          <span>• <strong>Linked review preview</strong> — review summary card with reviewer alias, rating, feedback excerpt, treatment context; read-only</span>
+          <span>• <strong>Current review status</strong> — badge (Published / Removed) shown within linked review preview card; read-only</span>
+          <span>• <strong>Request reason</strong> — patient-submitted reason text; read-only; 10–1000 chars enforced at submission</span>
+          <span>• <strong>Decision action</strong> — Approve / Reject buttons; both require decision note before confirming</span>
+          <span>• <strong>Decision note</strong> — admin-internal justification textarea; required; 10–1000 chars</span>
+          <span>• <strong>Admin removal reason</strong> — conditional textarea; required only when approving; patient-facing; persisted to removed review record (displayed on Screen 3)</span>
+          <span>• <strong>Decision history</strong> — read-only timeline of prior events/updates on this request (submission, views, decisions)</span>
+          <span>• <strong>Decision timestamp</strong> — conditional; shown read-only after decision is recorded; omitted for pending requests</span>
+          <span>• <strong>Approve outcome</strong>: review unpublished + archived; provider rating metrics recalculated; patient notified</span>
+          <span>• <strong>Reject outcome</strong>: review remains published; patient notified of rejection</span>
+        </div>
+
+      </div><!-- /detail-panel -->
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>

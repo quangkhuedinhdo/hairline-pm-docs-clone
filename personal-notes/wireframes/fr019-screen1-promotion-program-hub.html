@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-019 Screen 1 – Admin: Promotion Program Hub</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-ghost { background: transparent; color: #6b7280; border: none; cursor: pointer; font-size: 12px; padding: 6px 10px; }
+
+  /* ── Filter Panel ── */
+  .filter-panel {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 16px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .filter-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .filter-group.stretch { flex: 1; }
+  .filter-group-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .filter-input {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    height: 34px;
+    min-width: 180px;
+  }
+  .filter-input.search-box { min-width: 260px; }
+  .filter-input .icon { color: #9ca3af; font-style: normal; font-size: 13px; }
+  .filter-input input {
+    border: none;
+    outline: none;
+    font-size: 12px;
+    color: #374151;
+    background: transparent;
+    width: 100%;
+  }
+  .filter-input input::placeholder { color: #9ca3af; }
+
+  .filter-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    height: 34px;
+    min-width: 160px;
+  }
+  .filter-select .caret { margin-left: auto; color: #9ca3af; font-size: 10px; }
+  .filter-select .chip-count {
+    background: #4a90d9;
+    color: #fff;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .filter-date-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    height: 34px;
+    min-width: 210px;
+  }
+  .filter-date-range .icon { color: #9ca3af; font-style: normal; }
+  .date-sep { color: #9ca3af; }
+
+  .filter-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+  }
+  .range-input {
+    width: 76px;
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #374151;
+    height: 34px;
+    background: #fff;
+  }
+  .range-sep { color: #9ca3af; font-size: 11px; }
+
+  .filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .result-count {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+  }
+  .result-count span { color: #4a90d9; }
+  .filter-actions { display: flex; gap: 8px; align-items: center; }
+  .link-btn {
+    font-size: 12px;
+    color: #4a90d9;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+  }
+
+  /* ── Dropdown pills (multi-select visual) ── */
+  .multiselect-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .pill-active { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+  .pill-inactive { background: #f9fafb; color: #6b7280; border-color: #e5e7eb; }
+  .pill-active .pill-x { color: #1d4ed8; font-size: 10px; }
+
+  /* ── Content ── */
+  .content { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+
+  /* ── Table Card ── */
+  .table-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .table-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .table-hint { font-size: 12px; color: #9ca3af; }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fafafa;
+    white-space: nowrap;
+  }
+  .data-table th.sort-active {
+    color: #1a1a2e;
+  }
+  .data-table th .sort-icon { margin-left: 4px; color: #9ca3af; font-size: 10px; }
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f9fafb;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafbfc; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-admin-provider { background: #ede9fe; color: #5b21b6; }
+  .badge-provider-self  { background: #dcfce7; color: #166534; }
+  .badge-hairline       { background: #fef3c7; color: #92400e; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .s-active        { background: #d1fae5; color: #065f46; }
+  .s-active::before { background: #10b981; }
+  .s-draft         { background: #f3f4f6; color: #374151; }
+  .s-draft::before { background: #9ca3af; }
+  .s-pending       { background: #fef9c3; color: #854d0e; }
+  .s-pending::before { background: #f59e0b; }
+  .s-paused        { background: #fce7f3; color: #9d174d; }
+  .s-paused::before { background: #ec4899; }
+  .s-expired       { background: #fee2e2; color: #991b1b; }
+  .s-expired::before { background: #ef4444; }
+  .s-archived      { background: #f3f4f6; color: #6b7280; }
+  .s-archived::before { background: #9ca3af; }
+
+  .funding-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .fm-both     { background: #eff6ff; color: #1e40af; }
+  .fm-hairline { background: #fff7ed; color: #9a3412; }
+  .fm-provider { background: #f0fdf4; color: #14532d; }
+
+  .roi-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .roi-high   { background: #d1fae5; color: #065f46; }
+  .roi-mid    { background: #fef9c3; color: #854d0e; }
+  .roi-low    { background: #fee2e2; color: #991b1b; }
+  .roi-na     { color: #9ca3af; font-size: 11px; font-style: italic; font-weight: 400; background: none; padding: 0; }
+
+  /* ── Usage bar ── */
+  .usage-wrap { display: flex; flex-direction: column; gap: 3px; min-width: 100px; }
+  .usage-text { font-size: 11px; color: #374151; }
+  .usage-bar-bg { height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; }
+  .usage-bar-fill { height: 100%; border-radius: 2px; }
+  .ub-green  { background: #10b981; }
+  .ub-yellow { background: #f59e0b; }
+  .ub-red    { background: #ef4444; }
+  .usage-unlimited { font-size: 11px; color: #9ca3af; font-style: italic; }
+
+  /* ── Program name cell ── */
+  .prog-name { font-weight: 600; color: #111827; font-size: 12px; }
+  .prog-code { font-size: 11px; color: #6b7280; margin-top: 1px; font-family: 'SF Mono', 'Consolas', monospace; }
+  .prog-nocode { font-size: 11px; color: #d1d5db; font-style: italic; margin-top: 1px; }
+
+  /* ── Owner cell ── */
+  .owner-tag { font-size: 11px; }
+  .owner-admin    { color: #4a90d9; }
+  .owner-provider { color: #374151; }
+
+  /* ── Row actions ── */
+  .row-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .data-table tr:hover .row-actions { opacity: 1; }
+  .act-btn {
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #374151;
+    white-space: nowrap;
+  }
+  .act-btn:hover { background: #f3f4f6; border-color: #e5e7eb; }
+  .act-btn.view   { color: #4a90d9; }
+  .act-btn.pause  { color: #f59e0b; }
+  .act-btn.resume { color: #10b981; }
+  .act-btn.archive{ color: #6b7280; }
+  .act-btn.adopt  { color: #5b21b6; }
+  .act-btn.apps   { color: #374151; }
+  .act-sep { color: #e5e7eb; font-size: 10px; }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid #f3f4f6;
+    background: #fafafa;
+  }
+  .page-info { font-size: 12px; color: #6b7280; }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+  }
+  .page-btn.active { background: #4a90d9; color: #fff; border-color: #4a90d9; }
+  .page-btn.disabled { color: #d1d5db; cursor: default; }
+
+  /* ── Active filter pills row ── */
+  .active-filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 28px 12px;
+    background: #fff;
+  }
+  .active-filter-label { font-size: 11px; color: #9ca3af; font-weight: 500; }
+  .af-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    cursor: pointer;
+  }
+  .af-pill .x { color: #60a5fa; font-size: 11px; }
+  .af-clear-all { font-size: 11px; color: #ef4444; cursor: pointer; background: none; border: none; margin-left: 4px; }
+
+  /* ── Scope filter tag ── */
+  .scope-tag {
+    display: inline-flex;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .scope-reusable  { background: #f0fdf4; color: #166534; }
+  .scope-adhoc     { background: #fef9c3; color: #854d0e; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Admin</div>
+
+    <div class="sidebar-section">Platform</div>
+    <div class="sidebar-item"><i class="sidebar-icon">▦</i> Dashboard</div>
+    <div class="sidebar-item"><i class="sidebar-icon">👤</i> Patients</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🏥</i> Providers</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📋</i> Quotes & Bookings</div>
+
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💳</i> Billing & Payouts</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📊</i> Financial Reports</div>
+    <div class="sidebar-item active"><i class="sidebar-icon">🏷</i> Promotions</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🤝</i> Affiliates</div>
+
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">⚙</i> Configuration</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🔒</i> Access Control</div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Top bar ── -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Promotions</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Promotion Program Hub</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">⬇ Export</button>
+        <button class="btn btn-primary">+ New Program</button>
+      </div>
+    </div>
+
+    <!-- ── Filter Panel ── -->
+    <div class="filter-panel">
+
+      <!-- Row 1: Search + Program Type + Scope + Status -->
+      <div class="filter-row">
+        <div class="filter-group stretch">
+          <div class="filter-group-label">Code / Keyword Search</div>
+          <div class="filter-input search-box">
+            <i class="icon">🔍</i>
+            <input type="text" placeholder="Search by code, program name, or keyword…" />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Program Type</div>
+          <div class="filter-select">
+            <span>All Types</span>
+            <span class="chip-count" style="display:none">2</span>
+            <span class="caret">▾</span>
+          </div>
+          <div class="multiselect-pills">
+            <span class="pill pill-active">Admin-via-Provider <span class="pill-x">×</span></span>
+            <span class="pill pill-inactive">Provider Self-Created</span>
+            <span class="pill pill-inactive">Hairline-Funded &amp; Direct-Issued</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Scope</div>
+          <div class="filter-select">
+            <span>All Scopes</span>
+            <span class="caret">▾</span>
+          </div>
+          <div class="multiselect-pills">
+            <span class="pill pill-inactive">Reusable</span>
+            <span class="pill pill-inactive">Ad-Hoc Quote-Bound</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Status</div>
+          <div class="filter-select">
+            <span>All Statuses</span>
+            <span class="caret">▾</span>
+          </div>
+          <div class="multiselect-pills">
+            <span class="pill pill-inactive">Draft</span>
+            <span class="pill pill-active">Active <span class="pill-x">×</span></span>
+            <span class="pill pill-inactive">Pending Approval</span>
+            <span class="pill pill-inactive">Paused</span>
+            <span class="pill pill-inactive">Expired</span>
+            <span class="pill pill-inactive">Archived</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Funding Model + Provider Participation + Date Range + Usage + ROI -->
+      <div class="filter-row">
+        <div class="filter-group">
+          <div class="filter-group-label">Funding Model</div>
+          <div class="filter-select">
+            <span>All Models</span>
+            <span class="caret">▾</span>
+          </div>
+          <div class="multiselect-pills">
+            <span class="pill pill-inactive">Both Fees</span>
+            <span class="pill pill-inactive">Hairline Only</span>
+            <span class="pill pill-inactive">Provider Only</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Provider Participation</div>
+          <div class="filter-select" style="min-width:180px">
+            <i class="icon" style="font-style:normal;color:#9ca3af">🏥</i>
+            <span>All Providers</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Date Range (Active Window)</div>
+          <div class="filter-date-range">
+            <i class="icon">📅</i>
+            <span style="color:#9ca3af">Start date</span>
+            <span class="date-sep">–</span>
+            <span style="color:#9ca3af">End date</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Usage (Redemption Count)</div>
+          <div class="filter-range">
+            <input class="range-input" type="number" placeholder="Min" />
+            <span class="range-sep">–</span>
+            <input class="range-input" type="number" placeholder="Max" />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">ROI Tier</div>
+          <div class="filter-select" style="min-width:130px">
+            <span>All Tiers</span>
+            <span class="caret">▾</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer: result count + reset -->
+      <div class="filter-footer">
+        <div class="result-count">
+          Showing <span>24</span> programs
+        </div>
+        <div class="filter-actions">
+          <button class="link-btn">Reset all filters</button>
+          <button class="btn btn-outline" style="height:30px; padding:5px 12px; font-size:11px;">Apply</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Active filter pills (when filters applied) ── -->
+    <div class="active-filters">
+      <span class="active-filter-label">Active filters:</span>
+      <span class="af-pill">Program Type: Admin-via-Provider <span class="x">×</span></span>
+      <span class="af-pill">Status: Active <span class="x">×</span></span>
+      <button class="af-clear-all">Clear all</button>
+    </div>
+
+    <!-- ── Content ── -->
+    <div class="content">
+
+      <div class="table-card">
+        <div class="table-card-header">
+          <div>
+            <div class="table-title">All Promotion Programs</div>
+            <div class="table-hint">Master catalog · All types · Default sort: Last Updated ↓</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline" style="font-size:11px;height:30px;padding:5px 10px;">⇅ Sort</button>
+            <button class="btn btn-outline" style="font-size:11px;height:30px;padding:5px 10px;">⚙ Columns</button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Code / Program Name</th>
+              <th>Program Type</th>
+              <th>Owner</th>
+              <th>Funding Model</th>
+              <th>Participating Providers</th>
+              <th>Status</th>
+              <th>Active Window</th>
+              <th>Usage</th>
+              <th>ROI Tier</th>
+              <th class="sort-active">Last Updated <span class="sort-icon">↓</span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1: Admin-via-Provider, Active -->
+            <tr>
+              <td>
+                <div class="prog-name">Summer Hair Restoration Campaign</div>
+                <div class="prog-code">SUMMER2026</div>
+              </td>
+              <td><span class="badge badge-admin-provider">Admin-via-Provider</span></td>
+              <td><span class="owner-tag owner-admin">Admin · Sarah L.</span></td>
+              <td><span class="funding-badge fm-both">Both Fees</span></td>
+              <td>34 providers</td>
+              <td><span class="status-badge s-active">Active</span></td>
+              <td style="white-space:nowrap; font-size:11px;">01 Jun 2026<br>→ 31 Aug 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">482 / 1,000</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-green" style="width:48%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-high">High</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">13 May 2026, 09:14</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn pause">Pause</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn adopt">Adoptions</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: Provider Self-Created, Active, Reusable -->
+            <tr>
+              <td>
+                <div class="prog-name">New Patient Welcome Offer</div>
+                <div class="prog-code">WELCOME15</div>
+              </td>
+              <td><span class="badge badge-provider-self">Provider Self-Created</span></td>
+              <td><span class="owner-tag owner-provider">Istanbul Hair Clinic</span></td>
+              <td><span class="funding-badge fm-provider">Provider Only</span></td>
+              <td style="font-size:11px;color:#9ca3af;">N/A</td>
+              <td><span class="status-badge s-active">Active</span></td>
+              <td style="white-space:nowrap; font-size:11px;">01 Jan 2026<br>→ 31 Dec 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">27 / 100</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-green" style="width:27%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-mid">Mid</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">12 May 2026, 16:42</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn pause">Pause</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn archive">Archive</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3: Hairline-Funded, Active -->
+            <tr>
+              <td>
+                <div class="prog-name">Affiliate Partner Spring Drive</div>
+                <div class="prog-nocode">— No public code —</div>
+              </td>
+              <td><span class="badge badge-hairline">Hairline-Funded &amp; Direct-Issued</span></td>
+              <td><span class="owner-tag owner-admin">Admin · James K.</span></td>
+              <td><span class="funding-badge fm-hairline">Hairline Only</span></td>
+              <td style="font-size:11px;color:#9ca3af;">N/A (Direct-Issued)</td>
+              <td><span class="status-badge s-active">Active</span></td>
+              <td style="white-space:nowrap; font-size:11px;">01 Apr 2026<br>→ 30 Jun 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">193 / 500</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-yellow" style="width:39%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-high">High</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">12 May 2026, 11:05</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn pause">Pause</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4: Admin-via-Provider, Pending Approval -->
+            <tr>
+              <td>
+                <div class="prog-name">Q3 Volume Booster</div>
+                <div class="prog-code">Q3BOOST</div>
+              </td>
+              <td><span class="badge badge-admin-provider">Admin-via-Provider</span></td>
+              <td><span class="owner-tag owner-admin">Admin · Sarah L.</span></td>
+              <td><span class="funding-badge fm-both">Both Fees</span></td>
+              <td>12 providers</td>
+              <td><span class="status-badge s-pending">Pending Approval</span></td>
+              <td style="white-space:nowrap; font-size:11px;">01 Jul 2026<br>→ 30 Sep 2026</td>
+              <td>
+                <div class="usage-text" style="font-size:11px;color:#9ca3af;">Not started</div>
+              </td>
+              <td><span class="roi-na">Not yet calculated</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">11 May 2026, 14:30</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn adopt">Adoptions</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn archive">Archive</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5: Provider Self-Created, Ad-Hoc, Active -->
+            <tr>
+              <td>
+                <div class="prog-name">Quote #4821 Spot Discount</div>
+                <div class="prog-nocode">— Ad-Hoc Quote-Bound —</div>
+              </td>
+              <td><span class="badge badge-provider-self">Provider Self-Created</span></td>
+              <td><span class="owner-tag owner-provider">Athens Restore Clinic</span></td>
+              <td><span class="funding-badge fm-provider">Provider Only</span></td>
+              <td style="font-size:11px;color:#9ca3af;">N/A</td>
+              <td><span class="status-badge s-active">Active</span></td>
+              <td style="white-space:nowrap; font-size:11px;">10 May 2026<br>→ 17 May 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">0 / 1</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-green" style="width:0%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-na">Not yet calculated</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">10 May 2026, 08:55</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn pause">Pause</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6: Admin-via-Provider, Paused -->
+            <tr>
+              <td>
+                <div class="prog-name">Winter Promo 2025</div>
+                <div class="prog-code">WINTER25</div>
+              </td>
+              <td><span class="badge badge-admin-provider">Admin-via-Provider</span></td>
+              <td><span class="owner-tag owner-admin">Admin · James K.</span></td>
+              <td><span class="funding-badge fm-both">Both Fees</span></td>
+              <td>All Providers</td>
+              <td><span class="status-badge s-paused">Paused</span></td>
+              <td style="white-space:nowrap; font-size:11px;">01 Dec 2025<br>→ 28 Feb 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">312 / 400</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-yellow" style="width:78%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-mid">Mid</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">08 May 2026, 10:20</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn resume">Resume</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn adopt">Adoptions</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 7: Hairline-Funded, Draft -->
+            <tr>
+              <td>
+                <div class="prog-name">Segment: VIP Returning Patients</div>
+                <div class="prog-nocode">— Segment-Bound —</div>
+              </td>
+              <td><span class="badge badge-hairline">Hairline-Funded &amp; Direct-Issued</span></td>
+              <td><span class="owner-tag owner-admin">Admin · Sarah L.</span></td>
+              <td><span class="funding-badge fm-hairline">Hairline Only</span></td>
+              <td style="font-size:11px;color:#9ca3af;">N/A (Direct-Issued)</td>
+              <td><span class="status-badge s-draft">Draft</span></td>
+              <td style="white-space:nowrap; font-size:11px;">—<br>Not set</td>
+              <td>
+                <div class="usage-text" style="font-size:11px;color:#9ca3af;">—</div>
+              </td>
+              <td><span class="roi-na">Not yet calculated</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">07 May 2026, 17:00</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn archive">Archive</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 8: Provider Self-Created, Expired -->
+            <tr>
+              <td>
+                <div class="prog-name">Flash Sale – April</div>
+                <div class="prog-code">FLASH0426</div>
+              </td>
+              <td><span class="badge badge-provider-self">Provider Self-Created</span></td>
+              <td><span class="owner-tag owner-provider">Barcelona Hair Hub</span></td>
+              <td><span class="funding-badge fm-provider">Provider Only</span></td>
+              <td style="font-size:11px;color:#9ca3af;">N/A</td>
+              <td><span class="status-badge s-expired">Expired</span></td>
+              <td style="white-space:nowrap; font-size:11px;">10 Apr 2026<br>→ 30 Apr 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">50 / 50</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-red" style="width:100%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-low">Low</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">01 May 2026, 00:01</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn archive">Archive</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 9: Hairline-Funded, Active, Open Code -->
+            <tr>
+              <td>
+                <div class="prog-name">Open Referral Code – Global</div>
+                <div class="prog-code">HAIRLINE50</div>
+              </td>
+              <td><span class="badge badge-hairline">Hairline-Funded &amp; Direct-Issued</span></td>
+              <td><span class="owner-tag owner-admin">Admin · James K.</span></td>
+              <td><span class="funding-badge fm-hairline">Hairline Only</span></td>
+              <td style="font-size:11px;color:#9ca3af;">N/A (Direct-Issued)</td>
+              <td><span class="status-badge s-active">Active</span></td>
+              <td style="white-space:nowrap; font-size:11px;">01 Mar 2026<br>→ 31 Dec 2026</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">841 / 2,000</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-green" style="width:42%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-high">High</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">04 May 2026, 09:30</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn pause">Pause</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 10: Admin-via-Provider, Archived -->
+            <tr>
+              <td>
+                <div class="prog-name">Black Friday 2025</div>
+                <div class="prog-code">BF2025</div>
+              </td>
+              <td><span class="badge badge-admin-provider">Admin-via-Provider</span></td>
+              <td><span class="owner-tag owner-admin">Admin · Sarah L.</span></td>
+              <td><span class="funding-badge fm-both">Both Fees</span></td>
+              <td>All Providers</td>
+              <td><span class="status-badge s-archived">Archived</span></td>
+              <td style="white-space:nowrap; font-size:11px;">24 Nov 2025<br>→ 30 Nov 2025</td>
+              <td>
+                <div class="usage-wrap">
+                  <div class="usage-text">978 / 1,000</div>
+                  <div class="usage-bar-bg"><div class="usage-bar-fill ub-red" style="width:98%"></div></div>
+                </div>
+              </td>
+              <td><span class="roi-badge roi-high">High</span></td>
+              <td style="font-size:11px;color:#6b7280;white-space:nowrap;">01 Dec 2025, 00:05</td>
+              <td>
+                <div class="row-actions">
+                  <button class="act-btn view">View</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn adopt">Adoptions</button>
+                  <span class="act-sep">|</span>
+                  <button class="act-btn apps">Apps</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="page-info">Showing 1–10 of 24 programs</div>
+          <div class="page-btns">
+            <button class="page-btn disabled">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>

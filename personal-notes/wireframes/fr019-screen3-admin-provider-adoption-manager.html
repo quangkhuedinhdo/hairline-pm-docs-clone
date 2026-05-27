@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-019 Screen 3 – Admin: Provider Adoption Manager</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #1a1a2e;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #2d2d4e;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #6c8ebf; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555a7a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #232345; color: #fff; }
+  .sidebar-item.active {
+    background: #1e2d50;
+    color: #fff;
+    border-left-color: #4a90d9;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-x: auto; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-link { color: #4a90d9; cursor: pointer; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: #4a90d9; color: #fff; }
+  .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+  .btn-danger { background: #fff; color: #dc2626; border: 1px solid #fca5a5; }
+  .btn-ghost { background: transparent; color: #6b7280; border: none; cursor: pointer; font-size: 12px; padding: 6px 10px; }
+
+  /* ── Content ── */
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+
+  /* ── Program Header Panel ── */
+  .program-header {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 20px 24px;
+  }
+  .program-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .program-title-group { display: flex; flex-direction: column; gap: 6px; }
+  .program-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9ca3af;
+  }
+  .program-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .program-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .meta-item-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .meta-item-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111827;
+  }
+  .meta-item-value.highlight { color: #4a90d9; }
+
+  /* ── Status badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .badge-pending    { background: #fff7ed; color: #c2410c; }
+  .badge-pending .badge-dot { background: #f97316; }
+  .badge-accepted   { background: #f0fdf4; color: #15803d; }
+  .badge-accepted .badge-dot { background: #22c55e; }
+  .badge-declined   { background: #fef2f2; color: #b91c1c; }
+  .badge-declined .badge-dot { background: #ef4444; }
+  .badge-auto-declined { background: #fef2f2; color: #b91c1c; }
+  .badge-auto-declined .badge-dot { background: #f87171; }
+  .badge-revoked-provider { background: #fdf4ff; color: #7e22ce; }
+  .badge-revoked-provider .badge-dot { background: #a855f7; }
+  .badge-revoked-admin { background: #fff1f2; color: #9f1239; }
+  .badge-revoked-admin .badge-dot { background: #f43f5e; }
+  .badge-both-fees { background: #eff6ff; color: #1d4ed8; }
+
+  /* ── Table Card ── */
+  .table-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .table-title { font-size: 14px; font-weight: 600; color: #111827; }
+  .table-hint { font-size: 12px; color: #9ca3af; }
+  .table-header-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* ── Data Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead tr {
+    background: #f9fafb;
+    border-bottom: 1px solid #e4e8f0;
+  }
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
+  tbody td {
+    padding: 13px 16px;
+    font-size: 12px;
+    color: #374151;
+    vertical-align: middle;
+  }
+  .cell-primary { font-weight: 500; color: #111827; }
+  .cell-secondary { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .cell-comment {
+    font-size: 11px;
+    color: #6b7280;
+    font-style: italic;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cell-empty { color: #d1d5db; font-style: italic; }
+
+  /* ── Row action buttons ── */
+  .row-actions { display: flex; align-items: center; gap: 6px; }
+  .action-btn {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .action-reinvite   { color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff; }
+  .action-revoke     { color: #b91c1c; border-color: #fca5a5; background: #fef2f2; }
+  .action-exempt     { color: #374151; border-color: #d1d5db; background: #f9fafb; }
+
+  /* ── Summary strip ── */
+  .summary-strip {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .summary-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e4e8f0;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .summary-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .summary-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .summary-value.pending  { color: #f97316; }
+  .summary-value.accepted { color: #22c55e; }
+  .summary-value.declined { color: #ef4444; }
+  .summary-value.revoked  { color: #a855f7; }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 480px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .modal-desc {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 6px; }
+  .modal-field label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #374151;
+  }
+  .modal-field textarea {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    resize: vertical;
+    min-height: 90px;
+    color: #111827;
+    font-family: inherit;
+  }
+  .modal-field textarea::placeholder { color: #9ca3af; }
+  .modal-field .char-hint { font-size: 11px; color: #9ca3af; text-align: right; }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .modal-warning {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #c2410c;
+    line-height: 1.5;
+  }
+  .modal-warning strong { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Admin</div>
+    <div class="sidebar-section">Promotions</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">🎟</i> Promotions & Discounts
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">📊</i> Analytics
+    </div>
+    <div class="sidebar-section">Platform</div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">👥</i> Providers
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">🧑‍⚕️</i> Patients
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">💰</i> Billing & Finance
+    </div>
+    <div class="sidebar-item">
+      <i class="sidebar-icon">⚙️</i> Settings
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link">Promotions & Discounts</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-link">Summer Hair Restore 2026</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Provider Adoption Manager</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline">← Back to Program</button>
+        <button class="btn btn-primary">Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Program Header Panel ── -->
+      <div class="program-header">
+        <div class="program-header-top">
+          <div class="program-title-group">
+            <div class="program-label">Admin-via-Provider Program</div>
+            <div class="program-name">Summer Hair Restore 2026</div>
+          </div>
+          <span class="badge badge-both-fees">Both Fees</span>
+        </div>
+        <div class="program-meta-row">
+          <div class="meta-item">
+            <div class="meta-item-label">Discount Type / Value</div>
+            <div class="meta-item-value">Percentage — 20% off</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Applies To</div>
+            <div class="meta-item-value">Whole price</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Active Window</div>
+            <div class="meta-item-value">1 Jun 2026 – 31 Aug 2026</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Funding Model</div>
+            <div class="meta-item-value">Both Fees</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Application Mode</div>
+            <div class="meta-item-value">Code-only entry</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Auto-Decline Window</div>
+            <div class="meta-item-value">7 days</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Total Usage Limit</div>
+            <div class="meta-item-value">500 redemptions</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-item-label">Status</div>
+            <div class="meta-item-value highlight">Pending Approval</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Adoption Summary Strip ── -->
+      <div class="summary-strip">
+        <div class="summary-card">
+          <div class="summary-label">Total Targeted</div>
+          <div class="summary-value">12</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Pending</div>
+          <div class="summary-value pending">5</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Accepted</div>
+          <div class="summary-value accepted">4</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Declined / Auto-Declined</div>
+          <div class="summary-value declined">2</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Revoked</div>
+          <div class="summary-value revoked">1</div>
+        </div>
+      </div>
+
+      <!-- ── Adoption Table ── -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div>
+            <div class="table-title">Provider Adoption Roster</div>
+            <div class="table-hint">One row per targeted provider — showing all 12 providers</div>
+          </div>
+          <div class="table-header-actions">
+            <button class="btn btn-outline" style="font-size:12px;">Re-invite All Declined</button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Decided At</th>
+              <th>Decided By</th>
+              <th>Comment</th>
+              <th>Redemptions</th>
+              <th>Admin Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 – Accepted -->
+            <tr>
+              <td>
+                <div class="cell-primary">Istanbul Hair Clinic</div>
+                <div class="cell-secondary">Istanbul, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-accepted">
+                  <span class="badge-dot"></span>Accepted
+                </span>
+              </td>
+              <td>12 May 2026, 09:14</td>
+              <td>Dr. Emre Aydın (Provider)</td>
+              <td><span class="cell-comment">"Looks great for summer season."</span></td>
+              <td>18</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Force-Revoke</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 – Accepted -->
+            <tr>
+              <td>
+                <div class="cell-primary">Ankara Restore Center</div>
+                <div class="cell-secondary">Ankara, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-accepted">
+                  <span class="badge-dot"></span>Accepted
+                </span>
+              </td>
+              <td>13 May 2026, 14:02</td>
+              <td>Clinic Admin (Provider)</td>
+              <td><span class="cell-empty">—</span></td>
+              <td>7</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Force-Revoke</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 – Pending -->
+            <tr>
+              <td>
+                <div class="cell-primary">Izmir Hair & Beauty</div>
+                <div class="cell-secondary">Izmir, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-pending">
+                  <span class="badge-dot"></span>Pending
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>0</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 – Pending -->
+            <tr>
+              <td>
+                <div class="cell-primary">Bursa Elite Clinic</div>
+                <div class="cell-secondary">Bursa, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-pending">
+                  <span class="badge-dot"></span>Pending
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>0</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 – Declined -->
+            <tr>
+              <td>
+                <div class="cell-primary">Cappadocia Hair Studio</div>
+                <div class="cell-secondary">Nevsehir, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-declined">
+                  <span class="badge-dot"></span>Declined
+                </span>
+              </td>
+              <td>11 May 2026, 16:45</td>
+              <td>Studio Manager (Provider)</td>
+              <td><span class="cell-comment">"Margin too thin for summer."</span></td>
+              <td>0</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-reinvite">Re-invite</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6 – Auto-Declined -->
+            <tr>
+              <td>
+                <div class="cell-primary">Aegean Transplant House</div>
+                <div class="cell-secondary">Bodrum, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-auto-declined">
+                  <span class="badge-dot"></span>Auto-Declined
+                </span>
+              </td>
+              <td>10 May 2026, 00:00</td>
+              <td>System (Auto-Decline)</td>
+              <td><span class="cell-empty">—</span></td>
+              <td>0</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-reinvite">Re-invite</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 7 – Revoked by Provider -->
+            <tr>
+              <td>
+                <div class="cell-primary">Antalya Sun Clinic</div>
+                <div class="cell-secondary">Antalya, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-revoked-provider">
+                  <span class="badge-dot"></span>Revoked-by-Provider
+                </span>
+              </td>
+              <td>13 May 2026, 11:20</td>
+              <td>Dr. Selin Kaya (Provider)</td>
+              <td><span class="cell-comment">"Capacity constraints this quarter."</span></td>
+              <td>3</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-reinvite">Re-invite</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 8 – Revoked by Admin -->
+            <tr>
+              <td>
+                <div class="cell-primary">Black Sea Hair Institute</div>
+                <div class="cell-secondary">Trabzon, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-revoked-admin">
+                  <span class="badge-dot"></span>Revoked-by-Admin
+                </span>
+              </td>
+              <td>14 May 2026, 08:05</td>
+              <td>Admin — Sarah M.</td>
+              <td><span class="cell-comment">"Compliance issue flagged by finance."</span></td>
+              <td>1</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-reinvite">Re-invite</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 9 – Accepted -->
+            <tr>
+              <td>
+                <div class="cell-primary">Konya Prestige Clinic</div>
+                <div class="cell-secondary">Konya, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-accepted">
+                  <span class="badge-dot"></span>Accepted
+                </span>
+              </td>
+              <td>12 May 2026, 10:33</td>
+              <td>Dr. Ozan Demir (Provider)</td>
+              <td><span class="cell-empty">—</span></td>
+              <td>5</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Force-Revoke</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 10 – Pending -->
+            <tr>
+              <td>
+                <div class="cell-primary">Ege Hair Group</div>
+                <div class="cell-secondary">Cesme, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-pending">
+                  <span class="badge-dot"></span>Pending
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>0</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 11 – Accepted -->
+            <tr>
+              <td>
+                <div class="cell-primary">Topkapi Hair Center</div>
+                <div class="cell-secondary">Istanbul, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-accepted">
+                  <span class="badge-dot"></span>Accepted
+                </span>
+              </td>
+              <td>11 May 2026, 17:55</td>
+              <td>Clinic Director (Provider)</td>
+              <td><span class="cell-comment">"Excited to participate."</span></td>
+              <td>22</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-revoke">Force-Revoke</button>
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 12 – Pending -->
+            <tr>
+              <td>
+                <div class="cell-primary">Mediterranean Clinic</div>
+                <div class="cell-secondary">Mersin, TR</div>
+              </td>
+              <td>
+                <span class="badge badge-pending">
+                  <span class="badge-dot"></span>Pending
+                </span>
+              </td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td><span class="cell-empty">—</span></td>
+              <td>0</td>
+              <td>
+                <div class="row-actions">
+                  <button class="action-btn action-exempt">Mark Exempt</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Force-Revoke Modal (shown as static reference) ── -->
+<div class="modal-overlay" id="revokeModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Force-Revoke Adoption</div>
+    <div class="modal-desc">
+      You are about to revoke <strong>Istanbul Hair Clinic</strong>'s participation in
+      <strong>Summer Hair Restore 2026</strong>. The program will be removed from their
+      quote-creation selection list immediately. In-flight quotes already using this program
+      will be preserved.
+    </div>
+    <div class="modal-warning">
+      <strong>Note:</strong> This action will be logged in the audit trail and cannot be
+      undone without re-inviting the provider.
+    </div>
+    <div class="modal-field">
+      <label>Reason (required)</label>
+      <textarea placeholder="Enter a mandatory reason for this override…"></textarea>
+      <div class="char-hint">0 / 500</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn btn-danger" style="background:#dc2626;color:#fff;border:none;">Confirm Force-Revoke</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Re-invite Modal (shown as static reference) ── -->
+<div class="modal-overlay" id="reinviteModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">Re-invite Provider</div>
+    <div class="modal-desc">
+      Re-inviting <strong>Cappadocia Hair Studio</strong> will reset their adoption status
+      from <em>Declined</em> to <em>Pending</em> and re-send the S-03 approval notification.
+    </div>
+    <div class="modal-field">
+      <label>Reason (required)</label>
+      <textarea placeholder="Enter a mandatory reason for re-inviting this provider…"></textarea>
+      <div class="char-hint">0 / 500</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn btn-primary">Confirm Re-invite</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
