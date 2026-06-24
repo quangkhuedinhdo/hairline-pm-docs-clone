@@ -1,0 +1,141 @@
+# Reporting Rules
+
+Use this reference immediately before writing or rewriting a readiness report.
+
+## Source-Of-Truth Order
+
+1. active readiness report file
+2. active launch-plan file
+3. relevant PRD for expected behavior
+4. user-supplied evidence
+5. targeted code/API evidence
+
+Do not let source-code guesses override launch-plan scope or PRD expectations.
+
+## Classify User Input By Meaning
+
+Treat every user message first as a report about current system state. Then decide where it belongs.
+
+### 1. Completion or progress note
+
+Use `Review Notes` when the user is saying something now works, partially works, or was checked successfully.
+
+Typical phrases:
+
+- “đã tạo thành công”
+- “flow này khá ổn”
+- “đăng nhập được”
+- “đã check xong phần này”
+
+### 2. Confirmed issue
+
+Use `Remaining Fixes` or `Sprint-Level Blockers` when the system still needs a fix.
+
+A confirmed issue row should have:
+
+- one concrete problem
+- reproducible path
+- actual outcome
+- expected outcome
+- evidence link or `TBD`
+
+### 3. Evidence gap or scaffold reminder
+
+Use `Review pending` when the row exists as a placeholder, a deferred re-test checkpoint, or a reminder that the product still has not been checked.
+
+### 4. Blocked follow-up
+
+Use `Review Notes` plus a `Review pending` checkpoint row when a later check should exist but is currently blocked by an earlier defect.
+
+### 5. Out-of-scope finding
+
+Use `Not For This Sprint` when the item is real but should not become a current-sprint commitment.
+
+## Status Rules
+
+Use only these `Task Status` values in the readiness backlog:
+
+- `Review pending`
+- `Scout flagged`
+- `Recorded only`
+- `Task created (FE: HAIRL-123)` / `Task created (BE: HAIRL-123)` / `Task created (FE: HAIRL-123; BE: HAIRL-124)`
+- `Resolved - pending re-test`
+- `Resolved - verified YYYY-MM-DD`
+
+Interpretation:
+
+- `Review pending` = placeholder, evidence gap, or blocked re-test checkpoint
+- `Scout flagged` = PRD/code/API scouting found a concrete risk signal worth prioritizing for manual product testing, but the row is not yet a confirmed product bug
+- `Recorded only` = confirmed issue from real review evidence, but not yet turned into a Plane task
+- `Task created (...)` = one or more implementation tasks exist and their Plane keys are known. Each key is side-labeled because a single bug may be split into separate FE and BE tasks (see the `create-bug-tasks` skill):
+  - One side only: `Task created (FE: HAIRL-123)` or `Task created (BE: HAIRL-123)`
+  - Split bug (both sides): `Task created (FE: HAIRL-123; BE: HAIRL-124)` — list FE first, then BE, separated by `;`
+- `Resolved - pending re-test` = implementation side reports the issue fixed, but readiness validation has not re-tested the affected product path yet
+- `Resolved - verified YYYY-MM-DD` = the affected product path was re-tested on the stated date and the blocker/fix row no longer blocks sprint readiness
+
+A split bug stays in `Task created (...)` until both its FE and BE keys are present in the cell. Do not drop a row to `Resolved` until every listed task is resolved. Do not mark an item as `Resolved - verified YYYY-MM-DD` without adding enough re-test evidence in `Review Notes`, `Evidence Link`, or `Notes` for a future reviewer to understand what was checked. Do not invent extra status labels inside this report.
+
+## Bug ID Rules
+
+Every `Sprint-Level Blockers` and `Remaining Fixes` table must include `Bug ID` as the first column. Use it as the stable traceback key between the readiness report, generated bug task artifact, and Plane issue.
+
+- Assign `Bug ID` only after a row is a confirmed bug, meaning its `Task Status` is `Recorded only`, `Task created (...)`, `Resolved - pending re-test`, or `Resolved - verified YYYY-MM-DD`.
+- Leave `Bug ID` blank for `Review pending`, `Scout flagged`, evidence gaps, placeholders, and blocked checkpoints that have not yet been confirmed as product bugs.
+- Format IDs as `MODULE_CODE-###`, for example `PR-01-001`, `A-09A-001`, or `S-02-001`. For sprint-level confirmed blockers that do not belong to one module, use `SPRINT-###`.
+- Once assigned, never renumber or reuse a `Bug ID`, even if rows are reordered, removed, split, or resolved.
+- When a `Scout flagged` row is later confirmed as a bug, assign the next available ID for that module at the same time the status changes to `Recorded only` or later.
+
+## Evidence Rules
+
+- Never use local screenshot file paths
+- Prefer persistent uploaded screenshot URLs
+- Accept stable API or log references when screenshots are not the main evidence
+- Use `TBD` temporarily only when the issue is already clear enough to record but the persistent evidence URL is still missing
+- If the screenshot materially matters and no uploaded URL exists yet, ask the user to upload it
+
+## Writing Rules For Backlog Rows
+
+Each confirmed issue row should stay independently understandable.
+
+Minimum row quality:
+
+- `Flow / Story` or `Area` clearly identifies the affected journey
+- `Issue` states one core problem
+- `Steps to Reproduce` are concise and ordered
+- `Actual Outcome` describes observed behavior
+- `Expected Outcome` describes required behavior from launch plan, DoD, or PRD
+- `Notes` capture environment, account, scope limit, or code/API evidence when useful
+
+Formatting rules:
+
+- Use `<br>` inside long cells
+- Keep one row focused on one fixable problem
+- Split different problems into separate rows even if they were found in the same session
+
+## Scope-Attribution Rules
+
+- If the evidence comes from Admin dashboard testing, record it under the Admin module unless the same issue was directly confirmed in another tenant
+- Confirm `PR-01`, `PR-06`, or other Provider rows only when the Provider dashboard itself was actually tested
+- Use cross-tenant notes only when evidence truly spans more than one surface
+
+## Code And API Evidence Rules
+
+- Read code and APIs to support the report, not to replace product evidence
+- When writing code evidence, cite the smallest relevant surface such as a controller, query path, component, or route
+- When writing API evidence, describe what the endpoint returned and why that matters to the report
+- Only claim likely root cause when the evidence is strong enough; otherwise phrase it as a likely source or mismatch
+
+## Update Log Rules
+
+After significant edits in `local-docs/`:
+
+- create a same-day update log file when no same-day log exists yet for this work
+- otherwise append a concise bullet to the same-day relevant log
+- update `local-docs/project-requirements/update-logs/README.md` when a new log file is created
+
+## Anti-Patterns
+
+- Do not overclaim a confirmed bug when only an evidence gap exists
+- Do not collapse multiple defects into one vague row
+- Do not paste implementation speculation into the `Issue` field
+- Do not create Plane-style ownership tracking columns inside the readiness report
