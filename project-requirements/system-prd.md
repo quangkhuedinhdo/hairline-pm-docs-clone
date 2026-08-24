@@ -4,7 +4,7 @@
 **Document Type**: System-Level PRD  
 **Created**: 2025-10-23  
 **Status**: Active  
-**Last Updated**: 2026-04-13
+**Last Updated**: 2026-08-17
 
 ---
 
@@ -1704,6 +1704,77 @@ Total Quote:                           £3,000
 - FR-021: Language preferences (when i18n is implemented)
 
 **Note**: This FR is planned for future implementation. Detailed requirements to be documented in dedicated FR-035 PRD when implementation begins. This mirrors the pattern of FR-001 (Patient Profile) and FR-032 (Provider Profile) to ensure consistency across all three platforms.
+
+---
+
+### FR-037: Monitor Your Hair Loss
+
+**Priority**: P1 (Next Phase)
+**Module(s)**: P-05: Aftercare & Progress Monitoring, P-07: 3D Scan Capture & Viewing, PR-07: Communication & Messaging, A-01: Patient Management & Oversight, A-09: System Settings & Configuration, S-03: Notification Service, S-05: Media Storage Service
+
+**Goal**: Enable patients to monitor hair loss longitudinally through self-monitoring or limited provider-advice mode, then complete/export the case or convert it into a treatment inquiry without re-entering existing information.
+
+**Requirements**:
+
+- Patient MUST be limited to one active hair-loss monitoring case; this limit applies independently from transplant-progress monitoring.
+- Patient MUST choose self-monitoring or provider-advice mode at creation, and MUST NOT change mode while the case remains active.
+- Patient MUST be able to submit optional dated logs containing severity from 1 to 10, notes, photos, and standardized V1 head scan photo sets without a required logging frequency.
+- Advice-mode cases MUST wait for Admin provider assignment while patient logging remains available.
+- Advice mode MUST require the active FR-025 Inquiry medical questionnaire before the assigned provider can access the case.
+- Assigned provider MUST be able to post one limited advice paragraph per Admin-configurable weekly or bi-weekly window. The cadence is a single global setting captured on each case at creation; a change applies only to cases created afterwards.
+- Each advice window MUST open on its calculated start date and remain actionable with no ordinary deadline until its single advice is submitted. When a successor window opens first, only the older unsubmitted window MUST expire, and the successor MUST become the sole actionable window.
+- Submitted advice MUST be a separate provider-authored case-calendar record, MUST NOT attach to or modify any patient log, and MUST be editable with immutable version history plus a visible edited cue and latest-edit timestamp.
+- Before assignment or reassignment, Admin MUST be able to generate and revoke an expiring, read-only, audited case-preview link for a candidate provider, selecting its expiry at share time. Preview access MUST NOT create an assignment or ongoing case access, and FR-037 MUST NOT add an embedded chat surface for this exchange.
+- Provider-facing FR-037 screens MUST show an anonymized patient identifier for the entire case lifetime.
+- Assigned provider MUST be able to withdraw with a reason; withdrawal MUST remove provider access and return the case to Admin as a clearly identified reassignment case while patient logging continues.
+- Patient MUST be able to complete the case and export a date-to-date PDF containing all logs, scan photos, logged-day count, and severity summary/trend.
+- Patient MUST be able to convert an active monitoring case into a distinct FR-003 inquiry. Conversion MUST pre-fill compatible information, allow every copied field to be edited, select the latest scan by default while allowing another scan or retake, require medical-answer review/reconfirmation, and attach the monitoring-summary PDF.
+- Previous monitoring history MUST NOT be attached to a newly created monitoring case. Full history linkage applies only when that source monitoring case converts into an FR-003 inquiry.
+- If an assigned advice provider exists at conversion, that provider MUST be the only initial provider selected to quote. If no provider is assigned, FR-003 normal distribution MUST apply.
+- If that exclusive provider explicitly declines before creating a quote, FR-003 MUST audit the decline reason, remove the exclusive-provider restriction, and execute normal distribution exactly once. Inquiry or quote expiry MUST continue to follow FR-003/FR-004's existing configured rules and MUST NOT invoke this decline fallback.
+- Admin MUST be able to edit all monitoring information with immutable actor, reason, timestamp, before-value, and after-value history.
+
+**Integration Points**:
+
+- FR-002: V1 standardized head scan photo-set capture and quality validation.
+- FR-003: Service entry point, inquiry conversion, active-inquiry gate, and provider distribution.
+- FR-004: Quote creation after conversion.
+- FR-020: Assignment, advice, withdrawal, completion, export, and conversion notifications.
+- FR-025: Advice-mode medical questionnaire and conversion reconfirmation.
+
+**Detailed PRD**: `functional-requirements/fr037-monitor-hair-loss/prd.md`
+
+---
+
+### FR-038: Monitor Your Transplant Progress
+
+**Priority**: P1 (Next Phase)
+**Module(s)**: P-05: Aftercare & Progress Monitoring, P-07: 3D Scan Capture & Viewing, A-01: Patient Management & Oversight
+
+**Goal**: Provide a provider-free, self-paced utility for tracking transplant progress outside a managed aftercare package, with optional conversion into FR-011 standalone aftercare.
+
+**Requirements**:
+
+- Patient MUST be limited to one active transplant-progress monitoring case; this limit applies independently from hair-loss monitoring.
+- FR-038 MUST be self-service only and MUST NOT include provider advice, provider assignment, provider access, required cadence, milestones, overdue states, or compliance obligations.
+- Intake MUST capture FR-011-compatible external-treatment details, including treatment date, treatment type, treating clinic, optional documentation, current concerns, and optional initial scan/photos.
+- Patient MUST be able to submit optional dated logs containing severity from 1 to 10, notes, photos, and standardized V1 head scan photo sets.
+- Patient MUST be able to complete the case and export a date-to-date PDF containing treatment summary, all logs, scan photos, logged-day count, and severity summary/trend.
+- Patient MUST be able to convert an active monitoring case into a distinct FR-011 standalone-aftercare request. Conversion MUST pre-fill compatible information, allow every copied field to be edited, select the latest scan by default while allowing another scan or retake, and attach the monitoring-summary PDF.
+- Conversion MUST complete the monitoring case only after successful standalone-request creation. A failed or abandoned conversion MUST leave monitoring active.
+- Previous monitoring history MUST NOT be attached to a newly created monitoring case. Conversion provenance MUST link only the source monitoring case and destination FR-011 request.
+- After successful handoff, FR-011 MUST exclusively own package selection, payment, Admin assignment, provider activation, milestones, and provider-managed aftercare.
+- Admin MUST be able to view and edit all monitoring information with immutable actor, reason, timestamp, before-value, and after-value history, but MUST NOT assign a provider directly to FR-038.
+
+**Integration Points**:
+
+- FR-002: V1 standardized head scan photo-set capture and quality validation.
+- FR-003: Service Selection entry point.
+- FR-007: Payment after handoff into FR-011 checkout only.
+- FR-011: Standalone-aftercare request, package selection, payment, assignment, activation, and managed aftercare.
+- FR-020: Completion, export-ready, and conversion notifications.
+
+**Detailed PRD**: `functional-requirements/fr038-monitor-transplant-progress/prd.md`
 
 ---
 

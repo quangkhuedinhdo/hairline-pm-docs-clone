@@ -6,7 +6,169 @@ This folder contains documentation update reports and verification logs for the 
 
 ## Organization by Date
 
-### 2026-06-23/ (3 files)
+### 2026-08-20/ (10 files)
+
+#### **Governance Alignment for Template Ownership**
+
+- `GOVERNANCE_TEMPLATE_OWNERSHIP_2026-08-20.md` - Kept root governance limited to CLAUDE.md/AGENTS.md, retained documentation authority under local-docs, and documented the canonical template directory, Spec Kit compatibility symlink, and major-event Change Request policy.
+
+#### **FR-037 Verification and Approval (v1.9 → v2.0)**
+
+- `FR037_VERIFICATION_APPROVAL_2026-08-20.md` - Moved FR-037 from Draft to Verified & Approved after the verification findings and v1.8/v1.9 follow-ups were resolved; recorded Product Owner approval without inferring Technical Lead or Stakeholder approval.
+
+#### **Template Ownership Relocation**
+
+- `TEMPLATE_OWNERSHIP_RELOCATION_2026-08-20.md` - Moved every Spec Kit-compatible template into the tracked project-requirements template directory and replaced `.specify/templates/` with a compatibility symlink so existing scripts keep their paths.
+
+#### **FR Change Request Framework**
+
+- `FR_CHANGE_REQUEST_FRAMEWORK_2026-08-20.md` - Added the major-event Change Request template and one FR-local before/after record for each FR affected by the FR-037 v1.8/v1.9 cross-FR changes; implementation reconciliation remains explicitly separate from documentation approval.
+
+#### **FR-037 Provider-Decline Distribution Fallback (v1.8 → v1.9)**
+
+- `FR037_PROVIDER_DECLINE_FALLBACK_2026-08-20.md` - Replaced the patient-release rule with an automatic, audited, idempotent return to normal FR-003 distribution when the exclusive provider explicitly declines before quote creation; expiry remains on existing FR-003/FR-004 rules.
+
+#### **FR-037 Cross-FR Verification Sync (v1.7 → v1.8)**
+
+- `FR037_CROSS_FR_VERIFICATION_SYNC_2026-08-20.md` - Documented the FR-037 monitoring-conversion exclusive-provider override in FR-003 (Workflow 2 override branch + Alternative Flow B3) and FR-004 (restricted-recipient quote mode); added a "System-Triggered (Monitoring Advice)" entry point to FR-025; synced FR-037's 8 `monitoring.*` events into the FR-020/FR-030 notification catalogs; added a reciprocal FR-038 dependency to FR-037.
+
+#### **FR-037 Verification Fixes (v1.6 → v1.7)**
+
+- `FR037_VERIFICATION_FIXES_V17_2026-08-20.md` - Fixed the undefined provider de-anonymization trigger by anonymizing for the whole case lifetime, renamed the twice-monthly cadence to bi-weekly, relabelled the Step B inquiry-only fields as an FR-003 handoff target, made the latest submission timestamp authoritative for same-date entries, and synchronized preview-link, advice-window, anonymization, and S-03/S-05 additions into system-prd.md.
+
+#### **FR-037 Verification Corrections (v1.5 → v1.6)**
+
+- `FR037_VERIFICATION_CORRECTIONS_2026-08-20.md` - Enforced anonymized provider-facing patient identifiers until payment confirmation, aligned patient/Admin daily-note limits at 3,000 characters, and synchronized the S-05 label and document metadata.
+
+#### **FR-037 Provider and Admin Detail-Screen Restructure (v1.4 → v1.5)**
+
+- `FR037_PROVIDER_ADMIN_DETAIL_SCREEN_RESTRUCTURE_2026-08-20.md` - Split Provider Screen 9 overview from Screen 10A daily-log detail and Screen 10B advice detail; moved withdrawal to Screen 11; renumbered the Admin list/overview to Screens 12-13; and added corresponding Admin Screens 14A-14B.
+
+#### **FR-037 Advice, Preview, and Dashboard Revision (v1.3 → v1.4)**
+
+- `FR037_ADVICE_PREVIEW_AND_DASHBOARD_REVISION_2026-08-20.md` - Separated provider advice from patient logs as its own editable calendar record; defined open-until-submitted windows with expiry only on supersession; added Admin-selected expiring pre-assignment previews without embedded chat; and expanded Provider/Admin search, filtering, list data, and patient-parity case detail.
+
+### 2026-08-17/ (2 files)
+
+#### **Four Service Routes Deck Revision**
+
+- `SERVICE_ROUTES_DECK_REVISION_2026-08-17.md` - Expanded the four-service-routes presentation deck from 12 to 23 slides for a first-time audience: human problem framing, plain-language vocabulary and case-state rail, three route section dividers, one patient-story timeline per new route, a 39-screen design inventory, six unhappy-path states, and a closing design brief with four open product questions; also fixed windowed/fullscreen stage centring, normalized font weights to a 500/600/700 scale, and reworked the data-flow animations.
+
+#### **FR-037 and FR-038 Monitoring Flows**
+
+- `FR037_FR038_MONITORING_FLOWS_2026-08-17.md` - Created Spec Kit-aligned PRDs for hair-loss monitoring and transplant-progress monitoring, including self/advice modes, assignment and withdrawal, longitudinal logs, PDF exports, and conversion into FR-003 inquiry or FR-011 standalone aftercare.
+
+#### **FR-037 Verification Fixes (v1.2 → v1.3)**
+
+- `FR037_VERIFICATION_FIXES_2026-08-17.md` - Applied product-owner decisions from the FR-037 verification pass: added the NON-NEGOTIABLE self-service vs aftercare-package service boundary (no reminders, cadence, milestones, or compliance state), aligned raw scan media retention to 7 years, bound the Duration field to the FR-003 enum, split conversion into a read-only Step A summary and Step B review before the FR-003 handoff, and made advice cadence global and snapshotted at case creation.
+
+### 2026-08-11/ (1 file)
+
+#### **Sprint 1 A-02 Featured Provider Management**
+
+- `SPRINT_1_A02_FEATURED_PROVIDER_MANAGEMENT_2026-08-11.md` - Added Sprint 1 A-02 backlog rows for featured-provider controls and filter composition; aligned FR-015 with the two featured-status controls and the maximum-10 enforcement rule.
+
+### 2026-07-16/ (1 file)
+
+#### **E2E Status Taxonomy and Timestamp Integrity**
+
+- `E2E_STATUS_TAXONOMY_AND_TIMESTAMP_INTEGRITY_2026-07-16.md` - Centralized all testing-package enums, activated the governed possible-UI-discrepancy classification, added runtime and SQLite validation, migrated result storage to schema version 2, and added future run/attempt/dataset timing without fabricating historical timestamps.
+
+### 2026-07-15/ (2 files)
+
+#### **E2E Complete Case Coverage and Provider Login Suite**
+
+- `E2E_COMPLETE_CASE_COVERAGE_AND_LOGIN_SUITE_2026-07-15.md` - Promoted Testing Constitution v1.2, activated the six-case PR-01 Provider login suite, documented four governed coverage gaps, and added a centralized registry-driven `./test.sh` console for token-free selection and execution.
+
+#### **PR-01 Team Directory and Invitation E2E Registration**
+
+- `PR01_TEAM_DIRECTORY_INVITATION_E2E_REGISTRATION_2026-07-15.md` - Registered eighteen draft cases for the grouped Team directory, invite-team-member, and invitation-management function, including matching/empty search and individual/combined filters; added deterministic Maildrop datasets with a public-inbox safety gate and retained all non-clean runs for human review.
+
+### 2026-07-14/ (1 file)
+
+#### **Provider Login E2E First Case Registration**
+
+- `PROVIDER_LOGIN_E2E_FIRST_CASE_REGISTRATION_2026-07-14.md` - Registered the first real PR-01 Provider login E2E case, dataset recipe, and executable Playwright flow as `DRAFT`; the controlled run passed on its initial attempt, and `OPERATIONS.md` now provides the complete manual terminal runbook.
+
+### 2026-07-12/ (1 file)
+
+#### **Testing Automation Registration Gate and SQLite Foundation**
+
+- `TESTING_AUTOMATION_REGISTRATION_GATE_AND_SQLITE_FOUNDATION_2026-07-12.md` - Completed the MVP global-Playwright E2E setup with retry evidence, SQLite result/review storage, explicit human review, and registration/review skills. After proof, removed all PR-02 pilot cases, datasets, database records, and placeholders; the product registry is clean while 23 framework tests remain available.
+
+### 2026-07-11/ (1 file)
+
+#### **Automated E2E Testing Architecture**
+
+- `AUTOMATED_E2E_TESTING_ARCHITECTURE_2026-07-11.md` - Created the permanent testing-automation architecture and constitution, confirmed Playwright MCP access, approved the PR-02 sent-quote-edit pilot, created its draft registry, and implemented the first TDD foundation for IDs, retries/outcomes, review routing, and evidence policy with 9/9 unit tests passing. Quote withdrawal remains an unconfirmed review lead; no database, Playwright case, API mutation, reporter, or skill exists yet.
+
+### 2026-07-09/ (2 files)
+
+#### **FR-018 Admin Design Layout Verification**
+
+- `DESIGN_LAYOUT_VERIFICATION_FR018_ADMIN_2026-07-09.md` - Completed FR-018 Affiliate Management Admin Web design-layout verification against current `layout-temp/` assets. All 12 admin screens have mapped layouts; overall verdict is `🔴 BLOCKED` with 5 FAIL, 4 PARTIAL, and 3 GOOD screens. Main blockers are missing commission-edit routing, destructive/terminal modal submit gates, missing Screen 4 Application Method, and incomplete failed-state transaction detail parity.
+
+#### **FR-018 Affiliate Design Layout Verification**
+
+- `DESIGN_LAYOUT_VERIFICATION_FR018_AFF_2026-07-09.md` - Completed FR-018 Affiliate Management AFF-side design-layout verification in the existing Admin + Affiliate report. All 9 AFF screens have mapped layouts; AFF verdict is `🟡 PARTIAL` with 0 FAIL screens. Main AFF gaps are missing Overview monthly toggle/countdown/refresh affordance, missing Payouts below-$50 rollover note, missing Profile immutable-email note, missing activation email evidence, and minor `Referal` copy issues.
+
+### 2026-07-08/ (1 file)
+
+#### **Plane Workspace Alias Update**
+
+- `PLANE_WORKSPACE_ALIAS_UPDATE_2026-07-08.md` - Updated Plane automation configuration, cached values, reusable scripts, and Plane command/workflow prompt references after the Plane workspace slug changed from `samasu-digital` to `samasu-group`.
+
+### 2026-07-03/ (2 files)
+
+#### **Sprint 1 P-02 Quote Notification Bugs**
+
+- `SPRINT_1_P02_QUOTE_NOTIFICATION_BUGS_2026-07-03.md` - Updated the Sprint 1 readiness backlog after patient-side quote-notification review during provider quote-submission testing. Replaced the old P-02 "not checked" note with partial coverage for quote-ready notification delivery, and added confirmed bug rows `P-02-001` through `P-02-004` for duplicated patient quote-ready emails, backend-hosted email CTA URLs, duplicated in-app `New quote` notifications, and incorrect relative timestamps on freshly submitted quote notifications.
+
+#### **Sprint 1 Recorded Bug Task Creation**
+
+- `SPRINT_1_RECORDED_BUG_TASK_CREATION_2026-07-03.md` - Updated the Sprint 1 readiness backlog after creating Plane work items for all 16 `Recorded only` bug rows. Changed `Task Status` to side-labeled `Task created (...)` values and wrote the created Plane keys back into `P-02`, `PR-02`, and `PR-06` bug rows, including split FE/BE keys where one source bug produced two implementation tasks.
+
+### 2026-07-02/ (1 file)
+
+#### **Sprint 1 PR-02 Provider Notification Bugs**
+
+- `SPRINT_1_PR02_PROVIDER_NOTIFICATION_BUGS_2026-07-02.md` - Updated the Sprint 1 readiness backlog after direct Provider-dashboard review of inquiry notifications. Replaced the old PR-02 "not checked" note with partial provider coverage for accounts 1-3, added confirmed bug row `PR-02-001` for duplicated `New inquiry` notifications, and added confirmed bug row `PR-02-002` for notification clicks routing to `/provider/inquiries/{id}` and landing on a 404 instead of the live inquiry detail route.
+
+### 2026-06-26/ (4 files)
+
+#### **sprint-readiness-reporting — Token-Governance Alignment**
+
+- `SPRINT_READINESS_SKILL_TOKEN_ALIGNMENT_2026-06-26.md` - Audited the skill and applied three token-alignment edits (with approval, frozen skill): source-code lookup now routes through the code maps (`INDEX.md` §D, "locator not evidence") before opening `main/`; PRD lookup points to `INDEX.md` §C section maps; and update-log interaction is made **write-only** (do not read `update-logs/` for context when updating a backlog — `ls` the date folder, never scan/grep history) in both `SKILL.md` and `references/reporting-rules.md`.
+
+#### **gen-code-map Skill + Semantic Code Maps**
+
+- `GEN_CODE_MAP_SKILL_AND_SEMANTIC_MAPS_2026-06-26.md` - Replaced the three `repomix --no-files` directory-tree code maps with curated **folder-group semantic maps** (each group: Purpose / Modules P-PR-A-S / FRs / entry-point files) — backend ~204 lines, frontend ~116 (Provider+Admin web), app ~105 (Flutter, Patient-only); recorded that the tech-spec "React Native" mobile note is stale (actual stack is Flutter). Added the user-triggered **`gen-code-map`** skill (`skills-engineering/gen-code-map/`: `SKILL.md` with the 3 persistent map paths, `references/generation-rules.md`, and bundled `scripts/check-code-map-drift.sh` for deterministic folder-drift detection with seeded snapshots). Cleaned up superseded scripts (`regen-code-maps.sh` deleted; drift script moved into the skill; `scripts/README.md` now covers only `search.sh`). Updated INDEX §A.2 / §B / §D.
+
+#### **Agent Guidelines Restructure + Wayfinder Index + Token Governance**
+
+- `AGENT_GUIDELINES_INDEX_TOKEN_GOVERNANCE_2026-06-26.md` - Created `local-docs/INDEX.md` as the agent wayfinder (task → area → file → section routing, a user-trigger-only skill directory for all 13 skills, the directory map moved out of `CLAUDE.md`, and a scaffold/template registry pointing FR PRDs to `.specify/templates/prd-template.md`). Restructured `CLAUDE.md`/`AGENTS.md` (kept identical): added a Navigation & Token Governance section (locate-before-read, read-by-section, capped search output, soft phase budgets, fresh-thread-per-phase), switched skills from auto-trigger to user-triggered (still BLOCKING once invoked), added a history-restraint rule (do not read update-logs or run `git diff`/`git log` per task; update-logs only with user confirmation via the update-logs README wayfinder; git defaults to `--stat`/`--name-only`/`--check`), and moved the `File Structure` listing into INDEX. README now points agents to INDEX.
+
+#### **Phase 2 — Code Maps + Capped Search Wrapper**
+
+- `PHASE2_CODE_MAP_AND_SEARCH_WRAPPER_2026-06-26.md` - Added `local-docs/project-automation/scripts/search.sh`, a capped ripgrep wrapper that refuses to dump more than 50 matches (prints a count + "refine your query" and exits non-zero) to enforce token governance. Generated three structure-only repomix code maps under `project-notes/` (`code-map-backend.md` ~1677 lines, `code-map-frontend.md` ~1591, `code-map-app.md` ~542) using `--no-files` (directory tree, no file bodies) scoped to source dirs — chosen over `--compress` because full signature dumps were too large (backend ~50k / frontend ~70k lines) to read whole; signatures are now fetched on demand per subdir. Updated INDEX.md §D with the working commands and confirmed map paths (removed the "pending" caveat) and added a §B Tools note pointing to `search.sh`.
+
+#### **Sprint 1 PR-06 Country / City Dropdown Bug**
+
+- `SPRINT_1_PR06_COUNTRY_CITY_DROPDOWN_BUG_2026-06-26.md` - Updated the Sprint 1 readiness backlog after direct Provider-dashboard evidence from the clinic profile edit flow. Added confirmed bug row `PR-06-030` for the dependent `Country` / `City` dropdown: after deep scrolling inside a long city list, the city options begin repeating and later country changes stop refreshing the city list until the page is reloaded. The row stays `Recorded only` because the product symptom is confirmed, while FE/BE ownership is still unverified.
+
+### 2026-06-25/ (1 file)
+
+#### **Sprint 1 PR-06 Awards Review**
+
+- `SPRINT_1_PR06_AWARDS_REVIEW_2026-06-25.md` - Updated the Sprint 1 readiness backlog after direct Provider-dashboard review of the `Profile Setting -> Awards` tab. Recorded positive coverage for add/delete persistence after save and reload; added confirmed PR-06 bug rows for the false success toast on modal open, optional-field validation mismatch, and duplicate award creation when saving twice without reload; and narrowed the remaining PR-06 evidence-gap row so `Awards` is no longer tracked as untested.
+
+### 2026-06-24/ (1 file)
+
+#### **Sprint 1 PR-06 Language Navigation Review**
+
+- `SPRINT_1_PR06_LANGUAGE_NAV_REVIEW_2026-06-24.md` - Updated the Sprint 1 readiness backlog after direct Provider-dashboard review of the `Profile Setting -> Languages` tab. Recorded positive coverage for language search, add/remove, and persistence after reload; added a confirmed PR-06 bug row for the `Cancel` path routing providers into admin-only provider-management screens and exposing the `Add New Provider` wizard; and narrowed the remaining PR-06 evidence-gap row so `Languages` is no longer tracked as untested.
+
+### 2026-06-23/ (4 files)
 
 #### **FR-018 PRD Verified & Approved**
 
@@ -19,6 +181,10 @@ This folder contains documentation update reports and verification logs for the 
 #### **FR-018 Verification Fixes (v1.7 → v1.8 → v1.9 → v2.0)**
 
 - `FR018_VERIFICATION_FIXES_2026-06-23.md` - Applied three `verify-fr` passes. **Pass 1 (v1.8)**: set the **audit trail to 10-year retention** per constitution (financial records stay 7-year min); redefined the percentage **commission base as % of booking revenue** (not % of Hairline commission) per Product Owner decision — added Rule 14, corrected the Screen 2 preview and User Story 3/5 worked examples ($150), and aligned the `system-prd.md` FR-018 requirement line; **tightened commission bounds** to 5-25% / fixed min $50 (warning at 20%); **defined Performance Tier bands and Campaign Eligibility criteria** (new Affiliate Segmentation Rules subsection); standardized **bank-account masking** wording to "last 4 digits"; and **fixed the payout schedule at monthly-on-the-7th** per the client transcription. **Pass 2 (v1.9)**: reconciled the **initial affiliate Status = "Pending"** on create across Screen 2 / Screen 10 / Screen 10.1 (was contradictorily "Active"); added a **per-booking Hairline-funded cost ceiling** (Rule 15, Screen 4 Margin Guard + AC-6, REQ-018-041 — discount + commission may not exceed Hairline's commission on a booking; resolves the v1.8 Finance follow-up); and added a **Currency Rule note** that client GBP figures are illustrative vs USD base literals. **Pass 3 (v2.0)**: moved affiliate payout execution out of FR-018 so FR-017 / A-05 owns approval, retry, and Stripe transfers; corrected Screen 3 links to Screen 6 and Screen 8; and added read-only affiliate access to externally hosted marketing materials (REQ-018-042).
+
+#### **Sprint 1 A-09a Live Backend Verification**
+
+- `SPRINT_1_A09A_LIVE_BACKEND_VERIFICATION_2026-06-23.md` - Updated the Sprint 1 readiness backlog after live backend verification of the questionnaire module. Confirmed that questionnaire-set list/detail, categories, context types, versions, and audit logs are now served by real backend endpoints; strengthened the Screen 2 blocker row with exact live set-ID evidence; and reclassified the audit/history concern as a real-data fidelity follow-up rather than a generic mock-data suspicion.
 
 ### 2026-06-22/ (4 files)
 
@@ -207,6 +373,7 @@ This folder contains documentation update reports and verification logs for the 
 ### 2025-10-23/ (7 files)
 
 #### **Major Documentation Updates & Verification**
+
 
 - `DOCUMENTATION_UPDATES_2025-10-23.md` - Complete changelog of all system documentation updates
 - `VERIFICATION_REPORT_2025-10-23.md` - Comprehensive verification report confirming consistency
@@ -660,6 +827,15 @@ This folder contains documentation update reports and verification logs for the 
 
 ### Documentation Updates
 
+- **2026-08-20**: `TEMPLATE_OWNERSHIP_RELOCATION_2026-08-20.md` - Centralized all project and Spec Kit-compatible templates under `project-requirements/templates/`; `.specify/templates/` now resolves there through a compatibility symlink.
+- **2026-08-17**: `SERVICE_ROUTES_DECK_REVISION_2026-08-17.md` - Four-service-routes deck rebuilt for a mixed stakeholder and design audience: 23 slides across three named route sections, with vocabulary, patient stories, a 39-screen inventory, unhappy-path states, and a closing design ask.
+- **2026-08-11**: `SPRINT_1_A02_FEATURED_PROVIDER_MANAGEMENT_2026-08-11.md` - Added Sprint 1 A-02 backlog rows for featured-provider controls and filter composition; aligned FR-015 with the two featured-status controls and the maximum-10 enforcement rule.
+- **2026-07-16**: `E2E_STATUS_TAXONOMY_AND_TIMESTAMP_INTEGRITY_2026-07-16.md` - Centralized the web E2E status taxonomy, enforced it in the CLI and SQLite, and added schema-v2 action timestamps while preserving legacy history.
+- **2026-07-15**: `PR01_TEAM_DIRECTORY_INVITATION_E2E_REGISTRATION_2026-07-15.md` - Registered the eighteen-case draft PR-01 Team directory and invitation-management suite with positive/empty search and individual/combined filter coverage, documented nine governed gaps, and added an explicit safety gate for public Maildrop invitation links.
+- **2026-07-15**: `E2E_COMPLETE_CASE_COVERAGE_AND_LOGIN_SUITE_2026-07-15.md` - Changed the E2E registration gate to happy-path approval plus delegated PRD-derived coverage, activated six Provider login cases, preserved four governed gaps, and added the registry-driven `./test.sh` interactive console.
+- **2026-07-14**: `PROVIDER_LOGIN_E2E_FIRST_CASE_REGISTRATION_2026-07-14.md` - Registered and controlled-validated the first deterministic PR-01 Provider login Playwright case, and documented the complete manual terminal execution/review workflow; status remains `DRAFT` pending explicit activation approval.
+- **2026-07-08**: `PLANE_WORKSPACE_ALIAS_UPDATE_2026-07-08.md` - Plane automation workspace alias update from `samasu-digital` to `samasu-group`, covering reusable scripts, task-creation config/cache files, and Plane command/workflow prompt references.
+- **2026-07-03**: `SPRINT_1_P02_QUOTE_NOTIFICATION_BUGS_2026-07-03.md` - Sprint 1 readiness backlog update for patient-side quote notifications: partial P-02 coverage added, plus four confirmed bugs covering duplicated emails, invalid backend email CTA URLs, duplicated in-app notifications, and wrong relative timestamps on fresh quote events.
 - **2025-10-23**: `DOCUMENTATION_UPDATES_2025-10-23.md` - Complete changelog
 - **2025-10-27**: `CROSS_REFERENCE_UPDATES_2025-10-27.md` - Cross-reference fixes
 - **2025-10-28**: `MODULE_RESTRUCTURE_2025-10-28.md` - Module structure changes
@@ -670,6 +846,8 @@ This folder contains documentation update reports and verification logs for the 
 - **2026-03-19**: `AUDIT_VERIFICATION_PROVIDER_2026-03-19.md` - Provider dashboard audit second-pass: 6 verdict corrections, 2 new P2 bugs (no self-revoke guard, no quote-edit status guard), totals updated
 - **2026-03-19**: `MISSING_MOBILE_FLOWS_BACKEND_API_AUDIT_2026-03-19.md` - Backend endpoint readiness audit for all 15 missing patient mobile flows against `main/hairline-backend`
 - **2026-04-07**: `MOBILE_APP_TESTING_REPORT_PROGRESS_UPDATE_2026-04-07.md` - April 6 patient mobile testing artifacts updated for notification coverage: bottom-nav entry point, empty state, visible search/filter/bulk actions recorded, while swipe/deep-link/data-driven behavior remains blocked pending Firebase registration and backend delivery
+- **2026-06-26**: `PHASE2_CODE_MAP_AND_SEARCH_WRAPPER_2026-06-26.md` - Added the `search.sh` capped ripgrep wrapper and three structure-only repomix code maps (`project-notes/code-map-{backend,frontend,app}.md`); wired both into INDEX.md (§D Code Map commands + §B Tools note)
+- **2026-07-03**: `SPRINT_1_RECORDED_BUG_TASK_CREATION_2026-07-03.md` - Sprint 1 readiness backlog status update after creating Plane work items for all `Recorded only` bug rows across `P-02`, `PR-02`, and `PR-06`, including side-labeled FE/BE task keys
 - **2026-04-15**: `HAIRLINE_MOBILE_APRIL_2026_POSTMAN_COLLECTION_TEST_2026-04-15.md` - Live API sweep of the Hairline Mobile April 2026 collection routes; 44 original endpoints were tested in the initial sweep, 29 are confirmed meaningful after follow-up validation, 7 return successful but sparse payloads pending product confirmation, 8 remain unresolved failures, and 25 follow-up validations were run separately to clear ambiguity. Follow-up checks verified that `GET /localization/get-cities/CAN` returns `200` when the country input is the ISO alpha-3 code, that quote-bearing inquiries return meaningful `quote/get-quotes` payloads, that `POST /settings/update-provider-profile` and `POST /treatment/update-treatment` succeed with the required IDs/payloads, and that the report now includes an endpoint-correction retry guide for resolved reruns, including the `quote_amount` decimal-precision rule
 - **2026-04-23**: `BUG_REPORT_SKELETON_2026-04-23.md` - Created a concise mobile bug report table skeleton starting from `HL61`
 - **2026-04-24**: `PROVIDER_ADMIN_MILESTONE_REPORT_2026-04-24.md` - Created Provider/Admin milestone status report with verified module completion estimates, risks, dependencies, and remaining effort; Mobile App deferred
@@ -681,16 +859,21 @@ This folder contains documentation update reports and verification logs for the 
 - **2026-05-20**: `LAUNCH_PLAN_REVIEW_2026-05-20.md` - Three-track review plus follow-up correction pass: PRD/FR cross-check, sprint DoD/story rework, module table restructure, timeline fixes now including RC store-submission/code-freeze and store-review fallback, FR/module corrections for travel, support, promotions, payment, payout, search, compliance, affiliate, and FR-036 topline placeholder, plus expanded launch smoke tests.
 - **2026-05-29**: `SPRINT_1_READINESS_FIX_BACKLOG_2026-05-29.md` - Created Sprint 1 readiness and fix-backlog report from `launch-plan.md`, with Sprint 1 scope, modules, stories, deferrals, readiness blockers, and module-level evidence gaps for later staging/product review.
 - **2026-06-08**: `SPRINT_1_PROVIDER_ONBOARDING_REVIEW_2026-06-08.md` - Updated Sprint 1 provider onboarding backlog rows after Admin wizard screenshot review: provider creation is partial-pass, activation/Owner login remains open, and A-02/PR-06 follow-up bugs are logged for notification deep-linking, phone country-code UX, phone formatting, and document preview.
+- **2026-07-02**: `SPRINT_1_PR02_PROVIDER_NOTIFICATION_BUGS_2026-07-02.md` - Updated the Sprint 1 readiness backlog after direct Provider-dashboard review of inquiry notifications: PR-02 partial coverage is now recorded for providers 1-3, with confirmed bug rows for duplicated `New inquiry` alerts and a 404-causing notification deep link to `/provider/inquiries/{id}` instead of the live `/inquiries/{id}` route.
 - **2026-06-09**: `SPRINT_READINESS_REPORTING_SKILL_2026-06-09.md` - Created the `sprint-readiness-reporting` skill for Hairline readiness-report context resolution, scaffold creation, basic vs advanced update routing, evidence/status rules, and blocked-follow-up re-test handling.
 - **2026-06-11**: `SPRINT_READINESS_RESOLUTION_STATUS_2026-06-11.md` - Added resolution lifecycle statuses to the sprint-readiness reporting workflow so fix rows can distinguish implementation-reported fixes from reviewer-verified re-test closure.
 - **2026-06-12**: `CREATE_BUG_TASKS_SKILL_2026-06-12.md` - Created the `create-bug-tasks` skill for turning confirmed bug reports and `Recorded only` readiness backlog rows into Plane-ready `[BUG]` tasks with module/FR traceability, explicit labels, early PRD/document/design references, and optional post-create backlog status updates.
 - **2026-06-14**: `SPRINT_2_TO_5_READINESS_SCAFFOLDS_2026-06-14.md` - Created Sprint 2–5 readiness & fix-backlog scaffolds from `launch-plan.md`, dated `2026-06-05` / `2026-06-12` / `2026-06-19` / `2026-06-22` (one-week-spaced from the May 29 Sprint 1 milestone; Sprint 5 on its real launch date), each with launch-plan-anchored scope, modules, stories, deferrals, and `Review pending` evidence gaps.
 - **2026-06-16**: `BUG_TASK_FE_BE_SPLIT_2026-06-16.md` - Updated `create-bug-tasks` to split FE+BE bugs into separate `[BUG][FE]`/`[BUG][BE]` tasks (single side label each, new `Scope Boundary` description section, `Bugs, FE Task, BE Task` combination removed), and updated `sprint-readiness-reporting` so the `Task Status` column stores side-labeled Plane key(s) — `Task created (FE: HAIRL-123; BE: HAIRL-124)` for a split bug — in one cell per source row.
 - **2026-06-18**: `SPRINT_READINESS_BUG_ID_AND_SCOUT_STATUS_2026-06-18.md` - Added stable `Bug ID` traceback to sprint readiness backlog tables, introduced `Scout flagged` for code/PRD/API scouting leads that need prioritized manual testing, and updated `create-bug-tasks` to preserve source rows as `Source Bug ID`.
+- **2026-06-26**: `SPRINT_1_PR06_COUNTRY_CITY_DROPDOWN_BUG_2026-06-26.md` - Sprint 1 PR-06 clinic profile update: added confirmed backlog row `PR-06-030` for the provider `Country` / `City` dependent dropdown breaking after deep scroll in long city lists, causing repeated items and blocking later country-driven refresh until reload.
 - **2026-06-22**: `FR018_AFFILIATE_CODE_GENERATION_ALIGNMENT_2026-06-22.md` - FR-018 affiliate-code ownership alignment: bulk generation now creates one distinct code per selected/filter-matched affiliate, shared affiliate payout codes are explicitly unsupported, generated codes appear in affiliate dashboards, FR-019 points readers back to FR-018 for affiliate-bound code generation, and FR-022 A-07 filters are synced for affiliate cohort selection.
 - **2026-06-23**: `FR018_ATTRIBUTION_AND_DEPENDENCY_ALIGNMENT_2026-06-23.md` - FR-018 attribution follow-up: final price-discount priority is now separate from affiliate referral attribution, so provider-side promotions do not erase valid captured AFF commission credit; FR-017, FR-019, and FR-022 dependency references were aligned.
 - **2026-06-22**: `SPRINT_1_A09A_QUESTIONNAIRE_RETRIAGE_2026-06-22.md` - Sprint 1 A-09a questionnaire re-triage: create/list/detail/version/audit are now confirmed live, historical questionnaire rows were kept open pending task cross-check, and the current questionnaire blocker is narrowed to Screen 2 access failures plus the missing post-create transition into question authoring.
 - **2026-05-15**: `AGENT_GUIDELINES_SLIMDOWN_2026-05-15.md` - Slimmed `CLAUDE.md` and `AGENTS.md` to 101 lines each (from 284/277); deleted redundant skill catalog / deployment / generic enforcement sections, consolidated six scattered file/folder governance sections into a single `## File & Folder Rules` permission table, retained `local-docs/` directory tree and project-specific BLOCKING skills.
+- **2026-06-26**: `AGENT_GUIDELINES_INDEX_TOKEN_GOVERNANCE_2026-06-26.md` - Added `local-docs/INDEX.md` wayfinder and a Navigation & Token Governance regime in `CLAUDE.md`/`AGENTS.md` to curb token burn (locate-before-read, read-by-section, capped search, phase budgets, fresh threads); switched skills to user-triggered; added history-restraint rule for update-logs and `git diff`; moved the `File Structure` listing into INDEX.
+- **2026-06-26**: `GEN_CODE_MAP_SKILL_AND_SEMANTIC_MAPS_2026-06-26.md` - Replaced tree-dump code maps with curated folder-group semantic maps (purpose + module/FR bindings + entry points); added the user-triggered `gen-code-map` skill with a bundled deterministic drift-detector script; cleaned up superseded scripts; updated INDEX §A.2/§B/§D.
+- **2026-06-26**: `SPRINT_READINESS_SKILL_TOKEN_ALIGNMENT_2026-06-26.md` - Aligned the `sprint-readiness-reporting` skill to token governance: source/PRD lookups route through the code maps (§D) and PRD section maps (§C); update-log interaction made write-only (no reading `update-logs/` for context when updating a backlog).
 - **2026-05-06**: `PROGRESS_UPDATE_REPORT_2026-05-06.md` - Created a refreshed progress update report based on the January 27 milestone report structure, with fill-in sections for later PRD/FR checklist consolidation and fresh Provider/Admin code verification.
 - **2026-04-18**: `FR014_BACKEND_ALIGNMENT_2026-04-18.md` - FR-014 follow-up alignment after verification: backend cross-check confirmed canonical patient-country provenance is `patients.location_id -> countries.id/name`; FR-014 now documents legacy `patients.location` only as a temporary fallback, removes unsupported IP-geolocation fallback wording, aligns the system PRD SLA parameter to a platform-wide target, and adds Screen 6 service dependencies (`S-03`, `S-05`)
 - **2026-04-18**: `FR014_VERIFICATION_FIXES_V35_2026-04-18.md` - FR-014 PRD v3.4 → v3.5 verification fixes: Screen 6 PDF branding narrowed to `providers.profile_image` only; Rule 10 FX fallback capped at 48 hours; Assumption 8 added to record provider-side analytics widgets as PRD-derived by design (future passes must not re-flag as transcription discrepancies); Assumptions 9–10 added for FX freshness cap and legacy location UI indicator
@@ -701,6 +884,9 @@ This folder contains documentation update reports and verification logs for the 
 
 ### Verification Reports
 
+- **2026-08-20**: `FR037_VERIFICATION_APPROVAL_2026-08-20.md` - FR-037 v2.0 verification completion and Product Owner approval; Technical Lead and Stakeholder approvals remain explicitly unrecorded.
+- **2026-07-09**: `DESIGN_LAYOUT_VERIFICATION_FR018_AFF_2026-07-09.md` - FR-018 Affiliate Platform / AFF-side design-layout verification appended to the Admin + Affiliate report; all 9 AFF screens have layout coverage, with AFF verdict `🟡 PARTIAL` and no FAIL screens.
+- **2026-07-09**: `DESIGN_LAYOUT_VERIFICATION_FR018_ADMIN_2026-07-09.md` - FR-018 Admin Web design-layout verification; all 12 admin screens have layout coverage, with overall verdict `🔴 BLOCKED` due to critical action routing, confirmation-gate, missing-field, and failed-state parity gaps.
 - **2026-06-04**: `FR021_ADMIN_DESIGN_LAYOUT_VERIFICATION_2026-06-04.md` - FR-021 Provider/Admin Web Screens 2-10 design-layout verification; all 9 screens have layout coverage, with overall verdict `🔴 FAIL` due to publish-without-summary control issues in Screens 8-9.
 - **2026-05-27**: `FR013_PROVIDER_ADMIN_DESIGN_LAYOUT_VERIFICATION_2026-05-27.md` - FR-013 Provider/Admin Screens 5-10 design-layout verification; all six screens have layout coverage, with Screens 6, 8, and 9 failing on critical validation/control gaps.
 - **2026-05-21**: `FR019_DESIGN_LAYOUT_VERIFICATION_2026-05-21.md` - Full FR-019 design-layout verification; all three platform flows are `🔴 BLOCKED`, with missing provider/patient layouts plus admin governance and redemption-log gaps documented.
@@ -737,6 +923,17 @@ This folder contains documentation update reports and verification logs for the 
 
 ### Functional Requirements
 
+- **2026-08-20**: `FR037_VERIFICATION_APPROVAL_2026-08-20.md` - FR-037 v2.0: changed the PRD from Draft to Verified & Approved and recorded Joachim Trung Tuan's Product Owner approval.
+- **2026-08-20**: `GOVERNANCE_TEMPLATE_OWNERSHIP_2026-08-20.md` - Aligned governance and human onboarding with project-owned templates, the Spec Kit compatibility link, and FR-local Change Requests for major requirement events.
+- **2026-08-20**: `FR_CHANGE_REQUEST_FRAMEWORK_2026-08-20.md` - Established major-event FR Change Requests with project-owned template, FR-local traceability, before/after contracts, and separate implementation-reconciliation status; backfilled the FR-037 v1.8/v1.9 affected FRs.
+- **2026-08-20**: `FR037_PROVIDER_DECLINE_FALLBACK_2026-08-20.md` - FR-037 v1.9 and FR-003 v2.1: explicit exclusive-provider decline before quote creation now removes the restriction and returns the inquiry to normal FR-003 distribution exactly once; expiry behavior is unchanged.
+- **2026-08-20**: `FR037_CROSS_FR_VERIFICATION_SYNC_2026-08-20.md` - FR-037 v1.8 cross-FR sync: FR-003 exclusive-provider distribution override, FR-004 restricted-recipient quote mode, FR-025 Monitoring Advice entry point, FR-020/FR-030 `monitoring.*` event catalog rows, and FR-037→FR-038 reciprocal dependency.
+- **2026-08-20**: `FR037_VERIFICATION_FIXES_V17_2026-08-20.md` - FR-037 v1.7: lifetime provider anonymization, bi-weekly cadence rename, Step B handoff-target relabel, same-date severity tie-break, and system-prd.md synchronization.
+- **2026-08-20**: `FR037_VERIFICATION_CORRECTIONS_2026-08-20.md` - FR-037 v1.6: anonymized provider-facing identity, aligned daily-note validation, and corrected module/version metadata.
+- **2026-08-20**: `FR037_PROVIDER_ADMIN_DETAIL_SCREEN_RESTRUCTURE_2026-08-20.md` - FR-037 v1.5: dedicated Provider/Admin case overviews, daily-log details, and provider-advice details, with withdrawal and Admin screens renumbered accordingly.
+- **2026-08-20**: `FR037_ADVICE_PREVIEW_AND_DASHBOARD_REVISION_2026-08-20.md` - FR-037 v1.4: separate editable provider-advice calendar records, supersession-only window expiry, expiring pre-assignment previews without embedded chat, and expanded Provider/Admin listing and detail screens.
+- **2026-08-17**: `FR037_FR038_MONITORING_FLOWS_2026-08-17.md` - Created FR-037 hair-loss monitoring and FR-038 transplant-progress monitoring PRDs and aligned the system PRD and documentation index.
+- **2026-08-17**: `FR037_VERIFICATION_FIXES_2026-08-17.md` - FR-037 v1.3: self-service vs aftercare service boundary, 7-year raw scan retention, FR-003 Duration enum binding, two-step conversion summary flow, and creation-time cadence snapshot.
 - **2025-10-23**: `REQUIREMENTS_IMPLEMENTATION_2025-10-23.md` - Implementation summary
 - **2025-10-27**: `FR025_PRD_CREATION_2025-10-27.md` - FR-025 PRD creation
 - **2025-10-28**: `FR001_PRD_CREATION_2025-10-28.md` - FR-001 PRD creation
@@ -903,4 +1100,4 @@ Example: `DOCUMENTATION_UPDATES_2025-10-23.md`
 
 ---
 
-**Last Updated**: June 23, 2026 (FR-018 PRD marked Verified & Approved after final verification cleanup)
+**Last Updated**: August 20, 2026 (governance alignment for template ownership)
