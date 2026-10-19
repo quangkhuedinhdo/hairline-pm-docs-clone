@@ -6,6 +6,180 @@ This folder contains documentation update reports and verification logs for the 
 
 ## Organization by Date
 
+### 2026-10-19/ (1 file)
+
+#### **Testing Hub Consolidation and Phase Manual Test Plans**
+
+- [TESTING_HUB_CONSOLIDATION_2026-10-19.md](2026-10-19/TESTING_HUB_CONSOLIDATION_2026-10-19.md) - All testing artifacts consolidated into `testing/` (web E2E, API and Android material, credentials, archive of old plans and mobile reports); new TEST-STRATEGY.md and templates; Phase 1–3 manual test plans v1.0 with module batches and a Phase 4 skeleton; new `manual-test-bug-sync` skill.
+
+### 2026-10-18/ (1 file)
+
+#### **MTG-002 End-of-Session Note and Handoff**
+
+- [MTG002_SESSION_HANDOFF_2026-10-18.md](2026-10-18/MTG002_SESSION_HANDOFF_2026-10-18.md) - End-of-session note for the MTG-002 quote model work: completed state, final versions of 21 PRDs and three system documents, commit list, open Product Owner question (treatment record state after an In Progress provider fault), parked payment-pass items, and working rules for the next session. No document changes.
+
+### 2026-10-16/ (1 file)
+
+#### **MTG-002 Quote Model Alignment (Quote and Subquote Data Model Fix Pass)**
+
+- [MTG002_QUOTE_MODEL_ALIGNMENT_2026-10-16.md](2026-10-16/MTG002_QUOTE_MODEL_ALIGNMENT_2026-10-16.md) - Verification-driven fix pass for the MTG-002 quote and subquote data model across 21 PRDs with 21 CRs (CR-FRNNN-20261016-01): FR-003 v2.9, FR-004 v3.1, FR-005 v2.5, FR-006 v2.7, FR-007 v1.7, FR-007b v1.3, FR-008 v2.6, FR-010 v2.2, FR-014 v3.15, FR-015 v1.17, FR-017 v2.11, FR-019 v2.2, FR-020 v2.7, FR-022 v2.14, FR-024 v1.3, FR-026 v1.12, FR-029 v1.11, FR-030 v1.12, FR-016 v1.7 (minor); system PRD, system data schema v1.8.0 and system technical spec v1.2.0. Payment and fund release parked for a later pass. Includes Product Owner open-question decisions Q1–Q30 (Q26 and Q27 deferred to the payment pass) applied across FR-004 to FR-032 and schema v1.9.0, with new CR-FR032-20261016-01. Consolidated verification and final audit corrections (2026-10-18, Q31–Q50): admin-authored replacement quote, admin-only cancellation after acceptance, admin intervention screens, aftercare reassignment, new promotion tables, `booking.rescheduled`; final versions FR-003 v2.11, FR-004 v3.4, FR-005 v2.8, FR-006 v2.10, FR-010 v2.5, FR-011 v1.5, FR-016 v1.9, FR-019 v2.5, FR-020 v2.10, FR-030 v1.15; schema v1.11.0, tech spec v1.4.0, system PRD v1.2.0; new CR-FR011-20261016-01 and CR-FR016-20261016-01.
+
+### 2026-10-15/ (6 files)
+
+#### **FR-015 Eighth Verification Pass Fixes and FR-003, FR-020, FR-029, FR-030, FR-032 Change Requests**
+
+- [FR015_EIGHTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_EIGHTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.16: FR-021 owns the language list; closure deactivations always notify the provider, Screen 1 Closure Requested marker, new FR-020/FR-030 events `provider.closure_requested` and `provider.closure_rejected` (CR-FR032-20261015-03, CR-FR020-20261015-02, CR-FR030-20261015-02); Tab 7 edits for Active and Suspended providers (CR-FR029-20261015-02); FR-029 commission precision; no inquiries before password set (CR-FR003-20261015-01); Integration 4 REST only with rate limiting; system data schema v1.7.0 (`providers.password_set` and activation token columns, commission status rule, closure request rules)
+
+#### **FR-015 Seventh Verification Pass Fixes and FR-009 Change Request**
+
+- [FR015_SEVENTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_SEVENTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.15: global provider email identity rule owned by FR-009 (Owners, staff, pending invitations; Deactivated providers' emails freed; CR-FR009-20261015-02), FR-020 event names, Tab 6 upload modal fields, module IDs, read-only wording, file_size, FR-031 permission defaults; system data schema v1.6.0 global login-email rule (§3, §4)
+
+#### **FR-015 Sixth Verification Pass Fixes and FR-032, FR-020 Change Requests**
+
+- [FR015_SIXTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_SIXTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.14: FR-032 account closure becomes an admin-processed deactivation request (no Deleted status, new A7), mandatory FR-020 provider events (`provider.activation`, `provider.reactivated`, `provider.scheduled_change_cancelled`), seat requests via FR-034 support case, email uniqueness ignores Deactivated providers, provider-side view points to FR-032 Screen 4; FR-030 v1.10 catalog mirror and system data schema v1.5.0 (partial email unique index, new §40 closure requests); CR-FR032-20261015-02, CR-FR020-20261015-01, CR-FR030-20261015-01
+
+#### **FR-015 Fifth Verification Pass Fixes and FR-009, FR-017, FR-026 Change Requests**
+
+- [FR015_FIFTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_FIFTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.13: limited-write Login as Provider kept, Tab 3 per-provider staff with Invite Staff Member, reactivation cancels pending scheduled change (Key Entity 4), Rule 9 points to FR-017, Specialty from FR-026 list, SC-010/SC-015/US3 fixes. FR-009 v1.4 (proposed) via CR-FR009-20261015-01 (Screen 12, limited-write impersonation, REQ-009-023 to 025). FR-017 v2.10 via CR-FR017-20261015-01 (late-capture flag, installment cancellation, payout hold, REQ-017-028/029). FR-026 v1.11 via CR-FR026-20261015-01 (Provider Specialties list, Screen 5f, REQ-026-012h). System data schema v1.4.0 (§38 pending status changes, §39 provider specialties, payment reconciliation flag)
+
+#### **FR-015 Fourth Verification Pass Fixes, FR-029 Change Request, and FR-032 Clarification**
+
+- [FR015_FOURTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_FOURTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.12: Tab 7 Scheduled Configuration (one pending, replaceable, cancellable), Tab 1 commission read-only, shared-scope split on Tab 7 edit, FR-011 standalone aftercare in suspension/deactivation impact, Resend Activation Email visibility. FR-029 v1.9 via CR-FR029-20261015-01 (one active scope per provider, REQ-029-048). FR-032 v1.7 Scheduled Configuration clarification. System data schema v1.3.0 (`provider_commissions` pending status and unique indexes)
+
+#### **FR-015 Third Verification Pass Fixes and FR-032 Alignment**
+
+- [FR015_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.11: Last Activity Date defined, Status Count Tiles, grouped commission sort, FR-031 permissions (A-09), immediate Effective Date, Flat Rate Currency in Rule 2, server-side filtering. FR-032 v1.6 via CR-FR032-20261015-01: read-only Commission & Payout panel in Screen 4 and Rule 6 account-status banner. Implementation reconciliation pending.
+
+### 2026-10-14/ (2 files)
+
+#### **FR-015 Verification Fixes and Downstream Cascade Alignment**
+
+- [FR015_VERIFICATION_ALIGNMENT_2026-10-14.md](2026-10-14/FR015_VERIFICATION_ALIGNMENT_2026-10-14.md) - FR-015 v1.9: Draft removed, Screen 5 reactivation, wizard fields (Contact Email, Payout Frequency, Commission Start Date), deactivation cascade, `provider_commissions` table, `flat_rate` naming, `inquiries.status` equals suspension, admin edit reason, Login as Provider controls, FR-032 document rules, dependency fixes. New CRs beside FR-003, FR-004, FR-010, FR-011, FR-016, FR-020, FR-029; FR-005/FR-006 change-log alignment; follow-ups: FR-030 v1.9 (CR), FR-017 v2.8, standalone aftercare in scope, system PRD status line, system data schema and technical spec v1.1.0. Second pass FR-015 v1.10: Flat Rate currency, Screen 4 admin password, Commission Start Date as FR-029 Effective Date, featured display P2, Documents Status column removed, scheduled suspension/deactivation (REQ-015-028), affiliate note; FR-017 v2.9. Implementation reconciliation pending.
+
+#### **FR-014 Fourth Verification Pass Fixes**
+
+- [FR014_VERIFICATION_FIXES_2026-10-14.md](2026-10-14/FR014_VERIFICATION_FIXES_2026-10-14.md) - FR-014 v3.12: refund source of truth (no double-counted refunds), Screen 7 time-range basis, Screen 1 cross-filter with "View list" drill-down (layout unchanged), widget-scoped exports, S-06 10-year immutable access audit, FR-003 masked-name Rule 11, FR-009/FR-016 dependencies, date alignment; system PRD FR-014 sync. No Change Request; implementation reconciliation pending.
+
+### 2026-10-13/ (3 files)
+
+#### **FR-007 Accepted Subquote Payment and FR-017 Billing Alignment**
+
+- [FR007_ACCEPTED_SUBQUOTE_PAYMENT_BILLING_ALIGNMENT_2026-10-13.md](2026-10-13/FR007_ACCEPTED_SUBQUOTE_PAYMENT_BILLING_ALIGNMENT_2026-10-13.md) - FR-007 v1.6 and CR-FR007-20261013-01: accepted commercial snapshot, locked currency/provenance, and original payment-hold guards; FR-017 v2.7 clarifies existing booking-based invoices. Payment economics and suspension follow-ups unchanged; implementation reconciliation and consolidated verification pending.
+
+#### **FR-015 Provider Lifecycle and Accepted Subquote Alignment**
+
+- [FR015_PROVIDER_LIFECYCLE_SUBQUOTE_ALIGNMENT_2026-10-13.md](2026-10-13/FR015_PROVIDER_LIFECYCLE_SUBQUOTE_ALIGNMENT_2026-10-13.md) - FR-015 v1.8 and CR-FR015-20261013-01: automatic suspension cancellation, provider-specific cause and admin-support marker, immutable accepted history, confirmation-time commission snapshots, and distinct completed-procedure counting. Related-FR alignment, consolidated verification, and implementation reconciliation pending.
+
+#### **FR-014 Verification Fixes and FR-026 Analytics Configuration**
+
+- [FR014_VERIFICATION_FIXES_2026-10-13.md](2026-10-13/FR014_VERIFICATION_FIXES_2026-10-13.md) - FR-014 v3.8–v3.11, FR-026 v1.9–v1.10, FR-030 v1.7–v1.8, FR-020 v2.2–v2.3, FR-003 v2.6, system PRD sync: flat-rate commission recognised once per completed procedure (FR-015), Qualified funnel stage removed (CR-FR014-20261007-01 amended, further Screen 1 lock exception), FR-010 `No-show` closure reason as the no-show source, and new FR-026 Analytics Configuration (SLA 120 min default, commission target hidden until set) via CR-FR026-20261013-01. Implementation reconciliation pending. v3.10: TTFQ from distribution and `New`-only queue badge (CR-FR014-20261007-01 amendment 2), GMV excludes refund rows, provider-scoped returning patients, FR-007B installment labels, Report History UI and accessibility rules (new CR-FR014-20261013-02). v3.11 (applied 2026-10-14): booking commission snapshot, FR-018 affiliate attribution entity, Screen 11 sub-scores need a provider filter, Voided payouts hidden, FR-003 `distributed_at` defined, new `analytics.export_ready` event, Rule 15F role-by-screen matrix, age widget removed, net income tile, Implementation Notes and SC-014–SC-016.
+
+### 2026-10-07/ (1 file)
+
+#### **FR-014 Parent Quote and Accepted Subquote Analytics**
+
+- [FR014_PARENT_QUOTE_SUBQUOTE_ANALYTICS_2026-10-07.md](2026-10-07/FR014_PARENT_QUOTE_SUBQUOTE_ANALYTICS_2026-10-07.md) - Approved FR-014 v3.7 parent/inquiry metric units, immutable accepted-price reporting, Confirmed-booking funnels, valid-hold aging, accepted-price-bracket distribution, and metric-only cockpit exception; implementation reconciliation and consolidated verification pending.
+
+### 2026-09-29/ (3 files)
+
+#### **FR-031 Global Custom Provider Roles**
+
+- `FR031_GLOBAL_CUSTOM_PROVIDER_ROLES_2026-09-29.md` - Proposed Super Admin creation and cloning of global non-Owner provider roles, with FR-009 assignment alignment and implementation reconciliation pending.
+
+#### **FR-008 Confirmed Booking Travel Context**
+
+- `FR008_CONFIRMED_BOOKING_TRAVEL_CONTEXT_2026-09-29.md` - Revised FR-008 around the accepted subquote and confirmed booking, with booking-owned travel records and idempotent travel requests while preserving binary Path A / Path B responsibility.
+
+#### **Release Phase 2–4 Readiness Backlogs**
+
+- `RELEASE_PHASE_2_TO_4_READINESS_BACKLOGS_2026-09-29.md` - Added Phase 2–4 working readiness/fix backlogs with ordered retest cases, module review signals, and sequential release dependencies.
+
+### 2026-09-18/ (2 files)
+
+#### **Phase 1 Bug Task Creation**
+
+- `PHASE_1_BUG_TASK_CREATION_2026-09-18.md` - Created 22 Plane bug tasks (HAIRL-1515–HAIRL-1536) and updated 19 Phase 1 backlog status cells with matching codes; no resolution or retest claimed.
+
+#### **Meeting 03 Source Extraction**
+
+- `MEETING_03_SOURCE_EXTRACTION_2026-09-18.md` - Recorded the 17 September 2026 stakeholder meeting as `SRC-MTG-003` and registered it. Captures quote-flow feedback (reduce to ~5 steps, graft count is not a pricing input, in-flow head-scan annotation, no bulk quoting), localization direction (Turkish first, reader-preferred language, machine-translated free text), website navigation and imagery fixes, and the two-rail billing redesign with automated payout. The revised quote hierarchy is recorded as reported status, not a new decision. No PRD changed.
+
+### 2026-09-17/ (1 file)
+
+#### **Phase 1 Readiness and Retest Guideline**
+
+- `PHASE_1_READINESS_RETEST_GUIDELINE_2026-09-17.md` - Created the September commercial-pilot retest guideline with 45 cases across five checkpoints and six essential module slices; preserved relevant historical bug IDs and separated current test results from prior observations. No runtime testing performed.
+
+### 2026-09-16/ (2 files)
+
+#### **FR-006 Slot Exclusivity and System Contract Alignment**
+
+- `FR006_SLOT_EXCLUSIVITY_AND_SYSTEM_CONTRACT_2026-09-16.md` - Moved appointment conflict prevention to atomic FR-005 acceptance-time slot reservation; removed FR-006 first-payment-wins behavior; and completed the system PRD's AcceptanceEvent linkage, terminal payment-expiry, and pending Booking lifecycle contract.
+
+#### **FR-005 Dependency Reconciliation**
+
+- `FR005_DEPENDENCY_RECONCILIATION_2026-09-16.md` - Added the canonical Parent Quote → Quote Option → Option/Date-Price hierarchy; reconciled acceptance, payment-window expiry, notification privacy, and subquote filtering; aligned FR-005 quote questions with FR-012 Patient ↔ Provider messaging; and made the accepted-slot hold configurable with a 48-hour default.
+
+### 2026-09-15/ (2 files)
+
+#### **FR-006 Accepted Subquote Booking Handoff**
+
+- `FR006_ACCEPTED_SUBQUOTE_HANDOFF_2026-09-15.md` - Reconciled FR-006 v2.3 and the system PRD so Booking consumes one immutable accepted subquote and inherited parent context; aligned aggregate version provenance, separated appointment reservation from payment confirmation, prohibited commercial reselection, and made `Payment Window Expired` terminal without reopening prior quote records through CR-FR006-20260915-01. Implementation reconciliation and consolidated verification remain pending.
+
+#### **FR-005 Subquote Comparison and Acceptance Model**
+
+- `FR005_SUBQUOTE_ACCEPTANCE_MODEL_2026-09-15.md` - Revised FR-005 to make the complete subquote the atomic patient comparison and acceptance unit across multiple providers and parent quotes; added exact acceptance snapshots, sibling/competing outcomes, and the FR-006 handoff contract through CR-FR005-20260915-01. Consolidated verification and implementation reconciliation remain pending.
+
+### 2026-09-10/ (3 files)
+
+#### **FR-004 Dependency and Verification Fixes**
+
+- `FR004_DEPENDENCY_AND_VERIFICATION_FIXES_2026-09-10.md` - Applied all three selected FR-004 v2.5 verification resolutions: made Admin audit access explicitly immutable; aligned FR-019 promotion attachment, FR-024 package provenance, and FR-026 quote currency/expiry ownership; completed validation limits, source references, and approval metadata; preserved FR-005/FR-006/FR-008/FR-014/FR-015 as deferred.
+
+#### **FR-004 and FR-010 Verification Resolution**
+
+- `FR004_FR010_VERIFICATION_RESOLUTION_2026-09-10.md` - Applied the four Product Owner-selected FR-004 verification resolutions: technique remains Treatment-owned through an exact immutable version relationship; FR-038 was removed from restricted quote routing; FR-010 now consumes the accepted Quote Option and its relative plan; lifecycle terms are normalized to `accepted` and `withdrawn`; and the Constitution-required verification matrix is explicit. FR-005/FR-006/FR-008/FR-014/FR-015 remain deferred.
+
+#### **FR-004 System Integrity Verification Fixes**
+
+- `FR004_SYSTEM_INTEGRITY_FIXES_2026-09-10.md` - Second FR-004 verification pass after the quote-options restructure: corrected the stale quote status enum in the data schema (those values are treatment case statuses on `inquiries.status`), documented the `sent`/`quote` API divergence, added the `quote_clinicians` and `quote_documents` tables plus three missing `quotes` columns, flagged `common_requirements` as a real spec gap, deprecated `quotes.discount_id`, aligned Screen 7 admin option-item editing with Sub-screen 2A validation, and reconciled CR-FR004-20260909-01 metadata to FR-004 v2.4. FR-005/FR-008 reconciliation deferred by decision.
+
+### 2026-09-09/ (3 files)
+
+#### **FR-004 Parent Quote and Package Options Model**
+
+- `FR004_QUOTE_OPTIONS_MODEL_2026-09-09.md` - Approved FR-004 v2.0 and CR-FR004-20260909-01; refined Screen 1 into seven tabs in v2.1; and added complete provider/system field ownership, attachments, option-item fields, multiple clinicians, generated graft description, and configured currency snapshot in v2.2. Implementation reconciliation remains required.
+
+#### **FR-004 Verification Fixes and Upstream Reconciliation**
+
+- `FR004_VERIFICATION_FIXES_2026-09-09.md` - Resolved the FR-004 v2.2 re-verification findings: confirmed that relative plan days are never resolved to calendar dates, fixed quote-amount analytics to the accepted option/date price, documented `included_services` ownership, aligned FR-010 to multiple clinicians, and reconciled the system PRD, data schema, and technical spec to the quote-option aggregate. FR-005, FR-006, and FR-008 reconciliation remains open and unscheduled.
+
+#### **Subsequent Stakeholder Source Registry**
+
+- `SUBSEQUENT_STAKEHOLDER_SOURCE_REGISTRY_2026-09-09.md` - Established the source register and normalized records for later stakeholder meetings and supplied documents without changing PRDs.
+
+### 2026-09-07/ (2 files)
+
+#### **Sprint 1 Created Task Traceability**
+
+- `SPRINT_1_CREATED_TASK_TRACEABILITY_2026-09-07.md` - Updated the four P-02 and A-02 readiness-backlog rows with their created FE and BE Plane task keys.
+
+#### **Admin and Provider Release Roadmap Deck**
+
+- `ADMIN_PROVIDER_RELEASE_ROADMAP_DECK_2026-09-07.md` - Created a navigable 11-slide meeting deck from the September 6 dashboard audit, with dated phase delivery, shared responsibilities, and stakeholder pilot decisions.
+
+### 2026-09-06/ (1 file)
+
+#### **Admin and Provider Implementation Status Report**
+
+- `ADMIN_PROVIDER_IMPLEMENTATION_STATUS_REPORT_2026-09-06.md` - Recorded the current static implementation status of all Provider and Admin dashboard modules, decisive release gaps, and a four-phase gated release roadmap; mobile and runtime reliability testing are excluded.
+
+### 2026-09-04/ (1 file)
+
+#### **Inquiry Configuration Change Request**
+
+- `INQUIRY_CONFIGURATION_CHANGE_REQUEST_2026-09-04.md` - Approved the FR-003 and FR-026 requirement change for an Admin-managed inquiry treatment-area catalog with display assets and a configurable inquiry date blocked window; implementation reconciliation remains required.
+
 ### 2026-08-20/ (10 files)
 
 #### **Governance Alignment for Template Ownership**
@@ -827,6 +1001,54 @@ This folder contains documentation update reports and verification logs for the 
 
 ### Documentation Updates
 
+- **2026-10-19**: [TESTING_HUB_CONSOLIDATION_2026-10-19.md](2026-10-19/TESTING_HUB_CONSOLIDATION_2026-10-19.md) - Testing hub consolidation: one `testing/` folder, test strategy and templates, versioned phase manual test plans, `manual-test-bug-sync` skill
+- **2026-10-18**: [MTG002_SESSION_HANDOFF_2026-10-18.md](2026-10-18/MTG002_SESSION_HANDOFF_2026-10-18.md) - MTG-002 end-of-session note and handoff: status, open items and payment-pass backlog
+- **2026-10-16**: [MTG002_QUOTE_MODEL_ALIGNMENT_2026-10-16.md](2026-10-16/MTG002_QUOTE_MODEL_ALIGNMENT_2026-10-16.md) - MTG-002 quote model alignment: AcceptanceEvent and immutable snapshot, fixed slot hold with appointment at first payment, Payment Window Expired and admin revive, provider-fault transfer, versioned currency-free packages, promotion lifecycle, FR-030 event registry, system docs synced; 2026-10-18 final audit corrections (admin replacement quote, admin-only cancellation, admin intervention screens, aftercare reassignment, promotion tables)
+- **2026-10-14**: [FR014_VERIFICATION_FIXES_2026-10-14.md](2026-10-14/FR014_VERIFICATION_FIXES_2026-10-14.md) - FR-014 v3.12 fourth verification pass: refund source of truth, Screen 7 period basis, Screen 1 View list drill-down, widget-scoped exports, S-06 audit retention, Rule 11 masking, FR-009/FR-016 dependencies; system PRD ratings and audit lines synced.
+- **2026-10-13**: [FR007_ACCEPTED_SUBQUOTE_PAYMENT_BILLING_ALIGNMENT_2026-10-13.md](2026-10-13/FR007_ACCEPTED_SUBQUOTE_PAYMENT_BILLING_ALIGNMENT_2026-10-13.md) - Remaining Meeting 02 payment/billing consumer alignment: FR-007 accepted snapshot/hold contract plus narrow FR-017 invoice clarification, with existing checkout discounts preserved.
+
+- **2026-10-13**: [FR015_PROVIDER_LIFECYCLE_SUBQUOTE_ALIGNMENT_2026-10-13.md](2026-10-13/FR015_PROVIDER_LIFECYCLE_SUBQUOTE_ALIGNMENT_2026-10-13.md) - FR-015 v1.8 lifecycle/subquote alignment: automatic suspension cancellation, special admin support, booking-time commission snapshots, and accurate completed-procedure counting; documentation approval only.
+- **2026-10-13**: [FR014_VERIFICATION_FIXES_2026-10-13.md](2026-10-13/FR014_VERIFICATION_FIXES_2026-10-13.md) - FR-014 v3.8–v3.11 verification fixes (v3.11: booking commission snapshot, affiliate attribution entity, Rule 15F role matrix, `analytics.export_ready` event; flat-rate per completed procedure, Qualified stage removed, FR-010 No-show source, Shared Benchmark Rule, accrual net revenue, recurring exports, SLA-breach alert) and FR-026 v1.9–v1.10 Analytics Configuration ownership and recalculation rule
+- **2026-10-07**: [FR014_PARENT_QUOTE_SUBQUOTE_ANALYTICS_2026-10-07.md](2026-10-07/FR014_PARENT_QUOTE_SUBQUOTE_ANALYTICS_2026-10-07.md) - Reconciled analytics, reporting provenance, and exports with Meeting 02's approved parent/subquote model through CR-FR014-20261007-01 while preserving the cockpit layout.
+
+- **2026-09-29**: `FR031_GLOBAL_CUSTOM_PROVIDER_ROLES_2026-09-29.md` - Proposed FR-031 v1.1 and FR-009 v1.3 global custom provider role contracts with Owner safeguards; approval and implementation reconciliation pending.
+
+- **2026-09-29**: `FR008_CONFIRMED_BOOKING_TRAVEL_CONTEXT_2026-09-29.md` - Rebased FR-008 travel coordination on the FR-005 acceptance snapshot and FR-006 confirmed booking; kept the binary travel model and recorded implementation reconciliation in CR-FR008-20260929-01.
+
+- **2026-09-29**: `RELEASE_PHASE_2_TO_4_READINESS_BACKLOGS_2026-09-29.md` - Prepared Phase 2–4 readiness/fix backlogs from the September dashboard roadmap, preserving sequential gates and untested evidence status; removed redundant boundary notes.
+
+- **2026-09-18**: `PHASE_1_BUG_TASK_CREATION_2026-09-18.md` - Plane creation and code/status reconciliation for 19 confirmed Phase 1 backlog bugs, producing 22 tasks.
+
+- **2026-09-18**: `MEETING_03_SOURCE_EXTRACTION_2026-09-18.md` - Added the `SRC-MTG-003` meeting extraction covering quote-flow simplification, graft-count pricing constraint, in-flow head-scan annotation, localization and free-text auto-translation, website navigation and imagery, and the two-rail billing redesign; pending review with no contract changes.
+
+- **2026-09-17**: `PHASE_1_READINESS_RETEST_GUIDELINE_2026-09-17.md` - Created the user-approved September Phase 1 guideline for commercial-pilot retesting; 45 cases, historical bug traceability, explicit release gates and pending performance assurance.
+
+- **2026-09-16**: `FR006_SLOT_EXCLUSIVITY_AND_SYSTEM_CONTRACT_2026-09-16.md` - Resolved the FR-006 verification findings by enforcing one exclusive slot hold at acceptance and reconciling the system-level booking linkage, terminal payment window, immutable no-reopen behavior, and Booking lifecycle terminology.
+
+- **2026-09-16**: `FR005_DEPENDENCY_RECONCILIATION_2026-09-16.md` - Reconciled the FR-005 subquote model across its dependencies, including the quote hierarchy, terminal payment-window expiry, recipient-scoped outcomes, subquote filtering, Patient ↔ Provider quote messaging, and configurable slot-hold duration.
+
+- **2026-09-15**: `FR006_ACCEPTED_SUBQUOTE_HANDOFF_2026-09-15.md` - Reconciled FR-006 v2.3 and the system PRD around one immutable accepted-subquote handoff, shared aggregate version provenance, appointment reservation before payment confirmation, no commercial reselection, and terminal payment-window expiry that preserves the AcceptanceEvent.
+
+- **2026-09-15**: `FR005_SUBQUOTE_ACCEPTANCE_MODEL_2026-09-15.md` - Made the complete subquote the FR-005 comparison and acceptance unit, with inherited parent context, immutable selection snapshots, distinct sibling/competing outcomes, and an explicit FR-006 handoff boundary.
+
+- **2026-09-10**: `FR004_DEPENDENCY_AND_VERIFICATION_FIXES_2026-09-10.md` - Completed FR-004 v2.6 verification and aligned FR-019 v2.1, FR-024 v1.2, and FR-026 v1.8 to the parent-quote/Quote Option contract, with three approved Change Requests and the five explicitly deferred FRs preserved.
+
+- **2026-09-10**: `FR004_FR010_VERIFICATION_RESOLUTION_2026-09-10.md` - Reconciled FR-004 v2.5 and FR-010 v2.0 around Treatment-owned technique data, accepted-option package/plan consumption, canonical Quote lifecycle terms, and mandatory verification layers; recorded the new FR-010 Change Request and preserved the five explicitly deferred FRs.
+
+- **2026-09-10**: `FR004_SYSTEM_INTEGRITY_FIXES_2026-09-10.md` - Reconciled the documents around FR-004 to the v2.4 quote-option aggregate: quote status enum, undocumented quote tables and columns, discount ownership, Screen 7 admin validation, and Change Request metadata; recorded `common_requirements` and the graft-description template owner as open items.
+
+- **2026-09-09**: `FR004_QUOTE_OPTIONS_MODEL_2026-09-09.md` - Approved the FR-004 parent-quote/one-to-five-option aggregate, seven-tab editor, and complete data-ownership matrix. Currency is system-configured rather than quote input; implementation and downstream FR reconciliation remain pending.
+
+- **2026-09-09**: `FR004_VERIFICATION_FIXES_2026-09-09.md` - Applied the FR-004 re-verification decisions across FR-004 v2.3, FR-010 v1.9, and all three system documents; relative plan days stay relative, amount analytics use the accepted price only, and FR-005/FR-006/FR-008 reconciliation stays open.
+
+- **2026-09-09**: `SUBSEQUENT_STAKEHOLDER_SOURCE_REGISTRY_2026-09-09.md` - Added source governance, a source register, two meeting extractions, and a normalized fund-release/payments brief while preserving the PRD boundary.
+
+- **2026-09-07**: `SPRINT_1_CREATED_TASK_TRACEABILITY_2026-09-07.md` - Recorded the FE/BE Plane task keys for four Sprint 1 P-02 and A-02 backlog rows after task creation.
+
+- **2026-09-07**: `ADMIN_PROVIDER_RELEASE_ROADMAP_DECK_2026-09-07.md` - Created an 11-slide meeting deck that translates the Admin/Provider dashboard audit into a dated rollout, shared responsibilities, and pilot decisions.
+
+- **2026-09-04**: `INQUIRY_CONFIGURATION_CHANGE_REQUEST_2026-09-04.md` - Approved FR-003 v2.5 and FR-026 v1.6 for Admin-managed inquiry treatment-area choices with display assets and a configurable minimum inquiry lead time, defaulting to 3 days; recorded two Sprint 1 P-02 backlog items without creating tasks.
+
 - **2026-08-20**: `TEMPLATE_OWNERSHIP_RELOCATION_2026-08-20.md` - Centralized all project and Spec Kit-compatible templates under `project-requirements/templates/`; `.specify/templates/` now resolves there through a compatibility symlink.
 - **2026-08-17**: `SERVICE_ROUTES_DECK_REVISION_2026-08-17.md` - Four-service-routes deck rebuilt for a mixed stakeholder and design audience: 23 slides across three named route sections, with vocabulary, patient stories, a 39-screen inventory, unhappy-path states, and a closing design ask.
 - **2026-08-11**: `SPRINT_1_A02_FEATURED_PROVIDER_MANAGEMENT_2026-08-11.md` - Added Sprint 1 A-02 backlog rows for featured-provider controls and filter composition; aligned FR-015 with the two featured-status controls and the maximum-10 enforcement rule.
@@ -884,6 +1106,8 @@ This folder contains documentation update reports and verification logs for the 
 
 ### Verification Reports
 
+- **2026-09-06**: `ADMIN_PROVIDER_IMPLEMENTATION_STATUS_REPORT_2026-09-06.md` - Added a concise, module/FR-aligned static implementation audit and gated release roadmap for the Provider and Admin dashboards.
+
 - **2026-08-20**: `FR037_VERIFICATION_APPROVAL_2026-08-20.md` - FR-037 v2.0 verification completion and Product Owner approval; Technical Lead and Stakeholder approvals remain explicitly unrecorded.
 - **2026-07-09**: `DESIGN_LAYOUT_VERIFICATION_FR018_AFF_2026-07-09.md` - FR-018 Affiliate Platform / AFF-side design-layout verification appended to the Admin + Affiliate report; all 9 AFF screens have layout coverage, with AFF verdict `🟡 PARTIAL` and no FAIL screens.
 - **2026-07-09**: `DESIGN_LAYOUT_VERIFICATION_FR018_ADMIN_2026-07-09.md` - FR-018 Admin Web design-layout verification; all 12 admin screens have layout coverage, with overall verdict `🔴 BLOCKED` due to critical action routing, confirmation-gate, missing-field, and failed-state parity gaps.
@@ -922,6 +1146,29 @@ This folder contains documentation update reports and verification logs for the 
 - **2025-10-28**: `MODULE_RESTRUCTURE_2025-10-28.md` - Provider Platform modules
 
 ### Functional Requirements
+
+- **2026-10-16**: [MTG002_QUOTE_MODEL_ALIGNMENT_2026-10-16.md](2026-10-16/MTG002_QUOTE_MODEL_ALIGNMENT_2026-10-16.md) - MTG-002 quote model alignment: AcceptanceEvent and immutable snapshot, fixed slot hold with appointment at first payment, Payment Window Expired and admin revive, provider-fault transfer, versioned currency-free packages, promotion lifecycle, FR-030 event registry, system docs synced; 2026-10-18 final audit corrections (admin replacement quote, admin-only cancellation, admin intervention screens, aftercare reassignment, promotion tables)
+- **2026-10-15**: [FR015_EIGHTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_EIGHTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.15 → v1.16 eighth verification fixes; FR-003 v2.8, FR-020 v2.6, FR-029 v1.10, FR-030 v1.11, FR-032 v1.9 via five new CRs (closure notifications, Suspended-provider commission edits, password-set distribution gate); system data schema v1.7.0
+- **2026-10-15**: [FR015_SEVENTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_SEVENTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.14 → v1.15 seventh verification fixes; FR-009 v1.5 (proposed) global provider email identity rule (CR-FR009-20261015-02)
+- **2026-10-15**: [FR015_SIXTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_SIXTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.13 → v1.14 sixth verification pass fixes; FR-032 v1.7 → v1.8, FR-020 v2.4 → v2.5, FR-030 v1.9 → v1.10 via CR-FR032-20261015-02, CR-FR020-20261015-01, CR-FR030-20261015-01; FR-009 seat-request alignment; system data schema v1.5.0
+- **2026-10-15**: [FR015_FIFTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_FIFTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.12 → v1.13 fifth verification pass fixes; FR-009 v1.4 (proposed), FR-017 v2.10, and FR-026 v1.11 through CR-FR009-20261015-01, CR-FR017-20261015-01, CR-FR026-20261015-01; system data schema v1.4.0
+- **2026-10-15**: [FR015_FOURTH_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_FOURTH_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.11 → v1.12 fourth verification pass fixes; FR-029 v1.8 → v1.9 through CR-FR029-20261015-01 (single-provider scope split, one pending scheduled configuration); FR-032 v1.7 clarification; system data schema v1.3.0
+- **2026-10-15**: [FR015_VERIFICATION_FIXES_2026-10-15.md](2026-10-15/FR015_VERIFICATION_FIXES_2026-10-15.md) - FR-015 v1.10 → v1.11 third verification pass fixes; FR-032 v1.5 → v1.6 through CR-FR032-20261015-01 (Commission & Payout panel, account-status banner)
+- **2026-10-14**: [FR015_VERIFICATION_ALIGNMENT_2026-10-14.md](2026-10-14/FR015_VERIFICATION_ALIGNMENT_2026-10-14.md) - FR-015 v1.8 → v1.9 → v1.10 approved verification fixes (two passes; v1.10 adds Flat Rate currency, scheduled status changes, featured P2) with Change Requests CR-FR029/FR003/FR004/FR010/FR011/FR016/FR020-20261014-01 for the Flat Rate commission model and the suspension/deactivation cascade
+- **2026-10-14**: [FR014_VERIFICATION_FIXES_2026-10-14.md](2026-10-14/FR014_VERIFICATION_FIXES_2026-10-14.md) - FR-014 v3.11 → v3.12 approved verification fixes (Issues 1–9); system PRD FR-014 section synced. No Change Request; implementation reconciliation pending.
+- **2026-10-13**: [FR007_ACCEPTED_SUBQUOTE_PAYMENT_BILLING_ALIGNMENT_2026-10-13.md](2026-10-13/FR007_ACCEPTED_SUBQUOTE_PAYMENT_BILLING_ALIGNMENT_2026-10-13.md) - FR-007 v1.5 → v1.6 through approved CR-FR007-20261013-01; FR-017 v2.6 → v2.7 normal clarification only. Documentation approval is separate from implementation reconciliation and consolidated verification.
+
+- **2026-10-13**: [FR015_PROVIDER_LIFECYCLE_SUBQUOTE_ALIGNMENT_2026-10-13.md](2026-10-13/FR015_PROVIDER_LIFECYCLE_SUBQUOTE_ALIGNMENT_2026-10-13.md) - FR-015 v1.7 → v1.8 through approved CR-FR015-20261013-01; provider lifecycle/support and accepted-selection/commission/counting handoffs, with related-FR and implementation reconciliation still required.
+- **2026-10-13**: [FR014_VERIFICATION_FIXES_2026-10-13.md](2026-10-13/FR014_VERIFICATION_FIXES_2026-10-13.md) - FR-014 v3.8–v3.10 and FR-026 v1.9–v1.10 approved verification fixes; CR-FR014-20261007-01 amended and CR-FR026-20261013-01 created and amended; `inquiry.ttfq_sla_breached` added to FR-030/FR-020. v3.11 adds `analytics.export_ready` to FR-030 v1.8/FR-020 v2.3 and defines `inquiry_providers.distributed_at` in FR-003 v2.6. v3.10 adds CR-FR014-20261013-02 (Report History UI, accessibility rules).
+- **2026-10-07**: [FR014_PARENT_QUOTE_SUBQUOTE_ANALYTICS_2026-10-07.md](2026-10-07/FR014_PARENT_QUOTE_SUBQUOTE_ANALYTICS_2026-10-07.md) - FR-014 v3.7 documentation-approved definitions; accepted-price distribution replaces price-bracket conversion, with implementation reconciliation and consolidated verification still pending.
+
+- **2026-09-29**: `FR031_GLOBAL_CUSTOM_PROVIDER_ROLES_2026-09-29.md` - Proposed provider role creation and cloning in FR-031 with FR-009 assignment alignment; prior approved baselines remain distinguishable.
+
+- **2026-09-16**: `FR005_DEPENDENCY_RECONCILIATION_2026-09-16.md` - FR-005 v2.2 dependency alignment for the Parent Quote hierarchy, atomic subquote acceptance, payment-window expiry, outcome privacy, subquote filtering, Patient ↔ Provider quote messaging, and configurable slot-hold duration.
+
+- **2026-09-10**: `FR004_DEPENDENCY_AND_VERIFICATION_FIXES_2026-09-10.md` - FR-004 v2.6, FR-019 v2.1, FR-024 v1.2, and FR-026 v1.8 approved alignment for immutable audit access, option/date promotions, Quote Option package provenance, quote configuration, and verification metadata.
+
+- **2026-09-10**: `FR004_FR010_VERIFICATION_RESOLUTION_2026-09-10.md` - FR-004 v2.5 and FR-010 v2.0 approved alignment for immutable Treatment relationships, accepted Quote Option consumption, canonical lifecycle terms, and mandatory verification coverage.
 
 - **2026-08-20**: `FR037_VERIFICATION_APPROVAL_2026-08-20.md` - FR-037 v2.0: changed the PRD from Draft to Verified & Approved and recorded Joachim Trung Tuan's Product Owner approval.
 - **2026-08-20**: `GOVERNANCE_TEMPLATE_OWNERSHIP_2026-08-20.md` - Aligned governance and human onboarding with project-owned templates, the Spec Kit compatibility link, and FR-local Change Requests for major requirement events.
@@ -1100,4 +1347,4 @@ Example: `DOCUMENTATION_UPDATES_2025-10-23.md`
 
 ---
 
-**Last Updated**: August 20, 2026 (governance alignment for template ownership)
+**Last Updated**: October 19, 2026 (testing hub consolidation into `testing/`, test strategy and templates, Phase 1–3 manual test plans v1.0 and Phase 4 skeleton, new `manual-test-bug-sync` skill, then consistency review fixes with a placeholder registry, open-issue decisions (system quote currency, cloud evidence links, PO question list) and 338 cases). Previously October 18, 2026 (MTG-002 end-of-session note and handoff; MTG-002 consolidated verification and final audit corrections, Q31–Q50: 21 PRDs and 21 CRs, new CR-FR011-20261016-01 and CR-FR016-20261016-01, schema v1.11.0, tech spec v1.4.0, system PRD v1.2.0; before that, Q1–Q30 decisions applied 2026-10-16 with schema v1.9.0 and new CR-FR032-20261016-01). Previously October 16, 2026 (MTG-002 quote model alignment across 18 FRs with 18 new CRs, FR-016 v1.7 minor, system PRD, system data schema v1.8.0 and system technical spec v1.2.0; FR-015 v1.16 eighth verification pass fixes with FR-003 v2.8, FR-020 v2.6, FR-029 v1.10, FR-030 v1.11, and FR-032 v1.9 via five new CRs, system data schema v1.7.0; FR-015 v1.15 seventh verification pass fixes with FR-009 v1.5 (proposed) global provider email identity rule via CR-FR009-20261015-02 and system data schema v1.6.0; FR-015 v1.14 sixth verification pass fixes with FR-032 v1.8, FR-020 v2.5, and FR-030 v1.10 via three new CRs, system data schema v1.5.0; FR-015 v1.13 fifth verification pass fixes with FR-009 v1.4, FR-017 v2.10, and FR-026 v1.11 via three new CRs, system data schema v1.4.0; FR-015 v1.12 fourth verification pass fixes, FR-029 v1.9 via CR-FR029-20261015-01, and FR-032 v1.7 clarification, system data schema v1.3.0; FR-015 v1.11 third verification pass fixes and FR-032 v1.6 via CR-FR032-20261015-01; FR-015 v1.10 second verification pass fixes and FR-017 v2.9 alignment; FR-015 v1.9 verification fixes and downstream cascade alignment across FR-003/004/005/006/010/011/016/020/029 with seven new CRs; FR-014 v3.12 fourth verification pass fixes and system PRD FR-014 sync; FR-014 v3.11 third verification pass with FR-003 v2.6, FR-030 v1.8, FR-020 v2.3; FR-007 v1.6 accepted-subquote payment context and FR-017 v2.7 billing clarification; FR-015 v1.8 provider lifecycle/subquote alignment; FR-014 v3.9–v3.10 verification fixes and CR-FR014-20261013-02, FR-026 v1.10 analytics configuration and recalculation rule, FR-030/FR-020 SLA-breach event, system PRD FR-014 sync, system data schema entities 35–37; retained FR-014 parent quote and accepted subquote analytics, FR-008 travel context, Release Phase 2–4 backlogs, and proposed FR-031 custom provider roles)

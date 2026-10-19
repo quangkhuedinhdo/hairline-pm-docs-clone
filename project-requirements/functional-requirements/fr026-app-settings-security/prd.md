@@ -3,8 +3,9 @@
 **Module**: A-09: System Settings & Configuration
 **Feature Branch**: `fr026-app-settings-security`
 **Created**: 2025-11-04
-**Status**: ✅ Verified & Approved
+**Status**: 🟡 Revised — Pending Consolidated Verification
 **Source**: FR-026 from system-prd.md, Client transcription (Hairline-AdminPlatformPart2.txt)
+**Change Request**: [CR-FR026-20261016-01 — MTG-002 quote model alignment](change-request-2026-10-16-mtg002-quote-model-alignment.md)
 
 ---
 
@@ -14,7 +15,7 @@ The App Settings & Security Policies module provides a centralized, audited, and
 
 **Problem**: Currently, settings are scattered across different modules, making it difficult to maintain consistency, audit changes, or roll back problematic configurations. Security policies like authentication throttling and OTP expiry are hardcoded, preventing operational flexibility.
 
-**Solution**: A unified admin interface where authorized administrators can view, create, update, and version settings within clearly defined groups (Authentication & Security, App Data Lists, Notifications). All changes require a reason and are fully auditable (who/when/old value/new value).
+**Solution**: A unified admin interface where authorized administrators can view, create, update, and version settings within clearly defined groups (Authentication & Security, App Data, Notifications, Analytics). All changes require a reason and are fully auditable (who/when/old value/new value).
 
 **Value Delivered**:
 
@@ -31,8 +32,11 @@ The App Settings & Security Policies module provides a centralized, audited, and
 ### Multi-Tenant Architecture
 
 - **Patient Platform (P-01)**: Consumes authentication policies, OTP configurations, country/calling code lists, discovery question options, inquiry cancellation reason options, and account deletion reason options
-- **Provider Platform (PR-06)**: Indirectly consumes centrally managed lists for profile settings
+- **Provider Platform (PR-06 and PR-02)**: Consumes centrally managed profile lists and the versioned Quote Configuration (quote currency, quote expiry window, and quote-expiring-soon lead time)
+- **Quote Acceptance and Booking (FR-005 and FR-006)**: Consume the versioned slot-hold duration and the hold-expiring-soon reminder lead time from the Quote Configuration
 - **Admin Platform (A-09)**: Primary interface for viewing, editing, and versioning all settings
+- **Admin Platform (A-02)**: FR-015 provider creation (Screen 2 Step 2) and provider profile editing (Screen 3 Tab 1) consume the centrally managed Provider Specialties list
+- **Analytics (PR-05 and A-08)**: FR-014 provider and admin analytics consume the versioned Analytics Configuration (SLA target, engagement thresholds, outlier threshold, benchmark refresh frequency, optional commission target)
 - **Shared Services (S-03)**: Notification Service consumes OTP email templates for delivery
 
 ### Multi-Tenant Breakdown
@@ -45,11 +49,12 @@ The App Settings & Security Policies module provides a centralized, audited, and
 - Discovery questions ("How did you find us?") display options from centralized list
 - Changes to settings propagate to patient app within 1 minute
 
-**Provider Platform (PR-06 & PR-01)**:
+**Provider Platform (PR-06, PR-01 & PR-02)**:
 
 - Provider staff management (PR-06) indirectly uses centrally managed lists
 - Authentication throttling (PR-01) applies to provider login attempts
 - OTP parameters (PR-01) apply to provider email verification flows
+- Quote creation (PR-02) consumes the quote currency, quote expiry window, and quote-expiring-soon lead time from one configuration version; FR-004 copies the currency and expiry window read-only onto each quote at first send
 
 **Admin Platform (A-09)**:
 
@@ -59,6 +64,11 @@ The App Settings & Security Policies module provides a centralized, audited, and
 - Rollback capability is not supported; admins make forward-only changes
 - Role-based access restricts sensitive settings to authorized admins only
 - Sensitive values (API keys, secrets) are masked in UI and logs
+
+**Admin Platform (A-02)**:
+
+- FR-015 provider creation wizard (Screen 2 Step 2) populates the required Specialty select from the active Provider Specialties list
+- FR-015 provider profile editing (Screen 3 Tab 1) uses the same list; a provider's stored specialty still displays after that value is deactivated
 
 **Shared Services (S-03)**:
 
@@ -90,8 +100,9 @@ The App Settings & Security Policies module provides a centralized, audited, and
 **Admin-Initiated**:
 
 - Admin navigates to Settings → Authentication & Security to edit throttling policies
-- Admin navigates to Settings → App Data to manage country lists, discovery questions, inquiry cancellation reasons, or account deletion reasons
+- Admin navigates to Settings → App Data to manage country lists, discovery questions, inquiry cancellation reasons, account deletion reasons, provider specialties, inquiry configuration, or quote configuration
 - Admin navigates to Settings → Notifications to edit OTP email templates
+- Admin navigates to Settings → Analytics to edit analytics configuration consumed by FR-014
 
 **System-Triggered**:
 
@@ -221,6 +232,59 @@ The App Settings & Security Policies module provides a centralized, audited, and
 
 - **Outcome**: Patients see updated account deletion reason options when requesting account deletion
 
+**A6: Admin Configures Inquiry Treatment Areas and Lead Time**:
+
+- **Trigger**: Product team needs to add or retire an inquiry treatment-area choice, change its image/icon, or adjust how many days patients must wait before a preferred treatment date.
+- **Steps**:
+  1. Admin navigates to Settings → App Data → Inquiry Configuration.
+  2. Admin adds, edits, reorders, activates, or deactivates a treatment-area option. Each option has a label and an image/icon asset.
+  3. Admin sets Minimum Inquiry Lead Time in whole days. The current default is 3 days.
+  4. Admin clicks Save and supplies the required change reason.
+  5. System validates that active option labels are unique, an image/icon asset is present, and lead time is between 0 and 730 days.
+  6. System versions and audits the change, invalidates configuration caches, and exposes the active catalog and lead-time value through the patient configuration API.
+  7. New inquiry sessions receive the new configuration within one minute; submitted inquiries retain their historical treatment-area snapshot.
+
+- **Outcome**: Admin can change future inquiry options and the date blocked window without a code change. Implementation must confirm the patient client consumes the dynamic response before treating ordinary configuration changes as release-free.
+
+**A7: Admin Configures Quote and Slot-Hold Settings**:
+
+- **Trigger**: Product team needs to change the quote expiry window, the quote-expiring-soon lead time, the slot-hold duration, or the hold-expiring-soon reminder lead time.
+- **Steps**:
+  1. Admin navigates to Settings → App Data → Quote Configuration.
+  2. Admin sees the quote currency as a read-only value. It is the FR-029 Default Currency and can be changed only in FR-029 Screen 6. Each Default Currency change in FR-029 creates a new Quote Configuration version.
+  3. Admin enters whole-number hours for the quote expiry window (default 48), the quote-expiring-soon lead time (default 12), the slot-hold duration (default 48), and the hold-expiring-soon lead time (default 12).
+  4. Admin saves with a mandatory change reason.
+  5. System checks that the quote expiry window is 24 to 336 hours, the slot-hold duration is 24 to 168 hours, and each lead time is at least 1 hour and at most half of the window it warns about, then versions and audits the change, invalidates the configuration cache, and exposes the active values and configuration version through the authenticated Settings API.
+  6. When a provider first sends a parent Quote, FR-004 copies the quote currency and the quote expiry window read-only onto it and records the configuration version used. Drafts carry neither value. Later setting changes never affect a sent quote, and there is no per-quote extension.
+  7. When a patient accepts a subquote, FR-005 and FR-006 place one fixed slot hold for the slot-hold duration in effect at acceptance. Later setting changes never alter an existing hold, and payment failure never extends or restarts it.
+- **Outcome**: Quotes and slot holds use one auditable configuration source without retroactively changing sent quotes or existing holds.
+
+**A8: Admin Configures Analytics Parameters**:
+
+- **Trigger**: Product or operations team needs to change a threshold or target used by FR-014 analytics.
+- **Steps**:
+  1. Admin navigates to Settings → Analytics → Analytics Configuration.
+  2. Admin edits one or more values: TTFQ SLA target (minutes), At Risk and Dormant thresholds (days), price outlier threshold (%), benchmark refresh frequency, and optional target monthly commission.
+  3. System validates the values (for example, Dormant must be greater than At Risk) and blocks save on error.
+  4. Admin saves with a mandatory change reason.
+  5. System versions and audits the change, invalidates the configuration cache, and exposes the active values through the authenticated Settings API.
+  6. FR-014 applies the active version at its next calculation or benchmark refresh and records the configuration version used with its aggregates.
+- **Outcome**: Analytics thresholds and targets change without a code release, from one auditable source. Exports and scheduled-export files that were already generated are not rewritten.
+
+**A9: Admin Edits Provider Specialties**:
+
+- **Trigger**: Admin needs to add, rename, reorder, or retire a specialty value offered when creating or editing a provider (FR-015)
+- **Steps**:
+  1. Admin navigates to Settings → App Data → Provider Specialties
+  2. System displays the current list: "Hair Transplant Surgeon", "Dermatologist", "Trichologist", "Plastic Surgeon", "Other", with active status and display order
+  3. Admin clicks "Add Specialty" and enters: "Hair Restoration Physician"; or renames, reorders (drag-and-drop), or deactivates an existing value
+  4. Admin clicks "Save"
+  5. System validates that names are unique (case-insensitive), at most 100 characters, and that at least one value remains active
+  6. System opens a modal titled "Change Reason" requiring admin to enter an explanation (10-500 chars). Admin enters: "Adding specialty requested by provider onboarding team" and confirms.
+  7. System versions the list (v1.0 → v1.1), creates an audit log entry, and invalidates the settings cache
+  8. Within 1 minute, the FR-015 Specialty select (Screen 2 Step 2, Screen 3 Tab 1) shows only active values in display order; renamed values show the new name everywhere, including on existing provider profiles
+- **Outcome**: Admin controls the specialty values offered for new and edited providers without a code release. Deactivated values are no longer selectable, but providers that already hold them keep and still display them.
+
 **B1: Admin Attempts Invalid Configuration**:
 
 - **Trigger**: Admin enters out-of-range value for authentication throttling
@@ -266,14 +330,14 @@ The App Settings & Security Policies module provides a centralized, audited, and
 **Business Rules**:
 
 - Only admins with "Settings Management" permission can access this screen
-- Setting groups are organized into sections: Authentication & Security, App Data, Notifications
+- Setting groups are organized into sections: Authentication & Security, App Data, Notifications, Analytics
 - "Edit" button disabled for setting groups marked as "Fixed in Codebase"
 - "View History" always available (read-only)
 
 **Notes**:
 
 - Use card-based layout for setting groups
-- Color-code groups by category (blue: security, green: data, yellow: notifications)
+- Color-code groups by category (blue: security, green: data, yellow: notifications, purple: analytics)
 - Display warning icon if setting change pending propagation
 
 **Setting Groups (detailed)**:
@@ -287,10 +351,15 @@ The App Settings & Security Policies module provides a centralized, audited, and
   - Discovery Questions (answer options, order, active)
   - Inquiry Cancellation Reasons (reason label, order, requires_explanation, active)
   - Account Deletion Reasons (reason label, requires_explanation, display order, active)
+  - Provider Specialties (specialty name, display order, active)
+  - Inquiry Configuration (treatment-area options with image/icon assets, and minimum inquiry lead time)
+  - Quote Configuration (quote currency shown read-only from FR-029, quote expiry window, quote-expiring-soon lead time, slot-hold duration, hold-expiring-soon lead time)
 - Notifications
   - OTP Email Templates
     - Verification Email
     - Password Reset Email
+- Analytics
+  - Analytics Configuration (TTFQ SLA target, engagement thresholds, price outlier threshold, benchmark refresh frequency, optional target monthly commission)
 
 ---
 
@@ -528,6 +597,105 @@ The system enforces BOTH constraints simultaneously (whichever is more restricti
 
 ---
 
+### Screen 5c: Inquiry Configuration Manager
+
+**Purpose**: Allow Admin to manage treatment-area options displayed at inquiry creation and the blocked window before a patient may select a preferred treatment date.
+
+| Field Name | Type | Required | Description | Validation Rules |
+| --- | --- | --- | --- | --- |
+| Treatment Area Label | text | Yes | Patient-facing option label | Unique among active options; max 100 chars |
+| Image/Icon Asset | media URL | Yes | Image or icon returned with the option | Must resolve to an approved S-05-managed asset |
+| Display Order | number | Yes | Display sequence in the inquiry form | Unique integer order; drag-and-drop supported |
+| Active | checkbox | Yes | Whether the option is selectable for new inquiries | Default true; cannot deactivate the final active option; deactivation preserves historical records |
+| Minimum Inquiry Lead Time | number | Yes | Whole days blocked before a patient may select a preferred range | Integer 0-730; default 3 |
+
+**Business Rules**:
+
+- Admin may create, edit, reorder, activate, or deactivate treatment-area options. Options referenced by an inquiry cannot be deleted.
+- System MUST retain at least one active treatment-area option. A deactivation that would leave no active option is rejected.
+- The patient configuration API returns active options in display order with `id`, `label`, and `image_or_icon_url`, plus `minimum_inquiry_lead_days`.
+- The API must not return inactive options for new inquiries. Historical inquiry views use the saved option snapshot.
+- Minimum Inquiry Lead Time applies to both the calendar's disabled-date calculation and backend inquiry submission validation.
+- Saving either setting requires a change reason, version increment, immutable audit entry, and immediate cache invalidation.
+
+---
+
+### Screen 5d: Quote Configuration Manager
+
+**Purpose**: Own the quote expiry window, the quote-expiring-soon lead time, the slot-hold duration, and the hold-expiring-soon reminder lead time, and show the quote currency that FR-004 copies onto each parent Quote at first send.
+
+| Field Name | Type | Required | Description | Validation Rules |
+| --- | --- | --- | --- | --- |
+| Quote Currency | read-only label | Yes | ISO 4217 currency copied read-only onto each parent Quote at first send. It is the FR-029 Default Currency (FR-029 Screen 6), not a separate setting. Consumer: FR-004 | Changed only in FR-029; never provider-editable |
+| Quote Expiry Window | number | Yes | Whole hours copied read-only onto each parent Quote at first send to compute its expiry timestamp. Consumer: FR-004 | Whole hours from 24 to 336; default 48 hours |
+| Quote Expiring Soon Lead Time | number | Yes | Whole hours before a sent quote expires at which FR-004 emits `quote.expiring_soon` (delivered through FR-030 and FR-020). Consumer: FR-004 | Whole hours from 1 up to half of the Quote Expiry Window; default 12 hours |
+| Slot-Hold Duration | number | Yes | Whole hours of the one fixed, exclusive slot hold placed at subquote acceptance, and of the new hold placed by an FR-006 admin revive. Consumers: FR-005 and FR-006 | Whole hours from 24 to 168; default 48 hours |
+| Hold Expiring Soon Lead Time | number | Yes | Whole hours before a slot hold expires at which the patient receives the "hold expiring soon" reminder (triggered by FR-006, delivered through FR-030 and FR-020). Consumer: FR-006 | Whole hours from 1 up to half of the Slot-Hold Duration; default 12 hours |
+
+**Business Rules**:
+
+- The quote currency is the FR-029 Default Currency. FR-026 keeps no second currency setting. When the FR-029 Default Currency changes, the Quote Configuration records a new version so one version number identifies every value FR-004 copies.
+- FR-004 copies the quote currency and the quote expiry window read-only onto each parent Quote at first send and records the configuration version it used. Drafts carry neither value. Later changes never affect a sent quote, and no per-quote extension exists.
+- The slot hold starts at subquote acceptance. Each hold uses the slot-hold duration in effect when it is placed; later changes never alter an existing hold. Payment failure or retry never extends or restarts a hold.
+- Lead-time changes apply only to reminders that have not yet been sent.
+- Saving requires a change reason, version increment, immutable audit entry, and immediate cache invalidation.
+- Currency conversion and exchange-rate locking remain owned by FR-029 and occur at acceptance; this screen does not manage conversion rates.
+
+---
+
+### Screen 5e: Analytics Configuration Manager
+
+**Purpose**: Own the platform-wide thresholds and targets consumed by FR-014 provider and admin analytics.
+
+| Field Name | Type | Required | Description | Validation Rules |
+| --- | --- | --- | --- | --- |
+| TTFQ SLA Target | number | Yes | Platform-wide time-to-first-quote target in minutes, used for TTFQ colour coding and benchmark charts | Positive whole number of minutes; default 120 |
+| At Risk Threshold | number | Yes | Day boundary after which a provider without qualifying activity is At Risk; FR-014 defines what counts as activity | Positive whole number of days; default 7 |
+| Dormant Threshold | number | Yes | Day boundary after which a provider without qualifying activity is Dormant; FR-014 defines what counts as activity | Positive whole number of days; must be greater than At Risk Threshold; default 30 |
+| Price Outlier Threshold | number | Yes | Percentage deviation from the treatment median that flags a price outlier (FR-014 Screen 13) | Whole number from 1 to 100; default 30 |
+| Benchmark Refresh Frequency | select | Yes | How often FR-014 recomputes provider benchmarks | Daily, Weekly, or Monthly; default Weekly |
+| Target Monthly Commission | currency amount | No | Reference line on FR-014 Screen 12 Widget 2 | Optional; positive amount in the reporting currency of FR-014 admin financial analytics; blank by default |
+
+**Business Rules**:
+
+- Saving requires a change reason, version increment, immutable audit entry, and immediate cache invalidation.
+- Recalculation rule: live dashboards and benchmarks always use the configuration version active when they are calculated, including for past periods shown on screen. After a change, the next calculation recolours and re-buckets every period in view (for example, last month's TTFQ tiers after an SLA change); past periods are not frozen at older values. Each aggregate records the configuration version used. PDF/CSV exports and scheduled-export files already generated are never rewritten; they keep the values and version from their generation time.
+- When Target Monthly Commission is blank, FR-014 hides the reference line; clearing a previously set value hides it again.
+- Per-provider SLA overrides are out of scope; all providers are measured against the same platform SLA target.
+
+---
+
+### Screen 5f: Provider Specialties Manager
+
+**Purpose**: Centralized management of the specialty values offered in the FR-015 provider Specialty select (Screen 2 Step 2 provider creation wizard, Screen 3 Tab 1 provider profile editing)
+
+**Data Fields**:
+
+| Field Name     | Type     | Required | Description                                                | Validation Rules                                   |
+| -------------- | -------- | -------- | ---------------------------------------------------------- | -------------------------------------------------- |
+| Specialty Name | text     | Yes      | Display text for the specialty                             | Max 100 chars, unique (case-insensitive)           |
+| Display Order  | number   | No       | Sort priority (lower = displayed first)                    | Integer, default: 999                              |
+| Active         | checkbox | Yes      | Whether the value is selectable in FR-015 Specialty select | Default: true; at least one value must stay active |
+
+**Business Rules**:
+
+- Admin can add, rename, reorder, and deactivate values; hard delete is not supported (deactivate instead)
+- At least one active value must exist at all times; deactivating the final active value is blocked with a validation message
+- Deactivated values disappear from the FR-015 Specialty select for new selections; providers that already hold a deactivated value keep it, and it still displays on their profile (including in Screen 3 Tab 1 as the current value) until an admin changes it
+- Providers reference the specialty by its stable ID, so a rename applies to the display everywhere, including existing provider profiles
+- Saving requires a change reason, version increment, immutable audit entry (old and new values), and immediate cache invalidation
+- Changes propagate to FR-015 within 1 minute
+- Drag-and-drop reordering updates Display Order field
+
+**Notes**:
+
+- Provide drag-and-drop reordering UI (same pattern as Inquiry Cancellation Reasons)
+- Show how many providers hold each value; warn before deactivating a value that providers currently hold
+- On save, a modal prompts for the mandatory change reason (10-500 chars)
+- Consumer: FR-015 / A-02 Screen 2 Step 2 and Screen 3 Tab 1 read the active list to populate the Specialty select
+
+---
+
 ### Screen 6: OTP Email Template Editor
 
 **Purpose**: Edit email templates for OTP verification and password reset emails
@@ -626,6 +794,10 @@ The system enforces BOTH constraints simultaneously (whichever is more restricti
 - Discovery questions: add, edit, deactivate answer options
 - Inquiry cancellation reasons: add, edit, reorder, deactivate reason options (FR-003 consumer)
 - Account deletion reasons: add, edit, reorder, deactivate reason options (FR-001 Screen 16 consumer)
+- Provider specialties: add, rename, reorder, deactivate specialty values (FR-015 Screen 2 Step 2 and Screen 3 Tab 1 consumer)
+- Inquiry configuration: add, edit, reorder, activate, or deactivate treatment-area options and set the minimum inquiry lead time (FR-003 consumer)
+- Quote configuration: set the quote expiry window and the quote-expiring-soon lead time (FR-004 consumer), and the slot-hold duration and the hold-expiring-soon lead time (FR-005 and FR-006 consumers); the quote currency is shown read-only because it is the FR-029 Default Currency
+- Analytics configuration: TTFQ SLA target, At Risk and Dormant thresholds, price outlier threshold, benchmark refresh frequency, and optional target monthly commission (FR-014 consumer)
 - OTP email templates: subject line, HTML body, plain text body
 
 **Fixed in Codebase (Not Editable)**:
@@ -643,6 +815,7 @@ The system enforces BOTH constraints simultaneously (whichever is more restricti
 - Admin can deactivate discovery options but must maintain at least 2 active options
 - Admin can deactivate cancellation reasons but must maintain at least 2 active reasons; "Other" reason cannot be deactivated
 - Admin can deactivate account deletion reasons but must maintain at least 2 active reasons; "Others" reason cannot be deactivated
+- Admin can deactivate provider specialties but cannot delete them and must maintain at least 1 active value; providers holding a deactivated value keep it and it still displays
 - Admin can edit email templates but must include required variables ({code} for OTP templates)
 
 ---
@@ -695,20 +868,36 @@ The system enforces BOTH constraints simultaneously (whichever is more restricti
   - **Integration point**: P-01 polls Settings API every 60 seconds to retrieve latest configurations; applies to login flows, OTP verification, profile forms
 
 - **FR-003 / Module P-02: Quote Request & Management**
-  - **Why needed**: P-02 consumes inquiry cancellation reason options for the patient cancellation modal (Screen 11)
-  - **Integration point**: P-02 polls Settings API to retrieve active cancellation reasons; applies to inquiry cancellation flow (Workflow 5)
+  - **Why needed**: P-02 consumes inquiry cancellation reason options for the patient cancellation modal (Screen 8a), plus active inquiry treatment-area options and the minimum inquiry lead time for inquiry creation.
+  - **Integration point**: P-02 retrieves active cancellation reasons for Workflow 5 and retrieves the active ordered treatment-area catalog with `minimum_inquiry_lead_days` for Screen 1, Screen 5, and backend submission validation. Submitted inquiries retain their treatment-area snapshot.
+
+- **FR-004 / Module PR-02: Inquiry & Quote Management**
+  - **Why needed**: FR-004 consumes the quote currency, the quote expiry window, and the quote-expiring-soon lead time.
+  - **Integration point**: At first send, FR-004 retrieves one versioned configuration response, copies the ISO 4217 currency and the expiry window read-only onto the parent Quote, computes `expiresAt` from the send time, and records the configuration version. FR-004 emits `quote.expiring_soon` at the configured lead time. Sent quotes do not change when configuration is updated.
+
+- **FR-005 and FR-006 / Quote Acceptance and Booking**
+  - **Why needed**: FR-005 places the slot hold at acceptance and FR-006 manages it; both consume the slot-hold duration. FR-006 also consumes the hold-expiring-soon lead time for the patient reminder.
+  - **Integration point**: Acceptance and an FR-006 admin revive read the active slot-hold duration when the hold is placed. FR-006 has no separate hold setting.
+
+- **FR-029 / Payment System Configuration**
+  - **Why needed**: The FR-029 Default Currency is the quote currency shown in the Quote Configuration.
+  - **Integration point**: The Settings API returns the FR-029 Default Currency as the quote currency; a change in FR-029 records a new Quote Configuration version.
+
+- **FR-014 / Modules PR-05 and A-08: Provider Analytics & Reporting**
+  - **Why needed**: FR-014 consumes the versioned Analytics Configuration for TTFQ SLA colour coding, provider engagement status, price outlier detection, benchmark refresh cadence, and the optional commission reference line.
+  - **Integration point**: Analytics calculations and benchmark jobs retrieve one configuration version from the Settings API and record that version with the aggregates they produce.
 
 - **FR-009 / Module PR-01: Auth & Team Management**
   - **Why needed**: PR-01 consumes authentication throttling and OTP configuration for provider login and email verification
   - **Integration point**: PR-01 polls Settings API every 60 seconds to retrieve authentication policies
 
 - **FR-020 / Module S-03: Notification Service**
-  - **Why needed**: S-03 consumes OTP email templates for verification and password reset emails
-  - **Integration point**: S-03 retrieves template by name via Settings API when generating OTP email; caches template for 1 minute
+  - **Why needed**: S-03 consumes OTP email templates for verification and password reset emails, and the `inquiry.ttfq_sla_breached` alert uses the Analytics Configuration TTFQ SLA target
+  - **Integration point**: S-03 retrieves template by name via Settings API when generating OTP email; caches template for 1 minute. Quote-expiring-soon and hold-expiring-soon reminders are delivered through FR-030 and FR-020 at the lead times set in the Quote Configuration
 
 - **Module S-05: Media Storage Service**
-  - **Why needed**: S-05 stores country flag assets (SVG/PNG) uploaded via Country Manager UI
-  - **Integration point**: Settings UI uploads flag file to S-05 API, receives URL, and stores URL in country settings
+  - **Why needed**: S-05 stores country flag assets and treatment-area image/icon assets uploaded through the Settings UI.
+  - **Integration point**: Settings UI uploads an approved asset to the S-05 API, receives its URL, and stores that URL in the applicable country or inquiry treatment-area configuration.
 
 - **Admin Authentication & Authorization Module**
   - **Why needed**: Cannot restrict access to Settings Management UI without authentication and role-based permissions
@@ -727,6 +916,10 @@ The following modules consume FR-026 infrastructure. They are listed here for tr
 - **FR-011 / Module A-03: Aftercare Team Management**
   - **Relationship**: FR-026 provides the settings infrastructure; FR-011 implements aftercare milestone template management within that infrastructure
   - **Integration point**: Providers select from admin-created aftercare templates; templates are managed via the A-09 settings surface defined in FR-026
+
+- **FR-015 / Module A-02: Provider Management**
+  - **Relationship**: FR-026 owns the Provider Specialties list; FR-015 consumes it
+  - **Integration point**: FR-015 Screen 2 Step 2 and Screen 3 Tab 1 populate the required Specialty select from the active list and store the selected specialty ID on the provider
 
 ### External Dependencies (APIs, Services)
 
@@ -867,10 +1060,29 @@ The following modules consume FR-026 infrastructure. They are listed here for tr
   - Initial Option 7: "The app is difficult to use" (Order: 7, Requires Explanation: No)
   - Initial Option 8: "I'm taking a break and may return later" (Order: 8, Requires Explanation: No)
   - Initial Option 9: "Others" (Order: 9, Requires Explanation: Yes, FIXED — cannot be deactivated)
+- **Provider Specialties**:
+  - Initial Value 1: "Hair Transplant Surgeon" (Order: 1)
+  - Initial Value 2: "Dermatologist" (Order: 2)
+  - Initial Value 3: "Trichologist" (Order: 3)
+  - Initial Value 4: "Plastic Surgeon" (Order: 4)
+  - Initial Value 5: "Other" (Order: 5)
 - **Countries**:
   - Minimum initial set: Turkey (TR, +90), UK (GB, +44), USA (US, +1), Germany (DE, +49)
 - **Templates**:
   - Default "Verification Email" and "Password Reset Email" templates MUST be seeded with standard branding and variables
+- **Quote Configuration**:
+  - Quote Currency: the FR-029 Default Currency (not seeded as a separate value)
+  - Quote Expiry Window: 48 hours
+  - Quote Expiring Soon Lead Time: 12 hours
+  - Slot-Hold Duration: 48 hours
+  - Hold Expiring Soon Lead Time: 12 hours
+- **Analytics Configuration**:
+  - TTFQ SLA Target: 120 minutes
+  - At Risk Threshold: 7 days
+  - Dormant Threshold: 30 days
+  - Price Outlier Threshold: 30%
+  - Benchmark Refresh Frequency: Weekly
+  - Target Monthly Commission: not set (reference line hidden)
 
 ---
 
@@ -985,6 +1197,55 @@ Compliance officer requests complete audit trail of all authentication policy ch
 
 ---
 
+### User Story 7 - Manage Inquiry Configuration (Priority: P1)
+
+Admin needs to manage the treatment-area choices and minimum inquiry lead time without a code deployment, while keeping the patient inquiry flow and submission validation aligned.
+
+**Why this priority**: Inquiry creation depends on this configuration; the patient calendar and backend validation must use the same current value.
+
+**Independent Test**: Can be fully tested by: (1) Admin creates or updates a treatment-area option with an approved S-05 asset, sets the lead time, and submits the change reason; (2) Verify versioning, audit entry, and cache invalidation; (3) Retrieve the active configuration as a patient; (4) submit an inactive option and an early date; (5) confirm both are rejected and historical inquiries retain their saved snapshot.
+
+**Acceptance Scenarios**:
+
+1. **Given** admin is logged in with the Settings Manager role, **When** admin opens Settings → App Data → Inquiry Configuration, **Then** the system displays treatment-area options in display order and the current minimum inquiry lead time.
+2. **Given** admin enters a unique label, approved S-05 image/icon URL, display order, active state, and a whole-day lead time from 0 through 730, **When** admin saves with a change reason, **Then** the system versions and audits the update and invalidates the configuration cache.
+3. **Given** the configuration change was saved, **When** the patient client retrieves its configuration, **Then** it receives only active ordered options with IDs, labels, image/icon URLs, and `minimum_inquiry_lead_days` together.
+4. **Given** an option has become inactive or a selected date is earlier than the configured threshold, **When** the patient submits an inquiry, **Then** backend validation rejects the submission.
+5. **Given** an inquiry was submitted with an active treatment-area option, **When** that option is later changed or deactivated, **Then** the historical inquiry retains its original treatment-area snapshot.
+
+---
+
+### User Story 8 - Manage Quote Configuration (Priority: P1)
+
+Admin needs one versioned source for the quote expiry window, the slot-hold duration, and their reminder lead times, with the quote currency taken from FR-029.
+
+**Independent Test**: Change the quote expiry window and the slot-hold duration with a reason; verify version/audit records and cache invalidation; send a new quote and confirm its currency, expiry, and recorded configuration version; confirm a quote sent earlier and a hold placed earlier are unchanged.
+
+**Acceptance Scenarios**:
+
+1. **Given** a quote expiry window of 24 to 336 hours, a slot-hold duration of 24 to 168 hours, and each lead time from 1 hour up to half of its window, **When** Admin saves with a reason, **Then** the system versions and audits the configuration and invalidates its cache.
+2. **Given** the new configuration is active, **When** a provider first sends a parent Quote, **Then** FR-004 copies the FR-029 Default Currency and the quote expiry window read-only onto it and records the configuration version; a draft carries neither value.
+3. **Given** a quote was sent before the change, **When** configuration changes, **Then** its currency and expiry remain unchanged.
+4. **Given** a slot hold was placed before the slot-hold duration changed, **When** the duration changes, **Then** that hold keeps its original end time and only new holds use the new duration.
+5. **Given** Admin enters a window outside its bounds, a lead time under 1 hour, or a lead time longer than half of its window, **When** Admin saves, **Then** the system blocks the save and shows a validation error.
+
+---
+
+### User Story 9 - Manage Analytics Configuration (Priority: P2)
+
+Admin needs one versioned source for the thresholds and targets used by FR-014 analytics.
+
+**Independent Test**: Change the SLA target and engagement thresholds with a reason; verify version/audit records and cache invalidation; confirm FR-014 uses the new values on its next calculation and records the configuration version; confirm a previously generated export is unchanged.
+
+**Acceptance Scenarios**:
+
+1. **Given** valid values, **When** Admin saves with a reason, **Then** the system versions and audits the configuration and invalidates its cache.
+2. **Given** Admin enters a Dormant Threshold that is not greater than the At Risk Threshold, **When** Admin saves, **Then** the system blocks the save and shows a validation error.
+3. **Given** Target Monthly Commission is blank, **When** FR-014 renders Screen 12 Widget 2, **Then** no reference line is shown; **Given** a target is set, **Then** the line appears at that value.
+4. **Given** an export was generated before the change, **When** configuration changes, **Then** that export file is not rewritten.
+
+---
+
 ### Edge Cases
 
 - What happens when **admin attempts to deactivate one of the last 2 active discovery question options**? System prevents deactivation and displays error: "At least 2 active options required. Cannot deactivate this option."
@@ -995,6 +1256,8 @@ Compliance officer requests complete audit trail of all authentication policy ch
 - What happens when **admin attempts to deactivate the "Other" cancellation reason**? System prevents deactivation and displays error: "'Other' is a fixed reason and cannot be deactivated."
 - What happens when **admin attempts to deactivate the "Others" deletion reason**? System prevents deactivation and displays error: '"Others" is a fixed reason and cannot be deactivated.'
 - What happens when **admin deactivates a cancellation reason while a patient is mid-cancellation flow**? Patient app uses cached reason list (up to 1 minute stale); if patient submits with a now-deactivated reason, system still accepts the submission (reason was valid at flow start). Next cancellation flow loads updated list.
+- What happens when **the Settings API is unavailable as a provider first sends a quote**? FR-004 blocks the send and keeps the quote as a draft; it never sends a quote with a guessed or stale currency or expiry. The provider can retry.
+- What happens when **admin changes the slot-hold duration while holds are active**? Existing holds keep their original end time; holds placed after the change use the new duration.
 - What occurs if **admin deletes country that active patients have selected in profile**? System prevents hard delete (soft delete only); patients who selected deleted country retain selection; country hidden from new users.
 
 ---
@@ -1020,6 +1283,12 @@ Compliance officer requests complete audit trail of all authentication policy ch
 - **REQ-026-012**: System MUST store centrally managed discovery question options: answer option, display order, active status
 - **REQ-026-012a**: System MUST store centrally managed inquiry cancellation reason options: reason label, requires_explanation flag, display order, active status. Consumer: FR-003 Screen 8a.
 - **REQ-026-012b**: System MUST store centrally managed account deletion reason options: reason label, requires_explanation flag, display order, active status. Consumer: FR-001 Screen 16.
+- **REQ-026-012c**: System MUST store centrally managed inquiry treatment-area options: stable option ID, label, image/icon asset URL, display order, and active status. Consumer: FR-003 Screen 1.
+- **REQ-026-012d**: System MUST store a versioned minimum inquiry lead time as a whole number of days from 0 through 730. Default: 3 days. Consumer: FR-003 Screen 5 and submission validation.
+- **REQ-026-012e**: System MUST prevent deactivation of the final active inquiry treatment-area option.
+- **REQ-026-012f**: System MUST store one versioned Quote Configuration containing the quote expiry window (whole hours from 24 to 336, default 48), the quote-expiring-soon lead time (whole hours from 1 up to half of the expiry window, default 12), the slot-hold duration (whole hours from 24 to 168, default 48), and the hold-expiring-soon lead time (whole hours from 1 up to half of the slot-hold duration, default 12). The quote currency MUST be the FR-029 Default Currency, not a separate setting, and each change to the FR-029 Default Currency MUST create a new Quote Configuration version so the version recorded on a quote identifies both the hours and the currency used. Consumers: FR-004 (currency, expiry window, quote-expiring-soon lead time), FR-005 and FR-006 (slot-hold duration), and FR-006 (hold-expiring-soon lead time).
+- **REQ-026-012g**: System MUST store one versioned Analytics Configuration containing TTFQ SLA target (positive whole minutes, default 120), At Risk threshold (whole days, default 7), Dormant threshold (whole days, greater than At Risk, default 30), price outlier threshold (whole percent 1-100, default 30), benchmark refresh frequency (Daily, Weekly, or Monthly; default Weekly), and optional target monthly commission (blank by default). Consumer: FR-014.
+- **REQ-026-012h**: System MUST store a centrally managed Provider Specialties list: stable specialty ID, specialty name (max 100 chars, unique case-insensitive), display order, active status; seeded with Hair Transplant Surgeon, Dermatologist, Trichologist, Plastic Surgeon, Other. Admins can add, rename, reorder, and deactivate values (no hard delete); at least one value MUST remain active; changes MUST be versioned and audit-logged. Deactivated values MUST be hidden from new selection while providers that hold them keep and still display them; renames MUST apply to display everywhere. Consumer: FR-015 Screen 2 Step 2 and Screen 3 Tab 1.
 - **REQ-026-013**: System MUST store OTP email templates: template name, subject line, HTML body, plain text body, version number
 
 ### Security & Privacy Requirements
@@ -1038,6 +1307,13 @@ Compliance officer requests complete audit trail of all authentication policy ch
 - **REQ-026-022**: Settings API MUST return JSON response with version number, setting values, and last modified timestamp
 - **REQ-026-023**: Settings API MUST support OAuth 2.0 authentication with "read:settings" or "write:settings" scopes
 - **REQ-026-024**: System MUST NOT expose a rollback API.
+- **REQ-026-025**: The patient configuration response MUST return active ordered treatment-area options and `minimum_inquiry_lead_days` together so the client calendar and backend validator use one configuration source.
+- **REQ-026-026**: The authenticated Settings API MUST return the quote currency, the quote expiry window, both lead times, the slot-hold duration, the configuration version, and the last-modified timestamp together, so FR-004 sends each parent Quote from one consistent configuration version and can record that version on the quote.
+- **REQ-026-027**: Quote Configuration changes MUST affect only quotes first sent after activation; the currency and expiry already copied onto a sent quote MUST remain unchanged, drafts MUST carry neither value, and no per-quote extension is allowed.
+- **REQ-026-028**: The authenticated Settings API MUST return all Analytics Configuration values with the configuration version and last-modified timestamp so FR-014 calculations use one consistent version and can record it with their aggregates.
+- **REQ-026-029**: Analytics Configuration changes MUST apply from FR-014's next calculation or benchmark refresh to every period then displayed (past periods are not frozen), and MUST NOT rewrite exports or scheduled-export files that were already generated.
+- **REQ-026-030**: Each slot hold MUST use the slot-hold duration in effect when the hold is placed (at subquote acceptance or an FR-006 admin revive); later changes MUST NOT alter an existing hold, and payment failure MUST NOT extend or restart a hold.
+- **REQ-026-031**: Changes to the quote-expiring-soon or hold-expiring-soon lead time MUST apply only to reminders not yet sent.
 
 ---
 
@@ -1071,9 +1347,29 @@ Compliance officer requests complete audit trail of all authentication policy ch
   - **Key attributes**: reason_id, reason_label, requires_explanation (boolean), display_order, active, usage_count, created_at, updated_at
   - **Relationships**: Referenced by FR-001 deletion request entity (deletionReason field stores selected reason_label at time of DSR submission)
 
+- **Entity 7a - Provider Specialty**: Centrally managed specialty value for provider records (FR-015)
+  - **Key attributes**: specialty_id, specialty_name, display_order, active, created_at, updated_at
+  - **Relationships**: Referenced by FR-015 provider records by specialty_id; never hard-deleted, so existing references always resolve to the current name
+
 - **Entity 8 - Email Template**: OTP email template configuration
   - **Key attributes**: template_id, template_name, subject_line, html_body, plain_text_body, version_number, required_variables (JSON), created_at, updated_at
   - **Relationships**: One Template has many Versions; Consumed by Notification Service (S-03)
+
+- **Entity 9 - Inquiry Treatment Area Option**: Centrally managed treatment-area option for inquiry creation (FR-003 Screen 1)
+  - **Key attributes**: option_id, label, image_or_icon_url, display_order, active, created_at, updated_at
+  - **Relationships**: Referenced by the Inquiry treatment-area snapshot; cannot be deleted while referenced
+
+- **Entity 10 - Inquiry Scheduling Policy**: Versioned configuration for inquiry date eligibility
+  - **Key attributes**: policy_id, minimum_inquiry_lead_days, version_number, change_reason, created_at, updated_at
+  - **Relationships**: Consumed by FR-003 patient calendar and backend submission validation
+
+- **Entity 11 - Quote Configuration**: Versioned configuration for quote expiry, slot holds, and their reminder lead times
+  - **Key attributes**: configuration_id, currency_code (ISO 4217, read from the FR-029 Default Currency), quote_expiry_hours (positive integer, default 48), quote_expiring_soon_lead_hours (default 12), slot_hold_hours (positive integer, default 48), hold_expiring_soon_lead_hours (default 12), version_number, change_reason, created_at, updated_at
+  - **Relationships**: Consumed by FR-004 (currency and expiry copied read-only onto a quote at first send, with the version recorded), FR-005 and FR-006 (slot-hold duration), and FR-006 (hold reminder); never retroactively applied
+
+- **Entity 12 - Analytics Configuration**: Versioned configuration used by FR-014 analytics
+  - **Key attributes**: configuration_id, ttfq_sla_minutes (default 120), at_risk_days (default 7), dormant_days (default 30, greater than at_risk_days), price_outlier_percent (1-100, default 30), benchmark_refresh_frequency (daily/weekly/monthly, default weekly), target_monthly_commission (nullable, default null), version_number, change_reason, created_at, updated_at
+  - **Relationships**: Consumed by FR-014; the version used is recorded with analytics aggregates; never rewrites generated exports
 
 ---
 
@@ -1086,6 +1382,15 @@ Compliance officer requests complete audit trail of all authentication policy ch
 | 2026-02-08 | 1.2     | Added "Inquiry Cancellation Reasons" as new App Data list (Screen 5a) with field table, workflow A4, seeding data (7 initial reasons), Entity 6, REQ-026-012a, User Story 5, edge cases, dependency on FR-003. Consumer: FR-003 Screen 8a cancellation modal. | AI |
 | 2026-03-28 | 1.3     | Added "Account Deletion Reasons" as new App Data list (Screen 5b) with field table, workflow A5, seeding data (9 initial reasons), Entity 7, REQ-026-012b, edge case. Email Template entity renumbered to Entity 8. Consumer: FR-001 Screen 16 deletion request screen. | AI |
 | 2026-03-28 | 1.4     | Verification fixes: removed duplicate MFA bullet from Implementation Notes (deferred to FR-031 per REQ-026-017); added flag_url to Entity 4 and REQ-026-011; added IP/device-level rate limiting as fixed-in-codebase to Business Rules and Security Considerations; corrected stale "FR-003 Screen 11" → "Screen 8a" (6 occurrences); fixed propagation test scenarios from "30 seconds ago" to "1 minute ago"; moved FR-024/FR-011 from Internal Dependencies to new Downstream Consumers section; standardised "Friend Referral" in seeding data; corrected FR-003 module name to "P-02: Quote Request & Management". | AI |
+| 2026-09-04 | 1.5 | Added Inquiry Configuration as an Admin-managed App Data setting group: treatment-area catalog with image/icon assets and an active ordered API response, plus configurable minimum inquiry lead time (default 30 days). Added workflow A6, Screen 5c, editable-rule, integration, requirement, and entity contracts. See [Change Request](./change-request-2026-09-04-inquiry-configuration.md). | Product Owner |
+| 2026-09-04 | 1.6 | Corrected the approved default minimum inquiry lead time from 30 days to 3 days; the configurable range, audit, and propagation contracts are unchanged. See [Change Request](./change-request-2026-09-04-inquiry-configuration.md). | Product Owner |
+| 2026-09-04 | 1.7 | Verification follow-up: added the invariant that at least one inquiry treatment-area option must remain active, including Screen 5c validation and REQ-026-012e. | Product Owner |
+| 2026-09-10 | 1.8 | FR-004 v2.6 reconciliation: added versioned Quote Configuration ownership for the active ISO 4217 currency and default 48-hour expiry window, including workflow, Screen 5d, dependency, API, entity, and non-retroactivity contracts. See [Change Request](./change-request-2026-09-10-quote-configuration-ownership.md). | Product Owner / Documentation |
+| 2026-10-13 | 1.9 | FR-014 v3.8 verification resolution: added versioned Analytics Configuration ownership (TTFQ SLA target default 120 minutes, At Risk 7 days, Dormant 30 days, price outlier 30%, benchmark refresh Weekly, optional target monthly commission hidden until set), including workflow A8, Screen 5e, Analytics settings section, dependency, seeding, User Story 9, REQ-026-012g, REQ-026-028, REQ-026-029, and Entity 12. See [CR-FR026-20261013-01](./change-request-2026-10-13-analytics-configuration.md). | Product Owner / Documentation |
+| 2026-10-13 | 1.10 | FR-014 verification follow-up: added Quote Configuration (active ISO 4217 currency, default expiry hours) to the Screen 1 App Data setting groups; made the Analytics Configuration recalculation rule explicit (live views recalculate all displayed periods with the active version; generated exports never rewritten) in Screen 5e and REQ-026-029. Recorded in CR-FR026-20261013-01 | Claude Code |
+| 2026-10-15 | 1.11 | FR-015 v1.13 fifth verification resolution: added the centrally managed Provider Specialties App Data list (Settings → App Data → Provider Specialties) consumed by FR-015 / A-02 Screen 2 Step 2 and Screen 3 Tab 1. Specialty name (max 100 chars, unique case-insensitive), display order, active status; seeded with Hair Transplant Surgeon, Dermatologist, Trichologist, Plastic Surgeon, Other; add, rename, reorder, deactivate (no hard delete); at least one active value; deactivated values hidden from new selection but kept and displayed on existing providers; renames apply everywhere; audit-logged. Added Module Scope A-02 consumer, workflow A9, Screen 5f, editability rules, downstream consumer, seeding, REQ-026-012h, and Entity 7a. See [CR-FR026-20261015-01](./change-request-2026-10-15-provider-specialty-list.md). | Product Owner / Documentation |
+| 2026-10-16 | 1.12 | MTG-002 quote-model alignment: Quote Configuration now owns the versioned, audited slot-hold duration (default 48 hours, one fixed hold from acceptance, never extended by payment failure; consumers FR-005 and FR-006), the hold-expiring-soon reminder lead time (default 12 hours; FR-006), and the quote-expiring-soon lead time (default 12 hours; FR-004 emits `quote.expiring_soon`). Quote currency and expiry window are copied read-only at first send with the configuration version recorded; drafts carry neither; no per-quote extension; "Default Quote Expiry" renamed "Quote Expiry Window". The quote currency is the FR-029 Default Currency, not a second setting, and is seeded from it. Updated A7, Screen 1, Screen 5d, editability rules, dependencies (FR-005, FR-006, FR-029, FR-020), seeding, User Story 8, edge cases (Settings API outage at first send, duration change during active holds), REQ-026-012f, 026, 027, new REQ-026-030 and 031, Entity 11, and the Executive Summary setting groups. Findings S2-5 (absorbs FR-026-1), FR-026-2, FR-026-3, FR-026-4, FR-026-5, FR-026-6 (part), FR-026-7 (part), FR-026-8, FR-026-9, S2-6; decisions D14, D15, D16, M3, M11, M13, R7-3. See [Change Request](./change-request-2026-10-16-mtg002-quote-model-alignment.md) (CR-FR026-20261016-01). | Product Owner / Documentation |
+| 2026-10-16 | 1.13 | Product Owner follow-up decisions: reminder defaults kept at 12 hours with validation bounds (quote expiry window 24 to 336 hours; slot-hold duration 24 to 168 hours; each lead time at least 1 hour and at most half of its window), and an FR-029 Default Currency change explicitly creates a new Quote Configuration version. Updated A7, Screen 5d, REQ-026-012f, and User Story 8. Decisions Q13, Q14. See [Change Request](./change-request-2026-10-16-mtg002-quote-model-alignment.md) (CR-FR026-20261016-01). | Product Owner / Documentation |
 
 ---
 
@@ -1096,10 +1401,11 @@ Compliance officer requests complete audit trail of all authentication policy ch
 | Product Owner  | Hairline Product Owner   | 2025-12-11 | ✅ Approved         |
 | Technical Lead | Hairline Technical Lead  | 2025-12-11 | ✅ Approved         |
 | Security Lead  | Hairline Security Lead   | 2025-12-11 | ✅ Approved         |
+| Product Owner  | Hairline Product Owner   | 2026-10-16 | ✅ Approved (v1.13 documentation; implementation reconciliation required) |
 
 ---
 
 **Template Version**: 2.0.0 (Constitution-Compliant)
 **Constitution Reference**: Hairline Platform Constitution v1.0.0, Section III.B (PRD Standards & Requirements)
 **Based on**: FR-011 Aftercare & Recovery Management PRD, FR-026 from system-prd.md
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-10-16

@@ -1,10 +1,10 @@
 # Hairline Platform - Technical Specification
 
-**Version**: 1.0.0  
+**Version**: 1.4.0  
 **Document Type**: System-Level Technical Specification  
 **Created**: 2025-10-23  
 **Status**: Active  
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-10-18
 
 ---
 
@@ -127,46 +127,81 @@ The Hairline platform implements a **logical multi-tenant architecture** where a
 
 ### Quote & Booking Status Flow
 
-**Status Progression**:
+Quote status, booking status, and case stages are separate enums and MUST NOT be merged (`system-data-schema.md`).
+
+**Flow**:
 
 ```sh
-Inquiry → Quote → Accepted → Confirmed → In Progress → Aftercare → Completed
+Inquiry → Quote (sent) → Subquote accepted → Booking: Accepted (slot held) → Confirmed (first payment) → In Progress → Aftercare → Completed
+                                                       ↘ Payment Window Expired (hold lapsed before first payment)
+Any booking state after acceptance → Cancelled (admin-only, with reason; inquiry Cancelled, quote stays accepted)
+Accepted, Confirmed → Cancelled (provider fault, suspension or deactivation)
+In Progress + provider fault, suspension or deactivation → stays In Progress (supportRequired) → admin: Aftercare with aftercare-provider reassignment, or Cancelled with reason
 ```
 
-**Status Definitions**:
+**Quote Status (FR-004)**: `draft`, `sent`, `expired`, `withdrawn`, `archived`, `accepted`, `cancelled_other_accepted`, `cancelled_inquiry_cancelled`, `cancelled_provider_status`. `confirmed` is not a quote status; booking confirmation is an FR-006 booking status. A sent parent quote carries one to five Quote Options; each option/date-price row is a subquote, and the patient accepts exactly one subquote per inquiry.
 
-- `inquiry`: Patient inquiry submitted, waiting for provider quotes
-- `quote`: Quote submitted by provider with pre-scheduled appointment times (expires in 48 hours by default)
-- `accepted`: Patient accepted quote → appointment auto-scheduled (no manual provider confirmation)
-- `confirmed`: Payment completed → patient details revealed to provider (anonymization lifted)
-- `inprogress`: Patient arrives at clinic, treatment in progress (provider can update real-time progress)
-- `aftercare`: Treatment completed, aftercare phase active (6-12 months recovery)
-- `completed`: Final review and rating submitted by patient
+**Booking Status (FR-006)**:
+
+- `Accepted`: Patient accepted one subquote (FR-005). The booking links to the AcceptanceEvent and the appointment slot is held, not booked. No manual provider confirmation is needed (provider receives a notification only).
+- `Payment Window Expired`: The slot hold lapsed before the first payment step succeeded.
+- `Confirmed`: First payment step (deposit or first installment) succeeded; the appointment record is created and the slot is blocked; patient details are revealed to the provider (anonymization lifted).
+- `In Progress`: Patient arrives at clinic, treatment in progress (provider can update real-time progress).
+- `Aftercare`: Treatment completed, aftercare phase active (6-12 months recovery).
+- `Completed`: Final review and rating submitted by patient.
+- `Cancelled`: Closed with a recorded cancellation cause. The patient can cancel only while the inquiry is in Inquiry or Quoted; after acceptance the patient contacts support. Only an admin can cancel a booking after acceptance, from any booking state, with a mandatory reason and an audit entry; the inquiry moves to Cancelled and the accepted quote stays `accepted`. A provider fault, suspension, or deactivation cancels an `Accepted` or `Confirmed` booking with cause `ProviderFault`, `ProviderSuspended`, or `ProviderDeactivated`. In `In Progress` the booking is not cancelled automatically: it stays `In Progress` with `supportRequired`, and an admin either moves it to `Aftercare` and reassigns the aftercare provider, or cancels it with a mandatory reason. In `Aftercare` the booking is not cancelled; an admin reassigns the aftercare provider.
 
 **Critical Business Logic**:
 
-1. **Auto-Accept**: When patient accepts quote, status immediately changes to `accepted` and appointment is confirmed (provider receives notification only)
-2. **Anonymization Control**:
-   - Before `confirmed`: Provider sees "Mark P. - PAT-00123" (anonymized)
-   - After payment (`confirmed`): Provider sees full name, contact details, passport information
-3. **Quote Expiration**: Configurable per admin settings (default 48 hours)
+1. **Auto-Accept and Slot Hold**: When the patient accepts a subquote, the system records an append-only AcceptanceEvent with an immutable acceptance snapshot, sets the booking to `Accepted`, and places one exclusive slot hold keyed by provider, appointment date/time, and time zone. A unique index on that active hold key allows one active booking per slot, so a concurrent second acceptance fails and the patient is told the slot was just taken. Acceptance holds the slot only; no appointment is created and the calendar is not blocked at acceptance (provider receives notification only).
+2. **Fixed Hold and First Payment**: The hold lasts for the FR-026 slot-hold duration (default 48 hours) from acceptance and is fixed: payment failure or retry never extends or restarts it. On successful first payment (deposit or first installment) the booking moves to `Confirmed`, the appointment record is created, and the held slot becomes a calendar block. A "hold expiring soon" reminder is sent at the FR-026 lead time.
+3. **Payment Window Expired**: A scheduled job moves an `Accepted` booking whose hold has lapsed to `Payment Window Expired`: the hold is released, payment against that accepted selection is rejected, the AcceptanceEvent and snapshot stay unchanged, the parent quote and accepted subquote are not reopened, and patient and provider are notified. This applies only to the first payment step; a missed later installment or final payment never causes `Payment Window Expired` or inquiry cancellation (FR-007, FR-007B).
+4. **Admin Revive**: An admin may move a `Payment Window Expired` booking back to `Accepted` only with a mandatory reason. The system re-checks that the slot (provider, appointment date/time, time zone) is free, takes the promotion use again when the accepted promotion has a usage limit (for an automatic promotion only if the limit still has room, because the accepted price includes the promotion), and rejects the revive if either check fails. On success a new hold of the FR-026 slot-hold duration starts at the revive time. The action is audited.
+5. **Anonymization Control**:
+   - Before `Confirmed`: Provider sees "Mark P. - PAT-00123" (anonymized)
+   - After first payment (`Confirmed`): Provider sees full name, contact details, passport information
+6. **Quote Expiration and Configuration Read**: At first send the system copies the quote expiry (default 48 hours) and the quote currency read-only from the active FR-026 quote configuration and records that configuration's version on the quote; drafts carry neither. If the FR-026 configuration cannot be read, first send is blocked and the draft is kept unchanged. Later setting changes never affect a sent quote. A Default Currency change creates a new quote-configuration version, so the recorded version identifies both the hours and the currency. A draft that already holds prices switches to the new currency with its prices kept as typed, and send is blocked until the provider acknowledges a "currency changed, check your prices" banner. Every option/date-price row must have a price greater than 0 before send; a date range the clinic cannot serve is left out of that option. `first_sent_at` is set once at first send and never changed by a re-send, and TTFQ ends at the `first_sent_at` of the provider's earliest parent quote for the inquiry.
+7. **Quote Option Aggregate (FR-004)**: The quote is the parent aggregate; the acceptance unit is one `quote_option_date_prices` row, not the quote itself. Until acceptance a quote has a price range rather than an amount, so quote-amount analytics MUST read the accepted option/date price only and MUST count an unaccepted quote in volume and conversion metrics only. Quote Options are never counted as separate provider responses.
+8. **Multiple Quotes per Inquiry**: One provider may submit several parent quotes for the same inquiry, each with an independent lifecycle, expiry, version, and audit history. `(inquiry_id, provider_id)` MUST NOT be treated as unique.
+9. **Acceptance Snapshot as Source of Truth (FR-005)**: Price after promotion, currency, date range, appointment, and promotion are the binding money fields. Booking, payment, commission, and every other downstream service read them from the acceptance snapshot (or the booking money fields copied from it), never from the live quote, option, or date-price rows. The exchange rate and its timestamp are locked at acceptance and stored in the snapshot. The snapshot's appointment is the accepted baseline: an admin appointment change moves the booking's current appointment and never edits the snapshot, and booking notices read the booking's current appointment.
+10. **Provider-Status Cancellation Cascade (FR-015, FR-006)**: When a provider suspension or deactivation becomes effective, the system cancels that provider's `Accepted` (including unpaid within the hold) and `Confirmed` bookings and its standalone aftercare, and hands those bookings to the FR-006 Alternative Flow B5 admin transfer; the inquiry stays open. An `In Progress` booking is not cancelled automatically: it stays `In Progress` with `supportRequired`, and an admin decides the case on the FR-006 intervention screen (move to `Aftercare` with aftercare-provider reassignment, or cancel with a mandatory reason). An `Aftercare` booking is not cancelled: the booking and treatment record stay, `supportRequired` is set, and an admin reassigns the aftercare provider with a reason and an audit entry; the reassignment sends the mandatory `aftercare.provider_reassigned` to the patient and the new aftercare provider. Each cancelled booking, standalone aftercare record and provider inquiry participation stores the cancellation cause (`ProviderSuspended` or `ProviderDeactivated`), the provider status event reference, its effective time, and the prior stage, and sets an independent boolean `supportRequired` marker (not a status). Any active hold or calendar block is released. Only the provider's unaccepted parent quotes move to `cancelled_provider_status` (displayed "Cancelled (Provider Status)" and shown to the patient as "Offer Unavailable") with the cause in `cancellationProvenance`; an accepted quote keeps `accepted`. `supportRequired` is cleared only by an audited admin resolution (resolution reason, admin, timestamp). An earlier `ProviderSuspended` cause is never overwritten by a later deactivation, and reactivation restores nothing. Field-level storage: `system-data-schema.md` §5, §7, §11A, §13.
+11. **Provider-Fault Transfer (FR-006)**: When the provider withdraws or drops out after acceptance, or a suspension or deactivation takes effect, an `Accepted` or `Confirmed` booking is cancelled with the matching cause and `supportRequired`, and the inquiry stays open. A transfer to a replacement provider is available only for bookings cancelled in `Accepted` or `Confirmed`. A provider fault in `In Progress` leaves the booking `In Progress` with `supportRequired`; it is not cancelled automatically, no replacement acceptance is created, and an admin either moves it to `Aftercare` and reassigns the aftercare provider or cancels it with a mandatory reason. A provider fault in `Aftercare` is handled by reassigning the aftercare provider instead. For a transfer, an admin authors a replacement quote in the same inquiry on behalf of the replacement provider, linked to the original AcceptanceEvent. No automatic promotion attaches to the replacement quote and no promotion use is reserved for it; the admin sets the replacement price directly, and the original acceptance's promotion use is returned or kept under the normal rules. A replacement quote that is not accepted expires normally; the inquiry stays `supportRequired` and is not cancelled automatically, and the admin may author another replacement quote or cancel the inquiry and booking. When that replacement quote is accepted, the system creates a new admin-authored acceptance record and, in the same transaction, inserts one supersession record linking the original acceptance to the replacement; the original AcceptanceEvent is never edited, and no supersession record exists for a cancellation that is never replaced. The replacement booking is created from the new acceptance. The patient re-enters nothing. Money mechanics are defined in FR-007, FR-007B, and FR-017.
+12. **Provider Eligibility Revalidation**: Provider status MUST be `active` at inquiry allocation, quote submission, quote acceptance, and the booking-confirming payment; each step rejects a suspended or deactivated provider.
+13. **Commission Model (FR-029, FR-015)**: Provider commission is either Percentage (0-100%) of the booking total or Flat Rate (fixed amount > 0, in an enabled currency) deducted once per FR-010 completed procedure. The booking total is the accepted subquote price after promotion, in the quote currency, read from the acceptance snapshot; commission uses it for every discount type, including Hairline-funded discounts, and the deposit percentage and instalment amounts use the same booking total. The global default is percentage-only within 15-25%. At booking confirmation the booking snapshots commission model, value, and Flat Rate currency, together with the deposit and installment settings; payouts and analytics read that snapshot, never the provider's current settings.
+14. **Promotion Use Reservations (FR-019, FR-004, FR-005)**: Promotion programs and codes are stored in `promotion_programs` and `promotion_codes`; the legacy `discounts` table is not used for them. At most one automatic promotion attaches to a quote, chosen in priority order: provider discount, then Hairline-funded promotion, then affiliate; a patient-entered code takes priority over all of them at acceptance. An automatically applied promotion reserves one use per sent parent quote in `promotion_use_reservations`; if the promotion's usage limit is already full, the promotion does not attach and the send proceeds without it; a re-send of a new version keeps the reservation, creates one only if the new version newly qualifies, and releases it if the new version no longer carries the promotion. The reservation is released when the quote expires, is withdrawn, is not selected, or is cancelled before acceptance because the inquiry was cancelled or the provider's status changed (release reason `cancelled`), and at acceptance is consumed if the accepted row carries the promotion or released with reason `not_applied` if it does not, so the usage limit is never exceeded. If the booking ends in `Payment Window Expired` or is cancelled before the first payment, the use returns to the limit; an admin revive takes it again only if the limit has room, otherwise the revive is rejected. Provider-selected promotions and patient codes reserve one use at acceptance and consume it at the first successful payment. An admin-authored replacement quote never carries an automatic promotion and never takes a reservation. Field-level storage: `system-data-schema.md`.
+15. **Acceptance Notifications (FR-030, FR-020)**: At acceptance the patient receives only `booking.scheduled` ("Booking Accepted — Slot Held (Pending Payment)"), which is mandatory, goes to the patient only, and also fires at the acceptance of an admin-authored replacement quote; the provider learns of the acceptance through `quote.accepted`, whose outcomes go to providers only. `booking.rescheduled` is mandatory and goes to the patient and the provider when an admin changes the appointment (FR-006); it shows the booking's current appointment. `aftercare.provider_reassigned` (FR-011) is mandatory and goes to the patient and the new aftercare provider when an admin reassigns the aftercare provider; no admin alert is sent because the admin is the actor. Admins receive no per-acceptance alert, only exception alerts (hold expiring soon while unpaid, `Payment Window Expired`, provider fault, and `quote.withdrawn` after acceptance). `quote.cancelled_inquiry` is mandatory with no provider toggle. FR-004 emits `quote.updated` (quote revised, new version) when a new version of a sent quote is re-sent.
+16. **Treatment-Detail Changes (FR-010)**: The treatment record is created at booking confirmation (first successful payment) with status `Awaiting Check In`; its statuses are Awaiting Check In, In Progress (set at Check In), Completed, and Cancelled. Treatment details are locked while the booking is `Accepted` (unpaid). From `Confirmed`, the clinic may change treatment plan days, clinicians, or estimated grafts until Check In, and an admin may change them at any time from `Confirmed` onward, each with a mandatory reason; each change is audited, emits the mandatory `treatment.plan_changed`, and never changes the acceptance snapshot or money fields.
+17. **Travel Records (FR-008)**: The itinerary is a read view assembled from the travel context, flight and hotel records, and the booking; there is no stored itineraries table. A return flight or hotel check-out before the last treatment plan day raises a soft warning that must be acknowledged; the record can still be saved and the provider sees the flag. In a provider-fault transfer the passport carries to the replacement booking, flights and hotel are copied with `travel_date_review_required` set, and the originals stay read-only on the closed booking.
+18. **Currency Disable Guard (FR-029)**: A currency cannot be disabled while any non-terminal sent quote, unpaid accepted booking, or open booking or instalment plan uses it; the admin sees the count of records still using it.
+19. **Price Sort Across Currencies (FR-005, FR-022)**: Price sort converts each price to the patient's display currency at the current rate for ordering only; each card shows its own quote currency, and the ordering is labelled approximate when currencies are mixed.
 
 ### Payment Processing Architecture
 
 **Installment Payment System**:
 
 ```php
+// Read binding money fields from the booking (copied read-only from the FR-005
+// acceptance snapshot) and the AcceptanceEvent, never from live
+// quote/option/date-price rows.
+// Instalment arithmetic below is unchanged and pending the payment review.
+$acceptance = $booking->acceptanceEvent;
+$bookingTotal = $booking->booking_total; // accepted price after promotion, in $booking->currency
+// Procedure date comes from the booking's current appointment (moved by an admin
+// appointment change), not from the acceptance snapshot.
+$procedureDate = Carbon::parse($booking->hold_appointment_at, $booking->hold_appointment_timezone);
+
 // Calculate available installments
-$procedureDate = $quote->treatment_date;
 $daysUntilProcedure = now()->diffInDays($procedureDate);
 $maxInstallments = floor(($daysUntilProcedure - 30) / 30); // 30-day buffer
 
 // Create installment plan
 $plan = InstallmentPaymentPlan::create([
-    'quote_id' => $quote->id,
-    'total_amount' => $quote->quote_amount,
+    'quote_id' => $acceptance->accepted_parent_quote_id,
+    'total_amount' => $bookingTotal,
+    'currency' => $booking->currency, // quote currency from the acceptance snapshot
+    'exchange_rate' => $acceptance->exchange_rate, // locked at acceptance
     'number_of_installments' => min($selectedInstallments, $maxInstallments),
-    'installment_amount' => $quote->quote_amount / $selectedInstallments,
+    'installment_amount' => $bookingTotal / $selectedInstallments,
     'final_payment_date' => $procedureDate->subDays(30)
 ]);
 ```
@@ -190,23 +225,41 @@ MedicalHistory::create([
 ]);
 ```
 
-**Package Structure** (Base + Add-ons):
+**Package Structure** (Quote Options from versioned package templates, FR-004 and FR-024):
 
 ```php
-// Quote composition
-$quote = Quote::create([
-    'base_package_id' => $basePackage->id,
-    'base_amount' => $basePackage->price
+// Each Quote Option copies one versioned library package template (packages carry
+// no currency). Inline edits change only this quote's copy and never write back
+// to the library or create a package version.
+$option = $quote->options()->create([
+    'source_package_id' => $package->id,
+    'source_package_version' => $package->version,
+    'package_name_snapshot' => $package->name,
+    'standard_price_snapshot' => $package->standard_price,
+    'is_customized' => $inlineEdited,
+    'display_order' => $order, // one to five options per parent quote
 ]);
 
-// Add selected add-ons
-$quote->addons()->attach([
-    $hotelAddon->id => ['amount' => 500],
-    $transportAddon->id => ['amount' => 100]
+// Prices live on option/date-price rows (subquotes) in the quote currency;
+// the patient accepts exactly one row.
+$option->datePrices()->create([
+    'source_inquiry_date_range_id' => $range->id,
+    'start_date' => $range->start_date, // copied from the selected inquiry range
+    'end_date' => $range->end_date,
+    'appointment_at' => $appointmentAt,
+    'appointment_timezone' => $timezone,
+    'price' => $offeredPrice,
 ]);
-
-$quote->quote_amount = $quote->base_amount + $quote->addons->sum('amount');
 ```
+
+### Provider Lifecycle & Admin Controls (FR-015 v1.9)
+
+- **Status**: `active`, `suspended`, `deactivated` only; there is no `draft` provider status. Suspension and deactivation trigger the cancellation cascade above and automatically clear the `featured` flag.
+- **Creation fields**: `payout_frequency` (`weekly`, `twice_monthly`, `monthly`) is required at creation; `commission_start_date` is today or later; commission model and value per the Commission Model rule above. Clinic name is 3-200 characters and the contact email is unique.
+- **Provider documents**: `document_type` is one of `medical_license`, `board_certification`, `insurance`, `malpractice_insurance`, `business_license`, `other`; upload validation accepts PDF, JPG, PNG, DOCX, XLSX. Each document records `uploader_type` (`provider` or `admin`) and `uploader_id`; `notes` are admin-only; deletion is a soft delete.
+- **Retention**: data of a deactivated provider is retained for at least 7 years and then archived; provider records are never hard-deleted.
+- **Audit**: every admin edit of provider data requires a change reason stored in the audit log. Login as Provider sessions are audited (reason, admin re-authentication, 30-minute session timeout).
+- **Notification events (FR-020)**: `provider.suspended`, `provider.deactivated`, `provider.status_cancellation_patient` (affected patient), and `provider.status_cancellation_admin_support` (admin support queue for `supportRequired` cases).
 
 ---
 
@@ -456,7 +509,9 @@ Critical entities use soft deletes to:
 
 **Models with Soft Deletes**:
 
-- `Patient`, `Provider`, `ProviderUser`, `Inquiry`, `Quote`, `Treatment`, `AfterCare`, `Affiliate`
+- `Patient`, `Provider`, `ProviderUser`, `Treatment`, `AfterCare`, `Affiliate`
+
+`Inquiry` and `Quote` are not soft-deleted. An inquiry is closed by moving it to `cancelled`, and its rows are retained because acceptance and booking records reference it. A quote is retained in the same way: once an acceptance record references a quote, the quote is retained permanently and cannot be deleted.
 
 ```php
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -498,7 +553,17 @@ CREATE INDEX idx_inquiries_created_at ON inquiries(created_at);
 -- Composite indexes
 CREATE INDEX idx_quotes_provider_status ON quotes(provider_id, status);
 CREATE INDEX idx_quotes_inquiry_provider ON quotes(inquiry_id, provider_id);
+
+-- Quote option aggregate (FR-004 v2.2)
+CREATE INDEX idx_quote_options_quote_id ON quote_options(quote_id);
+CREATE UNIQUE INDEX idx_quote_options_order ON quote_options(quote_id, display_order);
+CREATE INDEX idx_quote_option_items_option ON quote_option_items(quote_option_id);
+CREATE INDEX idx_qodp_option ON quote_option_date_prices(quote_option_id);
+CREATE UNIQUE INDEX idx_qodp_option_range ON quote_option_date_prices(quote_option_id, source_inquiry_date_range_id);
+CREATE UNIQUE INDEX idx_qopd_option_day ON quote_option_plan_days(quote_option_id, day_number);
 ```
+
+**Note**: `idx_quotes_inquiry_provider` is a lookup index only — it MUST NOT be made unique, because one provider may submit multiple parent quotes for the same inquiry.
 
 #### Database Migrations
 
@@ -512,7 +577,7 @@ CREATE INDEX idx_quotes_inquiry_provider ON quotes(inquiry_id, provider_id);
 1. **Atomic Changes**: One schema change per migration
 2. **Reversible**: Always implement `down()` method
 3. **Data Migrations**: Separate from schema migrations
-4. **Foreign Keys**: Defined with cascade rules
+4. **Foreign Keys**: Defined with explicit ON DELETE rules; quotes and acceptance records use RESTRICT and are never cascade-deleted
 
 ```php
 // Example migration
@@ -521,21 +586,24 @@ Schema::create('quotes', function (Blueprint $table) {
     $table->uuid('inquiry_id');
     $table->uuid('provider_id');
     $table->uuid('treatment_id');
-    $table->decimal('quote_amount', 10, 2);
-    $table->string('currency');
+    // No quote amount: prices live on quote_option_date_prices rows
+    $table->string('currency')->nullable(); // copied at first send from FR-026
     $table->string('status');
     $table->timestamps();
     
-    // Foreign keys with cascade
+    // Restrict, never cascade: accepted quotes referenced by acceptance
+    // records are retained (see system-data-schema.md, Foreign Key Constraints)
     $table->foreign('inquiry_id')
           ->references('id')
           ->on('inquiries')
-          ->onDelete('cascade');
+          ->onDelete('restrict');
     
     // Indexes
     $table->index(['provider_id', 'status']);
 });
 ```
+
+**Quote aggregate migration (FR-004 v2.2)**: The option model is additive. New migrations create `quote_options`, `quote_option_items`, `quote_option_date_prices`, and `quote_option_plan_days` (see `system-data-schema.md` §7A-§7D). A data migration converts each existing quote into a one-option quote seeded from `quotes.package_id`, `quotes.treatment_date`, and `quotes.quote_amount`. Those three columns are deprecated and stay readable through a compatibility adapter until every consumer moves to the option contract (CR-FR004-20260909-01); they are not dropped in the same release.
 
 ### Business Logic Layer
 
@@ -562,31 +630,49 @@ class QuoteService
             throw new UnauthorizedException('Provider cannot quote on this inquiry');
         }
         
-        // Calculate pricing
-        $pricing = $this->calculateQuotePricing($data);
-        
-        // Create quote
+        // Create the parent quote as a draft. NOTE (FR-004): `quote_amount` is
+        // deprecated — price lives on each option/date combination and an accepted
+        // amount only exists after FR-005 selection. No commission is set on the
+        // quote: the binding commission snapshot is captured on the booking at
+        // booking confirmation (FR-029).
         $quote = Quote::create([
             'inquiry_id' => $inquiry->id,
             'provider_id' => $provider->id,
-            'quote_amount' => $pricing['total'],
-            'commission' => $pricing['commission'],
-            'status' => 'quote',
+            'status' => 'draft', // FR-004 quote status
             ...
         ]);
         
-        // Attach package items
-        $this->attachPackageItems($quote, $data['package_items']);
+        // Attach one to five quote options, each a quote-local package snapshot
+        // (never writes back to the FR-024 package library), with its option/date
+        // price matrix and relative-day plan
+        $this->attachQuoteOptions($quote, $data['options']);
         
-        // Send notification to patient
-        event(new QuoteSubmitted($quote));
+        $this->sendQuote($quote);
         
         return $quote;
     }
     
-    private function calculateQuotePricing(array $data)
+    public function sendQuote(Quote $quote)
     {
-        // Business logic for pricing calculation
+        // First send copies expiry and currency read-only from the active FR-026
+        // quote configuration and records its version; never provider input. If
+        // the configuration cannot be read, first send is blocked and the draft is
+        // kept unchanged.
+        $config = $this->quoteConfiguration->current(); // throws when unreadable
+        $now = now();
+        
+        $quote->update([
+            'status' => 'sent', // exposed as `quote` through the API
+            'currency' => $config->default_currency,
+            'expiration_hours' => $config->expiration_hours,
+            'quote_config_version' => $config->version,
+            'expires_at' => $now->copy()->addHours($config->expiration_hours),
+            'sent_at' => $now,
+            'first_sent_at' => $quote->first_sent_at ?? $now, // set once at first send; a re-send keeps it; TTFQ ends here
+        ]);
+        
+        // Send notification to patient
+        event(new QuoteSubmitted($quote));
     }
 }
 
@@ -1319,17 +1405,29 @@ use Stripe\PaymentIntent;
 
 class PaymentController extends Controller
 {
-    public function createPaymentIntent(Request $request)
+    public function createPaymentIntent(Request $request, Booking $booking)
     {
+        // Amount and currency are never taken from the client. The booking must
+        // belong to the authenticated patient, and a first payment requires the
+        // booking to be `accepted` with an active hold (before `hold_expires_at`).
+        abort_unless($booking->patient_id === $request->user()->id, 403);
+        if ($booking->status === 'accepted' && now()->gte($booking->hold_expires_at)) {
+            abort(409, 'Payment window expired');
+        }
+        
         Stripe::setApiKey(config('services.stripe.secret'));
         
+        // Amount due now (deposit or instalment) is derived server-side from
+        // booking_total; the payment rules own the split (FR-007)
+        $amountDue = $this->paymentService->amountDueNow($booking);
+        
         $paymentIntent = PaymentIntent::create([
-            'amount' => $request->amount * 100, // Convert to cents
-            'currency' => $request->currency,
+            'amount' => (int) round($amountDue * 100), // smallest currency unit
+            'currency' => strtolower($booking->currency), // quote currency from the acceptance snapshot
             'payment_method_types' => ['card'],
             'metadata' => [
-                'quote_id' => $request->quote_id,
-                'patient_id' => $request->patient_id,
+                'booking_id' => $booking->id,
+                'patient_id' => $booking->patient_id,
             ],
         ]);
         
@@ -1521,9 +1619,14 @@ class CreateQuoteRequest extends FormRequest
         return [
             'inquiry_id' => 'required|uuid|exists:inquiries,id',
             'provider_id' => 'required|uuid|exists:providers,id',
-            'quote_amount' => 'required|numeric|min:0|max:100000',
-            'currency' => 'required|in:USD,EUR,GBP,TRY',
-            'treatment_date' => 'required|date|after:today',
+            // No quote_amount, currency or treatment_date: currency is copied from
+            // the FR-026 quote configuration at first send, and prices live on
+            // option/date-price rows.
+            'options' => 'required|array|min:1|max:5',
+            'options.*.date_prices' => 'required|array|min:1',
+            'options.*.date_prices.*.source_inquiry_date_range_id' => 'required|uuid',
+            'options.*.date_prices.*.appointment_at' => 'required|date|after:today',
+            'options.*.date_prices.*.price' => 'required|numeric|gt:0',
         ];
     }
 }
@@ -1699,18 +1802,18 @@ const Inquiries = lazy(() => import('./pages/Inquiries'));
 // tests/Unit/QuoteServiceTest.php
 class QuoteServiceTest extends TestCase
 {
-    public function test_calculate_quote_pricing()
+    public function test_percentage_commission_uses_booking_total_after_promotion()
     {
-        $service = new QuoteService();
-        
-        $pricing = $service->calculateQuotePricing([
-            'base_price' => 3000,
-            'graft_count' => 2500,
-            'discount_percentage' => 10,
+        // Commission is never calculated at quote creation. It is computed from
+        // the booking total (accepted price after promotion) and the commission
+        // snapshot captured at booking confirmation.
+        $booking = Booking::factory()->make([
+            'booking_total' => 2700, // 3000 less a 10% promotion
+            'commission_model' => 'percentage',
+            'commission_value' => 15,
         ]);
         
-        $this->assertEquals(2700, $pricing['total']);
-        $this->assertEquals(450, $pricing['commission']);
+        $this->assertEquals(405, (new CommissionService())->commissionFor($booking));
     }
 }
 ```
@@ -1727,17 +1830,24 @@ class QuoteApiTest extends TestCase
     {
         $provider = Provider::factory()->create();
         $inquiry = Inquiry::factory()->create();
+        $range = $inquiry->dateRanges()->first();
+        $package = Package::factory()->for($provider)->create();
         
         $response = $this->actingAs($provider, 'provider')
             ->postJson('/api/quote/create-quote', [
                 'inquiry_id' => $inquiry->id,
-                'quote_amount' => 3500,
-                'currency' => 'USD',
-                'treatment_date' => ['2025-11-01', '2025-11-02'],
+                'options' => [[
+                    'source_package_id' => $package->id,
+                    'date_prices' => [[
+                        'source_inquiry_date_range_id' => $range->id,
+                        'appointment_at' => '2025-11-01 09:00:00',
+                        'price' => 3500,
+                    ]],
+                ]],
             ]);
         
         $response->assertStatus(201)
-                 ->assertJsonStructure(['data' => ['id', 'quote_amount']]);
+                 ->assertJsonStructure(['data' => ['id', 'version', 'status']]);
         
         $this->assertDatabaseHas('quotes', [
             'inquiry_id' => $inquiry->id,
@@ -1803,8 +1913,8 @@ test('provider can create quote for inquiry', async ({ page }) => {
   
   // Create quote
   await page.click('text=Create Quote');
-  await page.fill('input[name="quote_amount"]', '3500');
-  await page.selectOption('select[name="currency"]', 'USD');
+  // Currency comes from system configuration; the provider prices each option/date-price row
+  await page.fill('input[name="options[0][date_prices][0][price]"]', '3500');
   await page.click('button:has-text("Submit Quote")');
   
   // Verify success
@@ -2002,8 +2112,8 @@ jobs:
 Log::info('Quote created', [
     'quote_id' => $quote->id,
     'provider_id' => $quote->provider_id,
-    'amount' => $quote->quote_amount,
-    'currency' => $quote->currency,
+    'version' => $quote->version,
+    'status' => $quote->status,
 ]);
 
 Log::error('Payment failed', [
@@ -2061,6 +2171,18 @@ Complete list maintained in: `.env.example`
 ### Third-Party Service Credentials
 
 Stored in secure secret management system (AWS Secrets Manager, HashiCorp Vault)
+
+---
+
+### Document Change Log
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.1.0 | 2026-10-14 | Vân Tay Media | Aligned with FR-015 v1.9 verification decisions and FR-029 flat-rate commission: provider-status cancellation cascade, `supportRequired` marker, eligibility revalidation, commission model snapshot, provider lifecycle and admin controls, FR-020 provider status notification events |
+| 1.1.1 | 2026-10-14 | Vân Tay Media | Provider commission settings stored in `provider_commissions` (schema §2B), flat model named `flat_rate` |
+| 1.2.0 | 2026-10-16 | Vân Tay Media | MTG-002 quote model alignment (S5-2, S5-3, S5-4, S5-6, S5-7; decisions D1, D2, D6, D12, D17, D23, D24, M2, M3): split quote and booking status enums and removed `confirmed` as a quote status; acceptance holds the slot (fixed FR-026 hold keyed by provider, appointment date/time, and time zone) and the appointment is created and the slot blocked only at first payment; added `Payment Window Expired` (first payment only) and audited admin revive; provider-fault transfer via linked admin-authored acceptance record with inquiry kept open; downstream services read the acceptance snapshot; FX locked at acceptance; FR-026 configuration read at first send with outage blocking first send; instalment example reads `bookings.booking_total` and AcceptanceEvent appointment fields per the final schema; package example uses versioned templates and Quote Options; quote migration, validation, feature-test and logging examples no longer carry provider-supplied amount, currency or treatment date |
+| 1.3.0 | 2026-10-16 | Vân Tay Media | Product Owner Q-series alignment (Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q10, Q11, Q12, Q14, Q15, Q17, Q18, Q21, Q23, Q24, Q25, Q29, Q30; Q26 and Q27 deferred to the payment pass): active-hold unique index with "slot just taken" message; admin revive retakes an automatic promotion use only if the limit has room; Default Currency change creates a new quote-configuration version with a draft acknowledgement banner; option/date-price rows require price greater than 0 (validation `gt:0`); TTFQ ends at `first_sent_at`; commission, deposit and instalments share one booking total after promotion for every discount type (unit test corrected); new rules for promotion use reservations, acceptance notifications, treatment-detail lock and audited changes, travel records, currency disable guard and approximate cross-currency price sort |
+| 1.4.0 | 2026-10-18 | Vân Tay Media | 2026-10-18 consolidated verification corrections (Q15, Q33; D4, D11, D12, M2, M5; no Change Request, system document): promotion reservation also released with reason `cancelled` when the quote is cancelled before acceptance, and admin revive takes an automatic promotion use again only if the limit has room, otherwise rejected; `Quote` removed from soft-delete models and the quotes migration sample uses RESTRICT on `inquiry_id`; QuoteService sample creates a draft without commission and captures currency, expiry, configuration version, `sent_at` and `first_sent_at` at first send; commission unit test moved to the booking total and booking commission snapshot; Stripe PaymentIntent sample checks booking ownership and the active hold and takes amount and currency from the booking, never the client; instalment sample reads the booking's current appointment and stores currency and exchange rate; package sample reads `standard_price` and copies `start_date` and `end_date` to the date-price row. Final audit corrections (Q31, Q35 to Q44; f1 F5; f2 F2, F4, F5; f3 F5; f4 F13; f5 F4; no Change Request, system document): booking flow and `Cancelled` status show the cancellation exits (patient cancels only in Inquiry or Quoted; after acceptance only an admin cancels, from any booking state, the inquiry becomes Cancelled and the quote stays accepted); provider-status cascade and provider-fault transfer limited to Accepted, Confirmed and In Progress bookings, with transfer only for Accepted and Confirmed and aftercare provider reassignment in Aftercare; replacement quote authored by an admin and a single supersession record inserted at the replacement acceptance; one automatic promotion per quote in priority order, limit-full sends proceed without the promotion, release reason `not_applied`, storage in `promotion_programs` and `promotion_codes`; `booking.scheduled` is patient-only and also fires at the replacement acceptance, new `booking.rescheduled` for patient and provider, `quote.withdrawn` after acceptance added to admin exception alerts; treatment-detail changes by the clinic until Check In and by an admin at any time from Confirmed; `Inquiry` removed from the soft-delete list; QuoteService keeps `first_sent_at` on re-send; header version and change log aligned; round-2 additions (Q45 to Q49, Q42 check): a provider fault, suspension, or deactivation on an In Progress booking keeps it In Progress with `supportRequired` for an admin decision (Aftercare with aftercare-provider reassignment, or cancellation with reason) instead of cancelling it; treatment record created at confirmation in Awaiting Check In; new mandatory `aftercare.provider_reassigned` for patient and new aftercare provider; no automatic promotion or reservation on an admin-authored replacement quote; an unaccepted replacement quote expires normally with the inquiry staying support-required; booking notices read the current appointment while the snapshot keeps the accepted baseline |
 
 ---
 

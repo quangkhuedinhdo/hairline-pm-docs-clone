@@ -3,8 +3,9 @@
 **Module**: P-02: Quote Request & Management | P-06: Communication | P-08: Help & Support | PR-01: Provider Team | PR-02: Inquiry & Quote Management | PR-03: Treatment Execution & Documentation | PR-04: Aftercare Participation | PR-05: Financial Management & Reporting | PR-06: Profile & Settings Management | PR-07: Communication & Messaging | A-01: Patient Management & Oversight | A-02: Provider Management & Onboarding | A-03: Aftercare Team Management | A-05: Billing & Financial Reconciliation | A-06: Discount & Promotion Management | A-07: Affiliate Program Management | A-09: System Settings & Configuration | A-10: Communication Monitoring & Support
 **Feature Branch**: `fr022-search-filtering`
 **Created**: 2025-11-12
-**Status**: ✅ Verified & Approved
+**Status**: 🟡 Revised — Pending Consolidated Verification
 **Source**: FR-022 from system-prd.md
+**Change Request**: [CR-FR022-20261016-01 — MTG-002 quote model alignment](change-request-2026-10-16-mtg002-quote-model-alignment.md)
 
 ---
 
@@ -440,7 +441,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 ###### FR-005 / Screen 1: Quote Comparison List [P1 — MVP]
 
-**Purpose**: Patient sorts and filters received quotes for comparison before acceptance.
+**Purpose**: Patient sorts and filters complete subquotes across received parent quotes before accepting one subquote.
 
 _For UI state behaviors (inactive, active, reset), see [Control Behavior Standards](#control-behavior-standards) above. Document any screen-specific exceptions inline._
 
@@ -450,8 +451,10 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 | Filter | Type | Options | Default | Logic |
 |--------|------|---------|---------|-------|
-| Sort By | Dropdown | Price (Low–High), Price (High–Low), Graft Count, Rating, Quote Date | Quote Date (most recent) | Single selection |
-| Date Range | Filter chips | Patient's submitted date ranges | All | Narrows to quotes covering that range |
+| Sort By | Dropdown | Price (Low–High), Price (High–Low), Graft Count, Rating, Appointment Date, Quote Date | Quote Date (most recent) | Single selection; evaluates subquote-owned values and inherited parent/provider values |
+| Date Range | Filter chips | Patient's submitted date ranges | All | Narrows to subquotes whose selected Option/Date-Price Record uses that range |
+
+**Sort basis**: Price sorts use each subquote's complete offered price as shown on FR-005 / Screen 1, with any promotion already included; the standard price before promotion and the price per graft are not used for price sorting. For ordering only, each price is converted to the patient's display currency at the current rate; each card still shows its own quote currency, and when the listed subquotes use more than one currency the price order is labelled approximate. Subquotes with the same sort value are ordered by parent quote send date (most recent first), then by option order within the parent quote, then by date range start. Subquotes that cannot currently be accepted (Not Selected, Expired, Withdrawn or Cancelled) stay in the list, shown disabled as in FR-005, and sort after all eligible subquotes. Each list row and each counted result is one subquote.
 
 ---
 
@@ -609,7 +612,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 ###### FR-004 / Screen 2: Provider Quote List [P1 — MVP]
 
-**Purpose**: Provider searches for and filters their submitted quotes across all patient inquiries.
+**Purpose**: Provider searches for and filters their submitted quotes across all patient inquiries. Each list row and each counted result is one parent quote; its options and date ranges are shown as row attributes and are not counted as separate results.
 
 _For UI state behaviors (inactive, active, reset), see [Control Behavior Standards](#control-behavior-standards) above. Document any screen-specific exceptions inline._
 
@@ -623,7 +626,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 | Filter | Type | Options | Default | Logic |
 |--------|------|---------|---------|-------|
-| Quote Status | Multi-select | Draft, Sent, Expired, Withdrawn, Archived, Accepted, Cancelled (Other Accepted), Cancelled (Inquiry Cancelled) | All | OR (within field) |
+| Quote Status | Multi-select | Draft, Sent, Expired, Withdrawn, Archived, Accepted, Cancelled (Other Accepted), Cancelled (Inquiry Cancelled), Cancelled (Provider Status) | All | OR (within field) |
 | Date Range | Date range picker | Custom | All dates | Filters by quote creation date |
 | Concern | Multi-select | Hair Transplant, Beard Transplant, Both | All | OR (within field) |
 | Patient Location | Dropdown | All; country list from DB | All | Exact match |
@@ -732,7 +735,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 | Filter | Type | Options | Default | Logic |
 |--------|------|---------|---------|-------|
-| Package Type | Dropdown | All; admin-defined package types | All | Exact match |
+| Status | Dropdown | All, Active, Inactive | All | Exact match |
 
 ---
 
@@ -896,7 +899,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 ###### FR-004 / Screen 5: Global Quote Table [P1 — MVP]
 
-**Purpose**: Admin searches for and filters all quotes across all providers and patients.
+**Purpose**: Admin searches for and filters all quotes across all providers and patients. Each list row and each counted result is one parent quote; its options and date ranges are shown as row attributes and are not counted as separate results.
 
 _For UI state behaviors (inactive, active, reset), see [Control Behavior Standards](#control-behavior-standards) above. Document any screen-specific exceptions inline._
 
@@ -910,7 +913,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 | Filter | Type | Options | Default | Logic |
 |--------|------|---------|---------|-------|
-| Quote Status | Multi-select | Draft, Sent, Expired, Withdrawn, Archived, Accepted, Cancelled (Other Accepted), Cancelled (Inquiry Cancelled) | All | OR (within field) |
+| Quote Status | Multi-select | Draft, Sent, Expired, Withdrawn, Archived, Accepted, Cancelled (Other Accepted), Cancelled (Inquiry Cancelled), Cancelled (Provider Status) | All | OR (within field) |
 | Date Range | Date range picker | Custom | All dates | Filters by quote creation date |
 | Concern | Multi-select | Hair Transplant, Beard Transplant, Both | All | OR (within field) |
 | Patient Location | Dropdown | All; country list from DB | All | Exact match |
@@ -959,7 +962,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 
 | Filter | Type | Options | Default | Logic |
 |--------|------|---------|---------|-------|
-| Booking Status | Multi-select | All, Pending Payment, Confirmed, In Progress, Completed, Cancelled | All | OR (within field) |
+| Booking Status | Multi-select | Accepted, Payment Window Expired, Confirmed, In Progress, Aftercare, Completed, Cancelled | All | OR (within field) |
 | Provider | Dropdown | All; provider list from DB | All | Exact match |
 | Date Range | Date range picker | Custom | All dates | Filters by booking date |
 | Treatment Type | Dropdown | All, Hair Transplant, Beard Transplant, Both | All | Exact match |
@@ -1798,6 +1801,7 @@ _For UI state behaviors (inactive, active, reset), see [Control Behavior Standar
 - **Rule 6**: Search input fields MUST have debounce (300–500ms depending on screen type — see REQ-022-012) to reduce server load from rapid typing
 - **Rule 7**: Autocomplete suggestions MUST be limited to 10 results to avoid overwhelming user
 - **Rule 8**: Search history MUST NOT be stored (privacy consideration for admin platform)
+- **Rule 9**: Any patient-facing price sort or price filter across items priced in different currencies MUST convert each price to the patient's display currency at the current rate for ordering and filtering only; each card MUST still show its own quote currency, and when the listed items use more than one currency the price order MUST be labelled approximate
 
 ### Data & Privacy Rules
 
@@ -2108,6 +2112,24 @@ A patient from the UK wants to find providers in Turkey for a hair transplant. T
 
 ---
 
+### User Story 5 - Patient Sorts and Filters Subquotes Before Acceptance (Priority: P1)
+
+A patient has received two parent quotes from two providers. Each parent quote offers more than one option, priced for both of the patient's submitted date ranges. The patient wants to see the cheapest subquotes for their preferred date range before accepting one.
+
+**Why this priority**: Subquote sorting and filtering on FR-005 / Screen 1 is part of the MVP acceptance journey and must be testable from FR-022.
+
+**Independent Test**: Can be tested by creating two parent quotes from different providers with subquotes across two date ranges, then sorting by price and filtering by one date range on FR-005 / Screen 1.
+
+**Acceptance Scenarios**:
+
+1. **Given** subquotes from two parent quotes are listed, **When** the patient sorts by "Price (Low–High)", **Then** subquotes from both parent quotes are ordered together by their complete offered price with any promotion included
+2. **Given** the patient submitted two date ranges, **When** the patient selects one date range chip, **Then** only subquotes whose Option/Date-Price Record uses that range are listed and the result count shows the number of subquotes
+3. **Given** two subquotes have the same sort value, **When** the list is sorted, **Then** they are ordered by parent quote send date (most recent first), then option order, then date range start
+4. **Given** one parent quote has expired, **When** the patient views the sorted list, **Then** its subquotes stay listed, shown disabled, after all eligible subquotes
+5. **Given** the listed subquotes are priced in two different currencies, **When** the patient sorts by price, **Then** the order uses each price converted to the patient's display currency at the current rate, each card still shows its own quote currency, and the order is labelled approximate
+
+---
+
 ### Edge Cases
 
 - **Edge Case 1**: What happens when a patient searches for providers in a country with no active providers?
@@ -2156,7 +2178,7 @@ A patient from the UK wants to find providers in Turkey for a hair transplant. T
 - **REQ-022-038**: System MUST allow providers to filter treatment cases by procedure date range and clinician
 - **REQ-022-039**: System MUST allow providers to search and filter aftercare cases by patient name/ID, milestone, status, and date range
 - **REQ-022-040**: System MUST allow providers to filter their analytics dashboard by date range and treatment type
-- **REQ-022-041**: System MUST allow providers to search and filter their package list by name and package type
+- **REQ-022-041**: System MUST allow providers to search their package list by name and filter it by package status (Active or Inactive)
 - **REQ-022-042**: System MUST allow providers to filter their reviews by star rating
 - **REQ-022-043**: System MUST allow providers to search and filter support cases by case ID, keywords, status, type, and date range
 - **REQ-022-044**: System MUST allow providers to search team members by name, email, role, and status
@@ -2166,6 +2188,8 @@ A patient from the UK wants to find providers in Turkey for a hair transplant. T
 - **REQ-022-051**: System MUST allow patients to search help center content with full-text search and auto-suggest
 - **REQ-022-052**: System MUST allow patients to filter help center by content type (FAQs, Articles, Resources, Videos)
 - **REQ-022-053**: System MUST allow patients to filter their support tickets by status
+- **REQ-022-057**: System MUST allow patients to sort FR-005 subquotes by price, inherited graft count, inherited provider rating, appointment date, or parent quote date and to filter them by the patient-submitted date range selected by each subquote.
+- **REQ-022-058**: System MUST order any patient-facing price sort or price filter by each price converted to the patient's display currency at the current rate, for ordering and filtering only; each card MUST keep showing its own quote currency, and the price order MUST be labelled approximate when the listed items use more than one currency.
 
 #### Shared Behavior Rules
 
@@ -2239,8 +2263,8 @@ A patient from the UK wants to find providers in Turkey for a hair transplant. T
 | 2026-04-12 | 2.1 | Post-verification source-of-truth alignment: added missing patient/provider Help & Support search/filter screens from FR-035 and FR-032 to the Master Reference Table and screen specs; corrected Provider Messages mapping from FR-012 Screen 2 to Screen 3 and aligned its exact filter controls to the source FR; aligned A-02 provider-management search/filter wording and provider search requirement to the FR-015 admin dashboard model | Codex |
 | 2026-04-12 | 2.2 | Verification round 2 fixes: removed unimplemented "treatment type" filter from REQ-022-002, Module Scope, and Main Flow 1; corrected Main Flow 2 diagram nodes to match FR-015/Screen 1 (search: provider name/clinic name/email/license number; filters: status/featured/commission type/date range); rewrote User Story 2 Scenario 2 to test Location filter instead of search field; enumerated Transaction Search status options per record type (FR-017/Screen 7/Tab 1); updated footer date and approvals table | Claude AI |
 | 2026-04-12 | 2.3 | Verification round 3 fixes: (1) Standardized all search matching to fuzzy matching (database full-text indexes — MySQL FULLTEXT / PostgreSQL TSVECTOR) across all screen specs, Business Rules, REQ-022-007, and Implementation Notes; P3 external dependency updated to reflect advanced fuzzy (synonym expansion, edit-distance) as the P3 enhancement scope. (2) Resolved patient name PHI masking gap: removed patient name from provider-facing search fields in FR-003/Screen 9 and FR-004/Screen 2 (now Patient ID only pre-payment); updated Privacy Rule 1, REQ-022-033, REQ-022-035, and Module Scope PR-02 description. (3) Fixed admin search query max length from 100 to 200 chars to match FR-015/Screen 1 and FR-032/Screen 5 specs. (4) Corrected multi-select filter Logic column from "AND" to "OR (within field)" across all screen specs; added Filter Logic Note to Control Behavior Standards clarifying cross-filter AND vs. within-field OR semantics. (5) Expanded Internal Dependencies with full source FR maintenance table covering all 30+ FRs in the Master Reference Table. (6) Added Provider Platform entry points (PR-01 through PR-06). (7) Added 300ms debounce to FR-035/Screen 1 (was missing). (8) Marked REQ-022-009 export functionality as P2 spec gap with TODO. | Claude AI |
-| 2026-04-13 | 2.5 | Post-verification fixes: (1) Corrected FR-015/Screen 1 commission type filter from stale "Tier-based" to "Flat Rate" — aligns with FR-015 v1.6 update (maintenance convention gap). (2) Fixed User Story 2 Scenario 3: replaced non-existent "Pending Onboarding" status with "Draft" to match FR-015 provider status values. (3) Replaced FR-001 internal dependency with FR-031 — admin search authentication is governed by Admin Access Control (FR-031), not patient auth (FR-001). (4) Removed PostgreSQL references from Assumptions, Edge Case 4, and Implementation Notes — system uses MySQL 8.0+ exclusively per system-technical-spec.md. (5) Added provider platform max search query length (200 chars) to Business Rules — was undefined, leaving an implementation gap. | Claude AI |
 | 2026-04-13 | 2.4 | Verification round 4 fixes: (1) Removed "specialist" from Module Scope PR-04 and REQ-022-039 — specialist filter is admin-only (A-03); provider screen spec (FR-011/Screen 8) does not include it and the client transcriptions contain no provider-facing specialist filter requirement. (2) Removed B2 "Search returns too many results" workflow — truncation model (first 100 results) contradicted pagination rules (REQ-022-006: 25 results/page); pagination is now the single authoritative model; B3 renumbered to B2; Edge Case 2 updated to reflect paginated first-page display with filter guidance banner. (3) Moved REQ-022-009 (export) from Core Requirements (P1) to Enhanced Requirements (P2) — spec is incomplete; placement under P1 heading while noting P2 in an inline TODO was ambiguous. (4) Added "Active Status" and "Available Capacity" filters to FR-003/Screen 7a (Patient Provider Selection, P2) — required by system PRD (L441) but missing from screen spec. (5) Corrected Implementation Notes debounce from blanket "500ms" to "300–500ms per screen type, per REQ-022-012". Minor: overflow-vs-page-size interaction resolved as side-effect of B2 removal. | Claude AI |
+| 2026-04-13 | 2.5 | Post-verification fixes: (1) Corrected FR-015/Screen 1 commission type filter from stale "Tier-based" to "Flat Rate" — aligns with FR-015 v1.6 update (maintenance convention gap). (2) Fixed User Story 2 Scenario 3: replaced non-existent "Pending Onboarding" status with "Draft" to match FR-015 provider status values. (3) Replaced FR-001 internal dependency with FR-031 — admin search authentication is governed by Admin Access Control (FR-031), not patient auth (FR-001). (4) Removed PostgreSQL references from Assumptions, Edge Case 4, and Implementation Notes — system uses MySQL 8.0+ exclusively per system-technical-spec.md. (5) Added provider platform max search query length (200 chars) to Business Rules — was undefined, leaving an implementation gap. | Claude AI |
 | 2026-04-13 | 2.6 | Applied selected follow-up resolutions: (1) realigned FR-012 search/filter surfaces to source scope by moving patient/provider messaging screens to P2 and assigning provider messaging to PR-07, (2) removed non-authoritative search-result export behavior from FR-022 outside deferred REQ-022-009, and (3) replaced the FR-019/Screen 4 placeholder dependency note with a finalized screen reference. | Codex |
 | 2026-04-13 | 2.7 | Removed unsupported admin global-search/cross-module-search entry-point claims. Per user direction, provider-selection contract changes for Screen 7a were limited to `system-prd.md`; FR-022 content was otherwise left unchanged for that topic. | Codex |
 | 2026-04-13 | 2.8 | Status finalized: set PRD status to **✅ Verified & Approved**, updated approvals to **✅ Approved**, and refreshed footer metadata to match `prd-template.md`. | Documentation governance (2026-04-13) |
@@ -2248,6 +2272,11 @@ A patient from the UK wants to find providers in Turkey for a hair transplant. T
 | 2026-05-14 | 2.10 | Corrected stale FR-013 screen reference: updated all three occurrences of `FR-013 / Screen 2 (Review Management Dashboard)` to `FR-013 / Screen 7` following FR-013 v1.8 screen renumbering. | Verification alignment (2026-05-14) |
 | 2026-06-22 | 2.11 | Synced A-07 Affiliate Management filters with FR-018 v1.1 bulk affiliate code generation: added country/region, affiliate type, language, performance tier, campaign eligibility, and payout setup filters so admins can select affiliate cohorts before generating one unique code per affiliate. | Codex |
 | 2026-06-23 | 2.12 | FR-018 screen-reference cleanup: updated affiliate payout search/filter mappings from the stale FR-018 Screen 5 reference to current FR-018 Screen 7 Affiliate Payout Status & History. | Codex |
+| 2026-09-16 | 2.13 | Reconciled FR-005 Screen 1 with the accepted subquote model: changed the filter target from flat quotes to complete subquotes, added Appointment Date sorting, documented inherited sort values, and bound Date Range filtering to the subquote's selected Option/Date-Price Record. | Product Owner / Verification alignment |
+| 2026-10-16 | 2.14 | MTG-002 quote-model alignment: Quote Status filters on FR-004 / Screen 2 and Screen 5 now use the exact FR-004 quote statuses, adding Cancelled (Provider Status), with no `confirmed` quote status; the FR-006 / Screen 5 Booking Status filter now uses the exact FR-006 booking states (Accepted, Payment Window Expired, Confirmed, In Progress, Aftercare, Completed, Cancelled) and drops "Pending Payment"; FR-024 / Screen 4 package filter changed from Package Type to package status (Active, Inactive) with REQ-022-041 updated, following FR-024 v1.3; FR-005 / Screen 1 sort basis, tie-break order, ineligible-subquote placement and result unit defined; parent-quote row and count unit stated for FR-004 / Screen 2 and Screen 5; User Story 5 added for REQ-022-057; footer date refreshed. Findings FR-022-1, FR-022-2, FR-022-3, FR-022-4, FR-022-5, FR-022-6, FR-022-7, FR-022-9; decisions M6, D23, D17, R7-3. Status reset pending consolidated verification. See [Change Request](./change-request-2026-10-16-mtg002-quote-model-alignment.md) (CR-FR022-20261016-01). | Product Owner / Documentation |
+| 2026-10-16 | 2.15 | Product Owner Q-series alignment (CR-FR022-20261016-01): patient-facing price sorts and price filters convert each price to the display currency at the current rate for ordering only, cards keep their own quote currency, and mixed-currency order is labelled approximate (FR-005 / Screen 1 sort basis, General Module Rule 9, User Story 5 scenario 5, REQ-022-058; Q8). Consolidated verification remains pending. | Product Owner / Documentation |
+| 2026-10-18 | 2.16 | Consolidated verification corrections (CR-FR022-20261016-01): Approvals row refreshed to record Product Owner documentation approval through v2.15 via the MTG-002 decision log. No requirement change. | AI |
+| 2026-10-18 | 2.17 | Final audit corrections (CR-FR022-20261016-01): the 2026-04-13 change log rows for versions 2.4 and 2.5 are now listed in version order. No requirement change; the provider and admin Quote Status filters keep the FR-004 status label Cancelled (Provider Status), while FR-004 owns the patient-facing label Offer Unavailable. | Product Owner |
 
 ---
 
@@ -2258,10 +2287,13 @@ A patient from the UK wants to find providers in Turkey for a hair transplant. T
 | Product Owner | — | 2026-04-13 | ✅ Approved |
 | Technical Lead | — | 2026-04-13 | ✅ Approved |
 | Stakeholder | — | 2026-04-13 | ✅ Approved |
+| Product Owner | Joachim Trung Tuan | 2026-09-16 | Approved FR-005 subquote sort/filter alignment through v2.13 |
+| Product Owner | Joachim Trung Tuan | 2026-10-16 | Documentation approved through v2.15 via the MTG-002 decision log (CR-FR022-20261016-01); v2.16 approvals refresh on 2026-10-18; implementation reconciliation required |
+| Product Owner | Joachim Trung Tuan | 2026-10-18 | Approved via MTG-002 decision log (documentation only), v2.17 final audit corrections (CR-FR022-20261016-01); implementation reconciliation required |
 
 ---
 
 **Template Version**: 2.0.0 (Constitution-Compliant)
 **Constitution Reference**: Hairline Platform Constitution v1.0.0, Section III.B (Lines 799-883)
 **Based on**: FR-022 from system-prd.md
-**Last Updated**: 2026-06-23
+**Last Updated**: 2026-10-18

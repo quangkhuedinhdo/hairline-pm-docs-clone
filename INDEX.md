@@ -4,7 +4,7 @@
 any file, use this index to map **task → area → file → section**, then read **only the
 section you need**. Do not scan the tree. Do not read long files whole.
 
-**Last Updated**: 2026-08-17
+**Last Updated**: 2026-09-09
 
 > Behavior rules (locator-first, phase budgets, no full-file reads) live in
 > `CLAUDE.md` / `AGENTS.md` → *Navigation & Token Governance*. This file is **where to
@@ -24,6 +24,7 @@ Find your task, go to the listed area, then jump via the Section Maps in §C.
 | Architecture, APIs, integrations, deployment | `project-requirements/system-technical-spec.md` | §C.4 |
 | Project principles / scope / vision | `project-requirements/constitution-summary.md` | read top-to-mid only |
 | Original client requirements (verbatim) | `project-requirements/transcriptions/` | locate file first |
+| Subsequent stakeholder meetings, files, and extracted decisions | `project-requirements/sources/source-register.md` | read the register, then one normalized source record; raw files are evidence only |
 | Verifying an FR is built correctly | run the `verify-fr` skill | skill is authoritative |
 | Breaking a PRD into implementation tasks | run `create-implementation-tasks` skill | — |
 | Logging bugs as tasks | run `create-bug-tasks` skill | — |
@@ -31,8 +32,13 @@ Find your task, go to the listed area, then jump via the Section Maps in §C.
 | Checking build/implementation progress | run `check-progress` skill; `progress-tracking/` | — |
 | Sprint readiness / client review report | run `sprint-readiness-reporting` skill; `product-plans/` | date folder |
 | Status reports / analyses | `reports/YYYY-MM-DD/` | locate by date |
-| Test plans / QA | `testing-plans/YYYY-MM-DD/` | — |
-| Automated web E2E architecture, registry, execution framework, statuses, and results | `testing-automation/` | start at `ARCHITECTURE.md`; use `TESTING-CONSTITUTION.md` for governance, `status-taxonomy.json` for all enums, and `OPERATIONS.md` for commands |
+| Any testing work (manual or automated) | `testing/` | start at `testing/README.md`; rules in `testing/TEST-STRATEGY.md` |
+| Manual test plans and batches (per release phase, versioned) | `testing/manual/phases/<phase>/v<major>.0/` | `plan.md` first, then one batch file; new files are copied from `testing/templates/` |
+| Merge tester results, log or sync manual-test bugs | run `manual-test-bug-sync` skill | — |
+| Automated web E2E architecture, registry, execution framework, statuses, and results | `testing/automated/web-e2e/` | start at `ARCHITECTURE.md`; use `TESTING-CONSTITUTION.md` for governance, `status-taxonomy.json` for all enums, and `OPERATIONS.md` for commands |
+| API endpoint and flow test material; Android flows | `testing/automated/api/`, `testing/automated/android/` | read via the owning skill |
+| Test accounts | `testing/test-data/credentials/` | internal only; never copy into batch files |
+| Old (pre-2026-10-19) test plans and mobile test reports | `testing/archive/` | read `archive/README.md`; do not edit |
 | Website / public content | `website-works/` | — |
 | Recent doc changes / audit trail | `project-requirements/update-logs/` | read its README first |
 | Read / review / analyze main/ source code (only when invited) | see §D Code Map | map first → open only the named files |
@@ -56,7 +62,7 @@ invoked, the skill's `SKILL.md` is authoritative; follow it step-by-step.
 | `create-implementation-tasks` | Generate date-stamped Plane-ready implementation tasks from FR gaps / checklist subflows / PRD coverage. |
 | `create-bug-tasks` | Draft Plane-ready `[BUG]` task markdown from bug reports, readiness backlogs, or pasted bug lists. |
 | `check-progress` | Update one checklist row for a specific MODULE_CODE + FR_CODE pair, verifying FE/BE evidence. |
-| `plane-api-commands` | Any Plane API action: refresh metadata, list resources, create/update work items, set parents, add links. |
+| `plane-api-commands` | Any Plane API action: refresh metadata, list resources, create/update work items, read work-item states, set parents, add links. |
 | `sprint-readiness-reporting` | Start/continue/update sprint readiness reports and fix backlogs from the launch plan or review findings. |
 | `verify-design-layout` | Review Figma layouts (PNG/JPG/JSON) against FR screen specs for missing fields, type mismatches, flow gaps. |
 | `api-testing` | Test a SINGLE API endpoint with detailed reporting (one endpoint, one scenario). |
@@ -67,6 +73,7 @@ invoked, the skill's `SKILL.md` is authoritative; follow it step-by-step.
 | `android-flow-register` | Interactively record/update a multi-screen Android testing flow via a live guided session. |
 | `web-e2e-register` | Scout, propose, register, revise, or activate deterministic dashboard Playwright functions/flows and approved frontend changes. |
 | `web-e2e-review` | Inspect SQLite web E2E findings, assemble evidence, obtain human classification, and coordinate approved re-tests or follow-up. |
+| `manual-test-bug-sync` | Merge a tester's filled manual batch files into the hub, log Fail rows as Plane bugs, sync Plane states into Bug status, list retests, refresh progress summaries. |
 | `gen-code-map` | Generate/refresh the three semantic code maps for `main/` (backend/frontend/app) and check folder drift. |
 
 > **Governance note (pending your decision):** CLAUDE.md currently marks skills as
@@ -90,6 +97,7 @@ local-docs/
 │   ├── functional-requirements/  frNNN-slug/prd.md  (38 FRs; many ⚠️ >1000 lines)
 │   ├── templates/                Canonical FR, Change Request, and Spec Kit templates
 │   ├── transcriptions/           Client requirements, verbatim
+│   ├── sources/                  Later stakeholder evidence, meeting extractions, and source register
 │   └── update-logs/              Change history (has its own README index)
 ├── project-automation/
 │   ├── skills-engineering/       FROZEN — source-of-truth SKILL.md defs
@@ -104,8 +112,8 @@ local-docs/
 ├── progress-tracking/            Ongoing status trackers
 ├── project-notes/                Ad-hoc notes, decisions, dev-related-issues/
 ├── reports/YYYY-MM-DD/           Status reports & analyses
-├── testing-plans/YYYY-MM-DD/     Test plans; testing-credentials/
-├── testing-automation/           Living web E2E architecture, registry, framework & results
+├── testing/                      Testing hub: TEST-STRATEGY.md, manual/phases/, automated/
+│                                 (web-e2e/, api/, android/), templates/, test-data/, results/, archive/
 └── website-works/                website-requirements/, project-static-content/
 ```
 
@@ -157,6 +165,8 @@ For each doc type: where its structure is **defined** (template/source) and the 
 | Sprint readiness / fix backlog | `sprint-readiness-reporting/SKILL.md` (+ `references/reporting-rules.md`) | `product-plans/template/sprint-readiness-fix-backlog-template.md` | §C.5 |
 | Implementation task doc | `create-implementation-tasks/references/task-format.md` | (format spec, not a fill-in) | run skill |
 | Bug task doc | `create-bug-tasks/references/` | — | run skill |
+| Manual test phase plan (`testing/manual/phases/<phase>/v<major>.0/plan.md`) | `testing/TEST-STRATEGY.md` | `testing/templates/manual-phase-plan-template.md` | Template headings |
+| Manual test batch (`.../v<major>.0/batches/B<NN>-<module>-<slug>.md`) | `testing/TEST-STRATEGY.md`; `manual-test-bug-sync` skill (merge and validation rules) | `testing/templates/manual-batch-template.md` | Template headings |
 | Android QA test report / flow script | `android-emulator-qa/SKILL.md` | `android-emulator-qa/assets/test-report-template.md`, `assets/flow-script-template.md` | run skill |
 | Design-layout review report | `verify-design-layout/SKILL.md` | `verify-design-layout/assets/report-template.md` | run skill |
 | Update-log entry | CLAUDE.md → Update Log Protocol | dated exemplars in `update-logs/` | — |
