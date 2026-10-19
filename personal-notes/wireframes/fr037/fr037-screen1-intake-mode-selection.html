@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-037 Screen 1 — Hair-Loss Monitoring Intake &amp; Mode Selection</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Page canvas ── */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #e8eaed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 60px;
+      color: #1c1c1e;
+    }
+
+    /* ── Page header (outside phone) ── */
+    .page-header {
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .page-header-left h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1c1c1e;
+    }
+    .page-header-left p {
+      font-size: 13px;
+      color: #6e6e73;
+      margin-top: 4px;
+    }
+    .wf-badge {
+      background: #1c1c1e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+
+    /* ── Phone layout: two phones side by side ── */
+    .phones-row {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .phone-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .phone-col-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6e6e73;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 375px;
+      border-radius: 48px;
+      background: #fff;
+      border: 3px solid #1c1c1e;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.1),
+        0 24px 60px rgba(0,0,0,0.25),
+        inset 0 0 0 2px #3a3a3c;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Progress line (hidden — no sub-steps in Screen 1) ── */
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 34px;
+      background: #1c1c1e;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      height: 54px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 28px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1c1c1e;
+      position: relative;
+      z-index: 5;
+    }
+    .status-time { font-size: 15px; font-weight: 700; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .status-icon { font-size: 11px; }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid #f2f2f7;
+      position: relative;
+    }
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 16px;
+      color: #007aff;
+      cursor: pointer;
+      font-weight: 400;
+    }
+    .nav-back-chevron { font-size: 18px; line-height: 1; }
+    .nav-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      font-weight: 600;
+      color: #1c1c1e;
+      white-space: nowrap;
+    }
+    .nav-action {
+      margin-left: auto;
+      font-size: 15px;
+      color: #007aff;
+      cursor: pointer;
+    }
+
+    /* ── Progress bar (thin line) ── */
+    .progress-line {
+      height: 4px;
+      background: #f2f2f7;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #007aff;
+      width: 33%;
+      border-radius: 0 2px 2px 0;
+    }
+    .progress-label {
+      padding: 6px 16px 2px;
+      font-size: 11px;
+      color: #8e8e93;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ── Scrollable screen content ── */
+    .screen-scroll {
+      height: 680px;
+      overflow-y: auto;
+      background: #f2f2f7;
+      scrollbar-width: none;
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Section groups (iOS-style) ── */
+    .section-group {
+      margin-bottom: 8px;
+    }
+    .section-group-header {
+      padding: 16px 16px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #8e8e93;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .section-group-body {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+
+    /* ── Row item ── */
+    .row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      min-height: 48px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      gap: 10px;
+    }
+    .row:last-child { border-bottom: none; }
+    .row-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .row-content { flex: 1; min-width: 0; }
+    .row-label {
+      font-size: 15px;
+      color: #1c1c1e;
+      font-weight: 400;
+    }
+    .row-label.bold { font-weight: 600; }
+    .row-value {
+      font-size: 13px;
+      color: #8e8e93;
+      margin-top: 1px;
+    }
+    .row-value.filled { color: #1c1c1e; }
+    .row-chevron {
+      font-size: 13px;
+      color: #c7c7cc;
+      flex-shrink: 0;
+    }
+    .row-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .badge-required { background: #ffebe6; color: #c0392b; }
+    .badge-optional { background: #f2f2f7; color: #8e8e93; }
+    .badge-conditional { background: #e3f0ff; color: #007aff; }
+    .badge-done { background: #e3fef0; color: #1e8449; }
+
+    /* ── Mode cards (stacked, full-width, inside section-group-body) ── */
+    .mode-card {
+      display: flex;
+      align-items: flex-start;
+      padding: 14px 16px;
+      gap: 12px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      cursor: pointer;
+      position: relative;
+    }
+    .mode-card:last-child { border-bottom: none; }
+    .mode-card.selected { background: #f0f6ff; }
+    .mode-card-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .mode-card-icon-wrap.blue { background: #e3f0ff; }
+    .mode-card-icon-wrap.green { background: #e3fef0; }
+    .mode-card-body { flex: 1; }
+    .mode-card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1c1c1e;
+    }
+    .mode-card-desc {
+      font-size: 12px;
+      color: #8e8e93;
+      line-height: 1.5;
+      margin-top: 3px;
+    }
+    .mode-radio-outer {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #c7c7cc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 10px;
+    }
+    .mode-radio-outer.checked {
+      border-color: #007aff;
+      background: #007aff;
+    }
+    .mode-radio-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .mode-notice {
+      background: #fffbe6;
+      border-left: 3px solid #f0a500;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #7a4f00;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ── Inline field (inside a row) ── */
+    .field-inline {
+      padding: 12px 16px 10px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .field-inline:last-child { border-bottom: none; }
+    .field-inline-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8e8e93;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .field-inline-charcount { font-weight: 400; }
+    .field-inline textarea,
+    .field-inline select {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #1c1c1e;
+      font-family: inherit;
+      background: transparent;
+      resize: none;
+      min-height: 64px;
+    }
+    .field-inline select {
+      min-height: auto;
+      cursor: pointer;
+      color: #007aff;
+    }
+    .field-inline textarea::placeholder { color: #c7c7cc; }
+
+    /* ── Severity slider ── */
+    .severity-row {
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .severity-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .severity-label-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8e8e93;
+    }
+    .severity-value-badge {
+      background: #007aff;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 10px;
+    }
+    .slider-track {
+      position: relative;
+      height: 6px;
+      background: linear-gradient(to right, #34c759, #ffcc00, #ff3b30);
+      border-radius: 3px;
+      margin-bottom: 6px;
+    }
+    .slider-thumb {
+      position: absolute;
+      top: 50%;
+      left: 28%;
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #007aff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #8e8e93;
+    }
+    .severity-scale {
+      display: flex;
+      gap: 2px;
+      margin-top: 10px;
+    }
+    .sev-pip {
+      flex: 1;
+      height: 5px;
+      border-radius: 2px;
+    }
+
+    /* ── Photo upload area ── */
+    .photo-upload-row {
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .photo-upload-row:last-child { border-bottom: none; }
+    .photo-sublabel {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8e8e93;
+      margin-bottom: 8px;
+    }
+    .photo-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .photo-row::-webkit-scrollbar { display: none; }
+    .photo-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 1px solid rgba(60,60,67,0.12);
+      background: #f9f9f9;
+      position: relative;
+    }
+    .photo-thumb-remove {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ff3b30;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photo-add {
+      background: #f2f2f7;
+      border: 1.5px dashed #c7c7cc;
+      font-size: 22px;
+      color: #007aff;
+      cursor: pointer;
+    }
+    .photo-upload-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #f2f2f7;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: #007aff;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ── Head scan grid ── */
+    .scan-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .scan-grid:last-child { border-bottom: none; }
+    .scan-sublabel {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8e8e93;
+      padding: 12px 16px 0;
+      background: #fff;
+    }
+    .scan-cell {
+      background: #f2f2f7;
+      border-radius: 12px;
+      padding: 14px 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .scan-cell.done-cell { background: #e3fef0; }
+    .scan-cell-icon { font-size: 24px; margin-bottom: 4px; }
+    .scan-cell-label { font-size: 12px; font-weight: 600; color: #1c1c1e; }
+    .scan-cell-status {
+      font-size: 11px;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+    .scan-cell-status.done { color: #1e8449; }
+    .scan-cell-status.empty { color: #8e8e93; }
+    .scan-done-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #34c759;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scan-hint {
+      padding: 0 16px 12px;
+      background: #fff;
+      font-size: 11px;
+      color: #8e8e93;
+      line-height: 1.4;
+    }
+
+    /* ── Medical Q section ── */
+    .mq-banner {
+      background: #e3f0ff;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #0047b3;
+      line-height: 1.5;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .mq-banner strong { font-weight: 700; }
+    .mq-q-block {
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .mq-q-block:last-child { border-bottom: none; }
+    .mq-q-num {
+      font-size: 11px;
+      color: #8e8e93;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .mq-q-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1c1c1e;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .mq-opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #1c1c1e;
+      margin-bottom: 6px;
+      cursor: pointer;
+      border: 1.5px solid #e5e5ea;
+      background: #fff;
+    }
+    .mq-opt:last-child { margin-bottom: 0; }
+    .mq-opt.selected { border-color: #007aff; background: #f0f6ff; }
+    .mq-opt-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #c7c7cc;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mq-opt.selected .mq-opt-radio {
+      border-color: #007aff;
+      background: #007aff;
+    }
+    .mq-opt-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .mq-progress-strip {
+      padding: 10px 16px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .mq-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: #e5e5ea;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .mq-progress-fill { height: 100%; width: 25%; background: #007aff; border-radius: 2px; }
+    .mq-progress-text { font-size: 12px; color: #8e8e93; white-space: nowrap; }
+
+    /* ── Bottom button area ── */
+    .bottom-bar {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      padding: 12px 16px 8px;
+    }
+    .btn-primary-mobile {
+      width: 100%;
+      height: 50px;
+      border-radius: 14px;
+      background: #007aff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-secondary-mobile {
+      width: 100%;
+      height: 44px;
+      border-radius: 14px;
+      background: transparent;
+      color: #007aff;
+      font-size: 15px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4px;
+    }
+    .home-indicator {
+      display: flex;
+      justify-content: center;
+      padding: 8px 0 6px;
+      background: #fff;
+    }
+    .home-bar {
+      width: 134px;
+      height: 5px;
+      background: #1c1c1e;
+      border-radius: 3px;
+      opacity: 0.15;
+    }
+
+    /* ── Side annotation ── */
+    .annotation-list {
+      width: 180px;
+      flex-shrink: 0;
+      padding-top: 80px;
+    }
+    .annotation-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .ann-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff3b30;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .ann-dot.blue { background: #007aff; }
+    .ann-dot.green { background: #34c759; }
+    .ann-dot.orange { background: #ff9500; }
+    .ann-text {
+      font-size: 11px;
+      color: #1c1c1e;
+      line-height: 1.5;
+    }
+    .ann-text strong { color: #ff3b30; }
+    .ann-text strong.blue { color: #007aff; }
+    .ann-text strong.green { color: #1e8449; }
+    .ann-text strong.orange { color: #c0710a; }
+    .ann-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #8e8e93;
+      margin-bottom: 10px;
+    }
+
+    /* ── Phone 2 (Provider Advice mode) ── */
+    /* reuses all same classes, just content differs */
+  </style>
+</head>
+<body>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>FR-037 · Screen 1 — Intake &amp; Mode Selection</h1>
+      <p>Patient Platform (P-05) &nbsp;·&nbsp; Creates a monitoring case and captures reusable concern information</p>
+    </div>
+    <span class="wf-badge">Wireframe</span>
+  </div>
+
+  <!-- Two phones: Self-monitoring (left) vs Provider Advice (right) -->
+  <div class="phones-row">
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- PHONE A: Self-Monitoring mode selected      -->
+    <!-- ════════════════════════════════════════════ -->
+    <div class="phone-col">
+      <div class="phone-col-label">State A — Self-Monitoring</div>
+
+      <div class="phone">
+        <div class="dynamic-island"></div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <span class="status-icon">▋▋▋</span>
+            <span class="status-icon">WiFi</span>
+            <span class="status-icon">🔋</span>
+          </div>
+        </div>
+
+        <!-- Nav bar -->
+        <div class="nav-bar">
+          <div class="nav-back"><span class="nav-back-chevron">‹</span> Services</div>
+          <div class="nav-title">Monitor Hair Loss</div>
+        </div>
+
+
+        <!-- Scrollable content -->
+        <div class="screen-scroll">
+
+          <!-- MODE SELECTION -->
+          <div class="section-group">
+            <div class="section-group-header">Monitoring Mode <span style="color:#ff3b30">*</span></div>
+            <div class="section-group-body">
+
+              <!-- Self-monitoring selected -->
+              <div class="mode-card selected">
+                <div class="mode-card-icon-wrap blue">📊</div>
+                <div class="mode-card-body">
+                  <div class="mode-card-name">Self-Monitoring</div>
+                  <div class="mode-card-desc">Log observations, severity, and photos at your own pace. No provider involved.</div>
+                </div>
+                <div class="mode-radio-outer checked">
+                  <div class="mode-radio-inner"></div>
+                </div>
+              </div>
+
+              <!-- Provider advice -->
+              <div class="mode-card">
+                <div class="mode-card-icon-wrap green">🩺</div>
+                <div class="mode-card-body">
+                  <div class="mode-card-name">Provider Advice</div>
+                  <div class="mode-card-desc">A provider reviews your case and posts limited periodic guidance.</div>
+                </div>
+                <div class="mode-radio-outer">
+                </div>
+              </div>
+
+              <div class="mode-notice">
+                ⚠️ <strong>Mode is permanent for this case.</strong> To change modes, complete this case and start a new one.
+              </div>
+            </div>
+          </div>
+
+          <!-- CONCERN DETAILS -->
+          <div class="section-group">
+            <div class="section-group-header">Concern Details</div>
+            <div class="section-group-body">
+
+              <div class="field-inline">
+                <div class="field-inline-label">
+                  <span>Nature of Concern <span style="color:#ff3b30">*</span></span>
+                  <span class="field-inline-charcount">0 / 2000</span>
+                </div>
+                <textarea rows="3" placeholder="Describe your current hair-loss concern…"></textarea>
+              </div>
+
+              <div class="field-inline" style="min-height:48px; display:flex; flex-direction:column; justify-content:center; padding:0 16px;">
+                <div class="field-inline-label" style="padding-top:12px;">Duration <span style="color:#ff3b30">*</span></div>
+                <select style="min-height:auto; padding-bottom:12px; padding-top:4px;">
+                  <option value="" disabled selected>Select how long you've noticed this…</option>
+                  <option>Less than 1 month</option>
+                  <option>1–3 months</option>
+                  <option>3–6 months</option>
+                  <option>6–12 months</option>
+                  <option>1–2 years</option>
+                  <option>2–5 years</option>
+                  <option>More than 5 years</option>
+                </select>
+              </div>
+
+              <div class="field-inline">
+                <div class="field-inline-label">
+                  <span>Previous Treatments <span style="color:#ff3b30">*</span></span>
+                  <span class="field-inline-charcount">0 / 2000</span>
+                </div>
+                <textarea rows="3" placeholder='List treatments tried, or type "None"…'></textarea>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SEVERITY SLIDER -->
+          <div class="section-group">
+            <div class="section-group-header">Current Severity <span style="color:#ff3b30">*</span></div>
+            <div class="section-group-body">
+              <div class="severity-row">
+                <div class="severity-top">
+                  <span class="severity-label-text">1 = Minimal &nbsp;·&nbsp; 10 = Severe</span>
+                  <span class="severity-value-badge">3</span>
+                </div>
+                <div class="slider-track">
+                  <div class="slider-thumb"></div>
+                </div>
+                <div class="slider-labels">
+                  <span>1</span>
+                  <span>5</span>
+                  <span>10</span>
+                </div>
+                <div class="severity-scale" style="margin-top:8px;">
+                  <div class="sev-pip" style="background:#34c759;"></div>
+                  <div class="sev-pip" style="background:#5dde76;"></div>
+                  <div class="sev-pip" style="background:#85e695; outline:2px solid #007aff; border-radius:2px;"></div>
+                  <div class="sev-pip" style="background:#ffd60a;"></div>
+                  <div class="sev-pip" style="background:#ffb800;"></div>
+                  <div class="sev-pip" style="background:#ff9500;"></div>
+                  <div class="sev-pip" style="background:#ff6b00;"></div>
+                  <div class="sev-pip" style="background:#ff453a;"></div>
+                  <div class="sev-pip" style="background:#e5342a;"></div>
+                  <div class="sev-pip" style="background:#c0251d;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ADDITIONAL CONTEXT -->
+          <div class="section-group">
+            <div class="section-group-header">Additional Context <span style="color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;">(Optional)</span></div>
+            <div class="section-group-body">
+
+              <div class="field-inline">
+                <div class="field-inline-label">
+                  <span>Lifestyle Factors</span>
+                  <span class="field-inline-charcount">0 / 2000</span>
+                </div>
+                <textarea rows="2" placeholder="Diet, stress, medications, or other relevant context…"></textarea>
+              </div>
+
+              <div class="field-inline">
+                <div class="field-inline-label">
+                  <span>Additional Notes</span>
+                  <span class="field-inline-charcount">0 / 2000</span>
+                </div>
+                <textarea rows="2" placeholder="Anything else you'd like to record…"></textarea>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- INITIAL MEDIA -->
+          <div class="section-group">
+            <div class="section-group-header">Initial Media <span style="color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;">(Optional)</span></div>
+            <div class="section-group-body">
+
+              <!-- Photos -->
+              <div class="photo-upload-row">
+                <div class="photo-sublabel">Photos</div>
+                <div class="photo-row">
+                  <div class="photo-thumb">🖼️<div class="photo-thumb-remove">✕</div></div>
+                  <div class="photo-thumb">🖼️<div class="photo-thumb-remove">✕</div></div>
+                  <div class="photo-thumb photo-add">＋</div>
+                </div>
+              </div>
+
+              <!-- Head Scan -->
+              <div class="scan-sublabel">Head Scan (FR-002 V1)</div>
+              <div class="scan-grid">
+                <div class="scan-cell done-cell">
+                  <div class="scan-done-check">✓</div>
+                  <div class="scan-cell-icon">😐</div>
+                  <div class="scan-cell-label">Front</div>
+                  <div class="scan-cell-status done">Captured</div>
+                </div>
+                <div class="scan-cell done-cell">
+                  <div class="scan-done-check">✓</div>
+                  <div class="scan-cell-icon">☝️</div>
+                  <div class="scan-cell-label">Top</div>
+                  <div class="scan-cell-status done">Captured</div>
+                </div>
+                <div class="scan-cell">
+                  <div class="scan-cell-icon">👈</div>
+                  <div class="scan-cell-label">Left</div>
+                  <div class="scan-cell-status empty">Tap to capture</div>
+                </div>
+                <div class="scan-cell">
+                  <div class="scan-cell-icon">👉</div>
+                  <div class="scan-cell-label">Right</div>
+                  <div class="scan-cell-status empty">Tap to capture</div>
+                </div>
+              </div>
+              <div class="scan-hint">2 of 4 views captured. Quality validated after all 4 are complete. Failed views can be retaken.</div>
+
+            </div>
+          </div>
+
+          <!-- Bottom spacer for scroll -->
+          <div style="height: 80px;"></div>
+        </div><!-- /.screen-scroll -->
+
+        <!-- Bottom button -->
+        <div class="bottom-bar">
+          <button class="btn-primary-mobile">Continue →</button>
+          <button class="btn-secondary-mobile">Save Draft</button>
+        </div>
+        <div class="home-indicator"><div class="home-bar"></div></div>
+
+      </div><!-- /.phone -->
+    </div><!-- /.phone-col -->
+
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- PHONE B: Provider Advice mode + MQ shown   -->
+    <!-- ════════════════════════════════════════════ -->
+    <div class="phone-col">
+      <div class="phone-col-label">State B — Provider Advice (MQ required)</div>
+
+      <div class="phone">
+        <div class="dynamic-island"></div>
+
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <span class="status-icon">▋▋▋</span>
+            <span class="status-icon">WiFi</span>
+            <span class="status-icon">🔋</span>
+          </div>
+        </div>
+
+        <div class="nav-bar">
+          <div class="nav-back"><span class="nav-back-chevron">‹</span> Services</div>
+          <div class="nav-title">Monitor Hair Loss</div>
+        </div>
+
+
+        <div class="screen-scroll">
+
+          <!-- MODE — Provider Advice selected -->
+          <div class="section-group">
+            <div class="section-group-header">Monitoring Mode <span style="color:#ff3b30">*</span></div>
+            <div class="section-group-body">
+
+              <div class="mode-card">
+                <div class="mode-card-icon-wrap blue">📊</div>
+                <div class="mode-card-body">
+                  <div class="mode-card-name">Self-Monitoring</div>
+                  <div class="mode-card-desc">Log observations, severity, and photos at your own pace. No provider involved.</div>
+                </div>
+                <div class="mode-radio-outer"></div>
+              </div>
+
+              <div class="mode-card selected">
+                <div class="mode-card-icon-wrap green">🩺</div>
+                <div class="mode-card-body">
+                  <div class="mode-card-name">Provider Advice</div>
+                  <div class="mode-card-desc">A provider reviews your case and posts limited periodic guidance.</div>
+                </div>
+                <div class="mode-radio-outer checked">
+                  <div class="mode-radio-inner"></div>
+                </div>
+              </div>
+
+              <div class="mode-notice" style="background:#e3f0ff; border-left-color:#007aff; color:#004096;">
+                ℹ️ <strong>Provider Advice requires a medical questionnaire.</strong> Admin will assign a provider — you can log while assignment is pending.
+              </div>
+            </div>
+          </div>
+
+          <!-- CONCERN DETAILS (same fields, collapsed view) -->
+          <div class="section-group">
+            <div class="section-group-header">Concern Details</div>
+            <div class="section-group-body">
+
+              <div class="row">
+                <div class="row-content">
+                  <div class="row-label">Nature of Concern</div>
+                  <div class="row-value filled">Increased shedding at crown, past 3 months…</div>
+                </div>
+                <div class="row-chevron">›</div>
+              </div>
+
+              <div class="row">
+                <div class="row-content">
+                  <div class="row-label">Duration</div>
+                  <div class="row-value filled">3–6 months</div>
+                </div>
+                <div class="row-chevron">›</div>
+              </div>
+
+              <div class="row">
+                <div class="row-content">
+                  <div class="row-label">Previous Treatments</div>
+                  <div class="row-value filled">Minoxidil 5% for 8 months (discontinued)</div>
+                </div>
+                <div class="row-chevron">›</div>
+              </div>
+
+              <div class="row">
+                <div class="row-content">
+                  <div class="row-label">Current Severity</div>
+                  <div class="row-value filled">3 / 10</div>
+                </div>
+                <div class="row-chevron">›</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- MEDICAL QUESTIONNAIRE (conditional, shown for advice mode) -->
+          <div class="section-group">
+            <div class="section-group-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>Medical Questionnaire <span style="color:#ff3b30">*</span></span>
+              <span class="row-badge badge-conditional">Required for this mode</span>
+            </div>
+            <div class="section-group-body">
+
+              <div class="mq-banner">
+                <strong>Why is this required?</strong> The assigned provider needs your medical history to offer limited guidance. Answers are encrypted and shared only with the assigned provider and Admin.
+              </div>
+
+              <div class="mq-progress-strip">
+                <span class="mq-progress-text">Q1 of 8</span>
+                <div class="mq-progress-bar"><div class="mq-progress-fill"></div></div>
+                <span class="mq-progress-text">12%</span>
+              </div>
+
+              <!-- Q1 -->
+              <div class="mq-q-block">
+                <div class="mq-q-num">Question 1 of 8</div>
+                <div class="mq-q-text">Do you have any diagnosed medical conditions that may affect hair loss?</div>
+
+                <div class="mq-opt selected">
+                  <div class="mq-opt-radio"><div class="mq-opt-dot"></div></div>
+                  Yes — I have one or more relevant conditions
+                </div>
+                <div class="mq-opt">
+                  <div class="mq-opt-radio"></div>
+                  No diagnosed conditions
+                </div>
+                <div class="mq-opt">
+                  <div class="mq-opt-radio"></div>
+                  Unsure / Prefer not to say
+                </div>
+              </div>
+
+              <!-- Q2 -->
+              <div class="mq-q-block">
+                <div class="mq-q-num">Question 2 of 8</div>
+                <div class="mq-q-text">Are you currently taking medications that may influence hair loss?</div>
+
+                <div class="mq-opt selected">
+                  <div class="mq-opt-radio"><div class="mq-opt-dot"></div></div>
+                  Blood thinners / anticoagulants
+                </div>
+                <div class="mq-opt">
+                  <div class="mq-opt-radio"></div>
+                  Hormonal treatments (contraceptives, HRT)
+                </div>
+                <div class="mq-opt">
+                  <div class="mq-opt-radio"></div>
+                  Chemotherapy / immunosuppressants
+                </div>
+                <div class="mq-opt">
+                  <div class="mq-opt-radio"></div>
+                  None of the above
+                </div>
+              </div>
+
+              <!-- Placeholder for remaining questions -->
+              <div class="row" style="background:#f9f9f9; opacity:0.6;">
+                <div class="row-content">
+                  <div class="row-label" style="color:#8e8e93;">Questions 3–8</div>
+                  <div class="row-value">Complete to unlock activation</div>
+                </div>
+                <div class="row-chevron">›</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- INITIAL MEDIA (optional, same as State A) -->
+          <div class="section-group">
+            <div class="section-group-header">Initial Media <span style="color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;">(Optional)</span></div>
+            <div class="section-group-body">
+              <div class="row">
+                <div style="font-size:20px; margin-right:4px;">📷</div>
+                <div class="row-content">
+                  <div class="row-label">Photos</div>
+                  <div class="row-value">2 added</div>
+                </div>
+                <div class="row-badge badge-done">2 ✓</div>
+                <div class="row-chevron">›</div>
+              </div>
+              <div class="row">
+                <div style="font-size:20px; margin-right:4px;">🧑‍💻</div>
+                <div class="row-content">
+                  <div class="row-label">Head Scan (FR-002 V1)</div>
+                  <div class="row-value">2 of 4 views captured</div>
+                </div>
+                <div class="row-badge" style="background:#fff3e0; color:#b35c00;">2 / 4</div>
+                <div class="row-chevron">›</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height: 80px;"></div>
+        </div><!-- /.screen-scroll -->
+
+        <!-- Bottom CTA — disabled until all MQ answered -->
+        <div class="bottom-bar">
+          <button class="btn-primary-mobile" style="background:#a0c4ff;">Activate Monitoring</button>
+          <div style="text-align:center; font-size:12px; color:#8e8e93; margin-top:6px;">Complete all 8 medical questions to activate</div>
+        </div>
+        <div class="home-indicator"><div class="home-bar"></div></div>
+
+      </div><!-- /.phone -->
+    </div><!-- /.phone-col -->
+
+    <!-- Side annotations -->
+    <div class="annotation-list">
+      <div class="ann-section-title">Design Notes</div>
+
+      <div class="annotation-item">
+        <div class="ann-dot"></div>
+        <div class="ann-text"><strong>Mode is immutable</strong> after activation — warning shown inline below options.</div>
+      </div>
+
+      <div class="annotation-item">
+        <div class="ann-dot blue"></div>
+        <div class="ann-text"><strong class="blue">MQ section</strong> appears conditionally only when Provider Advice is selected (FR-025 component).</div>
+      </div>
+
+      <div class="annotation-item">
+        <div class="ann-dot green"></div>
+        <div class="ann-text"><strong class="green">CTA disabled</strong> until all 8 MQ questions answered. Self-monitoring has no MQ gate.</div>
+      </div>
+
+      <div class="annotation-item">
+        <div class="ann-dot orange"></div>
+        <div class="ann-text"><strong class="orange">Head scan</strong> = 4-view photo set per FR-002 V1 contract. True 3D is V2 scope.</div>
+      </div>
+
+      <div class="annotation-item">
+        <div class="ann-dot"></div>
+        <div class="ann-text"><strong>Concern fields</strong> use same validation as FR-003 so conversion pre-fills without remapping.</div>
+      </div>
+
+      <div class="annotation-item">
+        <div class="ann-dot blue"></div>
+        <div class="ann-text"><strong class="blue">State B</strong> shows concern fields in collapsed row format (already filled) to focus on MQ.</div>
+      </div>
+    </div>
+
+  </div><!-- /.phones-row -->
+
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 7 — Affiliate Payout Status &amp; History</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1280px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb-sep { color: #c1c7d0; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-actions { display: flex; gap: 8px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-link { background: none; border: none; color: #0052cc; padding: 0; font-size: 13px; cursor: pointer; text-decoration: underline; }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Sub-view tabs ── */
+    .subview-tabs {
+      display: flex; gap: 0;
+      border-bottom: 2px solid #dfe1e6;
+      margin-bottom: 20px;
+    }
+    .subview-tab {
+      padding: 10px 20px;
+      font-size: 13px; font-weight: 500;
+      color: #5e6c84;
+      border: none; background: none; cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .subview-tab.active {
+      color: #0052cc;
+      border-bottom-color: #0052cc;
+      font-weight: 600;
+    }
+
+    /* ── Month selector ── */
+    .month-selector {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .month-selector label { font-size: 13px; font-weight: 500; color: #5e6c84; }
+    .month-selector select {
+      padding: 6px 12px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 13px; color: #172b4d; background: #fff; cursor: pointer;
+    }
+    .month-selector .auto-note {
+      font-size: 12px; color: #5e6c84;
+      background: #f0f1f3; border-radius: 3px; padding: 4px 10px;
+    }
+
+    /* ── Overview stat cards ── */
+    .stat-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #fff; border: 1px solid #dfe1e6; border-radius: 6px;
+      padding: 16px 20px;
+    }
+    .stat-label { font-size: 12px; color: #5e6c84; font-weight: 500; margin-bottom: 6px; }
+    .stat-value { font-size: 22px; font-weight: 700; color: #172b4d; }
+    .stat-value.stat-fail { color: #de350b; }
+    .stat-value.stat-paid { color: #00875a; }
+    .stat-meta { font-size: 11px; color: #97a0af; margin-top: 4px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      background: #f8f9fa;
+    }
+    .filter-bar .search-box {
+      display: flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 5px 10px; flex: 0 0 220px;
+    }
+    .filter-bar .search-box input {
+      border: none; outline: none; font-size: 13px; color: #172b4d;
+      width: 100%; background: transparent;
+    }
+    .filter-bar .search-icon { color: #97a0af; font-size: 13px; }
+    .filter-select {
+      padding: 5px 10px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 13px; color: #172b4d; background: #fff; cursor: pointer;
+    }
+    .filter-label { font-size: 12px; color: #5e6c84; font-weight: 500; white-space: nowrap; }
+    .filter-spacer { flex: 1; }
+    .result-count { font-size: 12px; color: #5e6c84; white-space: nowrap; }
+    .filter-date-range { display: flex; align-items: center; gap: 4px; }
+    .filter-date-range input {
+      padding: 5px 8px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 12px; color: #172b4d; background: #fff;
+    }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-pending  { background: #fff7e6; color: #974f00; }
+    .badge-processing { background: #e6f0ff; color: #0052cc; }
+    .badge-paid     { background: #e3fcef; color: #006644; }
+    .badge-failed   { background: #ffebe6; color: #bf2600; }
+
+    /* ── Data table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      background: #f8f9fa;
+      border-bottom: 1px solid #dfe1e6;
+      white-space: nowrap;
+    }
+    .data-table tbody tr {
+      border-bottom: 1px solid #f0f1f3;
+      transition: background 0.1s;
+    }
+    .data-table tbody tr:hover { background: #f4f5f7; }
+    .data-table tbody tr.row-failed { background: #fff5f4; }
+    .data-table tbody tr.row-failed:hover { background: #ffebe6; }
+    .data-table tbody td { padding: 11px 12px; font-size: 13px; color: #172b4d; vertical-align: middle; }
+    .data-table .col-affiliate { min-width: 160px; }
+    .data-table .col-month    { min-width: 130px; white-space: nowrap; }
+    .data-table .col-bookings { min-width: 100px; text-align: right; }
+    .data-table .col-amount   { min-width: 130px; text-align: right; }
+    .data-table .col-method   { min-width: 120px; }
+    .data-table .col-details  { min-width: 110px; }
+    .data-table .col-status   { min-width: 120px; }
+    .data-table .col-txn      { min-width: 160px; }
+.data-table .col-notes    { min-width: 180px; }
+    .data-table .col-actions  { min-width: 180px; white-space: nowrap; }
+    .table-scroll { overflow-x: auto; }
+
+    .affiliate-link { color: #0052cc; text-decoration: none; font-weight: 500; }
+    .affiliate-link:hover { text-decoration: underline; }
+
+    .masked-account {
+      font-family: 'Courier New', monospace;
+      font-size: 12px; color: #42526e; letter-spacing: 0.04em;
+    }
+
+    .txn-id {
+      font-family: 'Courier New', monospace;
+      font-size: 11px; color: #42526e; letter-spacing: 0.02em;
+    }
+
+    .error-text {
+      font-size: 11px; color: #de350b; margin-top: 3px;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      border-top: 1px solid #dfe1e6;
+      font-size: 12px; color: #5e6c84;
+    }
+    .pagination-controls { display: flex; gap: 4px; }
+    .page-btn {
+      padding: 4px 10px; border: 1px solid #dfe1e6; border-radius: 3px;
+      background: #fff; font-size: 12px; cursor: pointer; color: #42526e;
+    }
+    .page-btn.active { background: #0052cc; color: #fff; border-color: #0052cc; }
+
+    /* ── Notes column ── */
+    .col-notes { min-width: 200px; }
+    .note-display { font-size: 12px; color: #42526e; line-height: 1.5; }
+    .note-empty   { font-size: 12px; color: #c1c7d0; }
+
+    /* ── Info banner ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #e6f0ff; border: 1px solid #b3d4ff; border-radius: 6px;
+      padding: 12px 16px; margin-bottom: 20px;
+      font-size: 13px; color: #0052cc;
+    }
+    .info-banner .icon { font-size: 15px; flex-shrink: 0; }
+
+    /* ── Section header within card body ── */
+    .section-label {
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center; padding: 48px 24px;
+      color: #5e6c84; font-size: 13px;
+    }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div class="topbar-logo">Hairline Admin</div>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#">Patients</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Finance</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Admin Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Payout Status &amp; History</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Affiliate Payout Status &amp; History</div>
+      <div class="page-subtitle">Read-only. Payout processing and Stripe transfers are managed in FR-017 / A-05.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-default">⬇ Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Info banner -->
+  <div class="info-banner">
+    <span class="icon">ℹ</span>
+    <span>This screen displays payout status calculated by FR-018 and executed by FR-017 / A-05. To initiate or retry payouts, go to <strong>Finance → Affiliate Billing — Commission Payouts (FR-017 Screen 6)</strong>.</span>
+  </div>
+
+  <!-- Month selector -->
+  <div class="month-selector">
+    <label>Payout Month:</label>
+    <select>
+      <option>November 2025</option>
+      <option selected>December 2025</option>
+      <option>January 2026</option>
+    </select>
+    <span class="auto-note">🕐 Auto-generated on the 7th of each month for the previous month's completed bookings</span>
+  </div>
+
+  <!-- Sub-view tabs -->
+  <div class="subview-tabs">
+    <button class="subview-tab active" onclick="showTab('overview', this)">Overview</button>
+    <button class="subview-tab" onclick="showTab('current-cycle', this)">Current Cycle</button>
+    <button class="subview-tab" onclick="showTab('billing-history', this)">Billing History</button>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SUB-VIEW 1: OVERVIEW
+       ════════════════════════════════════ -->
+  <div id="tab-overview">
+
+    <!-- Overall totals stat strip -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Owed This Cycle</div>
+        <div class="stat-value">$48,320.00</div>
+        <div class="stat-meta">December 2025</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Paid</div>
+        <div class="stat-value stat-paid">$41,750.00</div>
+        <div class="stat-meta">14 affiliates paid</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Affiliates in Cycle</div>
+        <div class="stat-value">17</div>
+        <div class="stat-meta">With completed bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Failed Payouts</div>
+        <div class="stat-value stat-fail">3</div>
+        <div class="stat-meta">Retry in FR-017 Screen 6</div>
+      </div>
+    </div>
+
+    <!-- Overview summary table -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Cycle Summary — December 2025</span>
+        <button class="btn btn-default btn-sm">⬇ Export CSV</button>
+      </div>
+      <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-affiliate">Affiliate Name</th>
+            <th class="col-month">Payout Month</th>
+            <th class="col-bookings">Completed Bookings</th>
+            <th class="col-amount">Commissions Owed</th>
+            <th class="col-method">Payment Method</th>
+            <th class="col-details">Payment Details</th>
+            <th class="col-status">Payout Status</th>
+            <th class="col-txn">Transaction ID</th>
+            <th class="col-notes">Internal Notes <span style="font-size:10px;font-weight:400;color:#97a0af;">(not visible to affiliate)</span></th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#" class="affiliate-link">Greenlight Wellness</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">42</td>
+            <td class="col-amount">$6,300.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 4521</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_4AbC1D2eEvKYlo</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">NovaClinics Group</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">38</td>
+            <td class="col-amount">$5,700.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 8832</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_2GhI3J4kFwMYpl</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">BeautyInfluence Co.</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">29</td>
+            <td class="col-amount">$4,350.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 3317</span></td>
+            <td><span class="badge badge-processing">Processing</span></td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Transfer initiated. Awaiting Stripe confirmation.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr class="row-failed">
+            <td><a href="#" class="affiliate-link">HairRevive Partners</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">21</td>
+            <td class="col-amount">$3,150.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 0092</span></td>
+            <td>
+              <span class="badge badge-failed">Failed</span>
+              <div class="error-text">Invalid bank account number</div>
+            </td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Affiliate contacted 08 Dec re: invalid bank details. Awaiting corrected account info.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">ClearScalp Media</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">15</td>
+            <td class="col-amount">$2,250.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 7741</span></td>
+            <td><span class="badge badge-pending">Pending</span></td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Awaiting FR-017 payout batch initiation.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr class="row-failed">
+            <td><a href="#" class="affiliate-link">PrimePartners Ltd.</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">18</td>
+            <td class="col-amount">$2,700.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 5503</span></td>
+            <td>
+              <span class="badge badge-failed">Failed</span>
+              <div class="error-text">Insufficient funds in Hairline account</div>
+            </td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Retry queued once Hairline operating account is topped up. ETA: 10 Dec.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 6 of 17 affiliates</span>
+        <div class="pagination-controls">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-overview -->
+
+
+  <!-- ════════════════════════════════════
+       SUB-VIEW 2: CURRENT CYCLE
+       ════════════════════════════════════ -->
+  <div id="tab-current-cycle" style="display:none;">
+
+    <!-- Stat strip (same as overview, contextual) -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Owed This Cycle</div>
+        <div class="stat-value">$48,320.00</div>
+        <div class="stat-meta">December 2025</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Paid</div>
+        <div class="stat-value stat-paid">$41,750.00</div>
+        <div class="stat-meta">14 affiliates paid</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Affiliates in Cycle</div>
+        <div class="stat-value">17</div>
+        <div class="stat-meta">With completed bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Failed Payouts</div>
+        <div class="stat-value stat-fail">3</div>
+        <div class="stat-meta">Retry in FR-017 Screen 6</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Current Cycle — December 2025</span>
+        <button class="btn btn-default btn-sm">⬇ Export CSV</button>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search affiliate name…" />
+        </div>
+        <select class="filter-select">
+          <option>All Statuses</option>
+          <option>Pending</option>
+          <option>Processing</option>
+          <option>Paid</option>
+          <option>Failed</option>
+        </select>
+        <div class="filter-spacer"></div>
+        <span class="result-count">17 affiliates</span>
+      </div>
+
+      <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-affiliate">Affiliate Name</th>
+            <th class="col-month">Payout Month</th>
+            <th class="col-bookings">Completed Bookings</th>
+            <th class="col-amount">Commissions Owed</th>
+            <th class="col-method">Payment Method</th>
+            <th class="col-details">Payment Details</th>
+            <th class="col-status">Payout Status</th>
+            <th class="col-txn">Transaction ID</th>
+            <th class="col-notes">Internal Notes <span style="font-size:10px;font-weight:400;color:#97a0af;">(not visible to affiliate)</span></th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#" class="affiliate-link">Greenlight Wellness</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">42</td>
+            <td class="col-amount">$6,300.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 4521</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_4AbC1D2eEvKYlo</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">NovaClinics Group</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">38</td>
+            <td class="col-amount">$5,700.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 8832</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_2GhI3J4kFwMYpl</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">BeautyInfluence Co.</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">29</td>
+            <td class="col-amount">$4,350.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 3317</span></td>
+            <td><span class="badge badge-processing">Processing</span></td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Transfer initiated. Awaiting Stripe confirmation.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr class="row-failed">
+            <td><a href="#" class="affiliate-link">HairRevive Partners</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">21</td>
+            <td class="col-amount">$3,150.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 0092</span></td>
+            <td>
+              <span class="badge badge-failed">Failed</span>
+              <div class="error-text">Invalid bank account number</div>
+            </td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Affiliate contacted 08 Dec re: invalid bank details. Awaiting corrected account info.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">ClearScalp Media</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">15</td>
+            <td class="col-amount">$2,250.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 7741</span></td>
+            <td><span class="badge badge-pending">Pending</span></td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Awaiting FR-017 payout batch initiation.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr class="row-failed">
+            <td><a href="#" class="affiliate-link">PrimePartners Ltd.</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">18</td>
+            <td class="col-amount">$2,700.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 5503</span></td>
+            <td>
+              <span class="badge badge-failed">Failed</span>
+              <div class="error-text">Insufficient funds in Hairline account</div>
+            </td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Retry queued once Hairline operating account is topped up. ETA: 10 Dec.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr class="row-failed">
+            <td><a href="#" class="affiliate-link">TrendClinic AU</a></td>
+            <td class="col-month">December 2025</td>
+            <td class="col-bookings">11</td>
+            <td class="col-amount">$1,650.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 2288</span></td>
+            <td>
+              <span class="badge badge-failed">Failed</span>
+              <div class="error-text">SWIFT code not recognised</div>
+            </td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Affiliate provided incorrect SWIFT on profile. Contacted 09 Dec to update bank details.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 7 of 17 affiliates</span>
+        <div class="pagination-controls">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-current-cycle -->
+
+
+  <!-- ════════════════════════════════════
+       SUB-VIEW 3: BILLING HISTORY
+       ════════════════════════════════════ -->
+  <div id="tab-billing-history" style="display:none;">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Billing History</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-default btn-sm">⬇ Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search affiliate, transaction ID…" />
+        </div>
+        <select class="filter-select">
+          <option>All Statuses</option>
+          <option>Pending</option>
+          <option>Processing</option>
+          <option>Paid</option>
+          <option>Failed</option>
+        </select>
+        <select class="filter-select">
+          <option>All Affiliates</option>
+          <option>Greenlight Wellness</option>
+          <option>NovaClinics Group</option>
+          <option>BeautyInfluence Co.</option>
+        </select>
+        <span class="filter-label">Date range:</span>
+        <div class="filter-date-range">
+          <input type="date" value="2025-01-01" />
+          <span>–</span>
+          <input type="date" value="2025-12-31" />
+        </div>
+        <div class="filter-spacer"></div>
+        <span class="result-count">84 records · 7-year retention</span>
+      </div>
+
+      <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-affiliate">Affiliate Name</th>
+            <th class="col-month">Payout Month</th>
+            <th class="col-bookings">Completed Bookings</th>
+            <th class="col-amount">Commissions Owed</th>
+            <th class="col-method">Payment Method</th>
+            <th class="col-details">Payment Details</th>
+            <th class="col-status">Payout Status</th>
+            <th class="col-txn">Transaction ID</th>
+            <th class="col-notes">Internal Notes <span style="font-size:10px;font-weight:400;color:#97a0af;">(not visible to affiliate)</span></th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#" class="affiliate-link">Greenlight Wellness</a></td>
+            <td class="col-month">November 2025</td>
+            <td class="col-bookings">39</td>
+            <td class="col-amount">$5,850.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 4521</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_3PmX8A2eZvKYlo</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">NovaClinics Group</a></td>
+            <td class="col-month">November 2025</td>
+            <td class="col-bookings">34</td>
+            <td class="col-amount">$5,100.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 8832</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_1QnB3C4dWvMYpl</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr class="row-failed">
+            <td><a href="#" class="affiliate-link">HairRevive Partners</a></td>
+            <td class="col-month">November 2025</td>
+            <td class="col-bookings">19</td>
+            <td class="col-amount">$2,850.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 0092</span></td>
+            <td>
+              <span class="badge badge-failed">Failed</span>
+              <div class="error-text">Invalid bank account number</div>
+            </td>
+            <td><span style="color:#97a0af;">—</span></td>
+            <td class="col-notes notes-cell"><span class="note-display">Bank issue first flagged in Nov cycle. Escalated to finance team. Rolled into Dec retry.</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">BeautyInfluence Co.</a></td>
+            <td class="col-month">October 2025</td>
+            <td class="col-bookings">26</td>
+            <td class="col-amount">$3,900.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 3317</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_5RoD7E8fXwNZqm</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">ClearScalp Media</a></td>
+            <td class="col-month">October 2025</td>
+            <td class="col-bookings">12</td>
+            <td class="col-amount">$1,800.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 7741</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_2StF9G1hYxOarn</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">PrimePartners Ltd.</a></td>
+            <td class="col-month">September 2025</td>
+            <td class="col-bookings">22</td>
+            <td class="col-amount">$3,300.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 5503</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_6UuH0I2iZyPbso</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="#" class="affiliate-link">TrendClinic AU</a></td>
+            <td class="col-month">September 2025</td>
+            <td class="col-bookings">8</td>
+            <td class="col-amount">$1,200.00</td>
+            <td>Stripe Transfer</td>
+            <td><span class="masked-account">•••• 2288</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td><span class="txn-id">txn_7VvI1J3jAzQctp</span></td>
+            <td class="col-notes notes-cell"><span class="note-empty">—</span></td>
+            <td>
+              <button class="btn btn-default btn-sm">View Detail</button>
+              <button class="btn btn-default btn-sm">⬇ Receipt</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="pagination">
+        <span>Showing 7 of 84 records (7-year audit retention)</span>
+        <div class="pagination-controls">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">…</button>
+          <button class="page-btn">12</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-billing-history -->
+
+</div><!-- /page-wrap -->
+
+<script>
+  function showTab(name, el) {
+    document.getElementById('tab-overview').style.display = 'none';
+    document.getElementById('tab-current-cycle').style.display = 'none';
+    document.getElementById('tab-billing-history').style.display = 'none';
+    document.getElementById('tab-' + name).style.display = 'block';
+
+    document.querySelectorAll('.subview-tab').forEach(function(t) {
+      t.classList.remove('active');
+    });
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

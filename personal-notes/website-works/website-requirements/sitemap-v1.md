@@ -5,7 +5,7 @@
 
 **Chú thích:**
 - Sections không có nhãn = sourced trực tiếp từ Design Brief
-- **[INFERRED]** = sections inferred from brief context, not explicitly spec'd
+- **[BỔ SUNG]** = sections được suy luận từ context của brief, không được spec tường minh
 
 ---
 
@@ -34,7 +34,7 @@
 ### `/how-it-works` — How It Works
 
 **Brief ref:** §4.1 (Patient journey, step-by-step), §3.2 (6-step app journey sequence), §5.1 §4 (Assess → Match → Treat → Recover strip)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -55,7 +55,7 @@
 ### `/about` — About
 
 **Brief ref:** §1.1 (What Hairline Is), §1.2 (Strategic job), §1.3 (Brand positioning)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -72,7 +72,7 @@
 ### `/careers` — Careers
 
 **Brief ref:** §4.1 (listed)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -87,7 +87,7 @@
 ### `/press` — Press
 
 **Brief ref:** §4.1 (listed)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -101,7 +101,7 @@
 ### `/contact` — Contact
 
 **Brief ref:** §4.1 (listed)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -119,7 +119,7 @@
 ### `/for-patients` — For Patients
 
 **Brief ref:** §4.2 (Consumer landing), §2.1 (Primary audience — patients), §2.4 (Conversion targets)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -136,7 +136,7 @@
 ### `/find-a-clinic` — Find a Clinic ★
 
 **Brief ref:** §4.2 (Provider directory + map), §6.3 (deliverable: Find-a-clinic directory + map template), §1.3 (Zocdoc / Airbnb marketplace UX reference)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -151,7 +151,7 @@
 ### `/find-a-clinic/[city]` — City Pages ★
 
 **Brief ref:** §4.2 (e.g., London, Dubai, Istanbul, Doha), §6.3  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -189,7 +189,7 @@
 ### `/aftercare` — Hairline Aftercare
 
 **Brief ref:** §1.1 (Hairline Aftercare — post-procedure recovery tracking, symptom monitoring, video follow-ups), Appendix B (symptom logging, 24/7 specialist access, 3D scan progress tracking)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -207,7 +207,7 @@
 ### `/travel` — Hairline Travel
 
 **Brief ref:** §1.1 (Hairline Travel — flights, hotels, transfers, visa support for medical travel), §4.2 (Hairline Travel service page)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -225,7 +225,7 @@
 ### `/assessment` — Assessment Entry
 
 **Brief ref:** §4.2 (Hair-loss assessment flow entry — links to app), §2.4 (Conversion target: Start hair-loss assessment)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -242,7 +242,7 @@
 ### `/treatments` — Treatments Hub
 
 **Brief ref:** §4.3 (Hub), §7.2 (Pillar-and-Cluster Architecture)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -290,7 +290,7 @@
 ### `/hair-loss` — Hair Loss Pillar Page
 
 **Brief ref:** §4.4 (Pillar page), §7.2 (Pillar-and-Cluster Architecture)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -336,7 +336,7 @@
 ### `/resources` — Resource & Article Index
 
 **Brief ref:** §4.5 (Article index, filterable by category), §6.3 (deliverable: Resource hub / category index)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -352,7 +352,7 @@
 ### `/resources/[category]` — Category Pages ★
 
 **Brief ref:** §4.5, §6.3  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -384,7 +384,7 @@
 ### `/resources/comparisons/[slug]` — Comparison Pages ★
 
 **Brief ref:** §4.5 (e.g., FUE vs FUT), §6.3 (Comparison page template listed as deliverable)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section / Component |
 |---|---------------------|
@@ -425,7 +425,7 @@
 ### `/for-providers/features` — Features
 
 **Brief ref:** §4.6 (listed), §1.1 (provider platform: lead generation, scheduling, patient management), §5.6 §3 (three-pillar value prop)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -443,7 +443,7 @@
 ### `/for-providers/enterprise` — Enterprise
 
 **Brief ref:** §4.6 (listed), §2.2 (B2B audience: clinic owners, chains, operations leads)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -459,7 +459,7 @@
 ### `/for-providers/case-studies` — Case Studies
 
 **Brief ref:** §4.6 (listed), §5.6 §5 (case studies: real clinics with before/after metrics)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -475,7 +475,7 @@
 ### `/for-providers/pricing` — Pricing *(future)*
 
 **Brief ref:** §4.6 (marked future), §5.6 §6 (pricing teaser / commission model)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|
@@ -490,7 +490,7 @@
 ### `/for-providers/book-demo` — Book a Demo
 
 **Brief ref:** §4.6 (listed), linked from /for-providers Hero CTA and Final CTA (§5.6)  
-**[INFERRED]**
+**[BỔ SUNG]**
 
 | # | Section |
 |---|---------|

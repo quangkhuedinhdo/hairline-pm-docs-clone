@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Wireframe] /resources/[slug] — Individual Article | Hairline.app</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+
+    /* ════════════════════════════════════════
+       DESIGN TOKENS  (Brief §3.3 & §6.1)
+       ════════════════════════════════════════ */
+    :root {
+      /* Surface */
+      --bg-base:     #FAF9F6;   /* warm off-white */
+      --bg-surface:  #F0EDE8;
+      --bg-elevated: #FFFFFF;
+      --bg-dark:     #160E06;
+
+      /* Text */
+      --color-text:           #1A1A17;
+      --color-text-secondary: #5A5550;
+      --color-text-muted:     #8E8880;
+      --color-text-inverse:   #FAF9F6;
+
+      /* Brand accent — terracotta / earthy warm (not medical-blue, not clinic-green) */
+      --color-accent:       #C4714A;
+      --color-accent-light: #F6EAE1;
+      --color-accent-dark:  #9B5435;
+
+      /* Borders */
+      --color-border:       #E2DDD6;
+      --color-border-strong: #C8C1B8;
+
+      /* Typography */
+      --font-sans:  'Inter', system-ui, sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+
+      /* Spacing (4px base) */
+      --sp-1:  4px;
+      --sp-2:  8px;
+      --sp-3:  12px;
+      --sp-4:  16px;
+      --sp-5:  20px;
+      --sp-6:  24px;
+      --sp-8:  32px;
+      --sp-10: 40px;
+      --sp-12: 48px;
+      --sp-16: 64px;
+      --sp-24: 96px;
+
+      /* Radius */
+      --r-sm:   6px;
+      --r-md:   12px;
+      --r-lg:   16px;
+      --r-xl:   24px;
+      --r-full: 9999px;
+
+      /* Elevation */
+      --shadow-sm: 0 1px 3px rgba(22,14,6,.06), 0 1px 2px rgba(22,14,6,.04);
+      --shadow-md: 0 4px 14px rgba(22,14,6,.08), 0 2px 4px rgba(22,14,6,.04);
+    }
+
+    /* ════════════════════════════════════════
+       RESET & BASE
+       ════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html  { scroll-behavior: smooth; }
+    body  {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--color-text);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button { cursor: pointer; border: none; font-family: inherit; }
+
+    /* Wireframe annotation chips */
+    .wf-chip {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #7B5EA7;
+      background: #F0EBFF;
+      border: 1px dashed #C4AAEE;
+      border-radius: 3px;
+      padding: 2px 6px;
+      margin-bottom: 8px;
+      pointer-events: none;
+    }
+
+    /* ════════════════════════════════════════
+       GLOBAL NAVIGATION
+       ════════════════════════════════════════ */
+    .global-nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--color-border);
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--sp-8);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-8);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      flex-shrink: 0;
+    }
+    .nav-logo span { color: var(--color-accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-8);
+      flex: 1;
+    }
+
+    .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--color-text); }
+    .nav-link.active { color: var(--color-text); font-weight: 600; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--r-md);
+      padding: 8px 18px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-primary  { background: var(--color-text); color: var(--color-text-inverse); border: 2px solid transparent; }
+    .btn-primary:hover { background: #333; }
+    .btn-ghost    { background: transparent; color: var(--color-text-secondary); border: 1.5px solid var(--color-border-strong); }
+    .btn-ghost:hover { color: var(--color-text); border-color: var(--color-text); }
+
+    /* ════════════════════════════════════════
+       BREADCRUMB  (SEO §7.1 — every page)
+       ════════════════════════════════════════ */
+    .breadcrumb-bar {
+      background: var(--bg-base);
+      border-bottom: 1px solid var(--color-border);
+      padding: 10px 0;
+    }
+    .breadcrumb-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--sp-8);
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+    .breadcrumb a { color: var(--color-text-secondary); }
+    .breadcrumb a:hover { color: var(--color-accent); }
+    .bc-sep { color: var(--color-border-strong); }
+    .bc-current { color: var(--color-text); }
+
+    /* ════════════════════════════════════════
+       ARTICLE HEADER
+       ════════════════════════════════════════ */
+    .article-header {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--sp-16) var(--sp-8) var(--sp-8);
+    }
+
+    .category-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      background: var(--color-accent-light);
+      border-radius: var(--r-full);
+      padding: 4px 14px;
+      margin-bottom: var(--sp-4);
+    }
+
+    .article-title {
+      font-family: var(--font-serif);
+      font-size: clamp(26px, 3.5vw, 46px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      color: var(--color-text);
+      max-width: 820px;
+      margin-bottom: var(--sp-5);
+    }
+
+    .article-standfirst {
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--color-text-secondary);
+      max-width: 680px;
+      margin-bottom: var(--sp-6);
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    .article-meta-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--sp-4);
+    }
+
+    .meta-pill {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .meta-sep {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--color-border-strong);
+    }
+
+    .share-strip {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .share-btn {
+      width: 34px; height: 34px;
+      border-radius: var(--r-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+    }
+    .share-btn:hover { background: var(--color-border); }
+
+    /* ════════════════════════════════════════
+       HERO IMAGE
+       ════════════════════════════════════════ */
+    .article-hero-img {
+      max-width: 1280px;
+      margin: 0 auto var(--sp-8);
+      padding: 0 var(--sp-8);
+    }
+    .img-placeholder {
+      width: 100%;
+      height: 400px;
+      border-radius: var(--r-xl);
+      background: var(--bg-surface);
+      border: 2px dashed var(--color-border-strong);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      color: var(--color-text-muted);
+    }
+    .img-placeholder .img-icon { font-size: 36px; }
+    .img-placeholder .img-label { font-size: 13px; font-weight: 600; }
+    .img-placeholder .img-note  { font-size: 12px; text-align: center; max-width: 480px; }
+
+    /* ════════════════════════════════════════
+       AUTHOR + MEDICAL REVIEWER BLOCK
+       (E-E-A-T — SEO §7.1)
+       ════════════════════════════════════════ */
+    .author-block {
+      max-width: 1280px;
+      margin: 0 auto var(--sp-8);
+      padding: 0 var(--sp-8);
+    }
+    .author-block-inner {
+      background: var(--bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5) var(--sp-8);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--sp-6);
+    }
+
+    .author-card {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+    }
+    .avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--color-border);
+      border: 2px solid var(--bg-elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700;
+      color: var(--color-text-secondary);
+      flex-shrink: 0;
+    }
+    .avatar.reviewer { background: #E8E0F5; color: #6B50A8; }
+
+    .author-info .role-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 2px;
+    }
+    .author-info .author-name  { font-size: 14px; font-weight: 600; color: var(--color-text); }
+    .author-info .author-creds { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+
+    .block-divider {
+      width: 1px; height: 48px;
+      background: var(--color-border-strong);
+      flex-shrink: 0;
+    }
+
+    .block-dates {
+      margin-left: auto;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .date-label { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--color-text-muted); }
+    .date-value { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+    .date-published { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; }
+
+    /* ════════════════════════════════════════
+       MAIN LAYOUT — ToC rail + Article body
+       ════════════════════════════════════════ */
+    .article-layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--sp-8) var(--sp-24);
+      display: grid;
+      grid-template-columns: 244px 1fr;
+      gap: var(--sp-16);
+      align-items: start;
+    }
+
+    /* ── Sticky ToC (desktop left rail) ── */
+    .toc-rail {
+      position: sticky;
+      top: 76px;
+      align-self: start;
+    }
+    .toc-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .toc-heading {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: var(--sp-4);
+      padding-bottom: var(--sp-4);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 1px; }
+    .toc-item a {
+      display: block;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      padding: 6px 8px;
+      border-radius: var(--r-sm);
+      line-height: 1.4;
+      transition: all .1s;
+    }
+    .toc-item a:hover { background: var(--bg-surface); color: var(--color-text); }
+    .toc-item.active a {
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+    .toc-item.sub a {
+      padding-left: 20px;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+    .toc-item.sub.active a { color: var(--color-accent); }
+
+    .toc-progress-wrap {
+      margin-top: var(--sp-4);
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--color-border);
+    }
+    .toc-progress-label { font-size: 11px; color: var(--color-text-muted); margin-bottom: 6px; }
+    .progress-track { height: 3px; background: var(--color-border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; width: 35%; background: var(--color-accent); border-radius: 99px; }
+
+    /* Mobile collapsible ToC */
+    .mobile-toc {
+      display: none;
+      background: var(--bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-lg);
+      margin-bottom: var(--sp-6);
+      overflow: hidden;
+    }
+    .mobile-toc-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-4) var(--sp-5);
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .mobile-toc-body {
+      padding: var(--sp-4) var(--sp-5);
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* ── Article body ── */
+    .article-body { min-width: 0; max-width: 720px; }
+
+    /* Key Takeaways component */
+    .key-takeaways {
+      background: var(--color-accent-light);
+      border: 1px solid #E8C4A8;
+      border-left: 4px solid var(--color-accent);
+      border-radius: var(--r-md);
+      padding: var(--sp-5) var(--sp-6);
+      margin-bottom: var(--sp-12);
+    }
+    .kt-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: var(--sp-4);
+    }
+    .kt-title {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--sp-4);
+    }
+    .kt-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .kt-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--color-text);
+      line-height: 1.55;
+    }
+    .kt-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: white;
+      font-size: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Editorial prose ── */
+    /* Brief §5.4: serif body, 1.7 leading, ≤70 char line length */
+    .prose h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--color-text);
+      margin-top: var(--sp-16);
+      margin-bottom: var(--sp-5);
+      scroll-margin-top: 80px;
+    }
+    .prose h3 {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--color-text);
+      margin-top: var(--sp-8);
+      margin-bottom: var(--sp-4);
+      scroll-margin-top: 80px;
+    }
+    .prose p {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      line-height: 1.78;
+      color: #282420;
+      margin-bottom: var(--sp-5);
+      max-width: 68ch;     /* ≈70 character line length */
+    }
+    .prose ul, .prose ol {
+      padding-left: var(--sp-6);
+      margin-bottom: var(--sp-5);
+    }
+    .prose li {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      line-height: 1.7;
+      color: #282420;
+      margin-bottom: 6px;
+    }
+    .prose a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .prose strong { font-weight: 700; color: var(--color-text); }
+
+    /* Inline citation (hover-reveal) */
+    .cite { position: relative; display: inline; }
+    .cite-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 700;
+      border: 1px solid #E8C4A8;
+      cursor: pointer;
+      vertical-align: super;
+      margin-left: 2px;
+    }
+    .cite-num:hover { background: var(--color-accent); color: #fff; }
+    .cite-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-text);
+      color: var(--bg-base);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      line-height: 1.45;
+      padding: 8px 12px;
+      border-radius: var(--r-md);
+      width: 280px;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .15s;
+      white-space: normal;
+    }
+    .cite-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--color-text);
+    }
+    .cite:hover .cite-tooltip { opacity: 1; }
+
+    /* Pull-quote component */
+    .pull-quote {
+      border-left: 3px solid var(--color-accent);
+      padding: var(--sp-4) var(--sp-6);
+      margin: var(--sp-10) 0;
+      background: var(--bg-surface);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+    }
+    .pull-quote blockquote {
+      font-family: var(--font-serif);
+      font-size: 21px;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--color-text);
+    }
+    .pull-quote cite {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-style: normal;
+      color: var(--color-text-secondary);
+      margin-top: var(--sp-4);
+    }
+
+    /* Callout box (info / warning) */
+    .callout {
+      border-radius: var(--r-md);
+      padding: var(--sp-4) var(--sp-5);
+      margin: var(--sp-6) 0;
+      display: flex;
+      gap: var(--sp-4);
+    }
+    .callout.info    { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout.warning { background: #FFFBEB; border: 1px solid #FDE68A; }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+    .callout-body { font-size: 14px; line-height: 1.6; color: var(--color-text); }
+    .callout-body strong { display: block; font-weight: 600; margin-bottom: 4px; }
+
+    /* Data / comparison table */
+    .data-table-wrap { margin: var(--sp-6) 0; overflow-x: auto; border-radius: var(--r-md); border: 1px solid var(--color-border); }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .data-table th {
+      background: var(--bg-surface);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      text-align: left;
+      padding: 10px 16px;
+      border-bottom: 2px solid var(--color-border-strong);
+    }
+    .data-table td {
+      font-family: var(--font-serif);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td     { background: var(--bg-surface); }
+
+    /* In-article CTA modules — non-ad treatment (Healthline pattern) */
+    .in-cta {
+      border-radius: var(--r-xl);
+      padding: var(--sp-6) var(--sp-8);
+      margin: var(--sp-10) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-6);
+    }
+    .in-cta.assessment { background: var(--color-text); color: var(--color-text-inverse); }
+    .in-cta.find-clinic { background: var(--bg-surface); border: 1px solid var(--color-border); }
+
+    .in-cta-icon {
+      width: 52px; height: 52px;
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .in-cta.assessment .in-cta-icon  { background: rgba(255,255,255,.12); }
+    .in-cta.find-clinic .in-cta-icon { background: var(--color-accent-light); }
+
+    .in-cta-body { flex: 1; }
+    .in-cta-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .in-cta.assessment .in-cta-label  { color: rgba(250,249,246,.6); }
+    .in-cta.find-clinic .in-cta-label { color: var(--color-text-muted); }
+
+    .in-cta-headline {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .in-cta.find-clinic .in-cta-headline { color: var(--color-text); }
+
+    .in-cta-desc { font-size: 13px; line-height: 1.55; }
+    .in-cta.assessment .in-cta-desc  { color: rgba(250,249,246,.75); }
+    .in-cta.find-clinic .in-cta-desc { color: var(--color-text-secondary); }
+
+    .in-cta-btn {
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--r-md);
+      white-space: nowrap;
+    }
+    .in-cta.assessment .in-cta-btn  { background: var(--color-accent); color: #fff; }
+    .in-cta.find-clinic .in-cta-btn { background: var(--color-text); color: #fff; }
+
+    /* FAQ accordion */
+    .faq-list { display: flex; flex-direction: column; border: 1px solid var(--color-border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: var(--sp-8); }
+    .faq-item { border-bottom: 1px solid var(--color-border); background: var(--bg-elevated); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-5) var(--sp-6);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text);
+      cursor: pointer;
+      gap: var(--sp-4);
+    }
+    .faq-chevron { font-size: 11px; color: var(--color-text-muted); flex-shrink: 0; }
+    .faq-a {
+      padding: 0 var(--sp-6) var(--sp-5);
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--color-text-secondary);
+    }
+    .faq-item.closed .faq-a { display: none; }
+
+    /* Expert reviewer footer block */
+    .reviewed-by-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-5) var(--sp-6);
+      margin-top: var(--sp-12);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+      flex-wrap: wrap;
+    }
+    .reviewer-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #E8E0F5;
+      color: #6B50A8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .reviewer-text .reviewed-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 3px;
+    }
+    .reviewer-text .reviewer-name  { font-size: 16px; font-weight: 600; color: var(--color-text); }
+    .reviewer-text .reviewer-creds { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+    .reviewed-date-block {
+      margin-left: auto;
+      text-align: right;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+    .reviewed-date-block strong { display: block; font-size: 14px; color: var(--color-text); margin-top: 2px; }
+    .reviewed-date-block a { color: var(--color-accent); font-size: 12px; display: block; margin-top: 4px; }
+
+    /* ════════════════════════════════════════
+       RELATED ARTICLES RAIL  (SEO §7.1 — 6–8 internal links)
+       ════════════════════════════════════════ */
+    .related-section {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--color-border);
+      padding: var(--sp-16) 0;
+    }
+    .section-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--sp-8);
+    }
+    .section-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: var(--sp-6);
+    }
+    .section-row h2 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .see-all {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-5);
+    }
+
+    .article-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow .2s;
+    }
+    .article-card:hover { box-shadow: var(--shadow-md); }
+
+    .card-img {
+      width: 100%; height: 175px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      color: var(--color-text-muted);
+      font-size: 12px;
+    }
+    .card-tag {
+      position: absolute;
+      top: 12px; left: 12px;
+      font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+      color: white;
+      background: var(--color-accent);
+      padding: 3px 10px;
+      border-radius: var(--r-full);
+    }
+    .card-body { padding: var(--sp-5); }
+    .card-headline {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--color-text);
+      margin-bottom: var(--sp-2);
+    }
+    .card-meta { font-size: 12px; color: var(--color-text-muted); }
+
+    /* ════════════════════════════════════════
+       SITE FOOTER
+       ════════════════════════════════════════ */
+    .site-footer {
+      background: var(--bg-dark);
+      color: var(--color-text-inverse);
+      padding: var(--sp-16) 0 var(--sp-8);
+    }
+    .footer-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--sp-8);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+      gap: var(--sp-16);
+      margin-bottom: var(--sp-12);
+    }
+
+    .footer-brand .f-logo {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: var(--sp-4);
+    }
+    .footer-brand .f-logo span { color: var(--color-accent); }
+    .footer-brand .f-tagline {
+      font-size: 14px;
+      color: rgba(250,249,246,.6);
+      line-height: 1.6;
+      margin-bottom: var(--sp-5);
+    }
+    .app-badges { display: flex; gap: var(--sp-2); }
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: var(--r-md);
+      padding: 7px 14px;
+    }
+
+    .footer-col h4 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: rgba(250,249,246,.45);
+      margin-bottom: var(--sp-4);
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 14px; color: rgba(250,249,246,.7); }
+    .footer-col ul li a:hover { color: var(--color-text-inverse); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: var(--sp-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--sp-4);
+      font-size: 13px;
+      color: rgba(250,249,246,.45);
+    }
+    .footer-bottom a { color: rgba(250,249,246,.6); }
+    .footer-bottom a:hover { color: var(--color-text-inverse); }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .article-layout { grid-template-columns: 1fr; }
+      .toc-rail { display: none; }
+      .mobile-toc { display: block; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .article-header { padding: var(--sp-8) var(--sp-4) var(--sp-5); }
+      .article-hero-img { padding: 0 var(--sp-4); }
+      .img-placeholder { height: 220px; border-radius: var(--r-lg); }
+      .author-block { padding: 0 var(--sp-4); }
+      .author-block-inner { flex-direction: column; align-items: flex-start; gap: var(--sp-4); }
+      .block-divider { display: none; }
+      .block-dates { margin-left: 0; text-align: left; }
+      .article-layout { padding: 0 var(--sp-4) var(--sp-16); }
+      .in-cta { flex-direction: column; align-items: flex-start; padding: var(--sp-5); }
+      .in-cta-btn { width: 100%; justify-content: center; }
+      .articles-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .share-strip { margin-left: 0; }
+      .article-meta-row { flex-wrap: wrap; }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     GLOBAL NAVIGATION
+     ══════════════════════════════════════════════════════════ -->
+<nav class="global-nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <div class="nav-logo">hair<span>line</span></div>
+
+    <div class="nav-links">
+      <span class="nav-link">Treatments ▾</span>
+      <span class="nav-link">Hair Loss ▾</span>
+      <span class="nav-link">Find a Clinic</span>
+      <span class="nav-link active">Resources</span>
+      <span class="nav-link">How It Works</span>
+    </div>
+
+    <div class="nav-actions">
+      <span class="btn btn-ghost" style="font-size:13px;">For Clinics →</span>
+      <span class="btn btn-primary">Download the app</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     BREADCRUMB  — SEO §7.1: required on every page below top nav
+     ══════════════════════════════════════════════════════════ -->
+<div class="breadcrumb-bar" aria-label="Breadcrumb">
+  <div class="breadcrumb-inner">
+    <nav class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="bc-sep">›</span>
+      <a href="/resources">Resources</a>
+      <span class="bc-sep">›</span>
+      <a href="/resources/treatments">Treatments</a>
+      <span class="bc-sep">›</span>
+      <span class="bc-current">FUE Hair Transplant: A Complete Guide</span>
+    </nav>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     ARTICLE HEADER
+     Single H1 — SEO §7.1
+     ══════════════════════════════════════════════════════════ -->
+<header class="article-header">
+  <div class="wf-chip">Component · Article Header</div>
+
+  <div class="category-pill">Treatments</div>
+
+  <!-- Single H1 — SEO requirement -->
+  <h1 class="article-title">
+    FUE Hair Transplant: A Complete Guide to What to Expect Before, During &amp; After
+  </h1>
+
+  <p class="article-standfirst">
+    Follicular Unit Extraction is currently the most popular hair transplant technique worldwide.
+    Here's everything you need to know — from candidacy to recovery — written for real patients, not surgeons.
+  </p>
+
+  <div class="article-meta-row">
+    <span class="meta-pill">⏱ 9 min read</span>
+    <span class="meta-sep"></span>
+    <span class="meta-pill">Published 14 March 2026</span>
+    <span class="meta-sep"></span>
+    <span class="meta-pill">Updated 3 June 2026</span>
+
+    <div class="share-strip" aria-label="Share article">
+      <div class="share-btn" title="Share on X">𝕏</div>
+      <div class="share-btn" title="Copy link">🔗</div>
+      <div class="share-btn" title="More sharing options">⬆</div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO IMAGE
+     max 200KB AVIF/WebP — performance constraint §7.3
+     ══════════════════════════════════════════════════════════ -->
+<div class="article-hero-img">
+  <div class="img-placeholder" role="img" aria-label="Article hero image placeholder">
+    <span class="img-icon">🖼</span>
+    <span class="img-label">Article Hero Image</span>
+    <span class="img-note">
+      Lifestyle photography · real consultation setting, not clinical imagery ·
+      max 200 KB AVIF/WebP · aspect ratio 16:9 · alt text required (Brief §7.1 &amp; §3.3)
+    </span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     AUTHOR + MEDICAL REVIEWER BLOCK
+     E-E-A-T trust signal — SEO §7.1, Brief §5.4
+     ══════════════════════════════════════════════════════════ -->
+<div class="author-block">
+  <div class="wf-chip">Component · Author + Medical Reviewer · E-E-A-T Signal (SEO §7.1)</div>
+  <div class="author-block-inner">
+
+    <div class="author-card">
+      <div class="avatar" aria-hidden="true">SL</div>
+      <div class="author-info">
+        <div class="role-label">Written by</div>
+        <div class="author-name">Sophia Laurent</div>
+        <div class="author-creds">Health &amp; Science Writer · BSc Biomedical Science, UCL</div>
+      </div>
+    </div>
+
+    <div class="block-divider" aria-hidden="true"></div>
+
+    <div class="author-card">
+      <div class="avatar reviewer" aria-hidden="true">RA</div>
+      <div class="author-info">
+        <div class="role-label">Medically reviewed by</div>
+        <div class="author-name">Dr. Reza Ahmadi</div>
+        <div class="author-creds">FRCSEd · Consultant Hair Restoration Surgeon · ISHRS Member · 14 yrs exp.</div>
+      </div>
+    </div>
+
+    <div class="block-dates">
+      <div class="date-label">Last reviewed</div>
+      <div class="date-value">3 June 2026</div>
+      <div class="date-published">First published 14 March 2026</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN ARTICLE LAYOUT
+     Left rail (sticky ToC) + Article body
+     ══════════════════════════════════════════════════════════ -->
+<div class="article-layout">
+
+  <!-- ── STICKY TABLE OF CONTENTS — desktop left rail ── -->
+  <aside class="toc-rail" aria-label="Table of contents">
+    <div class="wf-chip">Component · Sticky ToC · Desktop Left Rail (mobile: collapsible above body)</div>
+    <div class="toc-card">
+      <div class="toc-heading">In this article</div>
+      <ul class="toc-list" role="list">
+        <li class="toc-item active"><a href="#what-is-fue">What is FUE?</a></li>
+        <li class="toc-item"><a href="#how-it-works">How it works</a></li>
+        <li class="toc-item sub"><a href="#step-consultation">1. Consultation &amp; planning</a></li>
+        <li class="toc-item sub"><a href="#step-procedure">2. The procedure</a></li>
+        <li class="toc-item sub"><a href="#step-aftercare">3. Immediate aftercare</a></li>
+        <li class="toc-item"><a href="#candidate">Who is a good candidate?</a></li>
+        <li class="toc-item"><a href="#cost">Cost of FUE</a></li>
+        <li class="toc-item"><a href="#recovery">Recovery timeline</a></li>
+        <li class="toc-item"><a href="#risks">Side effects &amp; risks</a></li>
+        <li class="toc-item"><a href="#vs-fut">FUE vs FUT</a></li>
+        <li class="toc-item"><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="toc-progress-wrap">
+        <div class="toc-progress-label">Reading progress: 35%</div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── ARTICLE BODY ── -->
+  <main class="article-body" id="article-main">
+
+    <!-- Mobile collapsible ToC (visible only on small viewports) -->
+    <div class="mobile-toc" role="navigation" aria-label="Article sections">
+      <div class="mobile-toc-trigger" aria-expanded="false" aria-controls="mobile-toc-body">
+        <span>📋 In this article</span>
+        <span>▼</span>
+      </div>
+      <div class="mobile-toc-body" id="mobile-toc-body">
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#what-is-fue">What is FUE?</a></li>
+          <li class="toc-item"><a href="#how-it-works">How it works</a></li>
+          <li class="toc-item"><a href="#candidate">Who is a good candidate?</a></li>
+          <li class="toc-item"><a href="#cost">Cost of FUE</a></li>
+          <li class="toc-item"><a href="#recovery">Recovery timeline</a></li>
+          <li class="toc-item"><a href="#risks">Side effects &amp; risks</a></li>
+          <li class="toc-item"><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────
+         KEY TAKEAWAYS component
+         ───────────────────────────────────── -->
+    <div class="key-takeaways" role="note" aria-label="Key takeaways">
+      <div class="kt-label">Key Takeaways</div>
+      <p class="kt-title">What you need to know about FUE before reading on</p>
+      <ul class="kt-list">
+        <li>
+          <span class="kt-check" aria-hidden="true">✓</span>
+          FUE extracts individual follicles — no linear scar, faster recovery than FUT.
+        </li>
+        <li>
+          <span class="kt-check" aria-hidden="true">✓</span>
+          Full results appear between 12–18 months post-procedure.
+        </li>
+        <li>
+          <span class="kt-check" aria-hidden="true">✓</span>
+          Cost ranges from £3,000–£15,000+ depending on graft count, location and surgeon.
+        </li>
+        <li>
+          <span class="kt-check" aria-hidden="true">✓</span>
+          Not everyone is a candidate — donor density and loss stability are the key gates.
+        </li>
+      </ul>
+    </div>
+
+    <!-- ─────────────────────────────────────
+         EDITORIAL PROSE BODY
+         Serif body · 1.7 leading · ≤70 ch line length (Brief §5.4)
+         ───────────────────────────────────── -->
+    <article class="prose">
+
+      <!-- ── Section 1 ── -->
+      <h2 id="what-is-fue">What is Follicular Unit Extraction (FUE)?</h2>
+
+      <p>
+        FUE — Follicular Unit Extraction — is a hair transplant technique in which individual
+        hair follicles are removed one by one from a donor area (typically the back or sides of
+        the scalp) and implanted into areas of thinning or baldness.
+        <span class="cite">
+          <span class="cite-num" tabindex="0" role="button" aria-label="Citation 1">1</span>
+          <span class="cite-tooltip" role="tooltip">
+            International Society of Hair Restoration Surgery (ISHRS).
+            FUE: Consensus statement on technique nomenclature. 2023.
+          </span>
+        </span>
+      </p>
+
+      <p>
+        Unlike FUT (Follicular Unit Transplantation), FUE requires no strip excision of scalp
+        tissue — meaning no linear scar, less post-operative discomfort, and a faster return
+        to daily activity. As of 2025, FUE is the most widely performed hair transplant
+        technique worldwide.
+        <span class="cite">
+          <span class="cite-num" tabindex="0" role="button" aria-label="Citation 2">2</span>
+          <span class="cite-tooltip" role="tooltip">
+            ISHRS Practice Census 2025: FUE accounts for 72% of all hair restoration
+            procedures performed globally.
+          </span>
+        </span>
+      </p>
+
+      <!-- PULL QUOTE component -->
+      <div class="pull-quote" role="figure" aria-label="Expert quote">
+        <blockquote>
+          "The biggest misconception patients bring to consultation is that FUE is 'scarless'.
+          It's scar-minimal — and for most people that distinction is academic by month six."
+        </blockquote>
+        <cite>— Dr. Reza Ahmadi, Consultant Hair Restoration Surgeon</cite>
+      </div>
+
+      <!-- ── Section 2 ── -->
+      <h2 id="how-it-works">How does FUE work?</h2>
+
+      <p>An FUE procedure typically unfolds in three phases, often over a single day for sessions
+        under 2,000 grafts, or across two consecutive days for larger ones.</p>
+
+      <h3 id="step-consultation">1. Consultation &amp; pre-procedure planning</h3>
+
+      <p>
+        Before any procedure, your surgeon assesses your hair loss pattern (Norwood-Hamilton
+        scale for men; Ludwig scale for women), evaluates donor-zone density and quality,
+        and sets realistic expectations. On Hairline, your 3D head scan provides an
+        objective baseline that surgeons use to build a digital plan before you meet in person.
+        <span class="cite">
+          <span class="cite-num" tabindex="0" role="button" aria-label="Citation 3">3</span>
+          <span class="cite-tooltip" role="tooltip">
+            Rassman WR et al. Follicular unit extraction: minimally invasive surgery for hair
+            transplantation. Dermatologic Surgery. 2002;28(8):720–728.
+          </span>
+        </span>
+      </p>
+
+      <div class="callout info" role="note">
+        <span class="callout-icon" aria-hidden="true">ℹ️</span>
+        <div class="callout-body">
+          <strong>What your Hairline 3D scan measures</strong>
+          Scalp topography, hair density per cm², miniaturisation rate and donor reserve —
+          all without a physical consultation. Your matched provider receives this data before your
+          first appointment.
+        </div>
+      </div>
+
+      <h3 id="step-procedure">2. The procedure itself</h3>
+
+      <p>
+        On the day, the donor area is shaved and local anaesthetic applied. Using a micro-punch
+        tool (0.6–1.0 mm diameter), the surgeon extracts individual follicular units — each
+        containing 1–4 hairs. Grafts are stored in a hypothermic solution to preserve viability.
+        Recipient sites are created using micro-blades angled to replicate natural growth direction,
+        then the grafts are implanted. Grafts outside the body for more than 4–6 hours have
+        significantly reduced survival rates.
+      </p>
+
+      <!-- IN-ARTICLE CTA: ASSESSMENT — non-ad treatment (Healthline pattern) -->
+      <div class="in-cta assessment" aria-label="Start hair-loss assessment">
+        <div class="wf-chip" style="position:absolute; top:-24px; left:0;">Component · In-Article CTA Module — Assessment</div>
+        <div class="in-cta-icon" aria-hidden="true">📱</div>
+        <div class="in-cta-body">
+          <div class="in-cta-label">Hairline Assessment</div>
+          <div class="in-cta-headline">Find out if FUE is right for you</div>
+          <div class="in-cta-desc">
+            Our free assessment identifies your loss pattern, donor reserve and estimated
+            graft count — in 5 minutes, on your phone.
+          </div>
+        </div>
+        <button class="in-cta-btn">Start your assessment →</button>
+      </div>
+
+      <h3 id="step-aftercare">3. Immediate aftercare</h3>
+
+      <p>
+        Most patients experience mild swelling, redness and tightness in donor and recipient
+        areas for 3–5 days. Transplanted hairs typically shed between weeks 2–6 — this is
+        normal and expected. The follicles remain intact; new growth begins around the
+        3-month mark.
+      </p>
+
+      <!-- ── Section 3 ── -->
+      <h2 id="candidate">Who is a good candidate for FUE?</h2>
+
+      <p>FUE works best with sufficient, stable donor hair. Candidacy is not binary — a surgeon
+        evaluates multiple factors together.</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table" aria-label="FUE candidacy factors">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Ideal for FUE</th>
+              <th>May complicate FUE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Hair loss pattern</td>
+              <td>Norwood II–V, stable for 2+ years</td>
+              <td>Active, rapidly progressive loss</td>
+            </tr>
+            <tr>
+              <td>Donor density</td>
+              <td>&gt;60 follicular units / cm²</td>
+              <td>Low donor density — limits graft count</td>
+            </tr>
+            <tr>
+              <td>Hair characteristics</td>
+              <td>Coarse, curly, dark on light skin</td>
+              <td>Fine, straight, light hair on light skin</td>
+            </tr>
+            <tr>
+              <td>Age</td>
+              <td>25+ (loss pattern established)</td>
+              <td>Under 23 (pattern may still progress)</td>
+            </tr>
+            <tr>
+              <td>Health</td>
+              <td>No active autoimmune conditions</td>
+              <td>Alopecia areata, active scalp conditions</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Section 4 ── -->
+      <h2 id="cost">How much does FUE cost?</h2>
+
+      <p>
+        FUE pricing varies significantly by geography, clinic tier and graft count. The table
+        below reflects real-world ranges as of Q1 2026, sourced from Hairline's verified
+        provider network.
+        <span class="cite">
+          <span class="cite-num" tabindex="0" role="button" aria-label="Citation 4">4</span>
+          <span class="cite-tooltip" role="tooltip">
+            Hairline Provider Network: pricing data aggregated from 340 verified clinics across
+            14 countries, Q1 2026. All figures in GBP equivalent.
+          </span>
+        </span>
+      </p>
+
+      <div class="data-table-wrap">
+        <table class="data-table" aria-label="FUE cost by region">
+          <thead>
+            <tr>
+              <th>Region</th>
+              <th>~2,000 grafts</th>
+              <th>~3,500 grafts</th>
+              <th>~5,000 grafts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>United Kingdom</td>
+              <td>£4,500–£7,000</td>
+              <td>£7,500–£11,000</td>
+              <td>£12,000–£18,000</td>
+            </tr>
+            <tr>
+              <td>Turkey (Istanbul)</td>
+              <td>£1,200–£2,500</td>
+              <td>£1,800–£3,500</td>
+              <td>£2,200–£4,000</td>
+            </tr>
+            <tr>
+              <td>UAE (Dubai)</td>
+              <td>£3,000–£5,500</td>
+              <td>£5,000–£9,000</td>
+              <td>£8,000–£14,000</td>
+            </tr>
+            <tr>
+              <td>Spain / Portugal</td>
+              <td>£2,500–£4,500</td>
+              <td>£4,000–£7,000</td>
+              <td>£6,500–£11,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning" role="note">
+        <span class="callout-icon" aria-hidden="true">⚠️</span>
+        <div class="callout-body">
+          <strong>A note on 'all-inclusive' pricing</strong>
+          Some clinics advertise a flat price regardless of graft count. Graft count is the
+          primary cost driver — always confirm your estimated count in writing before committing.
+        </div>
+      </div>
+
+      <!-- ── Section 5 ── -->
+      <h2 id="recovery">FUE recovery timeline</h2>
+
+      <p>Recovery is measured in months, not days. Here is what to expect at each stage.</p>
+
+      <!-- PULL QUOTE 2 -->
+      <div class="pull-quote" role="figure" aria-label="Expert quote">
+        <blockquote>
+          "Month three is the hardest. The transplanted hairs have shed, the new growth
+          hasn't come through. Patients need to know this phase is coming so they don't panic."
+        </blockquote>
+        <cite>— Dr. Reza Ahmadi</cite>
+      </div>
+
+      <div class="data-table-wrap">
+        <table class="data-table" aria-label="FUE recovery timeline">
+          <thead>
+            <tr>
+              <th>Timeframe</th>
+              <th>What to expect</th>
+              <th>Hairline Aftercare support</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Days 1–7</strong></td>
+              <td>Swelling, redness, tightness in donor &amp; recipient zones. Scabs forming.</td>
+              <td>Daily symptom log, 24/7 chat with specialist</td>
+            </tr>
+            <tr>
+              <td><strong>Weeks 2–6</strong></td>
+              <td>Transplanted hairs shed (normal). Some native shock loss may occur.</td>
+              <td>Video follow-up with your surgeon at week 4</td>
+            </tr>
+            <tr>
+              <td><strong>Month 3</strong></td>
+              <td>New hair growth begins — fine, thin at first.</td>
+              <td>3D scan comparison vs. baseline</td>
+            </tr>
+            <tr>
+              <td><strong>Month 6</strong></td>
+              <td>~50% of final result visible. Noticeable improvement.</td>
+              <td>Progress photo timeline in app</td>
+            </tr>
+            <tr>
+              <td><strong>Month 12–18</strong></td>
+              <td>Full density achieved. Final assessment with your provider.</td>
+              <td>Closure report &amp; care plan review</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- IN-ARTICLE CTA: FIND A CLINIC -->
+      <div class="in-cta find-clinic" style="position:relative;" aria-label="Find a FUE clinic">
+        <div class="wf-chip" style="position:absolute; top:-24px; left:0;">Component · In-Article CTA Module — Find a Clinic</div>
+        <div class="in-cta-icon" aria-hidden="true">📍</div>
+        <div class="in-cta-body">
+          <div class="in-cta-label">Find a provider</div>
+          <div class="in-cta-headline">Find a verified FUE clinic near you</div>
+          <div class="in-cta-desc">
+            Browse clinics offering FUE, filtered by location, budget and patient ratings —
+            every provider vetted by Hairline.
+          </div>
+        </div>
+        <button class="in-cta-btn">Find a clinic near you →</button>
+      </div>
+
+      <!-- ── Section 6 ── -->
+      <h2 id="risks">Side effects &amp; risks</h2>
+
+      <p>FUE is considered safe when performed by a qualified surgeon in an appropriate setting.
+        All risks below are drawn from peer-reviewed literature and should be discussed at
+        your consultation.</p>
+
+      <ul>
+        <li><strong>Temporary shock loss</strong> — native hairs near the recipient area may shed
+          and regrow. Common, almost always temporary.</li>
+        <li><strong>Folliculitis</strong> — small pimple-like inflammation around new grafts.
+          Usually resolves without treatment.</li>
+        <li><strong>Low graft survival</strong> — typically linked to poor handling or implantation
+          outside the 4–6 hour viability window.</li>
+        <li><strong>Unnatural-looking results</strong> — almost always a technique or design issue.
+          Surgeon selection is the primary mitigation.</li>
+        <li><strong>Donor area depletion</strong> — over-harvesting limits options for future
+          sessions.</li>
+      </ul>
+
+      <!-- ── Section 7 ── -->
+      <h2 id="vs-fut">FUE vs FUT — which is right for you?</h2>
+
+      <p>There is no universal answer. The right technique depends on your loss pattern, donor
+        characteristics, lifestyle and surgeon expertise. See our full comparison guide for a
+        side-by-side breakdown.</p>
+
+      <p>
+        <a href="/resources/comparisons/fue-vs-fut">
+          → Read: FUE vs FUT — A complete comparison
+        </a>
+      </p>
+
+      <!-- ── Section 8: FAQ (schema-ready) ── -->
+      <h2 id="faq">Frequently asked questions</h2>
+      <div class="wf-chip">Component · FAQ Accordion · schema-marked-up (SEO §7.1 — FAQ block)</div>
+
+      <div class="faq-list" role="list">
+
+        <div class="faq-item" role="listitem">
+          <div class="faq-q" aria-expanded="true">
+            <span>Is FUE permanent?</span>
+            <span class="faq-chevron">▲</span>
+          </div>
+          <div class="faq-a">
+            Transplanted follicles come from the permanent donor zone — they are genetically
+            programmed not to miniaturise. Once established, results are considered permanent.
+            However, you may continue to lose native (non-transplanted) hair over time, which
+            can affect appearance and may require future sessions.
+          </div>
+        </div>
+
+        <div class="faq-item closed" role="listitem">
+          <div class="faq-q" aria-expanded="false">
+            <span>How long does the FUE procedure take?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            A session of 2,000 grafts typically takes 6–8 hours including extraction, site
+            creation and implantation. Larger sessions (3,500+ grafts) are often split over
+            two consecutive days to maintain graft viability.
+          </div>
+        </div>
+
+        <div class="faq-item closed" role="listitem">
+          <div class="faq-q" aria-expanded="false">
+            <span>Will I need to shave my head?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            For standard FUE, the donor area is shaved to 1–2 mm. Some clinics offer
+            'unshaven FUE' (U-FUE), which extracts from beneath longer native hair and avoids
+            a visibly shaved patch — at higher cost and longer procedure time.
+          </div>
+        </div>
+
+        <div class="faq-item closed" role="listitem">
+          <div class="faq-q" aria-expanded="false">
+            <span>Can I fly after an FUE transplant?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            Most surgeons recommend waiting at least 5–7 days before flying. Cabin pressure
+            changes and dry air are not believed to be harmful in themselves, but early travel
+            increases infection risk and makes proper aftercare more difficult. Hairline Travel
+            builds in a rest period before your return flight.
+          </div>
+        </div>
+
+        <div class="faq-item closed" role="listitem">
+          <div class="faq-q" aria-expanded="false">
+            <span>What is the difference between FUE and DHI?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            DHI (Direct Hair Implantation) is a variant of FUE that uses a pen-like implanter
+            tool (Choi pen) to extract and implant follicles in a single step, without
+            pre-made recipient sites. The key claimed benefit is reduced time outside the body
+            per graft — though evidence on survival rate differences is mixed.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- EXPERT REVIEWER FOOTER BLOCK (E-E-A-T) -->
+      <div class="reviewed-by-block" role="complementary" aria-label="Medical review information">
+        <div class="reviewer-avatar" aria-hidden="true">RA</div>
+        <div class="reviewer-text">
+          <div class="reviewed-label">Medically reviewed</div>
+          <div class="reviewer-name">Dr. Reza Ahmadi</div>
+          <div class="reviewer-creds">FRCSEd · Consultant Hair Restoration Surgeon · Member ISHRS · 14 years' experience</div>
+        </div>
+        <div class="reviewed-date-block">
+          <span>Last reviewed</span>
+          <strong>3 June 2026</strong>
+          <a href="/about/medical-review-process">Our review process →</a>
+        </div>
+      </div>
+
+    </article><!-- /prose -->
+
+  </main><!-- /article-body -->
+
+</div><!-- /article-layout -->
+
+<!-- ══════════════════════════════════════════════════════════
+     RELATED ARTICLES RAIL
+     SEO §7.1 — every article must surface 6–8 related links
+     ══════════════════════════════════════════════════════════ -->
+<section class="related-section" aria-labelledby="related-heading">
+  <div class="section-wrap">
+    <div class="wf-chip">Component · Related Articles Rail · min 6–8 internal links (SEO §7.1)</div>
+    <div class="section-row">
+      <h2 id="related-heading">Related articles</h2>
+      <a href="/resources" class="see-all">See all resources →</a>
+    </div>
+
+    <div class="articles-grid">
+
+      <article class="article-card">
+        <div class="card-img" aria-label="Article image placeholder">
+          <span class="card-tag">Treatments</span>
+          <span>Image · 16:9</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-headline">FUE vs FUT: Which Hair Transplant Is Right for You?</h3>
+          <div class="card-meta">Treatments · 7 min read</div>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img" aria-label="Article image placeholder">
+          <span class="card-tag">Recovery</span>
+          <span>Image · 16:9</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-headline">Hair Transplant Recovery: A Month-by-Month Timeline</h3>
+          <div class="card-meta">Recovery · 6 min read</div>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img" aria-label="Article image placeholder">
+          <span class="card-tag">Treatments</span>
+          <span>Image · 16:9</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-headline">DHI Hair Transplant: The 'Pen' Technique Explained</h3>
+          <div class="card-meta">Treatments · 5 min read</div>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Additional related links (to meet SEO 6–8 internal links) -->
+    <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; padding-top:20px; border-top:1px solid var(--color-border);">
+      <div class="wf-chip" style="margin:0;">Additional internal links — SEO §7.1</div>
+      <a href="/treatments/hair-transplant" style="font-size:13px; font-weight:600; color:var(--color-accent); padding:6px 14px; border:1px solid var(--color-accent-light); border-radius:var(--r-full); background:var(--color-accent-light);">→ Hair Transplant overview</a>
+      <a href="/treatments/hair-transplant/dhi" style="font-size:13px; font-weight:600; color:var(--color-accent); padding:6px 14px; border:1px solid var(--color-accent-light); border-radius:var(--r-full); background:var(--color-accent-light);">→ DHI technique</a>
+      <a href="/treatments/hair-transplant/fut" style="font-size:13px; font-weight:600; color:var(--color-accent); padding:6px 14px; border:1px solid var(--color-accent-light); border-radius:var(--r-full); background:var(--color-accent-light);">→ FUT technique</a>
+      <a href="/hair-loss/male-pattern-baldness" style="font-size:13px; font-weight:600; color:var(--color-accent); padding:6px 14px; border:1px solid var(--color-accent-light); border-radius:var(--r-full); background:var(--color-accent-light);">→ Male pattern baldness</a>
+      <a href="/find-a-clinic/istanbul" style="font-size:13px; font-weight:600; color:var(--color-accent); padding:6px 14px; border:1px solid var(--color-accent-light); border-radius:var(--r-full); background:var(--color-accent-light);">→ Clinics in Istanbul</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SITE FOOTER
+     ══════════════════════════════════════════════════════════ -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-wrap">
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+        <div class="f-logo">hair<span>line</span></div>
+        <div class="f-tagline">
+          Hair restoration, finally done right. Connect with verified providers worldwide —
+          from assessment to aftercare.
+        </div>
+        <div class="app-badges">
+          <div class="app-badge">🍎 App Store</div>
+          <div class="app-badge">▶ Google Play</div>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Patients</h4>
+        <ul>
+          <li><a href="/assessment">Start assessment</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/treatments">Treatments</a></li>
+          <li><a href="/aftercare">Hairline Aftercare</a></li>
+          <li><a href="/travel">Hairline Travel</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/resources">All articles</a></li>
+          <li><a href="/hair-loss">Hair loss conditions</a></li>
+          <li><a href="/treatments">Treatment guides</a></li>
+          <li><a href="/resources/comparisons">Comparisons</a></li>
+          <li><a href="/resources/recovery">Recovery guides</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Providers</h4>
+        <ul>
+          <li><a href="/for-providers">For clinics</a></li>
+          <li><a href="/for-providers/features">Platform features</a></li>
+          <li><a href="/for-providers/case-studies">Case studies</a></li>
+          <li><a href="/for-providers/book-demo">Book a demo</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div>
+        © 2026 Hairline App Ltd. ·
+        <a href="/privacy">Privacy Policy</a> ·
+        <a href="/terms">Terms</a> ·
+        <a href="/cookies">Cookie Settings</a>
+      </div>
+      <div>🌐 English · 🇬🇧 United Kingdom</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

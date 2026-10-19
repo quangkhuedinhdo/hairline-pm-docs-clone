@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — /for-patients Wireframe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Palette */
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+      --green:        #2E6B4F;
+      --green-light:  #D4EAE0;
+
+      /* Typography */
+      --font-ui: 'Inter', system-ui, sans-serif;
+
+      /* Spacing */
+      --section-py:  120px;
+      --container:   1200px;
+
+      /* Radius */
+      --radius-md:   12px;
+      --radius-lg:   20px;
+      --radius-xl:   28px;
+
+      /* Shadow */
+      --shadow-sm:   0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:   0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utility ─────────────────────────────────────────────────────── */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .section { padding: var(--section-py) 0; }
+
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .badge-green {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-secondary:hover { border-color: var(--ink-mid); }
+
+    .text-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .text-link:hover { text-decoration: underline; }
+
+    /* ─── NAV ────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,248,245,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 64px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      text-decoration: none;
+      margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+    .nav-links a.active { font-weight: 600; }
+    .nav-cta-b2b {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ─────────────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .breadcrumb a {
+      font-size: 13px;
+      color: var(--ink-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb-sep {
+      font-size: 13px;
+      color: var(--border);
+    }
+    .breadcrumb-current {
+      font-size: 13px;
+      color: var(--ink-mid);
+      font-weight: 500;
+    }
+
+    /* ─── SECTION 1 — HERO ───────────────────────────────────────────── */
+    .hero {
+      padding: 96px 0 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 58px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.07;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--ink-mid);
+      line-height: 1.55;
+      max-width: 420px;
+      margin-bottom: 36px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-app-note {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 4px;
+    }
+
+    /* Visual — phone + backdrop */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      padding-bottom: 0;
+    }
+    .hero-bg-panel {
+      position: absolute;
+      top: -96px;
+      right: -80px;
+      width: 82%;
+      height: calc(100% + 96px);
+      background: var(--accent-light);
+      border-radius: var(--radius-xl) 0 0 0;
+      z-index: 0;
+    }
+    .hero-phone-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 20px;
+      padding-right: 60px;
+    }
+    .phone-mockup {
+      width: 240px;
+      height: 490px;
+      background: var(--ink);
+      border-radius: 36px;
+      box-shadow: 0 32px 80px rgba(28,26,23,.28);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 5px solid #2e2b27;
+      flex-shrink: 0;
+    }
+    .phone-notch {
+      width: 90px;
+      height: 24px;
+      background: var(--ink);
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto;
+    }
+    .phone-screen {
+      flex: 1;
+      background: var(--bg-subtle);
+      margin: 0 5px 5px;
+      border-radius: 26px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .phone-screen-label {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--ink-muted);
+    }
+    .phone-screen-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .phone-progress-row {
+      display: flex;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .progress-dot {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+    }
+    .progress-dot.done { background: var(--accent); }
+    .phone-question-block {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .phone-option {
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+      color: var(--ink-mid);
+      background: var(--white);
+    }
+    .phone-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .phone-cta-btn {
+      margin-top: auto;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: 10px;
+      padding: 11px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    /* Floating stat card */
+    .hero-stat-card {
+      position: absolute;
+      left: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-md);
+      z-index: 2;
+    }
+    .stat-card-number {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.02em;
+    }
+    .stat-card-label {
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* Trust strip */
+    .trust-strip {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      padding: 16px 0;
+      margin-top: 80px;
+    }
+    .trust-strip-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+    .trust-icon { font-size: 15px; }
+    .trust-sep { width: 1px; height: 16px; background: var(--border); }
+
+    /* ─── SECTION 2 — SERVICE CARDS ──────────────────────────────────── */
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .service-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: box-shadow .2s;
+    }
+    .service-card:hover { box-shadow: var(--shadow-md); }
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .service-icon.orange { background: var(--accent-light); }
+    .service-icon.green  { background: var(--green-light); }
+    .service-icon.blue   { background: #D4E4F0; }
+    .service-icon.purple { background: #EAD4F0; }
+    .service-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.02em;
+    }
+    .service-card p {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .service-card-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+    }
+    .service-card-link:hover { text-decoration: underline; }
+
+    /* ─── SECTION 3 — HOW IT WORKS ───────────────────────────────────── */
+    .hiw-section {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .hiw-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .hiw-header h2 {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+    }
+    .hiw-header p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      margin-top: 12px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hiw-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      position: relative;
+    }
+    /* connector line */
+    .hiw-steps::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: calc(12.5% + 24px);
+      right: calc(12.5% + 24px);
+      height: 2px;
+      background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 8px, transparent 8px, transparent 16px);
+    }
+    .hiw-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      padding: 0 16px;
+      position: relative;
+    }
+    .hiw-step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      position: relative;
+      z-index: 1;
+    }
+    .hiw-step:first-child .hiw-step-number,
+    .hiw-step.active .hiw-step-number {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--white);
+    }
+    .hiw-step-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .hiw-step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .hiw-step p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.55;
+    }
+    .hiw-footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    /* ─── SECTION 4 — FIND A CLINIC ──────────────────────────────────── */
+    .clinic-map-section .section-header {
+      max-width: 560px;
+    }
+    .clinic-map-section .section-header h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+    .clinic-map-section .section-header p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      margin-bottom: 28px;
+    }
+    .clinic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 40px;
+      align-items: start;
+      margin-top: 56px;
+    }
+    .clinic-list-preview {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .clinic-card-compact {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .clinic-logo-placeholder {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .clinic-card-body { flex: 1; }
+    .clinic-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .clinic-card-meta {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 3px;
+    }
+    .clinic-card-rating {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .map-placeholder {
+      background: var(--bg-subtle);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-xl);
+      height: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--ink-muted);
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-pin {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: var(--accent);
+      box-shadow: 0 2px 8px rgba(184,92,56,.35);
+    }
+    .map-pin:nth-child(1) { top: 30%; left: 20%; }
+    .map-pin:nth-child(2) { top: 45%; left: 55%; }
+    .map-pin:nth-child(3) { top: 60%; left: 35%; }
+    .map-pin:nth-child(4) { top: 25%; left: 70%; }
+    .map-label {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+
+    /* ─── SECTION 5 — TESTIMONIALS ───────────────────────────────────── */
+    .testimonials-section {
+      background: var(--bg-dark);
+    }
+    .testimonials-section .label { color: rgba(255,255,255,.4); }
+    .testimonials-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 52px;
+    }
+    .testimonials-header h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--white);
+      max-width: 460px;
+      line-height: 1.1;
+      margin-top: 12px;
+    }
+    .testimonials-nav {
+      display: flex;
+      gap: 10px;
+    }
+    .nav-arrow {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.2);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--white);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .nav-arrow:hover { background: rgba(255,255,255,.08); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .testimonial-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 3px;
+      color: var(--accent);
+      font-size: 14px;
+    }
+    .testimonial-quote {
+      font-size: 16px;
+      color: rgba(255,255,255,.88);
+      line-height: 1.65;
+      font-style: italic;
+      flex: 1;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .author-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .author-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      margin-top: 2px;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-light);
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+    /* ─── SECTION 6 — TRUST SIGNALS ──────────────────────────────────── */
+    .trust-signals-section {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .trust-signals-header {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .trust-signals-header h2 {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+    }
+    .trust-signals-header p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      margin-top: 12px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .trust-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: 48px;
+    }
+    .trust-stat {
+      background: var(--white);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .trust-stat-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+    .trust-stat-number {
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -.04em;
+      color: var(--ink);
+    }
+    .trust-stat-number span {
+      color: var(--accent);
+    }
+    .trust-stat-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+    .trust-stat-sublabel {
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .trust-badges-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .trust-badge-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-mid);
+      box-shadow: var(--shadow-sm);
+    }
+    .trust-badge-pill .icon { font-size: 16px; }
+
+    /* ─── SECTION 7 — FINAL CTA ──────────────────────────────────────── */
+    .final-cta-section {
+      text-align: center;
+    }
+    .final-cta-section h2 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      max-width: 600px;
+      margin: 16px auto 16px;
+      line-height: 1.1;
+    }
+    .final-cta-section h2 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .final-cta-section p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      max-width: 460px;
+      margin: 0 auto 36px;
+    }
+    .app-badges-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .app-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .app-badge:hover { opacity: .88; }
+    .app-badge-icon { font-size: 24px; }
+    .app-badge-text .store-label { font-size: 10px; opacity: .6; display: block; }
+    .app-badge-text .store-name { font-size: 15px; font-weight: 600; }
+    .final-cta-note {
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+    .final-cta-phone-row {
+      margin-top: 60px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .final-phone-mini {
+      width: 160px;
+      height: 300px;
+      background: var(--ink);
+      border-radius: 28px;
+      border: 4px solid #2e2b27;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transform: translateY(0);
+    }
+    .final-phone-mini:first-child { transform: translateY(20px) rotate(-4deg); }
+    .final-phone-mini:last-child  { transform: translateY(20px) rotate(4deg); }
+    .final-phone-mini-screen {
+      height: 100%;
+      background: var(--bg-subtle);
+      margin: 3px;
+      border-radius: 22px;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark);
+      padding: 64px 0 40px;
+    }
+    .footer-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .footer-brand .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -.02em;
+      margin-bottom: 12px;
+    }
+    .footer-brand .logo span { color: var(--accent); }
+    .footer-brand p {
+      font-size: 13px;
+      color: rgba(255,255,255,.45);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 16px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col ul a {
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+    }
+    .footer-legal {
+      font-size: 12px;
+      color: rgba(255,255,255,.3);
+    }
+    .footer-legal a {
+      color: rgba(255,255,255,.4);
+      text-decoration: none;
+    }
+    .footer-legal a:hover { color: rgba(255,255,255,.7); }
+    .footer-socials {
+      display: flex;
+      gap: 16px;
+    }
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    .social-link:hover { border-color: rgba(255,255,255,.4); color: var(--white); }
+
+    /* ─── Section heading helper ─────────────────────────────────────── */
+    .section-heading {
+      margin-bottom: 52px;
+    }
+    .section-heading h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+    .section-heading p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      max-width: 560px;
+    }
+
+    /* ─── Annotation overlay ─────────────────────────────────────────── */
+    .anno {
+      display: inline-block;
+      background: #FFE066;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: #6B5000;
+      vertical-align: middle;
+      margin-left: 8px;
+      font-style: normal;
+    }
+    .wireframe-badge {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 8px 16px;
+      border-radius: 999px;
+      z-index: 999;
+      opacity: .8;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Hairline<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/how-it-works">How it works</a></li>
+      <li><a href="/for-patients" class="active">For Patients</a></li>
+      <li><a href="/treatments">Treatments</a></li>
+      <li><a href="/find-a-clinic">Find a Clinic</a></li>
+      <li><a href="/resources">Resources</a></li>
+    </ul>
+    <a href="/for-providers" class="nav-cta-b2b">For Clinics →</a>
+  </div>
+</nav>
+
+<!-- ─── BREADCRUMB ────────────────────────────────────────────────────── -->
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="/">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">For Patients</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 1 — HERO
+     Patient-focused headline · primary CTA: assessment · secondary: download
+     trust strip below fold
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- Copy column -->
+      <div class="hero-copy">
+        <div class="hero-eyebrow">
+          <span class="badge">For Patients</span>
+        </div>
+        <h1>Your hair,<br>your <em>decision</em>.</h1>
+        <p class="hero-sub">
+          Find a verified hair restoration clinic, understand every option, and track your recovery — all in one place.
+        </p>
+        <div class="hero-actions">
+          <div class="hero-cta-row">
+            <a href="/assessment" class="btn-primary">Start your free assessment →</a>
+            <a href="/find-a-clinic" class="btn-secondary">Find a clinic</a>
+          </div>
+          <p class="hero-app-note">Free · No commitment · Takes 5 minutes</p>
+        </div>
+      </div>
+
+      <!-- Visual column -->
+      <div class="hero-visual">
+        <div class="hero-bg-panel"></div>
+
+        <!-- Floating stat card -->
+        <div class="hero-stat-card">
+          <div class="stat-card-number">4.9 ★</div>
+          <div class="stat-card-label">App Store rating</div>
+        </div>
+
+        <div class="hero-phone-wrap">
+          <!-- Phone mockup — assessment screen -->
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-screen-label">Step 1 of 4 · Hair Assessment</div>
+              <div class="phone-screen-title">Where are you noticing hair loss?</div>
+
+              <div class="phone-progress-row">
+                <div class="progress-dot done"></div>
+                <div class="progress-dot done"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+              </div>
+
+              <div class="phone-option selected">Receding hairline</div>
+              <div class="phone-option">Overall thinning</div>
+              <div class="phone-option">Crown area</div>
+              <div class="phone-option">Patches / spots</div>
+
+              <div class="phone-cta-btn">Continue →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /hero-grid -->
+  </div><!-- /container -->
+
+  <!-- Trust strip -->
+  <div class="trust-strip">
+    <div class="trust-strip-inner">
+      <div class="trust-item">
+        <span class="trust-icon">✓</span>
+        <span>Verified providers in 14 countries</span>
+      </div>
+      <div class="trust-sep"></div>
+      <div class="trust-item">
+        <span class="trust-icon">★</span>
+        <span>4.9 App Store rating</span>
+      </div>
+      <div class="trust-sep"></div>
+      <div class="trust-item">
+        <span class="trust-icon">⚕</span>
+        <span>Medically reviewed content</span>
+      </div>
+      <div class="trust-sep"></div>
+      <div class="trust-item">
+        <span class="trust-icon">🔒</span>
+        <span>GDPR &amp; HIPAA compliant</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 2 — WHAT HAIRLINE OFFERS PATIENTS
+     Four service cards: Assessment & matching / Aftercare / Travel / Verified providers
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-heading">
+      <div class="label">Everything you need</div>
+      <h2>One platform. Every step of the journey.</h2>
+      <p>From understanding your hair loss to booking treatment abroad — Hairline is built around you, not the clinic.</p>
+    </div>
+
+    <div class="service-grid">
+
+      <!-- Card 1: Assessment & Matching -->
+      <div class="service-card">
+        <div class="service-icon orange">🔍</div>
+        <h3>Assessment &amp; Matching</h3>
+        <p>
+          A 5-minute assessment captures your hair-loss pattern and history. Our algorithm surfaces vetted providers who are the right clinical fit — not the ones who pay the most for placement.
+        </p>
+        <a href="/assessment" class="service-card-link">Start your assessment →</a>
+      </div>
+
+      <!-- Card 2: Hairline Aftercare -->
+      <div class="service-card">
+        <div class="service-icon green">🌿</div>
+        <h3>Hairline Aftercare</h3>
+        <p>
+          Recovery tracking starts the day of your procedure. Log symptoms, monitor progress with 3D scans, and reach a specialist 24/7 — without going back to the clinic.
+        </p>
+        <a href="/aftercare" class="service-card-link">Learn about aftercare →</a>
+      </div>
+
+      <!-- Card 3: Hairline Travel -->
+      <div class="service-card">
+        <div class="service-icon blue">✈️</div>
+        <h3>Hairline Travel</h3>
+        <p>
+          Travelling for treatment? We bundle flights, hotel, airport transfers and visa support into one co-ordinated package, so you arrive ready — not stressed.
+        </p>
+        <a href="/travel" class="service-card-link">Explore destinations →</a>
+      </div>
+
+      <!-- Card 4: Verified Providers -->
+      <div class="service-card">
+        <div class="service-icon purple">🏥</div>
+        <h3>Verified Providers</h3>
+        <p>
+          Every clinic on Hairline passes our clinical vetting process — credentials, facilities, patient outcomes. No sponsored placements. No stock photos.
+        </p>
+        <a href="/find-a-clinic" class="service-card-link">Browse verified clinics →</a>
+      </div>
+
+    </div><!-- /service-grid -->
+  </div><!-- /container -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 3 — HOW IT WORKS
+     Condensed 4-step: Assess → Match → Treat → Recover
+     Link to /how-it-works for full detail
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section hiw-section">
+  <div class="container">
+    <div class="hiw-header">
+      <div class="label">The process</div>
+      <h2>Simple from day one.</h2>
+      <p>Hair restoration is complex. The path through it doesn't have to be. Here's how Hairline guides you — step by step.</p>
+    </div>
+
+    <div class="hiw-steps">
+
+      <div class="hiw-step">
+        <div class="hiw-step-number">1</div>
+        <div class="hiw-step-icon">📋</div>
+        <h3>Assess</h3>
+        <p>Complete a 5-minute assessment. We map your hair-loss pattern, history and goals.</p>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-number">2</div>
+        <div class="hiw-step-icon">🤝</div>
+        <h3>Match</h3>
+        <p>We surface 3–5 verified clinics that are the right clinical and geographic fit for you.</p>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-number">3</div>
+        <div class="hiw-step-icon">💊</div>
+        <h3>Treat</h3>
+        <p>Book a consultation, review your treatment plan and proceed at your own pace.</p>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-number">4</div>
+        <div class="hiw-step-icon">📈</div>
+        <h3>Recover</h3>
+        <p>Hairline Aftercare tracks your progress from day one — 3D scans, symptom logs, specialist access.</p>
+      </div>
+
+    </div><!-- /hiw-steps -->
+
+    <div class="hiw-footer">
+      <a href="/how-it-works" class="text-link">See the full process in detail →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 4 — FIND A CLINIC
+     Map teaser with compact clinic cards · CTA to /find-a-clinic
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section clinic-map-section">
+  <div class="container">
+
+    <div class="section-header">
+      <div class="label">Provider network</div>
+      <h2>Verified clinics. Worldwide.</h2>
+      <p>We've vetted every provider on the platform — credentials, facilities, patient outcomes. Browse by location, treatment or budget.</p>
+      <div style="margin-top:24px;">
+        <a href="/find-a-clinic" class="btn-primary">Browse clinics near you →</a>
+      </div>
+    </div>
+
+    <div class="clinic-grid">
+
+      <!-- Compact clinic list preview -->
+      <div class="clinic-list-preview">
+
+        <div class="clinic-card-compact">
+          <div class="clinic-logo-placeholder"></div>
+          <div class="clinic-card-body">
+            <div class="clinic-card-name">Vera Clinic</div>
+            <div class="clinic-card-meta">Istanbul, Turkey · FUE, DHI, PRP</div>
+          </div>
+          <div class="clinic-card-rating">★ 4.9</div>
+        </div>
+
+        <div class="clinic-card-compact">
+          <div class="clinic-logo-placeholder"></div>
+          <div class="clinic-card-body">
+            <div class="clinic-card-name">Harley Street Hair Clinic</div>
+            <div class="clinic-card-meta">London, UK · FUE, FUT, PRP</div>
+          </div>
+          <div class="clinic-card-rating">★ 4.8</div>
+        </div>
+
+        <div class="clinic-card-compact">
+          <div class="clinic-logo-placeholder"></div>
+          <div class="clinic-card-body">
+            <div class="clinic-card-name">Dubai Hair Restoration Centre</div>
+            <div class="clinic-card-meta">Dubai, UAE · FUE, SMP</div>
+          </div>
+          <div class="clinic-card-rating">★ 4.7</div>
+        </div>
+
+        <div class="clinic-card-compact">
+          <div class="clinic-logo-placeholder"></div>
+          <div class="clinic-card-body">
+            <div class="clinic-card-name">Marmita Clinic</div>
+            <div class="clinic-card-meta">Doha, Qatar · FUE, Finasteride</div>
+          </div>
+          <div class="clinic-card-rating">★ 4.8</div>
+        </div>
+
+        <div style="text-align:center; padding:12px 0;">
+          <a href="/find-a-clinic" class="text-link">View all 200+ clinics →</a>
+        </div>
+
+      </div><!-- /clinic-list-preview -->
+
+      <!-- Map placeholder -->
+      <div class="map-placeholder">
+        <div class="map-pin"></div>
+        <div class="map-pin"></div>
+        <div class="map-pin"></div>
+        <div class="map-pin"></div>
+        <div class="map-label">🗺 Interactive clinic map</div>
+        <span style="font-size:12px; position:relative; z-index:1;">Filter by city, treatment or budget</span>
+      </div>
+
+    </div><!-- /clinic-grid -->
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 5 — PATIENT TESTIMONIALS
+     Real stories · long-form quotes · verified badge
+     Dark background, visually distinct
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section testimonials-section">
+  <div class="container">
+
+    <div class="testimonials-header">
+      <div>
+        <div class="label">Patient stories</div>
+        <h2>Real people. Real outcomes.</h2>
+      </div>
+      <div class="testimonials-nav">
+        <button class="nav-arrow">←</button>
+        <button class="nav-arrow">→</button>
+      </div>
+    </div>
+
+    <div class="testimonials-grid">
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">
+          "I'd spent two years going back and forth on this decision. Hairline made me feel like someone was actually on my side — not just trying to sell me a surgery. The matched clinics were genuinely suitable, not random."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👤</div>
+          <div>
+            <div class="author-name">James T.</div>
+            <div class="author-meta">FUE at Vera Clinic, Istanbul — 14 months ago</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="verified-badge">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">
+          "As a woman with female-pattern hair loss, I felt invisible in most 'hair restoration' spaces. Hairline was different — the assessment actually accounted for my situation, and the clinic they matched me with specialised in women's hair loss."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👤</div>
+          <div>
+            <div class="author-name">Priya M.</div>
+            <div class="author-meta">PRP at Harley Street Clinic, London — 8 months ago</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="verified-badge">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">
+          "The Aftercare feature was what sealed it for me. Knowing I'd have a structured recovery plan and could log symptoms without waiting for a clinic appointment — that's what I needed to feel confident going ahead."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👤</div>
+          <div>
+            <div class="author-name">David A.</div>
+            <div class="author-meta">DHI at Dubai Hair Restoration Centre — 6 months ago</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="verified-badge">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /testimonials-grid -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 6 — TRUST SIGNALS
+     Stats: verified providers · app store rating · medically reviewed
+     + trust pill badges
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section trust-signals-section">
+  <div class="container">
+
+    <div class="trust-signals-header">
+      <div class="label">Why patients choose Hairline</div>
+      <h2>Built on evidence, not hype.</h2>
+      <p>We set the bar for what a hair-restoration platform should look like — and hold every provider on it to the same standard.</p>
+    </div>
+
+    <div class="trust-stats-row">
+      <div class="trust-stat">
+        <div class="trust-stat-icon">🏥</div>
+        <div class="trust-stat-number">200<span>+</span></div>
+        <div class="trust-stat-label">Verified clinics</div>
+        <div class="trust-stat-sublabel">Across 14 countries</div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-stat-icon">★</div>
+        <div class="trust-stat-number">4<span>.9</span></div>
+        <div class="trust-stat-label">App Store rating</div>
+        <div class="trust-stat-sublabel">From 3,200+ reviews</div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-stat-icon">⚕</div>
+        <div class="trust-stat-number">100<span>%</span></div>
+        <div class="trust-stat-label">Medically reviewed</div>
+        <div class="trust-stat-sublabel">Every article on the platform</div>
+      </div>
+    </div>
+
+    <div class="trust-badges-row">
+      <div class="trust-badge-pill">
+        <span class="icon">🔒</span>
+        <span>GDPR compliant</span>
+      </div>
+      <div class="trust-badge-pill">
+        <span class="icon">🛡</span>
+        <span>HIPAA compliant</span>
+      </div>
+      <div class="trust-badge-pill">
+        <span class="icon">⚕</span>
+        <span>Medically reviewed content</span>
+      </div>
+      <div class="trust-badge-pill">
+        <span class="icon">✓</span>
+        <span>Clinically vetted providers</span>
+      </div>
+      <div class="trust-badge-pill">
+        <span class="icon">🚫</span>
+        <span>No sponsored placements</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 7 — FINAL CTA
+     App download badges · supporting copy · decorative phone trio
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section final-cta-section">
+  <div class="container">
+    <div class="label">Ready to start?</div>
+    <h2>Hair restoration, <em>done right</em>.</h2>
+    <p>Download the app and complete your free assessment in under 5 minutes. No pressure, no commitment.</p>
+
+    <div class="app-badges-row">
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">🍎</span>
+        <div class="app-badge-text">
+          <span class="store-label">Download on the</span>
+          <span class="store-name">App Store</span>
+        </div>
+      </a>
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">▶</span>
+        <div class="app-badge-text">
+          <span class="store-label">Get it on</span>
+          <span class="store-name">Google Play</span>
+        </div>
+      </a>
+    </div>
+    <p class="final-cta-note">Free · Available on iOS &amp; Android · Medically reviewed</p>
+
+    <!-- Decorative phone trio -->
+    <div class="final-cta-phone-row">
+      <div class="final-phone-mini">
+        <div class="final-phone-mini-screen" style="background: var(--accent-light);"></div>
+      </div>
+      <div class="final-phone-mini" style="transform: translateY(-10px);">
+        <div class="final-phone-mini-screen" style="background: var(--bg-subtle);"></div>
+      </div>
+      <div class="final-phone-mini">
+        <div class="final-phone-mini-screen" style="background: var(--green-light);"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        <div class="logo">Hairline<span>.</span></div>
+        <p>Hair restoration, done right. Connecting patients with vetted providers worldwide.</p>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">For Patients</div>
+        <ul>
+          <li><a href="/for-patients">Overview</a></li>
+          <li><a href="/assessment">Start assessment</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/aftercare">Aftercare</a></li>
+          <li><a href="/travel">Travel</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Treatments</div>
+        <ul>
+          <li><a href="/treatments/hair-transplant">Hair Transplant</a></li>
+          <li><a href="/treatments/fue">FUE</a></li>
+          <li><a href="/treatments/prp">PRP</a></li>
+          <li><a href="/treatments/finasteride">Finasteride</a></li>
+          <li><a href="/treatments">View all →</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">For Clinics</div>
+        <ul>
+          <li><a href="/for-providers">Overview</a></li>
+          <li><a href="/for-providers/features">Features</a></li>
+          <li><a href="/for-providers/case-studies">Case studies</a></li>
+          <li><a href="/for-providers/book-demo">Book a demo</a></li>
+        </ul>
+      </div>
+
+    </div><!-- /footer-top -->
+
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        © 2026 Hairline Technologies Ltd. &nbsp;·&nbsp;
+        <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+        <a href="/terms">Terms</a> &nbsp;·&nbsp;
+        <a href="/cookies">Cookies</a>
+      </div>
+      <div class="footer-socials">
+        <a href="#" class="social-link">𝕏</a>
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">IG</a>
+        <a href="#" class="social-link">YT</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Wireframe stamp -->
+<div class="wireframe-badge">WIREFRAME · /for-patients</div>
+
+</body>
+</html>

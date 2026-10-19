@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-021 Screen 7 — Admin: Translation Key Detail Editor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: #f4f5f7; color: #172b4d; }
+
+    /* ── Top bar ── */
+    .topbar { background: #fff; border-bottom: 1px solid #dfe1e6; height: 52px; display: flex; align-items: center; padding: 0 24px; gap: 16px; }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-lang { display: flex; align-items: center; gap: 6px; border: 1px solid #dfe1e6; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 13px; color: #42526e; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1280px; margin: 0 auto; padding: 24px 24px 48px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5e6c84; margin-bottom: 16px; }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #c1c7d0; }
+    .breadcrumb-current { color: #172b4d; font-weight: 500; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; text-decoration: none; }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-warning { background: #ff991f; color: #fff; }
+    .btn-warning:hover { background: #e08000; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-danger-outline { background: #fff; color: #bf2600; border: 1px solid #bf2600; }
+    .btn-danger-outline:hover { background: #ffebe6; }
+
+    /* ── Two-column layout ── */
+    .editor-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+
+    /* ── Cards ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; }
+    .card + .card { margin-top: 16px; }
+    .card-header { padding: 14px 20px; border-bottom: 1px solid #dfe1e6; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+    .card-body + .card-body { border-top: 1px solid #f4f5f7; }
+
+    /* ── Key identity section ── */
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+    .meta-grid.full { grid-template-columns: 1fr; }
+    .field-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+    .field-label.required::after { content: ' *'; color: #bf2600; }
+    .field-value-ro {
+      font-size: 13px; color: #172b4d; background: #f4f5f7;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #e0e2e7;
+    }
+    .field-value-ro.key-mono {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px; color: #0052cc; font-weight: 600;
+    }
+    .field-input {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit;
+    }
+    .field-input:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-textarea {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 8px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; resize: vertical;
+      min-height: 80px; line-height: 1.5;
+    }
+    .field-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-hint { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Source value section ── */
+    .source-section { border: 1px solid #dfe1e6; border-radius: 6px; overflow: hidden; }
+    .source-header {
+      padding: 10px 14px; background: #f8f9ff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .source-header-left { display: flex; align-items: center; gap: 8px; }
+    .source-lang-flag { font-size: 15px; }
+    .source-lang-name { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .source-lang-code { font-size: 11px; color: #5e6c84; background: #e0e2e7; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+    .source-locked-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; color: #974f0c;
+      background: #fff0b3; border: 1px solid #f5a623; padding: 2px 8px; border-radius: 10px;
+    }
+    .source-body { padding: 14px; }
+
+    /* ── Locale value sections ── */
+    .locale-section { border: 1px solid #dfe1e6; border-radius: 6px; overflow: hidden; }
+    .locale-section + .locale-section { margin-top: 10px; }
+    .locale-section.highlighted { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.12); }
+    .locale-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .locale-section.highlighted .locale-header { background: #f0f4ff; }
+    .locale-header-left { display: flex; align-items: center; gap: 8px; }
+    .locale-highlight-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; color: #0052cc; background: #deebff;
+      border: 1px solid #4c9aff; padding: 1px 7px; border-radius: 10px; font-weight: 600;
+    }
+    .locale-body { padding: 14px; }
+    .locale-status-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .badge-published  { background: #e3fcef; color: #006644; }
+    .badge-draft      { background: #fff0b3; color: #974f0c; }
+    .badge-missing    { background: #ffebe6; color: #bf2600; }
+    .badge-review     { background: #fffae6; color: #974f0c; }
+    .badge-pending    { background: #deebff; color: #0052cc; }
+    .badge-deprecated { background: #f4f5f7; color: #5e6c84; }
+
+    /* ── Character guidance ── */
+    .char-guidance {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: #5e6c84; margin-top: 6px;
+    }
+    .char-count { font-weight: 600; color: #42526e; }
+    .char-limit-ok { color: #006644; }
+    .char-limit-warn { color: #974f0c; }
+
+    /* ── Change reason section ── */
+    .change-reason-section {
+      border: 1px solid #f5a623; border-radius: 6px;
+      background: #fffae6; padding: 14px 16px;
+    }
+    .change-reason-title {
+      font-size: 13px; font-weight: 600; color: #974f0c; margin-bottom: 4px;
+    }
+    .change-reason-desc { font-size: 12px; color: #5e6c84; margin-bottom: 10px; }
+
+    /* ── Save action bar ── */
+    .save-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid #dfe1e6;
+      background: #fafbff;
+    }
+    .save-bar-left { font-size: 12px; color: #5e6c84; }
+    .save-bar-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Pending publish banner ── */
+    .pending-banner {
+      display: flex; align-items: center; gap: 10px;
+      background: #deebff; border: 1px solid #4c9aff; border-radius: 6px;
+      padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: #0052cc;
+    }
+    .pending-banner-icon { font-size: 16px; }
+    .pending-banner-text { flex: 1; }
+    .pending-banner-link { color: #0052cc; font-weight: 600; text-decoration: underline; cursor: pointer; }
+
+    /* ── History panel ── */
+    .history-list { padding: 0; }
+    .history-item { padding: 12px 20px; border-bottom: 1px solid #f4f5f7; }
+    .history-item:last-child { border-bottom: none; }
+    .history-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .history-actor { font-size: 12px; font-weight: 600; color: #172b4d; }
+    .history-time { font-size: 11px; color: #8993a4; }
+    .history-action-badge {
+      font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 8px;
+    }
+    .history-action-edit { background: #fff0b3; color: #974f0c; }
+    .history-action-import { background: #deebff; color: #0052cc; }
+    .history-action-publish { background: #e3fcef; color: #006644; }
+    .history-action-rollback { background: #ffebe6; color: #bf2600; }
+    .history-desc { font-size: 12px; color: #42526e; line-height: 1.4; }
+    .history-detail { font-size: 11px; color: #8993a4; margin-top: 3px; font-family: monospace; }
+    .history-empty { padding: 32px 20px; text-align: center; font-size: 13px; color: #8993a4; }
+
+    /* ── Scope info row ── */
+    .scope-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .scope-chip {
+      font-size: 11px; color: #42526e; background: #f4f5f7;
+      padding: 2px 8px; border-radius: 10px; white-space: nowrap;
+    }
+    .scope-chip.tenant { background: #deebff; color: #0052cc; }
+    .scope-chip.group  { background: #e3fcef; color: #006644; font-family: monospace; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Patients</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-lang">🌐 English <span style="font-size:10px;color:#5e6c84;">▼</span></div>
+</div>
+
+<!-- ── Page content ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Localization Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Turkish (tr)</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Translation Key Inventory</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">auth.login.title</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Translation Key Detail Editor</div>
+      <div class="page-subtitle">Edit per-language values for one key · Changes save as draft only and do not affect live bundles</div>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-default">← Back to Inventory</button>
+    </div>
+  </div>
+
+  <!-- Pending publish banner (shown after saving draft) -->
+  <div class="pending-banner">
+    <span class="pending-banner-icon">ℹ</span>
+    <span class="pending-banner-text">
+      This key has <strong>1 pending draft change</strong> not yet published. Runtime clients still use the previous published values.
+      <span class="pending-banner-link">Go to Version History to publish →</span>
+    </span>
+    <span class="badge badge-pending">Pending Publish</span>
+  </div>
+
+  <!-- Two-column layout -->
+  <div class="editor-layout">
+
+    <!-- ── Left column: editor ── -->
+    <div>
+
+      <!-- Key identity card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Key Identity</span>
+          <div class="scope-row">
+            <span class="scope-chip tenant">Patient App</span>
+            <span class="scope-chip group">auth</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="meta-grid">
+
+            <div>
+              <div class="field-label required">Translation Key</div>
+              <div class="field-value-ro key-mono">auth.login.title</div>
+              <div class="field-hint">Read-only · Editable only through controlled key lifecycle process</div>
+            </div>
+
+            <div>
+              <div class="field-label required">Tenant / Surface</div>
+              <div class="field-value-ro">Patient App</div>
+            </div>
+
+            <div>
+              <div class="field-label required">Group / Namespace</div>
+              <div class="field-value-ro">auth</div>
+            </div>
+
+            <div>
+              <div class="field-label">Screen / Context</div>
+              <input class="field-input" type="text" value="Login screen — page title" placeholder="Where this key appears and how it is used" />
+            </div>
+
+          </div>
+
+          <div style="margin-top:14px;">
+            <div class="field-label">Description / Context</div>
+            <textarea class="field-textarea" placeholder="Translator guidance and usage context…">Page heading displayed at the top of the patient login screen. Keep short — fits on one line.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Source & locale values card -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header">
+          <span class="card-title">Translation Values</span>
+          <span style="font-size:12px;color:#5e6c84;">2 active languages · Turkish highlighted (opened from Language Detail)</span>
+        </div>
+        <div class="card-body">
+
+          <!-- English source value -->
+          <div style="margin-bottom:14px;">
+            <div class="field-label required" style="margin-bottom:8px;">English Source Value</div>
+            <div class="source-section">
+              <div class="source-header">
+                <div class="source-header-left">
+                  <span class="source-lang-flag">🇬🇧</span>
+                  <span class="source-lang-name">English</span>
+                  <span class="source-lang-code">en</span>
+                  <span class="badge badge-published">Published</span>
+                </div>
+                <span class="source-locked-badge">🔒 Elevated auth required to edit</span>
+              </div>
+              <div class="source-body">
+                <textarea class="field-textarea" style="background:#f4f5f7;color:#42526e;cursor:not-allowed;" readonly>Sign In</textarea>
+                <div class="char-guidance">
+                  <span class="field-hint">Canonical source value · Cannot be edited without Super Admin authorization and change reason</span>
+                  <span class="char-count char-limit-ok">7 / 50 chars</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turkish locale value (highlighted) -->
+          <div style="margin-bottom:14px;">
+            <div class="field-label" style="margin-bottom:8px;">Active Language Values</div>
+
+            <div class="locale-section highlighted">
+              <div class="locale-header">
+                <div class="locale-header-left">
+                  <span class="source-lang-flag">🇹🇷</span>
+                  <span class="source-lang-name">Turkish</span>
+                  <span class="source-lang-code">tr</span>
+                  <span class="locale-highlight-pill">🔍 Language filter active</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="badge badge-review">Review Needed</span>
+                </div>
+              </div>
+              <div class="locale-body">
+                <div class="locale-status-row">
+                  <span style="font-size:12px;color:#974f0c;">⚠ Source value was recently edited — review this translation for accuracy.</span>
+                </div>
+                <textarea class="field-textarea">Giriş Yap</textarea>
+                <div class="char-guidance">
+                  <span class="field-hint">Must preserve placeholders and ICU syntax · Current status: Review Needed</span>
+                  <span class="char-count char-limit-ok">9 / 50 chars</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Character guidance row -->
+          <div style="background:#f4f5f7;border-radius:4px;padding:8px 12px;font-size:12px;color:#5e6c84;margin-bottom:14px;">
+            <strong style="color:#42526e;">Character guidance:</strong> This key is used as a page heading. Recommended max length is 50 characters to avoid overflow on small screens. Non-blocking.
+          </div>
+
+          <!-- Change reason (shown when English source edited or protected change) -->
+          <div class="change-reason-section">
+            <div class="change-reason-title">⚠ Change Reason Required</div>
+            <div class="change-reason-desc">Required when editing the English source value or publishing a sensitive change. Super Admin authorization is needed to proceed.</div>
+            <div class="field-label required" style="margin-bottom:5px;">Change Reason</div>
+            <textarea class="field-textarea" placeholder="Explain why this source value or sensitive translation is being changed…" style="min-height:60px;border-color:#f5a623;"></textarea>
+          </div>
+
+        </div>
+
+        <!-- Save bar -->
+        <div class="save-bar">
+          <span class="save-bar-left">Saving creates a draft only · Published bundles are not changed until a version is published in Screen 9</span>
+          <div class="save-bar-actions">
+            <button class="btn btn-default">Cancel</button>
+            <button class="btn btn-primary">Save Draft</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left column -->
+
+    <!-- ── Right column: history panel ── -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">History</span>
+          <span style="font-size:12px;color:#5e6c84;">4 events</span>
+        </div>
+
+        <div class="history-list">
+
+          <div class="history-item">
+            <div class="history-meta">
+              <span class="history-actor">admin@hairline.com</span>
+              <span class="history-time">2026-06-01 11:42</span>
+              <span class="history-action-badge history-action-edit">Edit</span>
+            </div>
+            <div class="history-desc">Turkish value updated · Status set to <strong>Review Needed</strong></div>
+            <div class="history-detail">tr: "Giriş Yap" → draft</div>
+          </div>
+
+          <div class="history-item">
+            <div class="history-meta">
+              <span class="history-actor">superadmin@hairline.com</span>
+              <span class="history-time">2026-05-28 09:15</span>
+              <span class="history-action-badge history-action-edit">Source Edit</span>
+            </div>
+            <div class="history-desc">English source value edited · Dependent translations marked <strong>Review Needed</strong></div>
+            <div class="history-detail">en: "Log In" → "Sign In" · Reason: "Brand copy update to match design system"</div>
+          </div>
+
+          <div class="history-item">
+            <div class="history-meta">
+              <span class="history-actor">admin@hairline.com</span>
+              <span class="history-time">2026-05-20 14:30</span>
+              <span class="history-action-badge history-action-publish">Publish</span>
+            </div>
+            <div class="history-desc">Published as part of version <strong>v3</strong> · Patient App · Turkish</div>
+            <div class="history-detail">Version: v3 · Surface: patient-app · Locale: tr</div>
+          </div>
+
+          <div class="history-item">
+            <div class="history-meta">
+              <span class="history-actor">admin@hairline.com</span>
+              <span class="history-time">2026-05-10 10:05</span>
+              <span class="history-action-badge history-action-import">Import</span>
+            </div>
+            <div class="history-desc">Turkish value imported from JSON · <em>tr-patient-v2.json</em></div>
+            <div class="history-detail">tr: "" → "Giriş Yap" · Import ID: imp_0024</div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /right column -->
+
+  </div><!-- /editor-layout -->
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>

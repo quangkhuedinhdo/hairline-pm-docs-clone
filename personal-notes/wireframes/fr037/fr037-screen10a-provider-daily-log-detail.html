@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-037 Screen 10A – Provider: Daily Log Detail</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+  .sidebar-badge {
+    margin-left: auto;
+    background: #38bdf8;
+    color: #0f2027;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 20px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .sidebar-badge.red { background: #ef4444; color: #fff; }
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 14px 18px;
+    border-top: 1px solid #1e3040;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .sidebar-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #38bdf8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #0f2027;
+    flex-shrink: 0;
+  }
+  .sidebar-user-name { font-size: 12px; font-weight: 600; color: #fff; }
+  .sidebar-user-role { font-size: 10px; color: #4a5a6a; margin-top: 1px; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-x: hidden; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    color: #6b7280; font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .breadcrumb-link { color: #0ea5e9; cursor: pointer; }
+  .breadcrumb-link:hover { text-decoration: underline; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .btn-ghost {
+    padding: 6px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { background: #f9fafb; }
+
+  /* ── Anon notice ── */
+  .anon-notice {
+    background: #f0f9ff;
+    border-bottom: 1px solid #bae6fd;
+    padding: 7px 28px;
+    font-size: 12px;
+    color: #0369a1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── Log date header bar ── */
+  .log-header-bar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .log-header-left { display: flex; flex-direction: column; gap: 6px; }
+  .log-date-label {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .log-meta-row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .log-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .log-meta-key {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.6px; color: #9ca3af;
+  }
+  .log-meta-val { font-size: 12px; color: #374151; font-weight: 500; }
+  .log-meta-val.mono {
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-weight: 700; color: #111827;
+  }
+
+  /* ── Prev/Next navigation ── */
+  .log-nav { display: flex; align-items: center; gap: 8px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+  }
+  .nav-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+  .nav-btn:disabled, .nav-btn.disabled { color: #d1d5db; border-color: #f3f4f6; cursor: default; background: #fafafa; }
+  .nav-counter {
+    font-size: 12px; color: #6b7280;
+    padding: 0 6px;
+  }
+
+  /* ── Content body ── */
+  .content-body {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding: 20px 28px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+  .col-left  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .col-right { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: #111827; display: flex; align-items: center; gap: 7px; }
+  .card-hint  { font-size: 11px; color: #9ca3af; }
+  .card-body  { padding: 20px; }
+
+  /* ── Severity display ── */
+  .severity-display {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .severity-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    border: 5px solid #f59e0b;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .severity-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: #d97706;
+    line-height: 1;
+  }
+  .severity-of-10 {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+  .severity-scale {
+    flex: 1;
+  }
+  .severity-scale-label {
+    font-size: 11px; font-weight: 600; color: #374151; margin-bottom: 8px;
+  }
+  .severity-bar-track {
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+  }
+  .severity-bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 70%; /* 7/10 */
+    border-radius: 4px;
+    background: linear-gradient(to right, #22c55e, #f59e0b, #ef4444);
+  }
+  .severity-bar-thumb {
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translate(50%, -50%);
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #f59e0b;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .severity-scale-ticks {
+    display: flex; justify-content: space-between;
+    margin-top: 5px;
+    font-size: 10px; color: #d1d5db;
+  }
+  .severity-scale-ticks span:first-child { color: #22c55e; font-weight: 600; }
+  .severity-scale-ticks span:last-child  { color: #ef4444; font-weight: 600; }
+  .severity-context {
+    font-size: 11px; color: #6b7280; margin-top: 8px;
+  }
+
+  /* ── Notes ── */
+  .notes-block {
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+  .notes-empty {
+    background: #fafafa;
+    border: 1px dashed #e5e7eb;
+    border-radius: 8px;
+    padding: 18px;
+    text-align: center;
+    font-size: 12px;
+    color: #d1d5db;
+  }
+
+  /* ── Photo gallery ── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .photo-thumb {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #9ca3af;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #f3f4f6;
+    transition: border-color 0.15s;
+  }
+  .photo-thumb:hover { border-color: #93c5fd; }
+  .photo-thumb-label {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.55));
+    color: #fff;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 4px 5px 5px;
+    text-align: center;
+  }
+  .photo-thumb-icon {
+    font-size: 24px;
+    color: #9ca3af;
+  }
+
+  /* ── Head scan component ── */
+  .scan-views-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .scan-view-box {
+    aspect-ratio: 3/4;
+    border-radius: 8px;
+    background: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #f3f4f6;
+    transition: border-color 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .scan-view-box:hover { border-color: #93c5fd; }
+  .scan-view-icon { font-size: 26px; color: #9ca3af; }
+  .scan-view-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .scan-quality-badge {
+    position: absolute;
+    top: 5px; right: 5px;
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #6ee7b7;
+  }
+  .scan-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #6b7280;
+  }
+  .scan-info-row strong { color: #374151; }
+
+  /* ── Section divider ── */
+  hr.sec { border: none; border-top: 1px solid #f3f4f6; margin: 16px 0; }
+
+  /* ── Right panel: Metadata card ── */
+  .meta-list { display: flex; flex-direction: column; gap: 12px; }
+  .meta-row { display: flex; flex-direction: column; gap: 3px; }
+  .meta-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.6px; color: #9ca3af;
+  }
+  .meta-value { font-size: 12px; color: #374151; line-height: 1.4; }
+  .meta-value.mono { font-family: 'IBM Plex Mono','Consolas',monospace; font-weight: 700; color: #111827; }
+
+  /* ── Read-only alert ── */
+  .alert-read-only {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 500; color: #6b7280;
+    background: #f3f4f6; border: 1px solid #e5e7eb;
+    padding: 2px 8px; border-radius: 4px;
+  }
+
+  /* ── Version badge ── */
+  .version-badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 7px; border-radius: 4px;
+    font-size: 10px; font-weight: 600;
+    background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd;
+  }
+
+  /* ── Separation notice ── */
+  .separation-notice {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #fde68a;
+    padding: 14px 16px;
+    display: flex;
+    gap: 10px;
+  }
+  .separation-notice-icon { font-size: 18px; flex-shrink: 0; line-height: 1; margin-top: 1px; }
+  .separation-notice-body { flex: 1; min-width: 0; }
+  .separation-notice-title { font-size: 12px; font-weight: 600; color: #92400e; margin-bottom: 4px; }
+  .separation-notice-text  { font-size: 11px; color: #b45309; line-height: 1.45; }
+  .separation-notice-link  {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 8px;
+    font-size: 12px; font-weight: 600;
+    color: #0ea5e9;
+    background: none; border: none;
+    cursor: pointer; padding: 0;
+    text-decoration: underline;
+  }
+
+  /* ── Context box ── */
+  .context-box {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    padding: 14px 16px;
+  }
+  .context-box-title {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: #9ca3af; margin-bottom: 10px;
+  }
+  .context-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 7px 0;
+    border-top: 1px solid #f3f4f6;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .context-entry:first-of-type { border-top: none; padding-top: 0; }
+  .context-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 3px; flex-shrink: 0; }
+  .dot-patient  { background: #3b82f6; }
+  .dot-provider { background: #10b981; }
+  .context-entry-text { flex: 1; min-width: 0; }
+  .context-entry-date { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+
+  /* ── Entry navigation strip ── */
+  .entry-nav-strip {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .entry-nav-strip-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #9ca3af;
+  }
+  .entry-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f9fafb;
+    cursor: pointer;
+    transition: background 0.1s;
+    font-size: 12px;
+  }
+  .entry-nav-item:last-child { border-bottom: none; }
+  .entry-nav-item:hover { background: #f9fafb; }
+  .entry-nav-item.current {
+    background: #eff6ff;
+    border-left: 3px solid #3b82f6;
+    padding-left: 11px;
+  }
+  .entry-nav-date { font-weight: 600; color: #374151; }
+  .entry-nav-sev  {
+    margin-left: auto;
+    font-size: 11px; font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #fef3c7; color: #d97706;
+    border: 1px solid #fcd34d;
+  }
+  .entry-nav-sev.high { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+  .entry-nav-sev.low  { background: #d1fae5; color: #059669; border-color: #6ee7b7; }
+  .entry-nav-has-scan { font-size: 10px; color: #6b7280; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Provider</div>
+
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item"><i class="sidebar-icon">▦</i> Dashboard</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💬</i> Inquiries</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📋</i> Quotes &amp; Bookings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🏥</i> Treatments</div>
+
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💰</i> Earnings &amp; Payouts</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📊</i> Reports</div>
+
+    <div class="sidebar-section">Monitoring</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">🩺</i> Advice Queue
+      <span class="sidebar-badge red">3</span>
+    </div>
+
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">⚙</i> Clinic Profile</div>
+    <div class="sidebar-item"><i class="sidebar-icon">👥</i> Team</div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-avatar">SL</div>
+      <div>
+        <div class="sidebar-user-name">Dr. Sarah Lim</div>
+        <div class="sidebar-user-role">Hair Loss Specialist</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Top bar ── -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Monitoring</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-link">Advice Queue</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-link">Case MC-0031</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Log: 20 Aug 2026</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-ghost">← Back to Case Overview</button>
+      </div>
+    </div>
+
+    <!-- ── Anon notice ── -->
+    <div class="anon-notice">
+      🔒 Patient identity is anonymised. This is a patient-authored daily log record — read-only. Provider advice is a separate calendar record and does not appear here.
+    </div>
+
+    <!-- ── Log date header bar ── -->
+    <div class="log-header-bar">
+      <div class="log-header-left">
+        <div class="log-date-label">
+          Wednesday, 20 August 2026
+          <span class="alert-read-only">🔒 Read-only</span>
+        </div>
+        <div class="log-meta-row">
+          <div class="log-meta-item">
+            <div class="log-meta-key">Case</div>
+            <div class="log-meta-val mono">MC-0031</div>
+          </div>
+          <div class="log-meta-item">
+            <div class="log-meta-key">Patient (Anonymised)</div>
+            <div class="log-meta-val mono">PT-4821</div>
+          </div>
+          <div class="log-meta-item">
+            <div class="log-meta-key">Entry Type</div>
+            <div class="log-meta-val" style="color:#1d4ed8;">Patient Daily Log</div>
+          </div>
+          <div class="log-meta-item">
+            <div class="log-meta-key">Log # in Case</div>
+            <div class="log-meta-val">Entry 23 of 28 logged days</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prev / Next navigation -->
+      <div class="log-nav">
+        <button class="nav-btn">‹ Prev Log
+          <span style="font-size:11px;color:#9ca3af;margin-left:2px;">18 Aug</span>
+        </button>
+        <span class="nav-counter">23 / 28</span>
+        <button class="nav-btn">Next Log ›
+          <span style="font-size:11px;color:#9ca3af;margin-left:2px;">24 Aug</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Content body ── -->
+    <div class="content-body">
+
+      <!-- ── Left column ── -->
+      <div class="col-left">
+
+        <!-- Severity -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📊 Severity Rating</span>
+            <span class="card-hint">Patient self-assessment · read-only</span>
+          </div>
+          <div class="card-body">
+
+            <div class="severity-display">
+              <div class="severity-ring">
+                <div class="severity-num">7</div>
+                <div class="severity-of-10">/ 10</div>
+              </div>
+              <div class="severity-scale">
+                <div class="severity-scale-label">Condition severity — 1 (minimal) to 10 (severe)</div>
+                <div class="severity-bar-track">
+                  <div class="severity-bar-fill"></div>
+                  <div class="severity-bar-thumb"></div>
+                </div>
+                <div class="severity-scale-ticks">
+                  <span>1 Minimal</span>
+                  <span style="color:#9ca3af;">3</span>
+                  <span style="color:#9ca3af;">5</span>
+                  <span style="color:#9ca3af;">7 ◀ today</span>
+                  <span style="color:#9ca3af;">9</span>
+                  <span>10 Severe</span>
+                </div>
+                <div class="severity-context">
+                  Case trend context: First entry 4 · Previous entry 7 (18 Aug) · This entry <strong>7</strong> · Average 5.8
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:8px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;font-size:11px;color:#c2410c;display:flex;align-items:center;gap:6px;">
+              ⚠ This entry's severity (7) is the authoritative value for 20 Aug 2026 because it is the latest-timestamped entry on this date. An earlier entry at 08:14 with severity 6 exists and remains visible in the audit trail.
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📝 Patient Notes</span>
+            <span class="card-hint">Patient-authored observation · read-only</span>
+          </div>
+          <div class="card-body">
+            <div class="notes-block">Noticed more pronounced thinning at the crown area today compared to last week. When combing after shower there was noticeably more hair on the comb than usual — roughly 15–20 hairs compared to my normal 5–8.
+
+The itching I mentioned previously has continued, particularly along the hairline at the temples. Applied coconut oil last night which gave some temporary relief.
+
+Energy levels feel low this week (work deadline stress). Sleeping around 5 hours per night. Wondering if this is contributing to the worsening pattern.</div>
+          </div>
+        </div>
+
+        <!-- Photos -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🖼 Attached Photos</span>
+            <span class="card-hint">3 images · click to view full size · read-only</span>
+          </div>
+          <div class="card-body">
+            <div class="photo-grid">
+
+              <div class="photo-thumb" style="background:#e0e7ff;">
+                <div class="photo-thumb-icon">🖼</div>
+                <div class="photo-thumb-label">Photo 1 · Crown</div>
+              </div>
+
+              <div class="photo-thumb" style="background:#fce7f3;">
+                <div class="photo-thumb-icon">🖼</div>
+                <div class="photo-thumb-label">Photo 2 · Hairline L</div>
+              </div>
+
+              <div class="photo-thumb" style="background:#ecfdf5;">
+                <div class="photo-thumb-icon">🖼</div>
+                <div class="photo-thumb-label">Photo 3 · Hairline R</div>
+              </div>
+
+              <!-- empty slot placeholder -->
+              <div class="photo-thumb" style="background:#fafafa;border:1px dashed #e5e7eb;cursor:default;">
+                <div style="font-size:11px;color:#d1d5db;text-align:center;padding:8px;">No more photos</div>
+              </div>
+
+            </div>
+
+            <div style="margin-top:10px;font-size:11px;color:#9ca3af;">
+              Photos are stored as secure authorized media. Access ends when assignment ends.
+            </div>
+          </div>
+        </div>
+
+        <!-- Head Scan -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔬 Head Scan Photo Set</span>
+            <span class="card-hint">V1 standardized multi-view · linked to this log date · read-only</span>
+          </div>
+          <div class="card-body">
+
+            <div class="scan-views-grid">
+
+              <div class="scan-view-box" style="background:#dbeafe;">
+                <div class="scan-view-icon">👤</div>
+                <div class="scan-view-label">Front</div>
+                <div class="scan-quality-badge">✓ Pass</div>
+              </div>
+
+              <div class="scan-view-box" style="background:#d1fae5;">
+                <div class="scan-view-icon">⬆</div>
+                <div class="scan-view-label">Top</div>
+                <div class="scan-quality-badge">✓ Pass</div>
+              </div>
+
+              <div class="scan-view-box" style="background:#fae8ff;">
+                <div class="scan-view-icon">◀</div>
+                <div class="scan-view-label">Left</div>
+                <div class="scan-quality-badge">✓ Pass</div>
+              </div>
+
+              <div class="scan-view-box" style="background:#fff7ed;">
+                <div class="scan-view-icon">▶</div>
+                <div class="scan-view-label">Right</div>
+                <div class="scan-quality-badge">✓ Pass</div>
+              </div>
+
+            </div>
+
+            <div class="scan-info-row">
+              <span>Captured: <strong>20 Aug 2026 · 10:52</strong></span>
+              <span>Quality: <strong style="color:#059669;">All 4 views passed</strong></span>
+              <span>Scan ID: <strong style="font-family:monospace;">SCN-0031-004</strong></span>
+              <span>Latest in case: <strong style="color:#059669;">Yes</strong></span>
+            </div>
+
+            <div style="margin-top:8px;font-size:11px;color:#9ca3af;">
+              This is the latest valid scan in this case. It will be used by default if the patient converts to an FR-003 inquiry.
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /.col-left -->
+
+      <!-- ── Right column ── -->
+      <div class="col-right">
+
+        <!-- Record Metadata -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🗂 Record Metadata</span>
+            <span class="alert-read-only">🔒 Read-only</span>
+          </div>
+          <div class="card-body">
+            <div class="meta-list">
+
+              <div class="meta-row">
+                <div class="meta-label">Author</div>
+                <div class="meta-value mono">PT-4821</div>
+                <div class="meta-value" style="color:#9ca3af;font-size:11px;margin-top:2px;">Patient-authored log</div>
+              </div>
+
+              <div class="meta-row">
+                <div class="meta-label">Log Date</div>
+                <div class="meta-value">20 August 2026</div>
+              </div>
+
+              <div class="meta-row">
+                <div class="meta-label">Created (submitted)</div>
+                <div class="meta-value">20 Aug 2026 · 08:14</div>
+                <div class="meta-value" style="color:#9ca3af;font-size:11px;margin-top:2px;">(Earlier entry — severity 6)</div>
+              </div>
+
+              <div class="meta-row">
+                <div class="meta-label">Latest Submission</div>
+                <div class="meta-value">20 Aug 2026 · 11:47</div>
+                <div class="meta-value" style="color:#0369a1;font-size:11px;margin-top:2px;">⬆ Authoritative for severity trend</div>
+              </div>
+
+              <div class="meta-row">
+                <div class="meta-label">Version State</div>
+                <div class="meta-value">
+                  <span class="version-badge">2 entries on this date</span>
+                </div>
+                <div class="meta-value" style="color:#9ca3af;font-size:11px;margin-top:4px;">
+                  Entry at 08:14 (sev 6) and 11:47 (sev 7). Latest is authoritative per Rule 9.
+                </div>
+              </div>
+
+              <div class="meta-row">
+                <div class="meta-label">Admin edits</div>
+                <div class="meta-value" style="color:#059669;">None — original patient record</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Separation notice -->
+        <div class="separation-notice">
+          <div class="separation-notice-icon">⚠️</div>
+          <div class="separation-notice-body">
+            <div class="separation-notice-title">Provider advice is separate</div>
+            <div class="separation-notice-text">
+              There is also a provider advice entry for 9 Aug 2026 in this case. It is a separate provider-authored calendar record and is <strong>never</strong> shown as part of this patient log.
+            </div>
+            <button class="separation-notice-link">View advice for Window 1 (Screen 10B) →</button>
+          </div>
+        </div>
+
+        <!-- Other events on case calendar context -->
+        <div class="context-box">
+          <div class="context-box-title">Other events near this date</div>
+
+          <div class="context-entry">
+            <span class="context-dot dot-patient"></span>
+            <div class="context-entry-text">
+              Patient log — Severity 7
+              <div class="context-entry-date">18 Aug 2026 · ← Prev log</div>
+            </div>
+          </div>
+
+          <div class="context-entry">
+            <span class="context-dot dot-patient" style="background:#1d4ed8;"></span>
+            <div class="context-entry-text">
+              <strong>Patient log — Severity 7 (this entry)</strong>
+              <div class="context-entry-date">20 Aug 2026 · current</div>
+            </div>
+          </div>
+
+          <div class="context-entry">
+            <span class="context-dot dot-patient"></span>
+            <div class="context-entry-text">
+              Patient log — Severity 8
+              <div class="context-entry-date">24 Aug 2026 · → Next log</div>
+            </div>
+          </div>
+
+          <div class="context-entry">
+            <span class="context-dot dot-patient"></span>
+            <div class="context-entry-text">
+              Patient log — Severity 7 (includes scan set)
+              <div class="context-entry-date">25 Aug 2026</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Log navigator strip -->
+        <div class="entry-nav-strip">
+          <div class="entry-nav-strip-header">Recent Patient Logs</div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">1 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev low">5</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">4 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev low">5</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">6 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev">6</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">9 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev">6</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">12 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev">7</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">14 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev">6</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">18 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev">7</span>
+          </div>
+
+          <div class="entry-nav-item current">
+            <div>
+              <div class="entry-nav-date">20 Aug 2026 ◀ viewing</div>
+              <div class="entry-nav-has-scan">📷 Includes scan set</div>
+            </div>
+            <span class="entry-nav-sev">7</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">24 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev high">8</span>
+          </div>
+
+          <div class="entry-nav-item">
+            <div>
+              <div class="entry-nav-date">25 Aug 2026</div>
+              <div class="entry-nav-has-scan">—</div>
+            </div>
+            <span class="entry-nav-sev high">7</span>
+          </div>
+
+        </div>
+
+      </div><!-- /.col-right -->
+
+    </div><!-- /.content-body -->
+
+  </div><!-- /.main -->
+</div><!-- /.layout -->
+</body>
+</html>

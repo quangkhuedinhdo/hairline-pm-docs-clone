@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-037 Screen 5 — Complete or Convert Monitoring Case</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #e8eaed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 60px;
+      color: #1c1c1e;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      width: 100%; max-width: 1060px;
+      margin-bottom: 32px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; }
+    .page-header p  { font-size: 13px; color: #6e6e73; margin-top: 4px; }
+    .wf-badge {
+      background: #1c1c1e; color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      white-space: nowrap; margin-top: 4px;
+    }
+
+    /* ── Phones row ── */
+    .phones-row {
+      display: flex; gap: 36px;
+      align-items: flex-start; justify-content: center;
+      width: 100%; max-width: 1060px;
+    }
+    .phone-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .phone-col-label {
+      font-size: 11px; font-weight: 700;
+      color: #6e6e73; text-transform: uppercase; letter-spacing: 0.07em;
+      text-align: center;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 375px; border-radius: 48px;
+      background: #fff; border: 3px solid #1c1c1e;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1),
+                  0 24px 60px rgba(0,0,0,0.25),
+                  inset 0 0 0 2px #3a3a3c;
+      overflow: hidden;
+    }
+    .dynamic-island { position: relative; height: 0; }
+    .di-pill {
+      position: absolute; top: 12px; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 34px;
+      background: #1c1c1e; border-radius: 20px; z-index: 10;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      height: 54px; background: #fff;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 28px 8px;
+      font-size: 12px; font-weight: 600; color: #1c1c1e;
+      position: relative; z-index: 5;
+    }
+    .status-time { font-size: 15px; font-weight: 700; }
+    .status-icons { display: flex; gap: 5px; font-size: 11px; }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      height: 44px; background: #fff;
+      display: flex; align-items: center; padding: 0 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      position: relative;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 16px; color: #007aff; cursor: pointer;
+    }
+    .nav-back-chevron { font-size: 20px; line-height: 1; }
+    .nav-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 16px; font-weight: 600; color: #1c1c1e; white-space: nowrap;
+    }
+
+    /* ── Screen scroll ── */
+    .screen-scroll {
+      height: 720px; overflow-y: auto;
+      background: #f2f2f7; scrollbar-width: none;
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Section group ── */
+    .section-group { margin-bottom: 8px; }
+    .section-group-header {
+      padding: 12px 16px 6px;
+      font-size: 12px; font-weight: 600; color: #8e8e93;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .section-group-body {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+
+    /* ── Case summary card ── */
+    .summary-header {
+      padding: 14px 16px 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .summary-case-title { font-size: 15px; font-weight: 600; color: #1c1c1e; }
+    .summary-case-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .summary-mode-pill {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 10px;
+      background: #f2f2f7; color: #8e8e93;
+    }
+
+    /* Stat grid */
+    .stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .stat-cell {
+      padding: 14px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      border-right: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .stat-cell:nth-child(even) { border-right: none; }
+    .stat-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .stat-val { font-size: 22px; font-weight: 700; color: #1c1c1e; line-height: 1; }
+    .stat-val.blue  { color: #007aff; }
+    .stat-val.green { color: #1a7a3c; }
+    .stat-val.purple{ color: #7b2fa3; }
+    .stat-lbl { font-size: 11px; color: #8e8e93; margin-top: 4px; }
+
+    /* Severity summary row */
+    .severity-summary {
+      padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .severity-summary:last-child { border-bottom: none; }
+    .sev-row-label { font-size: 12px; font-weight: 600; color: #8e8e93; margin-bottom: 8px; }
+    .sev-row-items { display: flex; gap: 0; }
+    .sev-item {
+      flex: 1; text-align: center;
+      padding: 0 4px;
+      border-right: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .sev-item:last-child { border-right: none; }
+    .sev-item-val { font-size: 18px; font-weight: 700; color: #1c1c1e; }
+    .sev-item-lbl { font-size: 10px; color: #8e8e93; margin-top: 2px; }
+    .trend-arrow { font-size: 20px; }
+    .trend-arrow.down  { color: #1a7a3c; }
+    .trend-arrow.up    { color: #ff3b30; }
+    .trend-arrow.flat  { color: #8e8e93; }
+
+    /* Mini chart in summary */
+    .mini-chart-wrap { padding: 10px 16px 12px; }
+    .mini-chart-label { font-size: 11px; color: #8e8e93; margin-bottom: 6px; }
+    svg.mini-chart { width: 100%; height: 48px; overflow: visible; }
+
+    /* ── Choice cards ── */
+    .choice-card {
+      display: flex; align-items: flex-start;
+      padding: 16px; gap: 12px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      cursor: pointer; position: relative;
+    }
+    .choice-card:last-child { border-bottom: none; }
+    .choice-card.selected-export { background: #fff8f8; }
+    .choice-card.selected-convert { background: #f0f6ff; }
+
+    .choice-radio {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid #c7c7cc;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .choice-radio.red   { border-color: #ff3b30; background: #ff3b30; }
+    .choice-radio.blue  { border-color: #007aff; background: #007aff; }
+    .choice-radio-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #fff;
+    }
+
+    .choice-icon-wrap {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .choice-icon-wrap.red-bg  { background: #fff0f0; }
+    .choice-icon-wrap.blue-bg { background: #e3f0ff; }
+
+    .choice-body { flex: 1; }
+    .choice-title {
+      font-size: 15px; font-weight: 700; color: #1c1c1e; margin-bottom: 4px;
+    }
+    .choice-desc { font-size: 13px; color: #6e6e73; line-height: 1.5; }
+
+    .choice-tag {
+      margin-top: 8px; display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 6px;
+    }
+    .tag-export  { background: #fff0f0; color: #c0392b; }
+    .tag-convert { background: #e3f0ff; color: #0047b3; }
+
+    /* Contextual info (shown for convert choice) */
+    .choice-info-panel {
+      margin: 0 16px 12px;
+      background: #e3f0ff;
+      border-radius: 10px;
+      padding: 11px 13px;
+      font-size: 12px; color: #0047b3; line-height: 1.5;
+    }
+    .choice-info-panel strong { font-weight: 700; }
+
+    /* Provider routing notice */
+    .provider-routing {
+      margin: 0 16px 8px;
+      background: #fff3cd;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 12px; color: #7a4f00; line-height: 1.5;
+      display: flex; gap: 8px;
+    }
+    .provider-routing-icon { font-size: 16px; flex-shrink: 0; }
+
+    /* ── Confirmation checkbox ── */
+    .confirm-row {
+      display: flex; align-items: flex-start;
+      padding: 14px 16px; gap: 12px;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      background: #fff;
+    }
+    .confirm-check {
+      width: 24px; height: 24px; border-radius: 6px;
+      border: 2px solid #c7c7cc;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+      font-size: 13px; font-weight: 700;
+    }
+    .confirm-check.checked-red  { background: #ff3b30; border-color: #ff3b30; color: #fff; }
+    .confirm-check.checked-blue { background: #007aff; border-color: #007aff; color: #fff; }
+    .confirm-text { font-size: 14px; color: #1c1c1e; line-height: 1.5; }
+    .confirm-text strong { font-weight: 700; }
+
+    /* ── Bottom bar ── */
+    .bottom-bar {
+      background: #fff; border-top: 0.5px solid rgba(60,60,67,0.18);
+      padding: 10px 16px 6px;
+    }
+    .btn-cta {
+      width: 100%; height: 50px; border-radius: 14px;
+      font-size: 16px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-cta.red   { background: #ff3b30; color: #fff; }
+    .btn-cta.blue  { background: #007aff; color: #fff; }
+    .btn-cta.disabled { background: #e5e5ea; color: #c7c7cc; cursor: not-allowed; }
+    .btn-cancel {
+      width: 100%; height: 44px; border-radius: 14px;
+      font-size: 15px; font-weight: 500; color: #007aff;
+      background: transparent; border: none; cursor: pointer; font-family: inherit;
+      margin-top: 4px;
+    }
+
+    .home-indicator {
+      display: flex; justify-content: center;
+      padding: 8px 0 6px; background: #fff;
+    }
+    .home-bar { width: 134px; height: 5px; background: #1c1c1e; border-radius: 3px; opacity: 0.15; }
+
+    /* ── Warning banner (active assignment) ── */
+    .warning-banner {
+      margin: 8px 0 0;
+      background: #fff3cd;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      padding: 11px 16px;
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 12px; color: #7a4f00; line-height: 1.5;
+    }
+    .warning-banner-icon { font-size: 16px; flex-shrink: 0; }
+
+    /* ── Annotations ── */
+    .annotation-list { width: 164px; flex-shrink: 0; padding-top: 70px; }
+    .ann-section-title {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #8e8e93; margin-bottom: 10px;
+    }
+    .annotation-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 14px; }
+    .ann-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; flex-shrink: 0; margin-top: 4px; }
+    .ann-dot.blue   { background: #007aff; }
+    .ann-dot.green  { background: #34c759; }
+    .ann-dot.orange { background: #ff9500; }
+    .ann-dot.gray   { background: #8e8e93; }
+    .ann-text { font-size: 11px; color: #1c1c1e; line-height: 1.5; }
+    .ann-text strong        { color: #ff3b30; }
+    .ann-text strong.blue   { color: #007aff; }
+    .ann-text strong.green  { color: #1a7a3c; }
+    .ann-text strong.orange { color: #b35c00; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>FR-037 · Screen 5 — Complete or Convert Monitoring Case</h1>
+    <p>Patient Platform (P-05) &nbsp;·&nbsp; Lets the patient deliberately end the active case</p>
+  </div>
+  <span class="wf-badge">Wireframe</span>
+</div>
+
+<div class="phones-row">
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHONE A: "Complete & Export" selected                     -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">State A — Complete &amp; Export PDF</div>
+    <div class="phone">
+      <div class="dynamic-island"><div class="di-pill"></div></div>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Dashboard</div>
+        <div class="nav-title">End Monitoring</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- ── CASE SUMMARY ── -->
+        <div class="section-group">
+          <div class="section-group-header">Case Summary</div>
+          <div class="section-group-body">
+
+            <div class="summary-header">
+              <div>
+                <div class="summary-case-title">Hair Loss Monitoring</div>
+                <div class="summary-case-sub">1 Jul 2026 – 25 Aug 2026</div>
+              </div>
+              <span class="summary-mode-pill">Self-Monitoring</span>
+            </div>
+
+            <!-- 2×2 stat grid -->
+            <div class="stat-grid">
+              <div class="stat-cell">
+                <div class="stat-val blue">55</div>
+                <div class="stat-lbl">Days Active</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">12</div>
+                <div class="stat-lbl">Days Logged</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val purple">3</div>
+                <div class="stat-lbl">Head Scans</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val green">3</div>
+                <div class="stat-lbl">Latest Severity</div>
+              </div>
+            </div>
+
+            <!-- Severity summary row -->
+            <div class="severity-summary">
+              <div class="sev-row-label">Severity Summary</div>
+              <div class="sev-row-items">
+                <div class="sev-item">
+                  <div class="sev-item-val">5</div>
+                  <div class="sev-item-lbl">First</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val">3</div>
+                  <div class="sev-item-lbl">Latest</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val">2</div>
+                  <div class="sev-item-lbl">Min</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val">7</div>
+                  <div class="sev-item-lbl">Max</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val trend-arrow down">↘</div>
+                  <div class="sev-item-lbl">Trend</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini trend chart -->
+            <div class="mini-chart-wrap">
+              <div class="mini-chart-label">Severity trend — 1 Jul → 25 Aug 2026</div>
+              <svg class="mini-chart" viewBox="0 0 343 42" preserveAspectRatio="none">
+                <line x1="0" y1="4"  x2="343" y2="4"  stroke="#f2f2f7" stroke-width="1"/>
+                <line x1="0" y1="21" x2="343" y2="21" stroke="#f2f2f7" stroke-width="1"/>
+                <line x1="0" y1="38" x2="343" y2="38" stroke="#f2f2f7" stroke-width="1"/>
+                <text x="0"   y="8"  font-size="7" fill="#c7c7cc">10</text>
+                <text x="0"   y="25" font-size="7" fill="#c7c7cc">5</text>
+                <text x="0"   y="42" font-size="7" fill="#c7c7cc">1</text>
+                <!-- severity: 5,6,4,5,4,7,4,5,3,4,3,3 scaled y=38-(v-1)*4.2 -->
+                <polyline
+                  points="14,21 42,17 70,25 98,21 126,25 154,9 182,25 210,21 238,29 266,25 294,29 316,29"
+                  fill="none" stroke="#007aff" stroke-width="2"
+                  stroke-linejoin="round" stroke-linecap="round"/>
+                <polygon
+                  points="14,21 42,17 70,25 98,21 126,25 154,9 182,25 210,21 238,29 266,25 294,29 316,29 316,38 14,38"
+                  fill="#007aff" opacity="0.08"/>
+                <circle cx="14"  cy="21" r="2.5" fill="#fff" stroke="#007aff" stroke-width="1.5"/>
+                <circle cx="316" cy="29" r="4"   fill="#007aff" stroke="#fff" stroke-width="1.5"/>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── COMPLETION CHOICE ── -->
+        <div class="section-group">
+          <div class="section-group-header">What would you like to do? <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+
+            <!-- Choice 1: Complete & Export — SELECTED -->
+            <div class="choice-card selected-export">
+              <div class="choice-radio red"><div class="choice-radio-dot"></div></div>
+              <div class="choice-icon-wrap red-bg">📄</div>
+              <div class="choice-body">
+                <div class="choice-title">Complete &amp; Export</div>
+                <div class="choice-desc">End the case and generate a downloadable PDF summary of all logs, scans, and severity data.</div>
+                <span class="choice-tag tag-export">→ Ends case · PDF generated (Screen 6)</span>
+              </div>
+            </div>
+
+            <!-- Choice 2: Request Treatment / Convert -->
+            <div class="choice-card">
+              <div class="choice-radio"></div>
+              <div class="choice-icon-wrap blue-bg">🏥</div>
+              <div class="choice-body">
+                <div class="choice-title">Request Treatment</div>
+                <div class="choice-desc">Convert this case into a treatment inquiry. Your monitoring data will pre-fill the inquiry form.</div>
+                <span class="choice-tag tag-convert">→ Opens conversion review (Screen 7)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── CONFIRMATION ── -->
+        <div class="section-group">
+          <div class="section-group-header">Confirmation <span style="color:#ff3b30">*</span></div>
+          <div class="confirm-row">
+            <div class="confirm-check checked-red">✓</div>
+            <div class="confirm-text">
+              I understand that <strong>ending this case is permanent.</strong> The case will become read-only and no further logs can be added.
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div><!-- /.screen-scroll -->
+
+      <div class="bottom-bar">
+        <button class="btn-cta red">📄 &nbsp;End Monitoring &amp; Export PDF</button>
+        <button class="btn-cancel">Cancel</button>
+      </div>
+      <div class="home-indicator"><div class="home-bar"></div></div>
+    </div><!-- /.phone -->
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHONE B: "Request Treatment" selected (advice mode case)  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">State B — Request Treatment (Advice Mode)</div>
+    <div class="phone">
+      <div class="dynamic-island"><div class="di-pill"></div></div>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Dashboard</div>
+        <div class="nav-title">End Monitoring</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- ── CASE SUMMARY (advice mode) ── -->
+        <div class="section-group">
+          <div class="section-group-header">Case Summary</div>
+          <div class="section-group-body">
+
+            <div class="summary-header">
+              <div>
+                <div class="summary-case-title">Hair Loss Monitoring</div>
+                <div class="summary-case-sub">1 Jul 2026 – 25 Aug 2026</div>
+              </div>
+              <span class="summary-mode-pill" style="background:#cfe2ff; color:#084298;">Provider Advice</span>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat-cell">
+                <div class="stat-val blue">55</div>
+                <div class="stat-lbl">Days Active</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">12</div>
+                <div class="stat-lbl">Days Logged</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val purple">3</div>
+                <div class="stat-lbl">Head Scans</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">2</div>
+                <div class="stat-lbl">Advice Posts</div>
+              </div>
+            </div>
+
+            <div class="severity-summary">
+              <div class="sev-row-label">Severity Summary</div>
+              <div class="sev-row-items">
+                <div class="sev-item">
+                  <div class="sev-item-val">5</div>
+                  <div class="sev-item-lbl">First</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val">3</div>
+                  <div class="sev-item-lbl">Latest</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val">2</div>
+                  <div class="sev-item-lbl">Min</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val">7</div>
+                  <div class="sev-item-lbl">Max</div>
+                </div>
+                <div class="sev-item">
+                  <div class="sev-item-val trend-arrow down">↘</div>
+                  <div class="sev-item-lbl">Trend</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mini-chart-wrap">
+              <div class="mini-chart-label">Severity trend — 1 Jul → 25 Aug 2026</div>
+              <svg class="mini-chart" viewBox="0 0 343 42" preserveAspectRatio="none">
+                <line x1="0" y1="4"  x2="343" y2="4"  stroke="#f2f2f7" stroke-width="1"/>
+                <line x1="0" y1="21" x2="343" y2="21" stroke="#f2f2f7" stroke-width="1"/>
+                <line x1="0" y1="38" x2="343" y2="38" stroke="#f2f2f7" stroke-width="1"/>
+                <text x="0" y="8"  font-size="7" fill="#c7c7cc">10</text>
+                <text x="0" y="25" font-size="7" fill="#c7c7cc">5</text>
+                <text x="0" y="42" font-size="7" fill="#c7c7cc">1</text>
+                <!-- Advice markers -->
+                <line x1="140" y1="4" x2="140" y2="38" stroke="#34c759" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+                <line x1="280" y1="4" x2="280" y2="38" stroke="#34c759" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+                <polyline
+                  points="14,21 42,17 70,25 98,21 126,25 154,9 182,25 210,21 238,29 266,25 294,29 316,29"
+                  fill="none" stroke="#007aff" stroke-width="2"
+                  stroke-linejoin="round" stroke-linecap="round"/>
+                <polygon
+                  points="14,21 42,17 70,25 98,21 126,25 154,9 182,25 210,21 238,29 266,25 294,29 316,29 316,38 14,38"
+                  fill="#007aff" opacity="0.08"/>
+                <circle cx="14"  cy="21" r="2.5" fill="#fff" stroke="#007aff" stroke-width="1.5"/>
+                <circle cx="316" cy="29" r="4"   fill="#007aff" stroke="#fff" stroke-width="1.5"/>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── COMPLETION CHOICE ── -->
+        <div class="section-group">
+          <div class="section-group-header">What would you like to do? <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+
+            <!-- Choice 1: Complete & Export -->
+            <div class="choice-card">
+              <div class="choice-radio"></div>
+              <div class="choice-icon-wrap red-bg">📄</div>
+              <div class="choice-body">
+                <div class="choice-title">Complete &amp; Export</div>
+                <div class="choice-desc">End the case and generate a downloadable PDF summary of all logs, scans, and severity data.</div>
+                <span class="choice-tag tag-export">→ Ends case · PDF generated (Screen 6)</span>
+              </div>
+            </div>
+
+            <!-- Choice 2: Request Treatment — SELECTED -->
+            <div class="choice-card selected-convert">
+              <div class="choice-radio blue"><div class="choice-radio-dot"></div></div>
+              <div class="choice-icon-wrap blue-bg">🏥</div>
+              <div class="choice-body">
+                <div class="choice-title">Request Treatment</div>
+                <div class="choice-desc">Convert this case into a treatment inquiry. Your monitoring data will pre-fill the inquiry form.</div>
+                <span class="choice-tag tag-convert">→ Opens conversion review (Screen 7)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Conversion info panel (appears when Request Treatment selected) -->
+        <div class="choice-info-panel">
+          <strong>What carries over to your inquiry:</strong><br/>
+          Nature of concern, duration, previous treatments, severity history, head scans, and medical questionnaire answers. You can review and edit all fields before submitting.
+        </div>
+
+        <!-- Provider routing notice (advice mode with active assignment) -->
+        <div class="provider-routing">
+          <span class="provider-routing-icon">⚠️</span>
+          <span><strong>Provider routing:</strong> Your currently assigned provider (P-001) will be the only initial quote recipient. This changes only if they decline before creating a quote.</span>
+        </div>
+
+        <!-- ── CONFIRMATION ── -->
+        <div class="section-group" style="margin-top:0;">
+          <div class="section-group-header">Confirmation <span style="color:#ff3b30">*</span></div>
+          <!-- Active assignment warning inside confirmation section -->
+          <div class="warning-banner" style="margin:0; border-top:none;">
+            <span class="warning-banner-icon">🩺</span>
+            <span>Proceeding will also <strong>end the active provider assignment</strong> (P-001) once the inquiry is successfully submitted.</span>
+          </div>
+          <div class="confirm-row" style="border-top:0.5px solid rgba(60,60,67,0.18);">
+            <div class="confirm-check checked-blue">✓</div>
+            <div class="confirm-text">
+              I understand that <strong>ending this case is permanent.</strong> The case will become read-only once the inquiry is successfully submitted.
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div><!-- /.screen-scroll -->
+
+      <div class="bottom-bar">
+        <button class="btn-cta blue">Continue to Conversion Review →</button>
+        <button class="btn-cancel">Cancel</button>
+      </div>
+      <div class="home-indicator"><div class="home-bar"></div></div>
+    </div><!-- /.phone -->
+  </div>
+
+  <!-- ── Annotations ── -->
+  <div class="annotation-list">
+    <div class="ann-section-title">Design Notes</div>
+
+    <div class="annotation-item">
+      <div class="ann-dot gray"></div>
+      <div class="ann-text"><strong style="color:#8e8e93;">Case Summary</strong> là read-only — Date range, Logged Days, Scans, Severity (first/latest/min/max/trend) + mini chart.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot"></div>
+      <div class="ann-text"><strong>CTA đổi màu</strong> theo lựa chọn: đỏ (Complete) vs xanh (Convert). Giúp phân biệt mức độ destructive của action.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot blue"></div>
+      <div class="ann-text"><strong class="blue">Conversion</strong> chỉ commit khi FR-003 submit thành công — nên CTA là "Continue to Review", không phải "End Case".</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot orange"></div>
+      <div class="ann-text"><strong class="orange">Provider routing notice</strong> xuất hiện khi State B có active assignment — báo trước rằng provider hiện tại sẽ là người nhận quote đầu tiên.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot"></div>
+      <div class="ann-text"><strong>Confirmation checkbox</strong> bắt buộc — CTA disabled cho đến khi chọn cả radio lẫn checkbox. Phòng tránh tap nhầm.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot green"></div>
+      <div class="ann-text"><strong class="green">Advice mode stat</strong>: "Advice Posts" thay "Days Active" trong stat grid để phản ánh đúng loại case.</div>
+    </div>
+  </div>
+
+</div><!-- /.phones-row -->
+
+</body>
+</html>

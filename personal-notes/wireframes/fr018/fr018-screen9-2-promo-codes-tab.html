@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 9.2 — Promo Codes Tab (Affiliate Portal)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #0052cc;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #fff; letter-spacing: 0.01em; }
+    .topbar-logo span { font-weight: 400; opacity: 0.75; font-size: 13px; margin-left: 8px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); }
+    .topbar-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; border: 1.5px solid rgba(255,255,255,0.4);
+    }
+    .topbar-logout {
+      font-size: 12px; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 4px;
+      padding: 4px 10px; cursor: pointer; text-decoration: none;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      padding: 0 28px;
+    }
+    .tab-nav a {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 14px 20px;
+      font-size: 13px; font-weight: 500; color: #5e6c84;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-nav a:hover { color: #172b4d; }
+    .tab-nav a.active { color: #0052cc; border-bottom-color: #0052cc; font-weight: 600; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+    .page-title { font-size: 18px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Stat strip ── */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; margin-bottom: 20px;
+    }
+    .stat-card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; padding: 14px 16px; }
+    .stat-label { font-size: 11px; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .stat-sub { font-size: 11px; color: #5e6c84; margin-top: 3px; }
+    .stat-value.green { color: #006644; }
+
+    /* ── Card ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; margin-bottom: 20px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 12px 20px; border-bottom: 1px solid #dfe1e6; background: #f8f9fa;
+    }
+    .filter-label { font-size: 12px; color: #5e6c84; font-weight: 500; white-space: nowrap; }
+    .filter-select {
+      padding: 5px 10px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 13px; color: #172b4d; background: #fff; cursor: pointer;
+    }
+    .filter-spacer { flex: 1; }
+    .result-count { font-size: 12px; color: #5e6c84; white-space: nowrap; }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      background: #f8f9fa; border-bottom: 1px solid #dfe1e6;
+      white-space: nowrap;
+    }
+    .data-table thead th.sortable { cursor: pointer; }
+    .data-table thead th.sortable:hover { color: #0052cc; }
+    .data-table tbody tr { border-bottom: 1px solid #f0f1f3; cursor: pointer; transition: background 0.1s; }
+    .data-table tbody tr:hover { background: #f4f5f7; }
+    .data-table tbody td { padding: 12px 14px; font-size: 13px; color: #172b4d; vertical-align: middle; }
+    .sort-desc::after { content: ' ▼'; font-size: 9px; }
+
+    /* ── Code chip ── */
+    .code-chip {
+      font-family: 'Courier New', monospace; font-size: 12px;
+      background: #f0f1f3; border-radius: 3px; padding: 3px 8px;
+      color: #172b4d; letter-spacing: 0.06em; white-space: nowrap; display: inline-block;
+    }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-active   { background: #e3fcef; color: #006644; }
+    .badge-inactive { background: #dfe1e6; color: #42526e; }
+    .badge-expired  { background: #dfe1e6; color: #42526e; }
+    .badge-revoked  { background: #ffebe6; color: #bf2600; }
+
+    /* ── Conversion bar ── */
+    .conv-wrap { display: flex; align-items: center; gap: 6px; }
+    .conv-bar-bg { width: 52px; height: 5px; background: #dfe1e6; border-radius: 3px; overflow: hidden; }
+    .conv-bar-fill { height: 100%; background: #0052cc; border-radius: 3px; }
+    .conv-bar-fill.low  { background: #97a0af; }
+    .conv-bar-fill.high { background: #36b37e; }
+    .conv-pct { font-size: 12px; color: #42526e; white-space: nowrap; }
+
+    /* ── View detail link ── */
+    .detail-link {
+      color: #0052cc; font-size: 12px; text-decoration: none; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .detail-link:hover { text-decoration: underline; }
+
+    /* ── Info note ── */
+    .info-note {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fffae6; border: 1px solid #ffe380; border-radius: 4px;
+      padding: 10px 14px; font-size: 12px; color: #7a5200; margin-bottom: 16px;
+    }
+
+    /* ── Legend ── */
+    .legend-row {
+      display: flex; gap: 14px; align-items: center;
+      font-size: 12px; color: #5e6c84; padding: 4px 0 8px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BAR ════════════════ -->
+<div class="topbar">
+  <div class="topbar-logo">Hairline <span>Affiliate Portal</span></div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">IC</div>
+    InfluCare Network
+    <a href="#" class="topbar-logout">Log out</a>
+  </div>
+</div>
+
+<!-- ════════════════ TAB NAVIGATION ════════════════ -->
+<div class="tab-nav">
+  <a href="#">📊 Overview</a>
+  <a href="#" class="active">🏷️ Promo Codes</a>
+  <a href="#">💳 Payouts</a>
+  <a href="#">👤 Profile</a>
+</div>
+
+<!-- ════════════════ PAGE CONTENT ════════════════ -->
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Promo Codes</div>
+      <div class="page-subtitle">Discount codes assigned to your affiliate account, with per-code performance breakdown</div>
+    </div>
+  </div>
+
+  <!-- Summary stat strip -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="stat-label">Active Codes</div>
+      <div class="stat-value">3</div>
+      <div class="stat-sub">1 inactive · 1 expired</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Applied</div>
+      <div class="stat-value">304</div>
+      <div class="stat-sub">across all codes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Completed</div>
+      <div class="stat-value">235</div>
+      <div class="stat-sub">overall 77.3% conversion</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Commission Earned</div>
+      <div class="stat-value green">$7,010</div>
+      <div class="stat-sub">all codes all-time</div>
+    </div>
+  </div>
+
+  <!-- Code list card -->
+  <div class="card">
+
+    <!-- Filter / sort bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter by Status</span>
+      <select class="filter-select">
+        <option>All Statuses</option>
+        <option>Active</option>
+        <option>Inactive</option>
+        <option>Expired</option>
+        <option>Revoked</option>
+      </select>
+
+      <span class="filter-label">Sort by</span>
+      <select class="filter-select">
+        <option>Revenue Generated ▼</option>
+        <option>Commission Earned ▼</option>
+        <option>Applied Count ▼</option>
+        <option>Conversion Rate ▼</option>
+        <option>Created Date ▼</option>
+      </select>
+
+      <div class="filter-spacer"></div>
+      <span class="result-count">5 codes total</span>
+    </div>
+
+    <!-- Data table -->
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Discount Code</th>
+            <th>Campaign Name</th>
+            <th>Status</th>
+            <th>Active Window</th>
+            <th>Discount</th>
+            <th>Method</th>
+            <th>Applied</th>
+            <th>Completed</th>
+            <th class="sortable sort-desc">Conv. Rate</th>
+            <th class="sortable">Revenue Generated</th>
+            <th class="sortable">Commission Earned</th>
+            <th>Created Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Row 1: Active -->
+          <tr>
+            <td><span class="code-chip">PARTNER10-ICN</span></td>
+            <td>PARTNER10</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-size:12px;white-space:nowrap;color:#5e6c84;">2025-11-05 – No expiry</td>
+            <td>$50</td>
+            <td>Auto-apply</td>
+            <td style="font-weight:600;">204</td>
+            <td style="font-weight:600;">166</td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill high" style="width:81%"></div></div>
+                <span class="conv-pct">81.4%</span>
+              </div>
+            </td>
+            <td style="font-weight:600;">$28,900</td>
+            <td style="font-weight:600;color:#006644;">$4,335</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">2025-11-05</td>
+            <td><a href="fr018-screen9-2-promo-code-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 2: Active -->
+          <tr>
+            <td><span class="code-chip">WINTER25-ICN</span></td>
+            <td>WINTER2025</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-size:12px;white-space:nowrap;color:#5e6c84;">2025-10-20 – 2026-03-31</td>
+            <td>10%</td>
+            <td>Code-based</td>
+            <td>57</td>
+            <td>31</td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:54%"></div></div>
+                <span class="conv-pct">54.4%</span>
+              </div>
+            </td>
+            <td>$7,750</td>
+            <td style="color:#006644;">$775</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">2025-10-20</td>
+            <td><a href="fr018-screen9-2-promo-code-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 3: Active, auto-apply -->
+          <tr>
+            <td><span class="code-chip">VIP2026-ICN</span></td>
+            <td>VIP2026</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-size:12px;white-space:nowrap;color:#5e6c84;">2026-03-01 – 2026-12-31</td>
+            <td>20%</td>
+            <td>Auto-apply</td>
+            <td>43</td>
+            <td>38</td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill high" style="width:88%"></div></div>
+                <span class="conv-pct">88.4%</span>
+              </div>
+            </td>
+            <td>$9,500</td>
+            <td style="color:#006644;">$1,900</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">2026-03-01</td>
+            <td><a href="fr018-screen9-2-promo-code-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 4: Inactive -->
+          <tr>
+            <td><span class="code-chip">SUMMER25-ICN</span></td>
+            <td>SUMMER2025</td>
+            <td><span class="badge badge-inactive">Inactive</span></td>
+            <td style="font-size:12px;white-space:nowrap;color:#5e6c84;">2025-06-01 – 2025-09-30</td>
+            <td>12%</td>
+            <td>Code-based</td>
+            <td>92</td>
+            <td>71</td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill low" style="width:77%"></div></div>
+                <span class="conv-pct">77.2%</span>
+              </div>
+            </td>
+            <td style="color:#97a0af;">$14,200</td>
+            <td style="color:#97a0af;">$0</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">2025-06-01</td>
+            <td><a href="fr018-screen9-2-promo-code-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 5: Expired -->
+          <tr>
+            <td><span class="code-chip">EARLY25-ICN</span></td>
+            <td>EARLY2025</td>
+            <td><span class="badge badge-expired">Expired</span></td>
+            <td style="font-size:12px;white-space:nowrap;color:#97a0af;">2025-01-01 – 2025-05-31</td>
+            <td>8%</td>
+            <td>Code-based</td>
+            <td>—</td>
+            <td>—</td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill low" style="width:0%"></div></div>
+                <span class="conv-pct" style="color:#97a0af;">—</span>
+              </div>
+            </td>
+            <td style="color:#97a0af;">$0</td>
+            <td style="color:#97a0af;">$0</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">2025-01-01</td>
+            <td><a href="fr018-screen9-2-promo-code-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /.card -->
+
+  <!-- Info note -->
+  <div class="info-note">
+    <span>ℹ</span>
+    <span>
+      <strong>Historical codes</strong> (Expired, Inactive, Revoked) remain visible for your reference but cannot be copied as active promotional codes. Only Active codes are valid at checkout.
+    </span>
+  </div>
+
+  <!-- Status legend -->
+  <div class="legend-row">
+    <strong style="color:#172b4d;">Status:</strong>
+    <span><span class="badge badge-active">Active</span> — valid at checkout, copy enabled</span>
+    <span><span class="badge badge-inactive">Inactive</span> — manually disabled by admin</span>
+    <span><span class="badge badge-expired">Expired</span> — past expiration date</span>
+    <span><span class="badge badge-revoked">Revoked</span> — forcibly invalidated</span>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

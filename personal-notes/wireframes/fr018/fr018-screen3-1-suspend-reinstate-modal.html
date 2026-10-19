@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 3.1 — Suspend / Reinstate Affiliate (Modal)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #42526e;
+    }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── State switcher (wireframe helper) ── */
+    .state-switcher {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px;
+      background: #fffae6; border-bottom: 1px solid #f6c344;
+      font-size: 12px; color: #974f0c;
+    }
+    .state-btn {
+      padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid #dfe1e6; background: #fff; color: #42526e;
+    }
+    .state-btn.active { background: #0052cc; color: #fff; border-color: #0052cc; }
+
+    /* ── Page content (dimmed background) ── */
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 28px 24px;
+      filter: blur(1.5px); opacity: 0.35; pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb-sep { color: #b3bac5; }
+
+    /* ── Affiliate header (background stub) ── */
+    .affiliate-header-card {
+      background: #fff; border: 1px solid #dfe1e6; border-radius: 6px;
+      padding: 20px 24px; margin-bottom: 16px;
+    }
+    .affiliate-name { font-size: 22px; font-weight: 700; color: #172b4d; margin-bottom: 8px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+    }
+    .badge-active    { background: #e3fcef; color: #006644; }
+    .badge-suspended { background: #ffebe6; color: #de350b; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .metrics-stub {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px;
+    }
+    .metric-stub {
+      background: #fff; border: 1px solid #dfe1e6; border-radius: 6px;
+      padding: 14px 16px;
+    }
+    .metric-stub-label { height: 10px; background: #dfe1e6; border-radius: 2px; width: 80%; margin-bottom: 8px; }
+    .metric-stub-value { height: 22px; background: #dfe1e6; border-radius: 2px; width: 60%; }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(23, 43, 77, 0.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+    }
+
+    /* ── Modal card ── */
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(23,43,77,0.24);
+      width: 560px;
+      max-width: calc(100vw - 32px);
+      overflow: hidden;
+    }
+
+    /* Suspend variant */
+    .modal.suspend .modal-header-bar { background: #de350b; }
+
+    /* Reinstate variant */
+    .modal.reinstate .modal-header-bar { background: #006644; }
+
+    .modal-header-bar {
+      height: 4px;
+    }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+    .modal-title {
+      font-size: 17px; font-weight: 700; color: #172b4d;
+    }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #5e6c84; font-size: 18px; line-height: 1;
+    }
+    .modal-close:hover { background: #f4f5f7; color: #172b4d; }
+
+    .modal-body { padding: 20px 24px; }
+
+    /* ── Affiliate context strip ── */
+    .affiliate-context {
+      display: flex; align-items: center; gap: 12px;
+      background: #f8f9fb; border: 1px solid #dfe1e6; border-radius: 6px;
+      padding: 12px 14px; margin-bottom: 20px;
+    }
+    .affiliate-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .affiliate-context-info { flex: 1; }
+    .affiliate-context-name { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .affiliate-context-meta { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+
+    /* ── Field row ── */
+    .field-row { margin-bottom: 16px; }
+    .field-label {
+      font-size: 12px; font-weight: 600; color: #344563;
+      margin-bottom: 5px; display: flex; align-items: center; gap: 4px;
+    }
+    .field-required { color: #de350b; }
+    .field-readonly {
+      background: #f4f5f7; border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 8px 12px; font-size: 13px; color: #172b4d;
+    }
+    .field-readonly.action-suspend { color: #de350b; font-weight: 600; }
+    .field-readonly.action-reinstate { color: #006644; font-weight: 600; }
+    .form-textarea {
+      border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 8px 10px; font-size: 13px; color: #172b4d;
+      background: #fff; outline: none; width: 100%;
+      min-height: 100px; resize: vertical;
+    }
+    .form-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px #deebff; }
+    .form-textarea::placeholder { color: #b3bac5; }
+    .field-hint {
+      font-size: 11px; color: #5e6c84; margin-top: 4px;
+      display: flex; justify-content: space-between;
+    }
+
+    /* ── Effects info box ── */
+    .effects-box {
+      background: #fff7d1; border: 1px solid #f6c344;
+      border-radius: 4px; padding: 12px 14px;
+      font-size: 12px; color: #172b4d;
+      margin-bottom: 16px;
+    }
+    .effects-box.reinstate {
+      background: #e3fcef; border-color: #57d9a3;
+    }
+    .effects-title {
+      font-weight: 600; margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .effects-list {
+      list-style: none; display: flex; flex-direction: column; gap: 4px;
+    }
+    .effects-list li { display: flex; align-items: flex-start; gap: 6px; }
+    .effects-list li::before { content: "•"; color: #974f0c; font-weight: 700; flex-shrink: 0; }
+    .effects-box.reinstate .effects-list li::before { color: #006644; }
+
+    /* ── Confirm checkbox ── */
+    .confirm-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #f8f9fb; border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 12px 14px; margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .confirm-row:hover { background: #f4f5f7; }
+    .confirm-checkbox {
+      width: 16px; height: 16px; accent-color: #0052cc;
+      flex-shrink: 0; margin-top: 1px; cursor: pointer;
+    }
+    .confirm-label { font-size: 13px; color: #172b4d; line-height: 1.4; }
+
+    /* ── Modal footer ── */
+    .modal-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 8px; padding: 16px 24px;
+      border-top: 1px solid #dfe1e6;
+      background: #f8f9fb;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none;
+      white-space: nowrap;
+    }
+    .btn-cancel { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-cancel:hover { background: #f4f5f7; }
+    .btn-submit-suspend { background: #de350b; color: #fff; }
+    .btn-submit-suspend:hover { background: #c42b07; }
+    .btn-submit-reinstate { background: #006644; color: #fff; }
+    .btn-submit-reinstate:hover { background: #00553a; }
+    .btn-disabled {
+      background: #f4f5f7; color: #b3bac5; border: 1px solid #dfe1e6;
+      cursor: not-allowed; pointer-events: none;
+    }
+
+    /* ── Notification note ── */
+    .notification-note {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: #5e6c84;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Finance</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── State switcher (wireframe annotation) ── -->
+<div class="state-switcher">
+  <strong>Wireframe state:</strong>
+  <button class="state-btn active" onclick="showState('suspend')" id="btn-suspend">Suspend (Active → Suspended)</button>
+  <button class="state-btn" onclick="showState('reinstate')" id="btn-reinstate">Reinstate (Suspended → Active)</button>
+</div>
+
+<!-- ── Background page (dimmed) ── -->
+<div class="page-wrap">
+  <div class="breadcrumb">
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Glow Clinic Partners</span>
+  </div>
+  <div class="affiliate-header-card">
+    <div class="affiliate-name">Glow Clinic Partners</div>
+    <span class="badge badge-active" id="bg-badge-active">
+      <span class="badge-dot"></span>
+      Active
+    </span>
+    <span class="badge badge-suspended" id="bg-badge-suspended" style="display:none;">
+      <span class="badge-dot"></span>
+      Suspended
+    </span>
+  </div>
+  <div class="metrics-stub">
+    <div class="metric-stub"><div class="metric-stub-label"></div><div class="metric-stub-value"></div></div>
+    <div class="metric-stub"><div class="metric-stub-label"></div><div class="metric-stub-value"></div></div>
+    <div class="metric-stub"><div class="metric-stub-label"></div><div class="metric-stub-value"></div></div>
+    <div class="metric-stub"><div class="metric-stub-label"></div><div class="metric-stub-value"></div></div>
+    <div class="metric-stub"><div class="metric-stub-label"></div><div class="metric-stub-value"></div></div>
+  </div>
+</div>
+
+<!-- ── Modal overlay — Suspend state ── -->
+<div class="modal-overlay" id="modal-suspend">
+  <div class="modal suspend">
+    <div class="modal-header-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">Suspend Affiliate</div>
+      <button class="modal-close" title="Cancel">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Affiliate context strip -->
+      <div class="affiliate-context">
+        <div class="affiliate-avatar">GC</div>
+        <div class="affiliate-context-info">
+          <div class="affiliate-context-name">Glow Clinic Partners</div>
+          <div class="affiliate-context-meta">AFF-00482 · Clinic Partner · United States</div>
+        </div>
+        <span class="badge badge-active">
+          <span class="badge-dot"></span>
+          Active
+        </span>
+      </div>
+
+      <!-- Action field (read-only) -->
+      <div class="field-row">
+        <div class="field-label">Action</div>
+        <div class="field-readonly action-suspend">Suspend</div>
+      </div>
+
+      <!-- Effects info box -->
+      <div class="effects-box">
+        <div class="effects-title">⚠️ Effects of suspension</div>
+        <ul class="effects-list">
+          <li>Affiliate status changes to <strong>Suspended</strong></li>
+          <li>All assigned discount codes are <strong>disabled</strong> immediately (invalid at checkout)</li>
+          <li>Pending unpaid commissions are <strong>held</strong> pending investigation</li>
+          <li>Affiliate receives an email notification with the suspension reason</li>
+          <li>Historical data (referrals, commissions, payouts) is retained</li>
+          <li>Affiliate can be reinstated later by changing status back to Active</li>
+        </ul>
+      </div>
+
+      <!-- Reason textarea (required for suspend) -->
+      <div class="field-row">
+        <div class="field-label">
+          Reason <span class="field-required">*</span>
+        </div>
+        <textarea
+          class="form-textarea"
+          id="suspend-reason"
+          maxlength="500"
+          placeholder="Describe the reason for suspension (e.g., suspected fake referrals, policy violation, unauthorized promotion)…"
+          oninput="updateSuspendSubmit()"
+        ></textarea>
+        <div class="field-hint">
+          <span>Min 20 characters · Max 500 characters · Required</span>
+          <span id="suspend-char-count">0 / 500</span>
+        </div>
+      </div>
+
+      <!-- Confirm checkbox -->
+      <label class="confirm-row" for="suspend-confirm">
+        <input
+          type="checkbox"
+          class="confirm-checkbox"
+          id="suspend-confirm"
+          onchange="updateSuspendSubmit()"
+        />
+        <span class="confirm-label">
+          I confirm this action — the affiliate will be <strong>suspended</strong>, all their discount codes will be disabled, and pending payouts will be held pending investigation.
+        </span>
+      </label>
+
+    </div>
+
+    <div class="modal-footer">
+      <div class="notification-note">
+        📧 An email notification will be sent to the affiliate with the suspension reason.
+      </div>
+      <button class="btn btn-cancel">Cancel</button>
+      <button class="btn btn-submit-suspend btn-disabled" id="suspend-submit">
+        Suspend Affiliate
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal overlay — Reinstate state ── -->
+<div class="modal-overlay" id="modal-reinstate" style="display:none;">
+  <div class="modal reinstate">
+    <div class="modal-header-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">Reinstate Affiliate</div>
+      <button class="modal-close" title="Cancel">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Affiliate context strip -->
+      <div class="affiliate-context">
+        <div class="affiliate-avatar">GC</div>
+        <div class="affiliate-context-info">
+          <div class="affiliate-context-name">Glow Clinic Partners</div>
+          <div class="affiliate-context-meta">AFF-00482 · Clinic Partner · United States</div>
+        </div>
+        <span class="badge badge-suspended">
+          <span class="badge-dot"></span>
+          Suspended
+        </span>
+      </div>
+
+      <!-- Action field (read-only) -->
+      <div class="field-row">
+        <div class="field-label">Action</div>
+        <div class="field-readonly action-reinstate">Reinstate</div>
+      </div>
+
+      <!-- Effects info box (reinstate) -->
+      <div class="effects-box reinstate">
+        <div class="effects-title">✅ Effects of reinstatement</div>
+        <ul class="effects-list">
+          <li>Affiliate status returns to <strong>Active</strong></li>
+          <li>Held payouts resume per investigation outcome</li>
+          <li>Discount codes must be manually re-enabled if needed (they remain disabled after suspension)</li>
+        </ul>
+      </div>
+
+      <!-- Reason textarea — not required for reinstate, shown but optional -->
+      <div class="field-row">
+        <div class="field-label">
+          Reason
+          <span style="font-size:11px;color:#5e6c84;font-weight:400;">(optional)</span>
+        </div>
+        <textarea
+          class="form-textarea"
+          id="reinstate-reason"
+          maxlength="500"
+          placeholder="Describe the reason for reinstatement (optional)…"
+        ></textarea>
+        <div class="field-hint">
+          <span>Max 500 characters</span>
+          <span>0 / 500</span>
+        </div>
+      </div>
+
+      <!-- Confirm checkbox -->
+      <label class="confirm-row" for="reinstate-confirm">
+        <input
+          type="checkbox"
+          class="confirm-checkbox"
+          id="reinstate-confirm"
+          onchange="updateReinstateSubmit()"
+        />
+        <span class="confirm-label">
+          I confirm this action — the affiliate will be <strong>reinstated</strong> and their status will return to Active.
+        </span>
+      </label>
+
+    </div>
+
+    <div class="modal-footer">
+      <div class="notification-note">
+        📧 An email notification will be sent to the affiliate about reinstatement.
+      </div>
+      <button class="btn btn-cancel">Cancel</button>
+      <button class="btn btn-submit-reinstate btn-disabled" id="reinstate-submit">
+        Reinstate Affiliate
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showState(state) {
+    document.getElementById('modal-suspend').style.display   = state === 'suspend'   ? 'flex' : 'none';
+    document.getElementById('modal-reinstate').style.display = state === 'reinstate' ? 'flex' : 'none';
+    document.getElementById('btn-suspend').classList.toggle('active', state === 'suspend');
+    document.getElementById('btn-reinstate').classList.toggle('active', state === 'reinstate');
+    document.getElementById('bg-badge-active').style.display    = state === 'suspend'   ? '' : 'none';
+    document.getElementById('bg-badge-suspended').style.display = state === 'reinstate' ? '' : 'none';
+  }
+
+  function updateSuspendSubmit() {
+    const reason  = document.getElementById('suspend-reason').value;
+    const checked = document.getElementById('suspend-confirm').checked;
+    const count   = document.getElementById('suspend-char-count');
+    const submit  = document.getElementById('suspend-submit');
+    count.textContent = reason.length + ' / 500';
+    const valid = reason.trim().length >= 20 && checked;
+    submit.classList.toggle('btn-disabled', !valid);
+  }
+
+  function updateReinstateSubmit() {
+    const checked = document.getElementById('reinstate-confirm').checked;
+    const submit  = document.getElementById('reinstate-submit');
+    submit.classList.toggle('btn-disabled', !checked);
+  }
+</script>
+
+</body>
+</html>

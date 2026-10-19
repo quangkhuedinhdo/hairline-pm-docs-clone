@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — Contact Wireframe (/contact)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --section-py:   120px;
+      --container:    1200px;
+      --radius-md:    12px;
+      --radius-lg:    20px;
+      --radius-xl:    28px;
+      --shadow-sm:    0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:    0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utilities ───────────────────────────────────────────────────── */
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 48px; }
+    .section   { padding: var(--section-py) 0; }
+    .section-alt { background: var(--bg-subtle); }
+
+    .label {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: .05em;
+      background: var(--accent-light); color: var(--accent);
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; background: var(--ink); color: var(--white);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; background: transparent; color: var(--ink);
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: var(--ink-mid); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0; background: none; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--accent);
+      text-decoration: none;
+    }
+    .btn-ghost:hover { text-decoration: underline; }
+
+    /* ─── NAV ─────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,248,245,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; gap: 32px; height: 64px;
+      max-width: var(--container); margin: 0 auto; padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--ink); text-decoration: none; margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--ink-mid);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+    .nav-cta-b2b {
+      font-size: 13px; font-weight: 600; color: var(--ink-muted);
+      text-decoration: none; border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ──────────────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb ol {
+      display: flex; align-items: center; gap: 8px; list-style: none;
+    }
+    .breadcrumb li { display: flex; align-items: center; gap: 8px; }
+    .breadcrumb a { font-size: 13px; color: var(--ink-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb .crumb-sep { font-size: 13px; color: var(--border); }
+    .breadcrumb .crumb-current { font-size: 13px; color: var(--ink-mid); font-weight: 500; }
+
+    /* ─── SECTION LABEL ──────────────────────────────────────────────── */
+    .section-label {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 48px;
+    }
+    .section-label hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+
+    /* ─── SECTION 1 — HERO ───────────────────────────────────────────── */
+    .hero {
+      padding: 96px 0 80px;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+    .hero-inner { max-width: 680px; }
+    .hero-eyebrow { margin-bottom: 20px; }
+    .hero h1 {
+      font-size: 64px; font-weight: 700; letter-spacing: -.03em;
+      line-height: 1.06; color: var(--ink); margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 20px; color: var(--ink-mid); line-height: 1.55;
+      max-width: 520px;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 40%; height: 100%;
+      background: linear-gradient(135deg, var(--accent-light) 0%, transparent 70%);
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    /* ─── SECTION 2 — CONTACT FORM + SUPPORT INFO ───────────────────── */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* Reason selector tabs */
+    .reason-tabs {
+      display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .reason-tab {
+      padding: 10px 20px; border-radius: var(--radius-md);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--white);
+      color: var(--ink-mid); transition: all .15s;
+    }
+    .reason-tab:hover { border-color: var(--ink-mid); color: var(--ink); }
+    .reason-tab.active {
+      background: var(--ink); color: var(--white); border-color: var(--ink);
+    }
+
+    /* Form */
+    .contact-form { display: flex; flex-direction: column; gap: 24px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .field-group { display: flex; flex-direction: column; gap: 8px; }
+    .field-group label {
+      font-size: 13px; font-weight: 600; color: var(--ink-mid);
+      letter-spacing: .02em;
+    }
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      padding: 14px 16px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 15px; font-family: var(--font-ui);
+      color: var(--ink); outline: none;
+      transition: border-color .15s;
+      width: 100%;
+    }
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus { border-color: var(--ink-mid); }
+    .field-group textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+    .field-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239A9289' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+
+    .form-note { font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
+    .form-note a { color: var(--ink-mid); }
+
+    .form-submit { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+
+    /* Support info sidebar */
+    .support-sidebar { display: flex; flex-direction: column; gap: 32px; }
+
+    .support-card {
+      padding: 32px; background: var(--white);
+      border-radius: var(--radius-xl); border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .support-card-icon {
+      width: 44px; height: 44px; border-radius: var(--radius-md);
+      background: var(--accent-light); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; margin-bottom: 20px;
+    }
+    .support-card h3 {
+      font-size: 16px; font-weight: 700; margin-bottom: 8px; letter-spacing: -.01em;
+    }
+    .support-card p { font-size: 14px; color: var(--ink-mid); line-height: 1.6; }
+    .support-card a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .support-card a:hover { text-decoration: underline; }
+    .support-card .response-time {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 12px; font-size: 13px; color: var(--ink-muted);
+    }
+    .response-time-dot {
+      width: 8px; height: 8px; border-radius: 999px; background: #4CAF50;
+    }
+
+    /* Office locations */
+    .office-list { display: flex; flex-direction: column; gap: 20px; margin-top: 4px; }
+    .office-item {}
+    .office-city {
+      font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px;
+    }
+    .office-address { font-size: 13px; color: var(--ink-muted); line-height: 1.55; }
+    .office-divider { border: none; border-top: 1px solid var(--border); }
+
+    /* ─── SECTION 3 — ALTERNATE CHANNELS ────────────────────────────── */
+    .channels-header { text-align: center; max-width: 520px; margin: 0 auto 56px; }
+    .channels-header h2 {
+      font-size: 36px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 16px;
+    }
+    .channels-header p { font-size: 17px; color: var(--ink-mid); line-height: 1.6; }
+
+    .channels-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    }
+    .channel-card {
+      padding: 32px 28px; background: var(--white);
+      border-radius: var(--radius-xl); border: 1px solid var(--border);
+      text-align: center; box-shadow: var(--shadow-sm);
+      text-decoration: none; color: var(--ink);
+      transition: box-shadow .2s, transform .2s;
+      display: block;
+    }
+    .channel-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .channel-icon {
+      width: 52px; height: 52px; border-radius: var(--radius-lg);
+      background: var(--bg-subtle); display: flex; align-items: center;
+      justify-content: center; font-size: 24px; margin: 0 auto 16px;
+    }
+    .channel-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .channel-handle { font-size: 13px; color: var(--accent); font-weight: 600; }
+    .channel-desc { font-size: 13px; color: var(--ink-muted); margin-top: 8px; line-height: 1.5; }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark); color: var(--white); padding: 80px 0 40px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 48px;
+      margin-bottom: 64px;
+    }
+    .footer-brand {}
+    .footer-brand .logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--white); margin-bottom: 16px;
+    }
+    .footer-brand p { font-size: 14px; color: rgba(255,255,255,.45); line-height: 1.65; max-width: 260px; }
+    .footer-col h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a {
+      font-size: 14px; color: rgba(255,255,255,.65); text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1); padding-top: 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-legal { font-size: 13px; color: rgba(255,255,255,.35); }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: var(--radius-md);
+      background: rgba(255,255,255,.08); display: flex; align-items: center;
+      justify-content: center; font-size: 15px; text-decoration: none;
+      transition: background .15s;
+    }
+    .footer-social a:hover { background: rgba(255,255,255,.16); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAV
+════════════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Hairline<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/how-it-works">How it works</a></li>
+      <li><a href="/treatments">Treatments</a></li>
+      <li><a href="/find-a-clinic">Find a clinic</a></li>
+      <li><a href="/resources">Resources</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <a href="/for-providers" class="nav-cta-b2b">For clinics →</a>
+  </div>
+</nav>
+
+<!-- ─── Breadcrumb ──────────────────────────────────────────────── -->
+<div class="breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><span class="crumb-sep">/</span></li>
+      <li><span class="crumb-current">Contact</span></li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — HERO
+     Sitemap ref: §1 — headline, brief intro
+════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <div class="hero-eyebrow">
+        <span class="badge">Get in touch</span>
+      </div>
+
+      <h1>
+        We're here<br>
+        to <em>help.</em>
+      </h1>
+
+      <p class="hero-sub">
+        Whether you have a question about your hair-loss journey, want to
+        explore a clinic partnership, or need to speak with our press team —
+        we'll get back to you within one business day.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 — CONTACT FORM + SUPPORT INFO
+     Sitemap ref:
+       §2 — Contact form (reason selector, name, email, message)
+       §3 — Support info (email, response time, office locations)
+════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">Send us a message</span>
+      <hr />
+    </div>
+
+    <div class="contact-layout">
+
+      <!-- LEFT — Form -->
+      <div>
+
+        <!-- Reason selector tabs -->
+        <div class="reason-tabs">
+          <button class="reason-tab active">Patient enquiry</button>
+          <button class="reason-tab">Clinic partnership</button>
+          <button class="reason-tab">Press</button>
+          <button class="reason-tab">Other</button>
+        </div>
+
+        <form class="contact-form" onsubmit="return false;">
+
+          <div class="form-row">
+            <div class="field-group">
+              <label for="first-name">First name</label>
+              <input type="text" id="first-name" placeholder="Alex" />
+            </div>
+            <div class="field-group">
+              <label for="last-name">Last name</label>
+              <input type="text" id="last-name" placeholder="Morgan" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="alex@example.com" />
+          </div>
+
+          <!-- Shown for "Patient enquiry" tab -->
+          <div class="field-group">
+            <label for="topic">What can we help with?</label>
+            <select id="topic">
+              <option value="" disabled selected>Select a topic</option>
+              <option>Finding the right clinic</option>
+              <option>Understanding treatment options</option>
+              <option>Aftercare support</option>
+              <option>App or account issue</option>
+              <option>Something else</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="message">Your message</label>
+            <textarea id="message" placeholder="Tell us what's on your mind. The more detail you share, the better we can help."></textarea>
+          </div>
+
+          <p class="form-note">
+            By submitting this form you agree to our
+            <a href="#">Privacy Policy</a>. We never share your details
+            with third parties without your consent.
+          </p>
+
+          <div class="form-submit">
+            <button type="submit" class="btn-primary">Send message →</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- RIGHT — Support sidebar -->
+      <div class="support-sidebar">
+
+        <!-- Direct email + response time -->
+        <div class="support-card">
+          <div class="support-card-icon">✉️</div>
+          <h3>Email us directly</h3>
+          <p>
+            <a href="mailto:hello@hairline.app">hello@hairline.app</a>
+          </p>
+          <div class="response-time">
+            <span class="response-time-dot"></span>
+            Typically replies within 1 business day
+          </div>
+        </div>
+
+        <!-- Clinic partnership shortcut -->
+        <div class="support-card">
+          <div class="support-card-icon">🏥</div>
+          <h3>Clinic partnership enquiries</h3>
+          <p>
+            Want to list your clinic on Hairline or explore a partnership?
+            <a href="mailto:partners@hairline.app">partners@hairline.app</a>
+          </p>
+          <p style="margin-top: 12px;">
+            Or <a href="/for-providers/book-demo">book a demo</a> to see the
+            platform in action.
+          </p>
+        </div>
+
+        <!-- Office locations -->
+        <div class="support-card">
+          <div class="support-card-icon">📍</div>
+          <h3>Our offices</h3>
+          <div class="office-list">
+            <div class="office-item">
+              <div class="office-city">London</div>
+              <div class="office-address">12 Soho Square, London W1D 3QF<br>United Kingdom</div>
+            </div>
+            <hr class="office-divider" />
+            <div class="office-item">
+              <div class="office-city">Dubai</div>
+              <div class="office-address">One Central, World Trade Centre<br>Dubai, UAE</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — ALTERNATE CHANNELS
+     Sitemap ref: §4 — social accounts
+════════════════════════════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">Find us online</span>
+      <hr />
+    </div>
+
+    <div class="channels-header">
+      <h2>Follow our journey</h2>
+      <p>Stay up to date with the latest hair-loss research, patient stories
+        and product news across our social channels.</p>
+    </div>
+
+    <div class="channels-grid">
+
+      <a href="#" class="channel-card">
+        <div class="channel-icon">𝕏</div>
+        <div class="channel-name">X / Twitter</div>
+        <div class="channel-handle">@hairlineapp</div>
+        <div class="channel-desc">Product updates, health news and team highlights</div>
+      </a>
+
+      <a href="#" class="channel-card">
+        <div class="channel-icon">in</div>
+        <div class="channel-name">LinkedIn</div>
+        <div class="channel-handle">Hairline Technologies</div>
+        <div class="channel-desc">Company news, hiring, and industry insights</div>
+      </a>
+
+      <a href="#" class="channel-card">
+        <div class="channel-icon">📷</div>
+        <div class="channel-name">Instagram</div>
+        <div class="channel-handle">@hairline.app</div>
+        <div class="channel-desc">Patient stories, clinic spotlights, recovery timelines</div>
+      </a>
+
+      <a href="#" class="channel-card">
+        <div class="channel-icon">▶</div>
+        <div class="channel-name">YouTube</div>
+        <div class="channel-handle">Hairline App</div>
+        <div class="channel-desc">Expert interviews, procedure walkthroughs, Q&As</div>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+        <div class="logo">Hairline<span style="color:var(--accent)">.</span></div>
+        <p>Hair restoration, finally done right. Verified providers. Honest education. End-to-end care.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Patients</h4>
+        <ul>
+          <li><a href="/for-patients">Overview</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/treatments">Treatments</a></li>
+          <li><a href="/aftercare">Aftercare</a></li>
+          <li><a href="/travel">Travel</a></li>
+          <li><a href="/assessment">Free assessment</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="/hair-loss">Hair loss guide</a></li>
+          <li><a href="/resources">Articles</a></li>
+          <li><a href="/how-it-works">How it works</a></li>
+          <li><a href="/resources/comparisons">Comparisons</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Providers</h4>
+        <ul>
+          <li><a href="/for-providers">Overview</a></li>
+          <li><a href="/for-providers/features">Features</a></li>
+          <li><a href="/for-providers/case-studies">Case studies</a></li>
+          <li><a href="/for-providers/book-demo">Book a demo</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        © 2026 Hairline Technologies Ltd · <a href="#" style="color:inherit">Privacy</a> · <a href="#" style="color:inherit">Terms</a> · <a href="#" style="color:inherit">Cookie settings</a>
+      </div>
+      <div class="footer-social">
+        <a href="#">𝕏</a>
+        <a href="#">in</a>
+        <a href="#">📷</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

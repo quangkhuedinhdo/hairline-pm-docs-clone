@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 5 — Promo Code Management</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1280px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb-sep { color: #c1c7d0; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    /* .page-actions removed — no page-level action buttons specified in Screen 5 */
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-danger { background: #de350b; color: #fff; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      background: #f8f9fa;
+    }
+    .filter-bar .search-box {
+      display: flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 5px 10px; flex: 0 0 220px;
+    }
+    .filter-bar .search-box input {
+      border: none; outline: none; font-size: 13px; color: #172b4d;
+      width: 100%; background: transparent;
+    }
+    .filter-bar .search-icon { color: #97a0af; font-size: 13px; }
+    .filter-select {
+      padding: 5px 10px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 13px; color: #172b4d; background: #fff; cursor: pointer;
+    }
+    .filter-label { font-size: 12px; color: #5e6c84; font-weight: 500; white-space: nowrap; }
+    .filter-spacer { flex: 1; }
+    .result-count { font-size: 12px; color: #5e6c84; white-space: nowrap; }
+    .filter-date-range {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .filter-date-range input {
+      padding: 5px 8px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 12px; color: #172b4d; background: #fff;
+    }
+
+    /* ── Bulk action bar ── */
+    .bulk-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 20px;
+      background: #e6f0ff;
+      border-bottom: 1px solid #b3d4ff;
+      font-size: 13px; color: #172b4d;
+    }
+    .bulk-bar-count { font-weight: 600; }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      background: #f8f9fa;
+      border-bottom: 1px solid #dfe1e6;
+      white-space: nowrap;
+    }
+    .data-table thead th.sortable { cursor: pointer; user-select: none; }
+    .data-table thead th.sortable:hover { color: #0052cc; }
+    .data-table tbody tr {
+      border-bottom: 1px solid #f0f1f3;
+      transition: background 0.1s;
+    }
+    .data-table tbody tr:hover { background: #f4f5f7; }
+    .data-table tbody tr.selected { background: #e6f0ff; }
+    .data-table tbody td { padding: 11px 12px; font-size: 13px; color: #172b4d; vertical-align: middle; }
+    .data-table .col-check { width: 36px; }
+    .data-table .col-code { min-width: 120px; }
+    .data-table .col-campaign { min-width: 130px; }
+    .data-table .col-affiliate { min-width: 140px; }
+    .data-table .col-discount { min-width: 80px; white-space: nowrap; }
+    .data-table .col-method { min-width: 90px; }
+    .data-table .col-usage { min-width: 160px; }
+    .data-table .col-rate { min-width: 80px; }
+    .data-table .col-revenue { min-width: 90px; text-align: right; }
+    .data-table .col-commission { min-width: 100px; text-align: right; }
+    .data-table .col-status { min-width: 80px; }
+    .data-table .col-date { min-width: 100px; white-space: nowrap; }
+    .data-table .col-actions { min-width: 140px; white-space: nowrap; }
+
+    /* ── Code chip ── */
+    .code-chip {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: #f0f1f3;
+      border-radius: 3px;
+      padding: 2px 7px;
+      color: #172b4d;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-active    { background: #e3fcef; color: #006644; }
+    .badge-inactive  { background: #dfe1e6; color: #42526e; }
+    .badge-expired   { background: #dfe1e6; color: #42526e; }
+    .badge-limit     { background: #fff0b3; color: #974f0c; }
+    .badge-revoked   { background: #ffebe6; color: #bf2600; }
+
+    /* ── Usage stat ── */
+    .usage-stat { font-size: 12px; color: #42526e; white-space: nowrap; }
+    .usage-stat .highlight { color: #172b4d; font-weight: 500; }
+
+    /* ── Conversion bar ── */
+    .conv-wrap { display: flex; align-items: center; gap: 6px; }
+    .conv-bar-bg {
+      width: 56px; height: 5px; background: #dfe1e6; border-radius: 3px; overflow: hidden;
+    }
+    .conv-bar-fill { height: 100%; background: #0052cc; border-radius: 3px; }
+    .conv-pct { font-size: 12px; color: #42526e; white-space: nowrap; }
+
+    /* ── Currency ── */
+    .currency { font-variant-numeric: tabular-nums; }
+
+    /* ── Affiliate link ── */
+    .aff-link { color: #0052cc; text-decoration: none; font-size: 13px; }
+    .aff-link:hover { text-decoration: underline; }
+
+    /* ── Inline actions ── */
+    .row-actions { display: flex; gap: 4px; }
+
+    /* ── Pagination ── */
+    .pagination-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px;
+      border-top: 1px solid #dfe1e6;
+      font-size: 13px; color: #5e6c84;
+    }
+    .pagination-controls { display: flex; gap: 4px; }
+    .page-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 3px;
+      border: 1px solid #dfe1e6; background: #fff;
+      font-size: 13px; cursor: pointer; color: #42526e;
+    }
+    .page-btn.active { background: #0052cc; color: #fff; border-color: #0052cc; }
+    .page-btn:hover:not(.active) { background: #f4f5f7; }
+
+    /* ── Note banner ── */
+    .note-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #e6f0ff; border: 1px solid #b3d4ff; border-radius: 4px;
+      padding: 10px 14px; font-size: 12px; color: #0052cc; margin-bottom: 16px;
+    }
+    .note-icon { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+
+    /* ── Sortable indicator ── */
+    .sort-asc::after  { content: ' ▲'; font-size: 9px; }
+    .sort-desc::after { content: ' ▼'; font-size: 9px; }
+
+    /* ── Checkbox ── */
+    input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BAR ════════════════ -->
+<div class="topbar">
+  <div class="topbar-logo">Hairline Admin</div>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Bookings</a>
+    <a href="#">Finance</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ════════════════ PAGE CONTENT ════════════════ -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Affiliates</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>Promo Code Management</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Promo Code Management</div>
+      <div class="page-subtitle">System-wide registry of all affiliate-bound promo codes across all affiliates and campaigns</div>
+    </div>
+  </div>
+
+  <!-- Info note -->
+  <div class="note-banner">
+    <span class="note-icon">ℹ</span>
+    <span>This screen lists codes created across all affiliates, campaigns, and generation modes (single and bulk). Applied/completed counts and conversion stats are sourced from FR-019 redemption lifecycle. Click any row or <strong>View Detail</strong> to open Screen 6 (Promo Code Detail).</span>
+  </div>
+
+  <!-- Main table card -->
+  <div class="card">
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">&#9906;</span>
+        <input type="text" placeholder="Search code or campaign…" />
+      </div>
+
+      <span class="filter-label">Status</span>
+      <select class="filter-select">
+        <option>All Statuses</option>
+        <option>Active</option>
+        <option>Inactive</option>
+        <option>Expired</option>
+        <option>Revoked</option>
+      </select>
+
+      <span class="filter-label">Campaign</span>
+      <select class="filter-select">
+        <option>All Campaigns</option>
+        <option>SUMMER2026</option>
+        <option>WINTER2025</option>
+        <option>PARTNER10</option>
+        <option>VIP2026</option>
+      </select>
+
+      <span class="filter-label">Linked Affiliate</span>
+      <select class="filter-select">
+        <option>All Affiliates</option>
+        <option>Clinique Beauté Paris</option>
+        <option>HairStyle Pro AU</option>
+        <option>InfluCare Network</option>
+        <option>MedPartner UK</option>
+      </select>
+
+      <span class="filter-label">Discount Type</span>
+      <select class="filter-select">
+        <option>All Types</option>
+        <option>Percentage</option>
+        <option>Fixed Amount</option>
+      </select>
+
+      <span class="filter-label">Method</span>
+      <select class="filter-select">
+        <option>All Methods</option>
+        <option>Code-based</option>
+        <option>Auto-apply</option>
+      </select>
+
+      <span class="filter-label">Created</span>
+      <div class="filter-date-range">
+        <input type="date" value="2025-01-01" />
+        <span style="color:#5e6c84">–</span>
+        <input type="date" value="2026-06-26" />
+      </div>
+
+      <div class="filter-spacer"></div>
+      <span class="result-count">Showing 1–50 of 247 codes</span>
+    </div>
+
+    <!-- Bulk action bar (visible when rows are selected) -->
+    <div class="bulk-bar">
+      <input type="checkbox" checked />
+      <span class="bulk-bar-count">3 codes selected</span>
+      <button class="btn btn-default btn-sm">✓ Activate Selected</button>
+      <button class="btn btn-default btn-sm">✕ Deactivate Selected</button>
+      <button class="btn btn-default btn-sm" style="color:#de350b;border-color:#de350b;">Clear Selection</button>
+    </div>
+
+    <!-- Data table -->
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-check"><input type="checkbox" /></th>
+            <th class="col-code sortable">Discount Code</th>
+            <th class="col-campaign sortable">Campaign Name</th>
+            <th class="col-affiliate sortable">Linked Affiliate</th>
+            <th class="col-discount">Discount</th>
+            <th class="col-method">Method</th>
+            <th class="col-usage sortable sort-desc">Applied / Completed</th>
+            <th class="col-rate sortable">Conv. Rate</th>
+            <th class="col-revenue sortable">Revenue</th>
+            <th class="col-commission sortable">Commission</th>
+            <th class="col-status">Status</th>
+            <th class="col-date sortable">Created</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Row 1: Active -->
+          <tr class="selected">
+            <td><input type="checkbox" checked /></td>
+            <td><span class="code-chip">SUMMER26-CLB</span></td>
+            <td>SUMMER2026</td>
+            <td><a href="#" class="aff-link">Clinique Beauté Paris</a></td>
+            <td>15%</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">312</span> applied /
+                <span class="highlight">218</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:70%"></div></div>
+                <span class="conv-pct">69.9%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$32,400</td>
+            <td class="currency" style="text-align:right">$4,860</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>2026-01-10</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Deactivate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 2: Active -->
+          <tr class="selected">
+            <td><input type="checkbox" checked /></td>
+            <td><span class="code-chip">SUMMER26-HSP</span></td>
+            <td>SUMMER2026</td>
+            <td><a href="#" class="aff-link">HairStyle Pro AU</a></td>
+            <td>15%</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">125</span> applied /
+                <span class="highlight">87</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:70%"></div></div>
+                <span class="conv-pct">69.6%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$18,750</td>
+            <td class="currency" style="text-align:right">$2,813</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>2026-01-10</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Deactivate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 3: Active, auto-apply -->
+          <tr class="selected">
+            <td><input type="checkbox" checked /></td>
+            <td><span class="code-chip">PARTNER10-ICN</span></td>
+            <td>PARTNER10</td>
+            <td><a href="#" class="aff-link">InfluCare Network</a></td>
+            <td>$50</td>
+            <td>Auto-apply</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">204</span> applied /
+                <span class="highlight">166</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:81%"></div></div>
+                <span class="conv-pct">81.4%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$28,900</td>
+            <td class="currency" style="text-align:right">$4,335</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>2025-11-05</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Deactivate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 4: Usage limit reached -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">WINTER25-MPK</span></td>
+            <td>WINTER2025</td>
+            <td><a href="#" class="aff-link">MedPartner UK</a></td>
+            <td>10%</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">200</span> applied /
+                <span class="highlight">200</span> completed
+                <span style="color:#974f0c;font-size:11px;display:block;">Usage cap reached (200 / 200)</span>
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:100%;background:#ff991f"></div></div>
+                <span class="conv-pct">100.0%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$41,000</td>
+            <td class="currency" style="text-align:right">$4,100</td>
+            <td><span class="badge badge-limit">Limit Reached</span></td>
+            <td>2025-10-01</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Activate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 5: Expired -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">VIP2026-CLB</span></td>
+            <td>VIP2026</td>
+            <td><a href="#" class="aff-link">Clinique Beauté Paris</a></td>
+            <td>20%</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">88</span> applied /
+                <span class="highlight">61</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:69%;background:#97a0af"></div></div>
+                <span class="conv-pct">69.3%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$15,250</td>
+            <td class="currency" style="text-align:right">$3,050</td>
+            <td><span class="badge badge-expired">Expired</span></td>
+            <td>2025-12-01</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-disabled btn-sm">—</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 6: Inactive -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">PARTNER10-HSP</span></td>
+            <td>PARTNER10</td>
+            <td><a href="#" class="aff-link">HairStyle Pro AU</a></td>
+            <td>$50</td>
+            <td>Auto-apply</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">14</span> applied /
+                <span class="highlight">9</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:64%;background:#97a0af"></div></div>
+                <span class="conv-pct">64.3%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$1,800</td>
+            <td class="currency" style="text-align:right">$270</td>
+            <td><span class="badge badge-inactive">Inactive</span></td>
+            <td>2025-09-15</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Activate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 7: Revoked -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">WINTER25-ICN</span></td>
+            <td>WINTER2025</td>
+            <td><a href="#" class="aff-link">InfluCare Network</a></td>
+            <td>10%</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">57</span> applied /
+                <span class="highlight">31</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:54%;background:#ff5630"></div></div>
+                <span class="conv-pct">54.4%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$7,750</td>
+            <td class="currency" style="text-align:right">$775</td>
+            <td><span class="badge badge-revoked">Revoked</span></td>
+            <td>2025-10-20</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-disabled btn-sm">—</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 8: Active, high conversion -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">SUMMER26-MPK</span></td>
+            <td>SUMMER2026</td>
+            <td><a href="#" class="aff-link">MedPartner UK</a></td>
+            <td>15%</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">76</span> applied /
+                <span class="highlight">63</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:83%"></div></div>
+                <span class="conv-pct">82.9%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$11,340</td>
+            <td class="currency" style="text-align:right">$1,701</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>2026-01-10</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Deactivate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 9: Active, auto-apply -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">VIP2026-ICN</span></td>
+            <td>VIP2026</td>
+            <td><a href="#" class="aff-link">InfluCare Network</a></td>
+            <td>20%</td>
+            <td>Auto-apply</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">43</span> applied /
+                <span class="highlight">38</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:88%"></div></div>
+                <span class="conv-pct">88.4%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$9,500</td>
+            <td class="currency" style="text-align:right">$1,900</td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td>2026-03-01</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Deactivate</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 10: Inactive -->
+          <tr>
+            <td><input type="checkbox" /></td>
+            <td><span class="code-chip">WINTER25-CLB</span></td>
+            <td>WINTER2025</td>
+            <td><a href="#" class="aff-link">Clinique Beauté Paris</a></td>
+            <td>$30</td>
+            <td>Code-based</td>
+            <td>
+              <div class="usage-stat">
+                <span class="highlight">33</span> applied /
+                <span class="highlight">22</span> completed
+              </div>
+            </td>
+            <td>
+              <div class="conv-wrap">
+                <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:67%;background:#97a0af"></div></div>
+                <span class="conv-pct">66.7%</span>
+              </div>
+            </td>
+            <td class="currency" style="text-align:right">$4,400</td>
+            <td class="currency" style="text-align:right">$660</td>
+            <td><span class="badge badge-inactive">Inactive</span></td>
+            <td>2025-11-20</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-default btn-sm">View Detail</button>
+                <button class="btn btn-default btn-sm">Activate</button>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <span>Showing <strong>1–50</strong> of <strong>247</strong> codes</span>
+      <div class="pagination-controls">
+        <span class="page-btn" style="cursor:default;color:#c1c7d0;">&#8249;</span>
+        <span class="page-btn active">1</span>
+        <span class="page-btn">2</span>
+        <span class="page-btn">3</span>
+        <span class="page-btn">…</span>
+        <span class="page-btn">5</span>
+        <span class="page-btn">&#8250;</span>
+      </div>
+      <span style="font-size:12px;color:#5e6c84;">50 per page</span>
+    </div>
+
+  </div><!-- /.card -->
+
+  <!-- Status color legend -->
+  <div style="display:flex;gap:16px;align-items:center;font-size:12px;color:#5e6c84;padding:4px 0 8px;">
+    <strong style="color:#172b4d;">Status:</strong>
+    <span><span class="badge badge-active">Active</span> — code is valid at checkout</span>
+    <span><span class="badge badge-inactive">Inactive</span> — manually disabled</span>
+    <span><span class="badge badge-expired">Expired</span> — past expiration date</span>
+    <span><span class="badge badge-limit">Limit Reached</span> — usage cap hit</span>
+    <span><span class="badge badge-revoked">Revoked</span> — forcibly invalidated</span>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

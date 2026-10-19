@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-021 Screen 9 — Admin: Language Version History &amp; Rollback</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: #f4f5f7; color: #172b4d; }
+
+    /* ── Top bar ── */
+    .topbar { background: #fff; border-bottom: 1px solid #dfe1e6; height: 52px; display: flex; align-items: center; padding: 0 24px; gap: 16px; }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-lang { display: flex; align-items: center; gap: 6px; border: 1px solid #dfe1e6; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 13px; color: #42526e; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 24px 48px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5e6c84; margin-bottom: 16px; }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #c1c7d0; }
+    .breadcrumb-current { color: #172b4d; font-weight: 500; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; text-decoration: none; }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-success { background: #006644; color: #fff; }
+    .btn-success:hover { background: #005537; }
+    .btn-danger { background: #de350b; color: #fff; }
+    .btn-danger:hover { background: #bf2600; }
+    .btn-danger-outline { background: #fff; color: #bf2600; border: 1px solid #bf2600; }
+    .btn-danger-outline:hover { background: #ffebe6; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn:disabled, .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Cards ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; }
+    .card + .card { margin-top: 16px; }
+    .card-header { padding: 14px 20px; border-bottom: 1px solid #dfe1e6; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Filter bar ── */
+    .filter-bar { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; padding: 14px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .filter-label { font-size: 12px; font-weight: 600; color: #5e6c84; white-space: nowrap; }
+    .filter-select {
+      font-size: 13px; color: #172b4d;
+      padding: 6px 28px 6px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235e6c84' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+    }
+    .filter-select:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .filter-divider { width: 1px; height: 24px; background: #dfe1e6; }
+    .filter-spacer { flex: 1; }
+
+    /* ── Form fields ── */
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .field-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+    .field-label.required::after { content: ' *'; color: #bf2600; }
+    .field-label.conditional::after { content: ' (conditional)'; color: #974f0c; font-style: italic; text-transform: none; font-weight: 400; letter-spacing: 0; }
+    .field-ro {
+      font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #e0e2e7;
+      background: #f4f5f7; font-family: inherit; width: 100%;
+    }
+    .field-ro.mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+    .field-textarea {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 8px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; resize: vertical;
+      min-height: 80px; line-height: 1.5;
+    }
+    .field-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-textarea[readonly] { background: #f4f5f7; border-color: #e0e2e7; color: #42526e; }
+    .field-hint { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .badge-pass      { background: #e3fcef; color: #006644; }
+    .badge-warning   { background: #fff0b3; color: #974f0c; }
+    .badge-blocked   { background: #ffebe6; color: #bf2600; }
+    .badge-manual    { background: #deebff; color: #0052cc; }
+    .badge-import    { background: #e6fcff; color: #006371; }
+    .badge-import-pub{ background: #f3f0ff; color: #403294; }
+    .badge-mt        { background: #fffae6; color: #974f0c; }
+    .badge-rollback  { background: #f4f5f7; color: #42526e; border: 1px solid #c1c7d0; }
+    .badge-active    { background: #e3fcef; color: #006644; }
+    .badge-draft     { background: #fff0b3; color: #974f0c; }
+
+    /* ── Info banners ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border-radius: 6px;
+      font-size: 13px; margin-bottom: 16px;
+    }
+    .info-banner.info    { background: #deebff; border: 1px solid #4c9aff; color: #0052cc; }
+    .info-banner.warning { background: #fffae6; border: 1px solid #f5a623; color: #974f0c; }
+    .info-banner.danger  { background: #ffebe6; border: 1px solid #de350b; color: #bf2600; }
+    .info-banner.success { background: #e3fcef; border: 1px solid #00875a; color: #006644; }
+    .info-banner-icon { flex-shrink: 0; font-size: 15px; }
+    .info-banner-text { font-size: 13px; line-height: 1.5; }
+
+    /* ── Two-column grid ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Pending changes list ── */
+    .pending-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; }
+    .pending-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px; border-radius: 4px; background: #f4f5f7;
+      font-size: 12px;
+    }
+    .pending-item-key { font-family: 'SF Mono', 'Fira Code', monospace; color: #0052cc; flex: 1; font-weight: 500; }
+    .pending-item-action { font-size: 11px; font-weight: 600; }
+    .pending-item-action.new    { color: #006644; }
+    .pending-item-action.edit   { color: #0052cc; }
+    .pending-item-action.delete { color: #bf2600; }
+    .pending-empty { font-size: 13px; color: #5e6c84; text-align: center; padding: 20px 0; }
+
+    /* ── Coverage summary panel ── */
+    .coverage-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .coverage-stat { text-align: center; padding: 12px 10px; border-radius: 6px; border: 1px solid #dfe1e6; background: #fafbfc; }
+    .coverage-stat.complete { border-color: #00875a; background: #e3fcef; }
+    .coverage-stat.partial  { border-color: #f5a623; background: #fffae6; }
+    .coverage-stat.missing  { border-color: #de350b; background: #ffebe6; }
+    .coverage-num { font-size: 22px; font-weight: 700; color: #172b4d; line-height: 1; }
+    .coverage-stat.complete .coverage-num { color: #006644; }
+    .coverage-stat.partial .coverage-num  { color: #974f0c; }
+    .coverage-stat.missing .coverage-num  { color: #bf2600; }
+    .coverage-lbl { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Publish section ── */
+    .publish-section {
+      border: 2px solid #0052cc; border-radius: 6px; overflow: hidden;
+    }
+    .publish-section-header {
+      padding: 12px 16px; background: #f0f4ff; border-bottom: 1px solid #c7dbff;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .publish-section-title { font-size: 13px; font-weight: 700; color: #0052cc; display: flex; align-items: center; gap: 8px; }
+    .publish-section-body { padding: 20px; }
+
+    /* ── Version history table ── */
+    .vh-table-wrap { overflow-x: auto; }
+    .vh-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .vh-table th {
+      text-align: left; font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.4px;
+      padding: 10px 14px; border-bottom: 2px solid #dfe1e6;
+      background: #fafbfc; white-space: nowrap;
+    }
+    .vh-table td { padding: 12px 14px; border-bottom: 1px solid #f4f5f7; vertical-align: middle; }
+    .vh-table tr:last-child td { border-bottom: none; }
+    .vh-table tr:hover td { background: #f8f9ff; }
+    .vh-table tr.active-row td { background: #f0f4ff; }
+    .vh-version-id { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; font-weight: 600; color: #0052cc; }
+    .vh-summary { max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #42526e; }
+    .vh-meta { font-size: 11px; color: #5e6c84; white-space: nowrap; }
+    .vh-actions { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+
+    /* ── Version detail panel ── */
+    .version-detail-panel {
+      border: 1px solid #dfe1e6; border-radius: 6px; overflow: hidden;
+      margin-top: 0;
+    }
+    .version-detail-header {
+      padding: 12px 16px; background: #f4f5f7; border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .version-detail-title { font-size: 13px; font-weight: 600; color: #172b4d; display: flex; align-items: center; gap: 8px; }
+    .version-detail-body { padding: 20px; }
+
+    /* ── Rollback confirm modal overlay ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(9,30,66,0.4);
+      display: flex; align-items: center; justify-content: center; z-index: 100;
+    }
+    .modal {
+      background: #fff; border-radius: 8px; box-shadow: 0 8px 40px rgba(9,30,66,0.2);
+      width: 480px; max-width: calc(100vw - 48px); overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 20px; border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; color: #172b4d; }
+    .modal-close { background: none; border: none; font-size: 18px; color: #5e6c84; cursor: pointer; padding: 0 4px; }
+    .modal-body { padding: 20px; }
+    .modal-footer {
+      padding: 14px 20px; border-top: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+      background: #fafbfc;
+    }
+
+    /* ── Section divider ── */
+    .section-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 16px; }
+    .section-divider-line { flex: 1; height: 1px; background: #dfe1e6; }
+    .section-divider-label { font-size: 12px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
+    /* ── Action bar ── */
+    .action-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid #dfe1e6; background: #fafbff;
+      border-radius: 0 0 6px 6px;
+    }
+    .action-bar-left { font-size: 12px; color: #5e6c84; }
+    .action-bar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Validation status ── */
+    .validation-block {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      border-radius: 6px; font-size: 13px;
+    }
+    .validation-block.pass    { background: #e3fcef; border: 1px solid #00875a; color: #006644; }
+    .validation-block.warning { background: #fffae6; border: 1px solid #f5a623; color: #974f0c; }
+    .validation-block.blocked { background: #ffebe6; border: 1px solid #de350b; color: #bf2600; }
+    .validation-block-icon { font-size: 16px; flex-shrink: 0; }
+    .validation-block-text { font-size: 13px; font-weight: 500; }
+    .validation-block-detail { font-size: 12px; margin-top: 2px; opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div class="topbar-logo">AdminPortal</div>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Users</a>
+    <a href="#" class="active">Localization</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-lang">🌐 EN (Admin)</div>
+</div>
+
+<!-- ── Page wrap ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Localization</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Turkish (tr)</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Version History &amp; Rollback</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Language Version History &amp; Rollback</div>
+      <div class="page-subtitle">Manage published versions, publish pending draft changes, or roll back to a prior version.</div>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-default">← Back to Language Detail</button>
+    </div>
+  </div>
+
+  <!-- ── Filter bar ── -->
+  <div class="filter-bar">
+    <span class="filter-label">Language</span>
+    <select class="filter-select">
+      <option>Vietnamese (vi)</option>
+      <option selected>Turkish (tr)</option>
+      <option>French (fr)</option>
+      <option>Spanish (es)</option>
+      <option>All languages</option>
+    </select>
+
+    <div class="filter-divider"></div>
+
+    <span class="filter-label">Tenant / Surface</span>
+    <select class="filter-select">
+      <option selected>Patient App</option>
+      <option>Provider Dashboard</option>
+      <option>Admin Platform</option>
+      <option>Shared / Notification</option>
+      <option>All surfaces</option>
+    </select>
+
+    <div class="filter-divider"></div>
+
+    <span class="filter-label">Group / Namespace</span>
+    <select class="filter-select">
+      <option value="">All groups</option>
+      <option selected>appointments</option>
+      <option>auth</option>
+      <option>common</option>
+      <option>notifications</option>
+    </select>
+
+    <div class="filter-spacer"></div>
+
+    <button class="btn btn-default btn-sm">Apply Filters</button>
+  </div>
+
+  <!-- ── SECTION: Publish Draft Changes ── -->
+  <div class="publish-section" style="margin-bottom: 16px;">
+    <div class="publish-section-header">
+      <div class="publish-section-title">
+        ✏️ Publish Draft Changes
+        <span class="badge badge-draft">12 keys pending</span>
+      </div>
+      <span class="badge badge-warning">Validation: Warning</span>
+    </div>
+    <div class="publish-section-body">
+
+      <!-- Scope read-only fields -->
+      <div class="grid-3" style="margin-bottom: 18px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label">Language</div>
+          <div class="field-ro">Turkish (tr)</div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label">Tenant / Surface</div>
+          <div class="field-ro">Patient App</div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label">Group / Namespace</div>
+          <div class="field-ro">appointments</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+        <!-- Pending changes -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label">Pending Changes</div>
+          <div class="pending-list">
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.confirm_title</span>
+              <span class="pending-item-action edit">Edited</span>
+            </div>
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.cancel_reason_label</span>
+              <span class="pending-item-action new">New</span>
+            </div>
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.reschedule_cta</span>
+              <span class="pending-item-action edit">Edited</span>
+            </div>
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.no_slots_message</span>
+              <span class="pending-item-action new">New</span>
+            </div>
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.provider_name_label</span>
+              <span class="pending-item-action edit">Edited</span>
+            </div>
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.date_picker_label</span>
+              <span class="pending-item-action edit">Edited</span>
+            </div>
+            <div class="pending-item">
+              <span class="pending-item-key">appointments.time_zone_hint</span>
+              <span class="pending-item-action new">New</span>
+            </div>
+            <div class="pending-item" style="opacity:0.6; font-size:11px; justify-content:center; background:none;">
+              + 5 more keys
+            </div>
+          </div>
+        </div>
+
+        <!-- Coverage summary -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label">Coverage Summary</div>
+          <div class="coverage-panel" style="margin-bottom: 10px;">
+            <div class="coverage-stat complete">
+              <div class="coverage-num">148</div>
+              <div class="coverage-lbl">Translated</div>
+            </div>
+            <div class="coverage-stat partial">
+              <div class="coverage-num">12</div>
+              <div class="coverage-lbl">Draft / Review</div>
+            </div>
+            <div class="coverage-stat missing">
+              <div class="coverage-num">4</div>
+              <div class="coverage-lbl">Missing</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#5e6c84;">Total keys in scope: 164 &nbsp;·&nbsp; Coverage: 90.2%</div>
+        </div>
+      </div>
+
+      <!-- Validation status -->
+      <div class="form-group">
+        <div class="field-label required">Validation Status</div>
+        <div class="validation-block warning">
+          <div class="validation-block-icon">⚠️</div>
+          <div>
+            <div class="validation-block-text">Warning — publish allowed with acknowledgement</div>
+            <div class="validation-block-detail">2 keys have untranslated placeholders; 4 keys missing values (fallback will apply at runtime)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change summary -->
+      <div class="form-group">
+        <div class="field-label required">Change Summary</div>
+        <textarea class="field-textarea" rows="3" placeholder="Describe the reason for this publish (e.g. 'Q2 appointment flow copy update approved by clinical ops')…"></textarea>
+        <div class="field-hint">Required for audit. This message will be recorded in the version history.</div>
+      </div>
+
+      <!-- Action bar inside publish section -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding-top:4px;">
+        <div style="font-size:12px; color:#5e6c84;">Publishing creates a new immutable version. Runtime clients will receive updated bundles within 5 minutes.</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-default">Discard Draft</button>
+          <button class="btn btn-success">Publish Version ▶</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION: Version History ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Published Version History</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:12px; color:#5e6c84;">5 versions · Turkish (tr) · Patient App · appointments</span>
+        <button class="btn btn-default btn-sm">Compare Two Versions</button>
+      </div>
+    </div>
+
+    <div class="vh-table-wrap">
+      <table class="vh-table">
+        <thead>
+          <tr>
+            <th>Version ID</th>
+            <th>Source Type</th>
+            <th>Change Summary</th>
+            <th>Language · Surface · Group</th>
+            <th>Validation</th>
+            <th>Published</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Active version -->
+          <tr class="active-row">
+            <td>
+              <div class="vh-version-id">v-tr-PA-appt-0015</div>
+              <span class="badge badge-active" style="margin-top:4px;">Active</span>
+            </td>
+            <td><span class="badge badge-manual">Manual Patch</span></td>
+            <td>
+              <div class="vh-summary" title="Q1 appointment flow copy approved by clinical ops team">Q1 appointment flow copy approved by clinical ops team</div>
+            </td>
+            <td>
+              <div class="vh-meta">tr · Patient App · appointments</div>
+            </td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td>
+              <div class="vh-meta">2026-05-28 14:32</div>
+              <div class="vh-meta">by admin@clinic.com</div>
+            </td>
+            <td>
+              <div class="vh-actions">
+                <button class="btn btn-default btn-sm">Compare</button>
+                <button class="btn btn-danger-outline btn-sm" disabled title="Cannot roll back to active version">Rollback</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Prior version 2 -->
+          <tr>
+            <td><div class="vh-version-id">v-tr-PA-appt-0014</div></td>
+            <td><span class="badge badge-import">JSON Import</span></td>
+            <td>
+              <div class="vh-summary" title="Bulk import from translator — appointments namespace sprint 4">Bulk import from translator — appointments namespace sprint 4</div>
+            </td>
+            <td><div class="vh-meta">tr · Patient App · appointments</div></td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td>
+              <div class="vh-meta">2026-05-14 10:05</div>
+              <div class="vh-meta">by admin@clinic.com</div>
+            </td>
+            <td>
+              <div class="vh-actions">
+                <button class="btn btn-default btn-sm">Compare</button>
+                <button class="btn btn-danger-outline btn-sm">Rollback</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Prior version 3 -->
+          <tr>
+            <td><div class="vh-version-id">v-tr-PA-appt-0013</div></td>
+            <td><span class="badge badge-import-pub">Import + Publish</span></td>
+            <td>
+              <div class="vh-summary" title="Initial full import with publish — appointments v1">Initial full import with publish — appointments v1</div>
+            </td>
+            <td><div class="vh-meta">tr · Patient App · appointments</div></td>
+            <td><span class="badge badge-warning">Warning</span></td>
+            <td>
+              <div class="vh-meta">2026-04-30 09:17</div>
+              <div class="vh-meta">by superadmin@clinic.com</div>
+            </td>
+            <td>
+              <div class="vh-actions">
+                <button class="btn btn-default btn-sm">Compare</button>
+                <button class="btn btn-danger-outline btn-sm">Rollback</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Prior version 4 -->
+          <tr>
+            <td><div class="vh-version-id">v-tr-PA-appt-0012</div></td>
+            <td><span class="badge badge-mt">Machine Translation</span></td>
+            <td>
+              <div class="vh-summary" title="Prefill missing keys via Google Cloud Translation — appointments scope">Prefill missing keys via Google Cloud Translation — appointments scope</div>
+            </td>
+            <td><div class="vh-meta">tr · Patient App · appointments</div></td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td>
+              <div class="vh-meta">2026-04-18 16:44</div>
+              <div class="vh-meta">by admin@clinic.com</div>
+            </td>
+            <td>
+              <div class="vh-actions">
+                <button class="btn btn-default btn-sm">Compare</button>
+                <button class="btn btn-danger-outline btn-sm">Rollback</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Prior version 5 — rollback -->
+          <tr>
+            <td><div class="vh-version-id">v-tr-PA-appt-0011</div></td>
+            <td><span class="badge badge-rollback">Rollback</span></td>
+            <td>
+              <div class="vh-summary" title="Emergency rollback — broken placeholder in confirm_title">Emergency rollback — broken placeholder in confirm_title</div>
+            </td>
+            <td><div class="vh-meta">tr · Patient App · appointments</div></td>
+            <td><span class="badge badge-pass">Pass</span></td>
+            <td>
+              <div class="vh-meta">2026-04-10 08:55</div>
+              <div class="vh-meta">by superadmin@clinic.com</div>
+            </td>
+            <td>
+              <div class="vh-actions">
+                <button class="btn btn-default btn-sm">Compare</button>
+                <button class="btn btn-danger-outline btn-sm">Rollback</button>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+
+<!-- ── ROLLBACK CONFIRM MODAL (shown when Rollback button clicked) ── -->
+<div class="modal-overlay" id="rollbackModal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Confirm Rollback</div>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="info-banner warning" style="margin-bottom:14px;">
+        <div class="info-banner-icon">⚠️</div>
+        <div class="info-banner-text">Rollback restores the selected version as active by creating a <strong>new version entry</strong>. Prior history is preserved and unchanged.</div>
+      </div>
+
+      <!-- Version detail inside modal -->
+      <div class="form-group">
+        <div class="field-label required">Version ID</div>
+        <div class="field-ro mono">v-tr-PA-appt-0014</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <div class="field-label required">Language</div>
+          <div class="field-ro">Turkish (tr)</div>
+        </div>
+        <div class="form-group">
+          <div class="field-label required">Tenant / Surface</div>
+          <div class="field-ro">Patient App</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="field-label">Group / Namespace</div>
+        <div class="field-ro">appointments</div>
+      </div>
+
+      <div class="form-group">
+        <div class="field-label required">Source Type</div>
+        <div style="padding: 4px 0;"><span class="badge badge-import">JSON Import</span></div>
+      </div>
+
+      <div class="form-group">
+        <div class="field-label">Original Change Summary</div>
+        <textarea class="field-textarea" readonly rows="2">Bulk import from translator — appointments namespace sprint 4</textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="field-label required">Rollback Reason</div>
+        <textarea class="field-textarea" rows="3" placeholder="Explain why you are rolling back to this version (e.g. 'Reverting broken placeholder introduced in v-tr-PA-appt-0015')…"></textarea>
+        <div class="field-hint">Required for audit. This will be stored in the new rollback version entry.</div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger">Confirm Rollback</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── COMPARE VERSIONS MODAL ── -->
+<div class="modal-overlay" id="compareModal" style="display:none;">
+  <div class="modal" style="width:760px; max-width:calc(100vw - 48px);">
+    <div class="modal-header">
+      <div class="modal-title">Compare Versions</div>
+      <button class="modal-close" id="compareModalClose">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+
+      <!-- Version selectors -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; border-bottom:1px solid #dfe1e6;">
+        <div style="padding:16px 20px; border-right:1px solid #dfe1e6;">
+          <div class="field-label" style="margin-bottom:6px;">Version A (Base)</div>
+          <select class="filter-select" style="width:100%;" id="versionA">
+            <option value="0014" selected>v-tr-PA-appt-0014 — JSON Import · 2026-05-14</option>
+            <option value="0015">v-tr-PA-appt-0015 — Manual Patch · 2026-05-28 (Active)</option>
+            <option value="0013">v-tr-PA-appt-0013 — Import+Publish · 2026-04-30</option>
+            <option value="0012">v-tr-PA-appt-0012 — Machine Translation · 2026-04-18</option>
+            <option value="0011">v-tr-PA-appt-0011 — Rollback · 2026-04-10</option>
+          </select>
+        </div>
+        <div style="padding:16px 20px;">
+          <div class="field-label" style="margin-bottom:6px;">Version B (Compare to)</div>
+          <select class="filter-select" style="width:100%;" id="versionB">
+            <option value="0015" selected>v-tr-PA-appt-0015 — Manual Patch · 2026-05-28 (Active)</option>
+            <option value="0014">v-tr-PA-appt-0014 — JSON Import · 2026-05-14</option>
+            <option value="0013">v-tr-PA-appt-0013 — Import+Publish · 2026-04-30</option>
+            <option value="0012">v-tr-PA-appt-0012 — Machine Translation · 2026-04-18</option>
+            <option value="0011">v-tr-PA-appt-0011 — Rollback · 2026-04-10</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Scope info -->
+      <div style="padding:10px 20px; background:#fafbfc; border-bottom:1px solid #dfe1e6; display:flex; align-items:center; gap:16px; font-size:12px; color:#5e6c84;">
+        <span>🌐 Turkish (tr)</span>
+        <span>·</span>
+        <span>Patient App</span>
+        <span>·</span>
+        <span>appointments</span>
+        <span style="flex:1;"></span>
+        <span><strong style="color:#172b4d;">8</strong> keys changed</span>
+        <span><strong style="color:#006644;">2</strong> added</span>
+        <span><strong style="color:#bf2600;">1</strong> removed</span>
+      </div>
+
+      <!-- Diff table -->
+      <div style="overflow-y:auto; max-height:380px;">
+        <table style="width:100%; border-collapse:collapse; font-size:12px;">
+          <thead>
+            <tr style="position:sticky; top:0; background:#f4f5f7; z-index:1;">
+              <th style="padding:8px 14px; text-align:left; font-size:11px; font-weight:600; color:#5e6c84; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid #dfe1e6; width:220px;">Key</th>
+              <th style="padding:8px 14px; text-align:left; font-size:11px; font-weight:600; color:#5e6c84; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid #dfe1e6;">Version A value</th>
+              <th style="padding:8px 14px; text-align:left; font-size:11px; font-weight:600; color:#5e6c84; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid #dfe1e6;">Version B value</th>
+              <th style="padding:8px 14px; text-align:center; font-size:11px; font-weight:600; color:#5e6c84; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1px solid #dfe1e6; width:80px;">Change</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Edited row -->
+            <tr style="background:#fff;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.confirm_title</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#42526e; vertical-align:top; background:#fffae6;">Confirm your appointment</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">Confirm appointment</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-manual" style="font-size:10px;">Edited</span></td>
+            </tr>
+
+            <!-- Edited row -->
+            <tr style="background:#fafbfc;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.reschedule_cta</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#42526e; vertical-align:top; background:#fffae6;">Reschedule appointment</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">Move appointment</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-manual" style="font-size:10px;">Edited</span></td>
+            </tr>
+
+            <!-- Added row -->
+            <tr style="background:#fff;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.cancel_reason_label</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#c1c7d0; font-style:italic; vertical-align:top; background:#f4f5f7;">— (not present)</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">Cancellation reason</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-pass" style="font-size:10px;">Added</span></td>
+            </tr>
+
+            <!-- Added row -->
+            <tr style="background:#fafbfc;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.time_zone_hint</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#c1c7d0; font-style:italic; vertical-align:top; background:#f4f5f7;">— (not present)</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">Time zone: {timezone}</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-pass" style="font-size:10px;">Added</span></td>
+            </tr>
+
+            <!-- Removed row -->
+            <tr style="background:#fff;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.legacy_note</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#42526e; vertical-align:top; background:#fffae6;">Legacy note</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#c1c7d0; font-style:italic; vertical-align:top; background:#ffebe6;">— (removed)</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-blocked" style="font-size:10px;">Removed</span></td>
+            </tr>
+
+            <!-- Edited row -->
+            <tr style="background:#fafbfc;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.provider_name_label</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#42526e; vertical-align:top; background:#fffae6;">Attending physician</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">Treating physician</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-manual" style="font-size:10px;">Edited</span></td>
+            </tr>
+
+            <!-- Edited row -->
+            <tr style="background:#fff;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.date_picker_label</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#42526e; vertical-align:top; background:#fffae6;">Select date</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">Select appointment date</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-manual" style="font-size:10px;">Edited</span></td>
+            </tr>
+
+            <!-- Edited row -->
+            <tr style="background:#fafbfc;">
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; font-family:'SF Mono','Fira Code',monospace; color:#0052cc; font-weight:500; vertical-align:top;">appointments.no_slots_message</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#c1c7d0; font-style:italic; vertical-align:top; background:#f4f5f7;">— (not present)</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; color:#172b4d; vertical-align:top; background:#e3fcef;">No available time slots for this date</td>
+              <td style="padding:10px 14px; border-bottom:1px solid #f4f5f7; text-align:center; vertical-align:top;"><span class="badge badge-pass" style="font-size:10px;">Added</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" id="compareModalCancel">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  /* ── Rollback modal ── */
+  function openRollbackModal() {
+    document.getElementById('rollbackModal').style.display = 'flex';
+  }
+  function closeRollbackModal() {
+    document.getElementById('rollbackModal').style.display = 'none';
+  }
+
+  document.querySelector('#rollbackModal .modal-close').addEventListener('click', closeRollbackModal);
+  document.getElementById('rollbackModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRollbackModal();
+  });
+  document.querySelector('#rollbackModal .modal-footer .btn-default').addEventListener('click', closeRollbackModal);
+
+  document.querySelectorAll('.btn-danger-outline:not([disabled])').forEach(function(btn) {
+    btn.addEventListener('click', openRollbackModal);
+  });
+
+  /* ── Compare modal ── */
+  function openCompareModal() {
+    document.getElementById('compareModal').style.display = 'flex';
+  }
+  function closeCompareModal() {
+    document.getElementById('compareModal').style.display = 'none';
+  }
+
+  document.getElementById('compareModalClose').addEventListener('click', closeCompareModal);
+  document.getElementById('compareModalCancel').addEventListener('click', closeCompareModal);
+  document.getElementById('compareModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCompareModal();
+  });
+
+  document.querySelectorAll('.btn-default.btn-sm').forEach(function(btn) {
+    if (btn.textContent.trim() === 'Compare') {
+      btn.addEventListener('click', openCompareModal);
+    }
+  });
+  document.querySelector('.card-header .btn-default').addEventListener('click', openCompareModal);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe — Condition Page Template — Hairline.app §5.3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS ───────────────────────────────────────── */
+    :root {
+      --bg:            #FAF8F5;
+      --surface:       #FFFFFF;
+      --surface-sub:   #F5F1EC;
+      --accent:        #B85C38;
+      --accent-lt:     #F5EDE8;
+      --accent-hover:  #9C4E2E;
+      --ink:           #1A1611;
+      --ink-2:         #5C544A;
+      --ink-3:         #9A9087;
+      --border:        #E8E2D9;
+      --cluster-bg:    #EEE9E2;
+      --tag-bg:        #EDE8E2;
+      --green:         #2D6A4F;
+      --green-bg:      #EAF4EE;
+
+      --sans:   'Inter', system-ui, sans-serif;
+      --serif:  Georgia, 'Times New Roman', serif;
+
+      --nav-h: 64px;
+      --sidebar-w: 244px;
+      --r-sm: 6px; --r-md: 12px; --r-lg: 16px;
+      --r-xl: 20px; --r-2xl: 24px; --r-full: 9999px;
+      --sh-sm: 0 1px 3px rgba(26,22,17,.06),0 1px 2px rgba(26,22,17,.04);
+      --sh-md: 0 4px 16px rgba(26,22,17,.08),0 2px 4px rgba(26,22,17,.04);
+    }
+
+    /* ── RESET ───────────────────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);font-size:16px;color:var(--ink);background:var(--bg);line-height:1.6}
+    h1,h2,h3,h4,h5{font-family:var(--sans);font-weight:600;line-height:1.2;color:var(--ink)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* ── WIREFRAME BANNER ────────────────────────────────────── */
+    .wf-banner{background:#6366F1;color:#fff;text-align:center;padding:10px 24px;
+      font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    .wf-label{display:inline-flex;align-items:center;gap:6px;background:#6366F1;color:#fff;
+      font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      padding:2px 8px;border-radius:var(--r-sm);margin-bottom:10px}
+    .wf-note{font-size:11px;color:#6366F1;border-left:2px solid #6366F1;
+      padding-left:10px;margin-top:8px;font-style:italic;line-height:1.5}
+
+    /* ── BUTTONS ─────────────────────────────────────────────── */
+    .btn-primary{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;
+      font-family:var(--sans);font-size:14px;font-weight:600;padding:10px 22px;
+      border-radius:var(--r-full);border:none;cursor:pointer;text-decoration:none;transition:background .15s}
+    .btn-primary:hover{background:var(--accent-hover);text-decoration:none;color:#fff}
+    .btn-lg{font-size:15px;padding:14px 30px}
+    .btn-ghost{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--ink);
+      font-family:var(--sans);font-size:13px;font-weight:500;padding:8px 16px;
+      border-radius:var(--r-sm);border:1px solid var(--border);cursor:pointer;transition:all .15s}
+    .btn-ghost:hover{background:var(--tag-bg);text-decoration:none;color:var(--ink)}
+    .btn-white{display:block;background:#fff;color:var(--accent);font-size:13px;font-weight:600;
+      padding:10px 16px;border-radius:var(--r-full);text-align:center;text-decoration:none}
+    .btn-white:hover{opacity:.9;text-decoration:none;color:var(--accent)}
+    .btn-wh-solid{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--ink);
+      border:none;padding:12px 22px;border-radius:var(--r-full);font-size:14px;font-weight:600;
+      cursor:pointer;text-decoration:none;transition:opacity .15s}
+    .btn-wh-solid:hover{opacity:.9;text-decoration:none;color:var(--ink)}
+    .btn-outline-wh{display:inline-flex;align-items:center;gap:6px;background:transparent;color:#fff;
+      border:1.5px solid rgba(255,255,255,.4);padding:12px 22px;border-radius:var(--r-full);
+      font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s}
+    .btn-outline-wh:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.8);text-decoration:none;color:#fff}
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    .nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.95);
+      backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:var(--nav-h)}
+    .nav-inner{max-width:1280px;margin:0 auto;padding:0 32px;height:100%;
+      display:flex;align-items:center;justify-content:space-between;gap:32px}
+    .nav-logo{font-weight:700;font-size:20px;color:var(--ink);letter-spacing:-.02em;flex-shrink:0;text-decoration:none}
+    .nav-logo span{color:var(--accent)}
+    .nav-links{display:flex;align-items:center;gap:2px;list-style:none;flex:1;justify-content:center}
+    .nav-links li a{font-size:13px;font-weight:500;color:var(--ink);padding:8px 12px;
+      border-radius:var(--r-sm);display:flex;align-items:center;gap:4px;transition:background .15s}
+    .nav-links li a:hover{background:var(--tag-bg);text-decoration:none}
+    .nav-links li a.active{color:var(--accent)}
+    .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+
+    /* ── BREADCRUMB ──────────────────────────────────────────── */
+    .breadcrumb{background:var(--bg);border-bottom:1px solid var(--border);padding:10px 0}
+    .bc-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;
+      gap:8px;font-size:13px;color:var(--ink-3)}
+    .bc-inner a{color:var(--ink-3)}
+    .bc-inner a:hover{color:var(--accent);text-decoration:none}
+    .bc-inner .sep{opacity:.4}
+    .bc-inner .cur{color:var(--ink-2);font-weight:500}
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero{background:var(--surface);padding:64px 0 48px;border-bottom:1px solid var(--border)}
+    .hero-inner{max-width:1280px;margin:0 auto;padding:0 32px;
+      display:grid;grid-template-columns:1fr 340px;gap:64px;align-items:center}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-lt);
+      color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:3px 12px;border-radius:var(--r-full);margin-bottom:18px}
+    .hero-h1{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1.08;
+      margin-bottom:20px;color:var(--ink)}
+    .hero-stat{display:flex;align-items:flex-start;gap:12px;background:var(--surface-sub);
+      border:1px solid var(--border);border-radius:var(--r-md);padding:16px 20px;
+      margin-bottom:22px;max-width:460px}
+    .hero-stat-n{font-size:26px;font-weight:700;color:var(--accent);line-height:1.2}
+    .hero-stat-l{font-size:13px;color:var(--ink-2);margin-top:2px}
+    .hero-desc{font-family:var(--serif);font-size:19px;line-height:1.65;
+      color:var(--ink-2);max-width:520px;margin-bottom:28px}
+    .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .hero-anchor{font-size:14px;font-weight:500;color:var(--ink-2)}
+    .hero-meta{display:flex;align-items:center;gap:20px;margin-top:28px;padding-top:22px;
+      border-top:1px solid var(--border);font-size:13px;color:var(--ink-3);flex-wrap:wrap}
+    .reviewed-badge{display:flex;align-items:center;gap:6px;background:var(--green-bg);
+      color:var(--green);font-size:12px;font-weight:500;padding:3px 10px;border-radius:var(--r-full)}
+    .hero-img-ph{width:340px;height:300px;background:var(--surface-sub);
+      border:2px dashed var(--border);border-radius:var(--r-xl);display:flex;
+      flex-direction:column;align-items:center;justify-content:center;gap:12px;
+      color:var(--ink-3);font-size:12px;text-align:center;padding:24px}
+    .hero-img-ph .ph-icon{font-size:44px;opacity:.25}
+
+    /* ── PAGE BODY GRID ──────────────────────────────────────── */
+    .page-body{max-width:1280px;margin:0 auto;padding:48px 32px;
+      display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:48px;align-items:start}
+
+    /* ── SIDEBAR ─────────────────────────────────────────────── */
+    .sidebar{position:sticky;top:calc(var(--nav-h) + 24px);
+      max-height:calc(100vh - var(--nav-h) - 48px);overflow-y:auto;
+      display:flex;flex-direction:column;gap:20px}
+    .sidebar::-webkit-scrollbar{width:3px}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+    .toc-card,.cluster-card,.sb-cta{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);padding:20px;box-shadow:var(--sh-sm)}
+    .cluster-card{background:var(--cluster-bg);border-color:#DDD8D0}
+    .sb-cta{background:var(--accent);border:none;text-align:center}
+    .toc-title,.cluster-title{font-size:11px;font-weight:700;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;
+      padding-bottom:10px;border-bottom:1px solid var(--border)}
+    .cluster-title{border-bottom-color:#DDD8D0}
+    .toc-list,.cluster-list{list-style:none;display:flex;flex-direction:column;gap:1px}
+    .toc-list li a,.cluster-list li a{display:block;font-size:13px;color:var(--ink-2);
+      padding:7px 10px;border-radius:var(--r-sm);transition:all .15s;line-height:1.4}
+    .toc-list li a:hover,.cluster-list li a:hover{background:var(--accent-lt);
+      color:var(--accent);text-decoration:none}
+    .toc-list li a.active{background:var(--accent-lt);color:var(--accent);font-weight:500}
+    .cluster-list li a.cur{color:var(--accent);font-weight:500;background:rgba(184,92,56,.08)}
+    .toc-num{font-size:11px;color:var(--ink-3);margin-right:6px}
+    .sb-cta h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+    .sb-cta p{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:14px;line-height:1.5}
+
+    /* ── ARTICLE CONTENT ─────────────────────────────────────── */
+    .article{min-width:0}
+
+    .author-block{display:flex;align-items:flex-start;gap:16px;background:var(--surface);
+      border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;
+      margin-bottom:28px;box-shadow:var(--sh-sm)}
+    .a-avatars{display:flex;gap:6px;flex-shrink:0}
+    .a-av{width:44px;height:44px;background:var(--surface-sub);border:2px solid var(--border);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:18px}
+    .a-av:nth-child(2){margin-left:-12px}
+    .a-info .row{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:6px}
+    .a-item{font-size:11px;color:var(--ink-3)}
+    .a-item strong{display:block;font-size:13px;color:var(--ink);font-weight:500}
+    .a-dates{font-size:11px;color:var(--ink-3);display:flex;gap:16px;flex-wrap:wrap}
+
+    .art-meta{display:flex;align-items:center;gap:14px;margin-bottom:28px;
+      padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .meta-tag{background:var(--accent-lt);color:var(--accent);font-size:11px;font-weight:700;
+      padding:2px 10px;border-radius:var(--r-full);letter-spacing:.06em;text-transform:uppercase}
+    .meta-read{font-size:13px;color:var(--ink-3)}
+    .meta-share{display:flex;align-items:center;gap:8px;margin-left:auto;
+      font-size:13px;color:var(--ink-3)}
+    .share-btn{width:30px;height:30px;border-radius:var(--r-full);background:var(--surface-sub);
+      border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+      font-size:11px;cursor:pointer;color:var(--ink-2)}
+
+    .intro-p{font-family:var(--serif);font-size:19px;line-height:1.72;color:var(--ink);
+      margin-bottom:48px;padding-bottom:40px;border-bottom:1px solid var(--border)}
+
+    /* Content sections */
+    .cs{margin-bottom:64px;scroll-margin-top:calc(var(--nav-h) + 24px)}
+    .s-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:10px}
+    .s-h2{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-bottom:20px;color:var(--ink)}
+    .s-lead{font-family:var(--serif);font-size:18px;line-height:1.65;
+      color:var(--ink-2);margin-bottom:8px}
+
+    /* ── SYMPTOMS CHECKLIST ──────────────────────────────────── */
+    .symptoms-box{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md)}
+    .sym-hd{padding:28px 28px 20px;border-bottom:1px solid var(--border)}
+    .sym-hd h3{font-size:19px;font-weight:600;margin-bottom:6px}
+    .sym-hd p{font-size:13px;color:var(--ink-2)}
+    .sym-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:20px 28px}
+    .sym-item{display:flex;align-items:center;gap:12px;padding:12px 14px;
+      border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;
+      transition:all .15s;background:var(--bg);user-select:none}
+    .sym-item:hover{border-color:var(--accent);background:var(--accent-lt)}
+    .sym-item.on{border-color:var(--accent);background:var(--accent-lt)}
+    .sym-cb{width:20px;height:20px;border:2px solid var(--border);border-radius:5px;
+      flex-shrink:0;display:flex;align-items:center;justify-content:center;
+      font-size:11px;color:#fff;transition:all .15s}
+    .sym-item.on .sym-cb{background:var(--accent);border-color:var(--accent)}
+    .sym-txt{font-size:13px;font-weight:500;color:var(--ink);line-height:1.4}
+    .sym-foot{padding:20px 28px;background:var(--surface-sub);
+      border-top:1px solid var(--border);display:flex;align-items:center;
+      justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .sym-email{display:flex;align-items:center;gap:10px;flex:1;min-width:260px}
+    .sym-email input{flex:1;padding:10px 16px;border:1.5px solid var(--border);
+      border-radius:var(--r-full);font-family:var(--sans);font-size:13px;
+      background:var(--surface);color:var(--ink);outline:none}
+    .sym-email input:focus{border-color:var(--accent)}
+    .sym-note{font-size:11px;color:var(--ink-3)}
+
+    /* ── CAUSES ──────────────────────────────────────────────── */
+    .causes-list{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+    .cause{display:flex;align-items:flex-start;gap:16px;padding:20px;
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
+      box-shadow:var(--sh-sm)}
+    .cause-n{width:28px;height:28px;background:var(--accent-lt);color:var(--accent);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+    .cause h4{font-size:15px;font-weight:600;margin-bottom:6px}
+    .cause p{font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:8px}
+    .cite{font-size:11px;color:var(--ink-3);background:var(--tag-bg);padding:2px 8px;
+      border-radius:var(--r-sm);display:inline-block;cursor:pointer}
+    .cite:hover{background:var(--accent-lt);color:var(--accent)}
+
+    /* ── DIAGNOSIS ───────────────────────────────────────────── */
+    .diag-steps{display:flex;flex-direction:column;gap:4px;margin-top:20px}
+    .diag-step{display:flex;gap:16px;padding:20px;background:var(--surface);
+      border:1px solid var(--border);border-radius:var(--r-md)}
+    .step-dot{width:28px;height:28px;background:var(--accent);border-radius:var(--r-full);
+      display:flex;align-items:center;justify-content:center;color:#fff;
+      font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+    .step-content h4{font-size:15px;font-weight:600;margin-bottom:6px}
+    .step-content p{font-size:13px;color:var(--ink-2);line-height:1.6}
+
+    /* ── TREATMENT TILES ─────────────────────────────────────── */
+    .tx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+    .tx-tile{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-xl);
+      padding:22px;text-decoration:none;transition:all .2s;display:flex;
+      flex-direction:column;gap:10px;box-shadow:var(--sh-sm)}
+    .tx-tile:hover{border-color:var(--accent);box-shadow:var(--sh-md);
+      transform:translateY(-2px);text-decoration:none}
+    .tx-icon{width:38px;height:38px;background:var(--accent-lt);border-radius:var(--r-md);
+      display:flex;align-items:center;justify-content:center;font-size:18px}
+    .tx-tag{background:var(--tag-bg);color:var(--ink-3);font-size:10px;font-weight:700;
+      padding:2px 8px;border-radius:var(--r-sm);text-transform:uppercase;
+      letter-spacing:.08em;width:fit-content}
+    .tx-name{font-size:14px;font-weight:600;color:var(--ink)}
+    .tx-desc{font-size:12px;color:var(--ink-2);line-height:1.5;flex:1}
+    .tx-cost{font-size:11px;color:var(--ink-3);padding-top:10px;
+      border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .tx-cost strong{color:var(--ink-2);font-weight:600}
+    .tx-all{margin-top:18px;text-align:center;font-size:13px;font-weight:600;color:var(--accent)}
+
+    /* ── PREVENTION ──────────────────────────────────────────── */
+    .prev-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+    .prev-card{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);padding:20px;box-shadow:var(--sh-sm)}
+    .prev-icon{font-size:26px;margin-bottom:10px}
+    .prev-card h4{font-size:14px;font-weight:600;margin-bottom:10px}
+    .prev-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+    .prev-list li{display:flex;align-items:flex-start;gap:8px;font-size:12px;
+      color:var(--ink-2);line-height:1.5}
+    .prev-list li::before{content:'→';color:var(--accent);font-weight:600;flex-shrink:0}
+
+    /* ── RELATED ARTICLES ────────────────────────────────────── */
+    .rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+    .art-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+      overflow:hidden;box-shadow:var(--sh-sm);transition:all .2s;text-decoration:none;display:block}
+    .art-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px);text-decoration:none}
+    .art-img{height:120px;background:var(--surface-sub);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;font-size:32px;opacity:.2}
+    .art-body{padding:14px}
+    .art-tag{background:var(--accent-lt);color:var(--accent);font-size:10px;font-weight:700;
+      padding:2px 8px;border-radius:var(--r-sm);display:inline-block;margin-bottom:8px;
+      text-transform:uppercase;letter-spacing:.06em}
+    .art-title{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;margin-bottom:8px}
+    .art-meta2{font-size:11px;color:var(--ink-3);display:flex;gap:10px}
+
+    /* ── CLINIC CALLOUT ──────────────────────────────────────── */
+    .clinic-co{background:linear-gradient(135deg,#1A1611 0%,#2C2419 100%);
+      border-radius:var(--r-2xl);padding:48px;display:grid;
+      grid-template-columns:1fr auto;gap:32px;align-items:center;margin-bottom:64px}
+    .clinic-co h3{font-size:28px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:10px}
+    .clinic-co p{font-size:14px;color:rgba(255,255,255,.7);max-width:420px;
+      line-height:1.6;margin-bottom:22px}
+    .co-stats{display:flex;gap:24px;margin-bottom:24px}
+    .co-stat-n{font-size:24px;font-weight:700;color:#fff}
+    .co-stat-l{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+    .co-btns{display:flex;gap:12px;flex-wrap:wrap}
+    .clinic-co-vis{width:180px;height:160px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);border-radius:var(--r-xl);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:10px;color:rgba(255,255,255,.35);font-size:11px;text-align:center;padding:16px}
+    .clinic-co-vis .co-icon{font-size:36px;opacity:.3}
+
+    /* ── FAQ ─────────────────────────────────────────────────── */
+    .faq-list{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+    .faq-item{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)}
+    .faq-q{display:flex;align-items:center;justify-content:space-between;
+      padding:18px 22px;cursor:pointer;user-select:none}
+    .faq-q h4{font-size:14px;font-weight:600;color:var(--ink);padding-right:16px;line-height:1.4}
+    .faq-chevron{width:24px;height:24px;background:var(--tag-bg);border-radius:var(--r-full);
+      display:flex;align-items:center;justify-content:center;font-size:11px;
+      color:var(--ink-2);transition:transform .25s;flex-shrink:0}
+    .faq-item.open .faq-chevron{transform:rotate(180deg);background:var(--accent-lt);color:var(--accent)}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+    .faq-item.open .faq-a{max-height:300px}
+    .faq-a-in{padding:0 22px 18px;font-size:13px;color:var(--ink-2);line-height:1.65;
+      border-top:1px solid var(--border);padding-top:14px}
+
+    /* ── REVIEWER BLOCK ──────────────────────────────────────── */
+    .reviewer{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+      padding:24px;margin-bottom:32px;box-shadow:var(--sh-sm)}
+    .rev-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+    .rev-profile{display:flex;align-items:flex-start;gap:16px}
+    .rev-av{width:52px;height:52px;background:var(--surface-sub);border:2px solid var(--border);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;
+      font-size:22px;flex-shrink:0}
+    .rev-info h4{font-size:15px;font-weight:600;margin-bottom:4px}
+    .rev-creds{font-size:13px;color:var(--ink-2);margin-bottom:8px;line-height:1.5}
+    .rev-date{font-size:11px;color:var(--ink-3);background:var(--tag-bg);
+      display:inline-block;padding:2px 8px;border-radius:var(--r-sm)}
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    .footer{background:var(--ink);color:rgba(255,255,255,.65);
+      padding:64px 0 32px;margin-top:120px}
+    .foot-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+      gap:32px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .foot-logo{font-size:20px;font-weight:700;color:#fff;margin-bottom:14px}
+    .foot-logo span{color:var(--accent)}
+    .foot-brand p{font-size:13px;line-height:1.6;max-width:260px}
+    .foot-col h5{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:#fff;margin-bottom:14px}
+    .foot-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .foot-col ul li a{font-size:13px;color:rgba(255,255,255,.55);transition:color .15s}
+    .foot-col ul li a:hover{color:#fff;text-decoration:none}
+    .foot-bottom{display:flex;align-items:center;justify-content:space-between;
+      padding-top:24px;font-size:12px;flex-wrap:wrap;gap:16px}
+    .foot-bottom-links{display:flex;gap:20px}
+    .foot-bottom-links a{color:rgba(255,255,255,.4);font-size:12px}
+    .foot-bottom-links a:hover{color:rgba(255,255,255,.8);text-decoration:none}
+  </style>
+</head>
+<body>
+
+<!-- WIREFRAME ANNOTATION BANNER -->
+<div class="wf-banner">
+  WIREFRAME · Condition Page Template · Hairline.app Brief §5.3
+  · Example URL: /hair-loss/male-pattern-baldness · Applies to all 8 condition pages
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════════ -->
+<nav class="nav" role="navigation" aria-label="Primary navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">hair<span>line</span></a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Hair Loss ▾</a></li>
+      <li><a href="#">Treatments ▾</a></li>
+      <li><a href="#">Find a Clinic</a></li>
+      <li><a href="#">Resources ▾</a></li>
+      <li><a href="#">How It Works</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">For Clinics →</a>
+      <a href="#" class="btn-primary">Download the app</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     BREADCRUMB  §7.1 SEO requirement
+══════════════════════════════════════════════════════════ -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="bc-inner">
+    <a href="#">Home</a>
+    <span class="sep">/</span>
+    <a href="#">Hair Loss</a>
+    <span class="sep">/</span>
+    <span class="cur">Male Pattern Baldness</span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO  §5.3 · Section 1
+     Condition name · prevalence statistic · one-line description
+══════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero" aria-labelledby="condition-title">
+  <div class="hero-inner">
+
+    <!-- Left: text -->
+    <div>
+      <div class="hero-tag">Hair Loss Condition</div>
+      <h1 class="hero-h1" id="condition-title">Male Pattern<br>Baldness</h1>
+
+      <!-- Prevalence statistic -->
+      <div class="hero-stat">
+        <div style="font-size:22px;flex-shrink:0;margin-top:2px">📊</div>
+        <div>
+          <div class="hero-stat-n">85%</div>
+          <div class="hero-stat-l">of men are affected by male pattern baldness by age 50</div>
+        </div>
+      </div>
+
+      <!-- One-line description -->
+      <p class="hero-desc">
+        Male pattern baldness (androgenetic alopecia) is the most common form of hair loss in men — gradual, progressive, and treatable when caught early.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#" class="btn-primary btn-lg">Start your free assessment →</a>
+        <a href="#symptoms" class="hero-anchor">Check your symptoms ↓</a>
+      </div>
+
+      <!-- Trust strip: medically reviewed + dates -->
+      <div class="hero-meta">
+        <span class="reviewed-badge">✓ Medically reviewed</span>
+        <span>📅 Last reviewed: Jan 2026</span>
+        <span>✏️ Updated: Mar 2026</span>
+        <span>⏱ 8 min read</span>
+      </div>
+    </div>
+
+    <!-- Right: illustration placeholder -->
+    <div class="hero-img-ph">
+      <div class="ph-icon">🖼</div>
+      <div style="font-weight:600;margin-bottom:4px;font-size:13px">Condition illustration</div>
+      <div style="font-size:11px">Hair follicle cross-section showing MPB progression: Norwood Stage I → VII</div>
+      <div class="wf-note">Custom 1.5px stroke line art — not stock photography (Brief §3.3)</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT — Sticky sidebar + article
+══════════════════════════════════════════════════════════ -->
+<div class="page-body">
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LEFT SIDEBAR — Sticky TOC + Cluster nav  §7.1 §7.2
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <aside class="sidebar" aria-label="Page navigation">
+
+    <!-- Table of contents  §7.1 sticky TOC -->
+    <div class="toc-card">
+      <div class="toc-title">In this article</div>
+      <ul class="toc-list">
+        <li><a href="#symptoms" class="active" id="toc-symptoms"><span class="toc-num">1.</span>Symptoms</a></li>
+        <li><a href="#causes"   id="toc-causes"><span class="toc-num">2.</span>Causes</a></li>
+        <li><a href="#diagnosis" id="toc-diagnosis"><span class="toc-num">3.</span>Diagnosis</a></li>
+        <li><a href="#treatments" id="toc-treatments"><span class="toc-num">4.</span>Treatment options</a></li>
+        <li><a href="#prevention" id="toc-prevention"><span class="toc-num">5.</span>Prevention &amp; lifestyle</a></li>
+        <li><a href="#related"  id="toc-related"><span class="toc-num">6.</span>Related articles</a></li>
+        <li><a href="#find-clinic" id="toc-find"><span class="toc-num">7.</span>Find a clinic</a></li>
+        <li><a href="#faq"      id="toc-faq"><span class="toc-num">8.</span>FAQ</a></li>
+      </ul>
+    </div>
+
+    <!-- Cluster nav — all 8 condition pages  §7.2 pillar-and-cluster -->
+    <div class="cluster-card">
+      <div class="cluster-title">Hair Loss Conditions</div>
+      <ul class="cluster-list">
+        <li><a href="#" class="cur">↳ Male Pattern Baldness</a></li>
+        <li><a href="#">Female Pattern Hair Loss</a></li>
+        <li><a href="#">Alopecia Areata</a></li>
+        <li><a href="#">Postpartum Hair Loss</a></li>
+        <li><a href="#">Stress-Related Hair Loss</a></li>
+        <li><a href="#">Traction Alopecia</a></li>
+        <li><a href="#">Receding Hairline</a></li>
+        <li><a href="#">Crown Thinning</a></li>
+      </ul>
+    </div>
+
+    <!-- Sidebar CTA -->
+    <div class="sb-cta">
+      <h4>Not sure where you stand?</h4>
+      <p>Free 5-minute assessment — understand your hair loss pattern and get matched with vetted providers.</p>
+      <a href="#" class="btn-white">Start assessment →</a>
+    </div>
+
+  </aside>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       ARTICLE CONTENT
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <article class="article" aria-label="Condition article">
+
+    <!-- Author + medical reviewer  §7.1 E-E-A-T signal -->
+    <div class="author-block">
+      <div class="a-avatars">
+        <div class="a-av" title="Author photo">✍️</div>
+        <div class="a-av" title="Reviewer photo">🩺</div>
+      </div>
+      <div class="a-info">
+        <div class="row">
+          <div class="a-item">
+            <span>Written by</span>
+            <strong>Sarah Whitmore</strong>
+          </div>
+          <div class="a-item">
+            <span>Medically reviewed by</span>
+            <strong>Dr. James Okeke, MBBS FRCS</strong>
+          </div>
+        </div>
+        <div class="a-dates">
+          <span>Published: 14 Aug 2025</span>
+          <span>·</span>
+          <span>Last reviewed: 12 Jan 2026</span>
+          <span>·</span>
+          <span>12 peer-reviewed citations</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article meta strip -->
+    <div class="art-meta">
+      <span class="meta-tag">Conditions</span>
+      <span class="meta-read">⏱ 8 min read</span>
+      <div class="meta-share">
+        Share:
+        <button class="share-btn" aria-label="Share on X">𝕏</button>
+        <button class="share-btn" aria-label="Share on LinkedIn">in</button>
+        <button class="share-btn" aria-label="Copy link">🔗</button>
+      </div>
+    </div>
+
+    <!-- Intro paragraph (editorial serif) -->
+    <p class="intro-p">
+      Male pattern baldness — clinically known as androgenetic alopecia — is the most prevalent form of hair loss worldwide, affecting approximately 85% of men by the age of 50. Unlike sudden or patchy hair loss, it follows a predictable progression: a receding hairline, thinning at the crown, and eventual loss across the top of the scalp. The good news is that it is one of the most treatable forms of hair loss, particularly when addressed early.
+    </p>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 2 — SYMPTOMS CHECKLIST  §5.3 · Item 2
+         Interactive self-assessment — captures email
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="symptoms" aria-labelledby="h-symptoms">
+      <div class="s-label">Section 2</div>
+      <div class="wf-label">§5.3 — Interactive symptoms checklist — email capture</div>
+      <h2 class="s-h2" id="h-symptoms">Do these symptoms sound familiar?</h2>
+      <p class="s-lead" style="margin-bottom:20px">
+        Select any that apply — we'll personalise your results and suggest matched providers.
+      </p>
+
+      <div class="symptoms-box">
+        <div class="sym-hd">
+          <h3>Check your symptoms</h3>
+          <p>Tick all that apply. This helps us personalise your assessment.</p>
+        </div>
+
+        <div class="sym-grid">
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Hairline receding at the temples</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Thinning at the crown of my head</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">More hair on pillow or in shower drain</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Scalp more visible through hair</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Hair feels finer or weaker than before</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Family history of hair loss (father / grandfather)</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Noticed changes in the past 6–12 months</span>
+          </div>
+          <div class="sym-item" data-symptom>
+            <div class="sym-cb">✓</div>
+            <span class="sym-txt">Patches of hair loss (not just thinning)</span>
+          </div>
+        </div>
+
+        <div class="sym-foot">
+          <div class="sym-email">
+            <input type="email" placeholder="Enter your email for personalised results" aria-label="Email address">
+            <a href="#" class="btn-primary" style="white-space:nowrap">See my results →</a>
+          </div>
+          <p class="sym-note">Personalised results + matched providers. No spam, unsubscribe any time.</p>
+        </div>
+      </div>
+
+      <p class="wf-note">Interaction: checked items increment a counter displayed in the CTA button label. Email field + CTA unlock after ≥1 selection. Email passed to CRM pre-assessment. Mobile: 1-column symptom grid.</p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 3 — CAUSES  §5.3 · Item 3
+         Bulleted with citations
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="causes" aria-labelledby="h-causes">
+      <div class="s-label">Section 3</div>
+      <h2 class="s-h2" id="h-causes">What causes male pattern baldness?</h2>
+      <p class="s-lead">
+        Male pattern baldness is not a single cause but a convergence of genetic sensitivity, hormonal action, and the natural aging of hair follicles.
+      </p>
+
+      <div class="causes-list">
+        <div class="cause">
+          <div class="cause-n">1</div>
+          <div>
+            <h4>Genetics (Androgenetic Alopecia)</h4>
+            <p>The primary driver. Inherited sensitivity in hair follicles to dihydrotestosterone (DHT) causes them to shrink over time — a process called follicular miniaturisation. The gene is polygenic, meaning it can come from either parent.</p>
+            <span class="cite">📄 NCBI — Genetics of Androgenetic Alopecia (2022)</span>
+          </div>
+        </div>
+        <div class="cause">
+          <div class="cause-n">2</div>
+          <div>
+            <h4>DHT (Dihydrotestosterone)</h4>
+            <p>Testosterone converts to DHT via the enzyme 5-alpha reductase. In men with the genetic predisposition, DHT binds to androgen receptors in follicles at the hairline and crown, progressively shortening the hair growth cycle.</p>
+            <span class="cite">📄 Journal of Dermatology — DHT and Hair Follicle Receptor Sensitivity (2021)</span>
+          </div>
+        </div>
+        <div class="cause">
+          <div class="cause-n">3</div>
+          <div>
+            <h4>Age</h4>
+            <p>Hair follicle sensitivity to DHT increases with age. Most men see first signs of recession between their mid-20s and mid-30s. The rate of progression varies widely — some men reach Norwood Stage 7 by age 40; others remain at Stage 2–3 indefinitely.</p>
+            <span class="cite">📄 International Journal of Dermatology (2020)</span>
+          </div>
+        </div>
+        <div class="cause">
+          <div class="cause-n">4</div>
+          <div>
+            <h4>Contributing factors</h4>
+            <p>While genetics and DHT are primary, lifestyle factors can accelerate loss: chronic stress, inadequate nutrition (especially iron and biotin deficiency), scalp inflammation, and certain medications.</p>
+            <span class="cite">📄 Dermatology Reports — Modifiable Risk Factors (2023)</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="wf-note">Citation chips hover-reveal a source preview panel (title, journal, year, link). Citation data stored in CMS as structured fields — not freeform text.</p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 4 — DIAGNOSIS  §5.3 · Item 4
+         What a clinician will do
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="diagnosis" aria-labelledby="h-diagnosis">
+      <div class="s-label">Section 4</div>
+      <h2 class="s-h2" id="h-diagnosis">How is it diagnosed?</h2>
+      <p class="s-lead" style="margin-bottom:20px">
+        Male pattern baldness is usually diagnosed clinically — no blood test required. A qualified provider will typically follow these steps:
+      </p>
+
+      <div class="diag-steps">
+        <div class="diag-step">
+          <div class="step-dot">1</div>
+          <div class="step-content">
+            <h4>Visual examination &amp; Norwood Scale classification</h4>
+            <p>The clinician assesses hairline, crown density and recession pattern. The Hamilton–Norwood Scale (Stages I–VII) classifies the degree of loss and tracks progression over time.</p>
+          </div>
+        </div>
+        <div class="diag-step">
+          <div class="step-dot">2</div>
+          <div class="step-content">
+            <h4>Trichoscopy (dermoscopy)</h4>
+            <p>A handheld dermatoscope magnifies the scalp surface to assess hair diameter variability, follicular unit density, and perifollicular signs — confirming miniaturisation without a biopsy.</p>
+          </div>
+        </div>
+        <div class="diag-step">
+          <div class="step-dot">3</div>
+          <div class="step-content">
+            <h4>Medical history review</h4>
+            <p>The clinician will ask about family history, onset timeline, recent medications (finasteride, minoxidil, anabolic steroids), dietary changes, and significant stress events.</p>
+          </div>
+        </div>
+        <div class="diag-step">
+          <div class="step-dot">4</div>
+          <div class="step-content">
+            <h4>Blood tests (if indicated)</h4>
+            <p>Not routinely required for classic MPB, but ordered if the pattern is atypical: thyroid panel, ferritin, full blood count, testosterone and SHBG levels.</p>
+          </div>
+        </div>
+        <div class="diag-step">
+          <div class="step-dot">5</div>
+          <div class="step-content">
+            <h4>3D head scan (via Hairline app)</h4>
+            <p>Hairline's in-app 3D scan captures precise scalp topology and donor density — providing an objective baseline that tracks progress across treatments over time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 5 — TREATMENT OPTIONS  §5.3 · Item 5
+         Linked tiles to relevant treatment pages
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="treatments" aria-labelledby="h-treatments">
+      <div class="s-label">Section 5</div>
+      <div class="wf-label">§5.3 — Treatment option tiles — linked to /treatments/[slug]</div>
+      <h2 class="s-h2" id="h-treatments">Treatment options</h2>
+      <p class="s-lead" style="margin-bottom:4px">
+        Several evidence-based treatments exist for male pattern baldness. The right choice depends on the stage of loss, donor density, budget and preference. Treatments often work best in combination.
+      </p>
+
+      <div class="tx-grid">
+        <a href="#" class="tx-tile">
+          <div class="tx-icon">✂️</div>
+          <span class="tx-tag">Surgical</span>
+          <div class="tx-name">FUE Hair Transplant</div>
+          <p class="tx-desc">Individual follicular units extracted from the donor area and implanted into thinning regions. Permanent results.</p>
+          <div class="tx-cost"><span>From</span><strong>£3,000 – £12,000</strong></div>
+        </a>
+        <a href="#" class="tx-tile">
+          <div class="tx-icon">💊</div>
+          <span class="tx-tag">Medical · Rx</span>
+          <div class="tx-name">Finasteride</div>
+          <p class="tx-desc">Oral DHT-blocker. Slows progression in ~9 out of 10 men. Requires ongoing use to maintain results.</p>
+          <div class="tx-cost"><span>From</span><strong>£20 – £50 / month</strong></div>
+        </a>
+        <a href="#" class="tx-tile">
+          <div class="tx-icon">💧</div>
+          <span class="tx-tag">OTC · Popular</span>
+          <div class="tx-name">Minoxidil</div>
+          <p class="tx-desc">Topical solution or foam applied to the scalp. Stimulates follicular blood flow. Works well alongside finasteride.</p>
+          <div class="tx-cost"><span>From</span><strong>£15 – £40 / month</strong></div>
+        </a>
+        <a href="#" class="tx-tile">
+          <div class="tx-icon">🩸</div>
+          <span class="tx-tag">Clinical</span>
+          <div class="tx-name">PRP Therapy</div>
+          <p class="tx-desc">Platelet-rich plasma injected into the scalp to stimulate dormant follicles. Often combined with transplant procedures.</p>
+          <div class="tx-cost"><span>From</span><strong>£500 – £2,500 / course</strong></div>
+        </a>
+        <a href="#" class="tx-tile">
+          <div class="tx-icon">🎨</div>
+          <span class="tx-tag">Cosmetic</span>
+          <div class="tx-name">Scalp Micropigmentation</div>
+          <p class="tx-desc">Micro-needling pigment deposits that simulate the appearance of hair follicles. Non-surgical, long-lasting cosmetic solution.</p>
+          <div class="tx-cost"><span>From</span><strong>£800 – £3,000</strong></div>
+        </a>
+        <a href="#" class="tx-tile">
+          <div class="tx-icon">🔬</div>
+          <span class="tx-tag">Surgical · New</span>
+          <div class="tx-name">DHI Hair Transplant</div>
+          <p class="tx-desc">Direct Hair Implantation — a refined FUE technique using a Choi implanter pen for higher density placement.</p>
+          <div class="tx-cost"><span>From</span><strong>£4,000 – £14,000</strong></div>
+        </a>
+      </div>
+
+      <p class="tx-all"><a href="#">Compare all treatments in detail →</a></p>
+      <p class="wf-note">Tiles link to /treatments/[slug]. Tags match the mega-menu pill pattern (Brief §3.1). Cost ranges pulled from CMS — not hardcoded. On mobile: 2-column grid, then 1-column at &lt;480px.</p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 6 — PREVENTION & LIFESTYLE  §5.3 · Item 6
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="prevention" aria-labelledby="h-prevention">
+      <div class="s-label">Section 6</div>
+      <h2 class="s-h2" id="h-prevention">Prevention &amp; lifestyle</h2>
+      <p class="s-lead" style="margin-bottom:4px">
+        Genetics cannot be changed — but a healthy scalp environment, early intervention, and lifestyle factors can meaningfully slow progression.
+      </p>
+
+      <div class="prev-grid">
+        <div class="prev-card">
+          <div class="prev-icon">🥗</div>
+          <h4>Nutrition</h4>
+          <ul class="prev-list">
+            <li>Ensure adequate iron and ferritin levels — deficiency accelerates shedding</li>
+            <li>Maintain protein intake ≥1.2 g/kg/day for follicular support</li>
+            <li>Zinc supports follicular cell function — found in seeds, legumes, meat</li>
+            <li>Avoid crash diets and prolonged caloric restriction</li>
+          </ul>
+        </div>
+        <div class="prev-card">
+          <div class="prev-icon">🧘</div>
+          <h4>Stress management</h4>
+          <ul class="prev-list">
+            <li>Chronic cortisol elevation is linked to telogen effluvium — temporary shedding</li>
+            <li>Regular aerobic exercise reduces DHT conversion indirectly</li>
+            <li>Sleep 7–9 hours: growth hormone is released in deep sleep</li>
+            <li>Treat anxiety or burnout — stress-pattern loss is often reversible</li>
+          </ul>
+        </div>
+        <div class="prev-card">
+          <div class="prev-icon">🧴</div>
+          <h4>Scalp health</h4>
+          <ul class="prev-list">
+            <li>Avoid high-alcohol shampoos that strip the scalp's natural oils</li>
+            <li>Scalp massage 4 min/day shown to increase hair thickness in studies</li>
+            <li>Treat dandruff or seborrheic dermatitis promptly — inflammation impairs follicles</li>
+            <li>Avoid tight hairstyles for extended periods (traction effect)</li>
+          </ul>
+        </div>
+        <div class="prev-card">
+          <div class="prev-icon">💉</div>
+          <h4>Early medical intervention</h4>
+          <ul class="prev-list">
+            <li>Start finasteride at first signs of recession — most effective before significant loss</li>
+            <li>Minoxidil is OTC and safe for early preventive use</li>
+            <li>Combination therapy outperforms either treatment alone</li>
+            <li>Book a consultation before loss reaches Norwood Stage 4+</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 7 — RELATED ARTICLES  §5.3 · Item 7
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="related" aria-labelledby="h-related">
+      <div class="s-label">Section 7</div>
+      <h2 class="s-h2" id="h-related">Related articles</h2>
+
+      <div class="rel-grid">
+        <a href="#" class="art-card">
+          <div class="art-img">🖼</div>
+          <div class="art-body">
+            <span class="art-tag">Treatments</span>
+            <div class="art-title">Finasteride for Hair Loss: The Complete Guide</div>
+            <div class="art-meta2"><span>⏱ 12 min</span><span>📅 Jan 2026</span></div>
+          </div>
+        </a>
+        <a href="#" class="art-card">
+          <div class="art-img">🖼</div>
+          <div class="art-body">
+            <span class="art-tag">Conditions</span>
+            <div class="art-title">The Norwood Scale Explained: Stages, Progression &amp; What to Do</div>
+            <div class="art-meta2"><span>⏱ 9 min</span><span>📅 Dec 2025</span></div>
+          </div>
+        </a>
+        <a href="#" class="art-card">
+          <div class="art-img">🖼</div>
+          <div class="art-body">
+            <span class="art-tag">Comparisons</span>
+            <div class="art-title">FUE vs FUT: Which Hair Transplant Is Right for You?</div>
+            <div class="art-meta2"><span>⏱ 15 min</span><span>📅 Nov 2025</span></div>
+          </div>
+        </a>
+      </div>
+
+      <p class="wf-note">3 cards sourced dynamically from CMS by shared tag ("Male Pattern Baldness") + content type. On mobile: horizontal scroll rail. 6–8 total internal links per page required (§7.1).</p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         SECTION 8 — FIND-A-CLINIC CALLOUT  §5.3 · Item 8
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="find-clinic" aria-labelledby="h-find">
+      <div class="s-label">Section 8</div>
+      <div class="wf-label">§5.3 — Find-a-clinic call-out</div>
+
+      <div class="clinic-co" aria-labelledby="h-find">
+        <div>
+          <h3 id="h-find">Ready to find a verified provider?</h3>
+          <p>Browse clinics that specialise in treating male pattern baldness — vetted by Hairline, with verified reviews and transparent pricing.</p>
+          <div class="co-stats">
+            <div>
+              <div class="co-stat-n">240+</div>
+              <div class="co-stat-l">Verified providers</div>
+            </div>
+            <div>
+              <div class="co-stat-n">14</div>
+              <div class="co-stat-l">Countries</div>
+            </div>
+            <div>
+              <div class="co-stat-n">4.9 ★</div>
+              <div class="co-stat-l">Average rating</div>
+            </div>
+          </div>
+          <div class="co-btns">
+            <a href="#" class="btn-wh-solid">Find a clinic near you →</a>
+            <a href="#" class="btn-outline-wh">Start your free assessment</a>
+          </div>
+        </div>
+        <div class="clinic-co-vis">
+          <span class="co-icon">🗺</span>
+          <span>World map with clinic pins — pre-filtered to MPB treatment providers</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         FAQ  §7.1 SEO requirement — schema-marked-up
+         (FAQPage JSON-LD injected server-side)
+    ════════════════════════════════════════════════════ -->
+    <section class="cs" id="faq" aria-labelledby="h-faq">
+      <div class="s-label">FAQ — §7.1 Schema-marked-up (FAQPage JSON-LD)</div>
+      <h2 class="s-h2" id="h-faq">Frequently asked questions</h2>
+
+      <div class="faq-list">
+
+        <div class="faq-item open">
+          <div class="faq-q">
+            <h4>At what age does male pattern baldness start?</h4>
+            <div class="faq-chevron">▾</div>
+          </div>
+          <div class="faq-a">
+            <div class="faq-a-in">
+              Male pattern baldness can begin as early as the late teens or early 20s, though the most common onset is between 25 and 35. By age 50, approximately 85% of men show significant signs. Early onset does not necessarily mean faster progression — but earlier treatment generally yields better outcomes.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">
+            <h4>Is male pattern baldness permanent?</h4>
+            <div class="faq-chevron">▾</div>
+          </div>
+          <div class="faq-a">
+            <div class="faq-a-in">
+              Untreated, MPB is a progressive condition — follicles that have miniaturised significantly will not regrow hair without intervention. However, hair transplantation can restore permanent hair in areas that have experienced loss, using DHT-resistant follicles from the donor zone.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">
+            <h4>Does finasteride stop hair loss completely?</h4>
+            <div class="faq-chevron">▾</div>
+          </div>
+          <div class="faq-a">
+            <div class="faq-a-in">
+              Finasteride stops or significantly slows progression in approximately 9 out of 10 men and leads to visible regrowth in roughly two-thirds of users over 12–24 months. Results are contingent on continued use — stopping finasteride typically reverses gains within 12 months.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">
+            <h4>Can stress cause male pattern baldness?</h4>
+            <div class="faq-chevron">▾</div>
+          </div>
+          <div class="faq-a">
+            <div class="faq-a-in">
+              Stress does not cause androgenetic alopecia — the underlying cause is genetic. However, severe or chronic stress can trigger telogen effluvium, a different and temporary form of widespread shedding that can appear simultaneously with MPB. Managing stress is beneficial for overall scalp health but will not reverse genetic hair loss.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">
+            <h4>How much does hair transplant surgery cost?</h4>
+            <div class="faq-chevron">▾</div>
+          </div>
+          <div class="faq-a">
+            <div class="faq-a-in">
+              In the UK, FUE hair transplant costs typically range from £3,000 to £12,000 depending on the number of grafts required, the clinic's location, and the surgeon's experience. Procedures performed in Turkey or Dubai by vetted surgeons often cost 50–70% less. Hairline provides personalised cost estimates based on your Norwood stage and donor density.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="wf-note">All Q&A content is in the DOM for SEO crawling — accordion is presentation-only (not display:none). JSON-LD FAQPage schema generated server-side from CMS fields. Target: 5–10 questions per condition page (§7.1).</p>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         MEDICAL REVIEWER BLOCK  §7.1 E-E-A-T signal
+         Repeated at foot of article (also at top in author-block)
+    ════════════════════════════════════════════════════ -->
+    <div class="reviewer" role="complementary" aria-label="Medical reviewer information">
+      <div class="rev-label">✓ Medically reviewed</div>
+      <div class="rev-profile">
+        <div class="rev-av">👨‍⚕️</div>
+        <div class="rev-info">
+          <h4>Dr. James Okeke</h4>
+          <div class="rev-creds">MBBS (Hons), FRCS — Consultant Hair Restoration Surgeon, London Hair Clinic. 14 years of clinical experience in hair transplantation and medical management of alopecia.</div>
+          <span class="rev-date">Last reviewed: 12 January 2026</span>
+        </div>
+      </div>
+    </div>
+
+  </article>
+</div><!-- end .page-body -->
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="footer" aria-label="Site footer">
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="foot-logo">hair<span>line</span></div>
+        <p>Connecting people experiencing hair loss with vetted providers worldwide. Medically reviewed content you can trust.</p>
+      </div>
+      <div class="foot-col">
+        <h5>For Patients</h5>
+        <ul>
+          <li><a href="#">Find a Clinic</a></li>
+          <li><a href="#">Treatments</a></li>
+          <li><a href="#">Aftercare</a></li>
+          <li><a href="#">Travel</a></li>
+          <li><a href="#">Assessment</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Hair Loss</h5>
+        <ul>
+          <li><a href="#">All Conditions</a></li>
+          <li><a href="#">Male Pattern Baldness</a></li>
+          <li><a href="#">Alopecia Areata</a></li>
+          <li><a href="#">Receding Hairline</a></li>
+          <li><a href="#">Crown Thinning</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">All Articles</a></li>
+          <li><a href="#">Treatments Guide</a></li>
+          <li><a href="#">Comparisons</a></li>
+          <li><a href="#">Recovery Tips</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">For Clinics</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Hairline.app — Samasu Digital LTD</span>
+      <div class="foot-bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookie settings</a>
+        <a href="#">Sitemap</a>
+      </div>
+      <span>🌐 EN · Change language</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── FAQ accordion ─────────────────────────────────── */
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ── Symptom checklist ─────────────────────────────── */
+  document.querySelectorAll('[data-symptom]').forEach(item => {
+    item.addEventListener('click', () => item.classList.toggle('on'));
+  });
+
+  /* ── TOC active state on scroll ─────────────────────── */
+  const tocMap = {
+    symptoms:   document.getElementById('toc-symptoms'),
+    causes:     document.getElementById('toc-causes'),
+    diagnosis:  document.getElementById('toc-diagnosis'),
+    treatments: document.getElementById('toc-treatments'),
+    prevention: document.getElementById('toc-prevention'),
+    related:    document.getElementById('toc-related'),
+    'find-clinic': document.getElementById('toc-find'),
+    faq:        document.getElementById('toc-faq'),
+  };
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && tocMap[e.target.id]) {
+        Object.values(tocMap).forEach(l => l && l.classList.remove('active'));
+        tocMap[e.target.id].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+
+  Object.keys(tocMap).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) io.observe(el);
+  });
+</script>
+
+</body>
+</html>

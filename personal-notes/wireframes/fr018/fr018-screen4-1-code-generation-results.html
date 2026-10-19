@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 4.1 — Code Generation Results</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1000px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb-sep { color: #c1c7d0; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-warning { background: #ff991f; color: #fff; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Batch info ── */
+    .batch-meta {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px;
+      margin-bottom: 0;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-value { font-size: 14px; color: #172b4d; }
+    .meta-value.mono { font-family: 'Courier New', monospace; font-size: 13px; }
+
+    /* ── Summary stat strip ── */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .stat-cell {
+      padding: 18px 20px;
+      background: #fff;
+      border-right: 1px solid #dfe1e6;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat-value { font-size: 28px; font-weight: 700; }
+    .stat-value.neutral { color: #172b4d; }
+    .stat-value.green  { color: #006644; }
+    .stat-value.gray   { color: #5e6c84; }
+    .stat-value.red    { color: #bf2600; }
+
+    /* ── Result table ── */
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; font-size: 11px; font-weight: 600;
+      color: #5e6c84; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 10px 12px; background: #f4f5f7;
+      border-bottom: 1px solid #dfe1e6;
+    }
+    tbody tr { border-bottom: 1px solid #f4f5f7; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8f9fa; }
+    tbody td { padding: 11px 12px; vertical-align: middle; font-size: 13px; }
+
+    /* Checkbox column */
+    .col-check { width: 36px; }
+    .col-code  { width: 160px; }
+
+    /* ── Outcome badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-created  { background: #e3fcef; color: #006644; }
+    .badge-skipped  { background: #f4f5f7; color: #5e6c84; }
+    .badge-failed   { background: #ffebe6; color: #bf2600; }
+
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+    }
+    .dot-green  { background: #36b37e; }
+    .dot-gray   { background: #97a0af; }
+    .dot-red    { background: #ff5630; }
+
+    /* ── Code pill ── */
+    .code-pill {
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+      font-size: 12px; font-weight: 600;
+      background: #e6eeff; color: #0052cc;
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .code-empty { color: #a5adba; font-style: italic; }
+
+    /* ── Reason text ── */
+    .reason-text { font-size: 12px; color: #5e6c84; }
+    .reason-text.failed { color: #bf2600; }
+
+    /* ── Affiliate name ── */
+    .affiliate-name { font-weight: 500; color: #172b4d; }
+    .affiliate-id { font-size: 11px; color: #97a0af; margin-top: 1px; }
+
+    /* ── Action bar ── */
+    .action-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid #dfe1e6;
+      background: #f4f5f7;
+      border-radius: 0 0 6px 6px;
+    }
+    .action-bar-spacer { flex: 1; }
+
+    /* ── Select-all row ── */
+    .select-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px;
+      background: #fffae6;
+      border-bottom: 1px solid #dfe1e6;
+      font-size: 12px; color: #42526e;
+    }
+
+    /* ── Info banner ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 16px;
+      background: #deebff;
+      border: 1px solid #b3d4ff;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 13px; color: #0747a6;
+    }
+    .info-icon { font-size: 16px; margin-top: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Billing</a>
+    <a href="#">Reports</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Code Generation</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Code Generation Results</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Code Generation Results</div>
+      <div class="page-subtitle">Screen 4.1 — Bulk generation outcome summary for this batch</div>
+    </div>
+  </div>
+
+  <!-- Info banner -->
+  <div class="info-banner">
+    <span class="info-icon">ℹ</span>
+    <span>This batch is persisted and can be revisited later from <strong>Screen 5 — Promo Code Management</strong>. Retrying failed rows will not duplicate already-successful codes.</span>
+  </div>
+
+  <!-- Batch info card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Batch Details</span>
+    </div>
+    <div class="card-body">
+      <div class="batch-meta">
+        <div class="meta-item">
+          <span class="meta-label">Batch ID</span>
+          <span class="meta-value mono">BATCH-2025-11-0047</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Campaign Name</span>
+          <span class="meta-value">Summer 2026 — Active UK Affiliates</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Generation Mode</span>
+          <span class="meta-value">Filtered Segment</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Run Date &amp; Time</span>
+          <span class="meta-value">26 Jun 2026, 14:32 UTC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary stat strip -->
+  <div class="stat-strip">
+    <div class="stat-cell">
+      <span class="stat-label">Requested</span>
+      <span class="stat-value neutral">12</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-label">Created</span>
+      <span class="stat-value green">8</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-label">Skipped</span>
+      <span class="stat-value gray">2</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-label">Failed</span>
+      <span class="stat-value red">2</span>
+    </div>
+  </div>
+
+  <!-- Result rows card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Per-Affiliate Results</span>
+      <span style="font-size:12px; color:#5e6c84;">12 affiliates · 2 failed rows selected for retry</span>
+    </div>
+
+    <!-- Select failed rows notice -->
+    <div class="select-row">
+      <input type="checkbox" checked /> &nbsp;2 failed rows selected — click <strong>Retry Failed Only</strong> to re-attempt
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="col-check"><input type="checkbox" /></th>
+          <th>Affiliate</th>
+          <th class="col-code">Generated Code</th>
+          <th>Outcome</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Created rows -->
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Glow Clinic London</div>
+            <div class="affiliate-id">AFF-00142</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-GCL</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Hair Revival Partners</div>
+            <div class="affiliate-id">AFF-00158</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-HRP</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">BeautyHub UK</div>
+            <div class="affiliate-id">AFF-00163</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-BHU</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">The Scalp Studio</div>
+            <div class="affiliate-id">AFF-00177</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-TSS</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Manchester Hair Clinic</div>
+            <div class="affiliate-id">AFF-00181</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-MHC</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Follicle Experts Ltd</div>
+            <div class="affiliate-id">AFF-00195</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-FEL</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Restore &amp; Glow</div>
+            <div class="affiliate-id">AFF-00201</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-RAG</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Hairline HQ</div>
+            <div class="affiliate-id">AFF-00214</div>
+          </td>
+          <td><span class="code-pill">SUMMER2026-HHQ</span></td>
+          <td><span class="badge badge-created"><span class="dot dot-green"></span> Created</span></td>
+          <td><span class="reason-text">Code created and linked successfully</span></td>
+        </tr>
+
+        <!-- Skipped rows -->
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">Luxe Hair Society</div>
+            <div class="affiliate-id">AFF-00229</div>
+          </td>
+          <td><span class="code-empty">—</span></td>
+          <td><span class="badge badge-skipped"><span class="dot dot-gray"></span> Skipped</span></td>
+          <td><span class="reason-text">Affiliate is inactive — not eligible for code generation</span></td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" disabled /></td>
+          <td>
+            <div class="affiliate-name">NorthWest Beauty Network</div>
+            <div class="affiliate-id">AFF-00237</div>
+          </td>
+          <td><span class="code-empty">—</span></td>
+          <td><span class="badge badge-skipped"><span class="dot dot-gray"></span> Skipped</span></td>
+          <td><span class="reason-text">Incomplete payout setup — bank account details missing</span></td>
+        </tr>
+
+        <!-- Failed rows -->
+        <tr style="background:#fff8f6;">
+          <td><input type="checkbox" checked /></td>
+          <td>
+            <div class="affiliate-name">PrimeCare Aesthetics</div>
+            <div class="affiliate-id">AFF-00248</div>
+          </td>
+          <td><span class="code-empty">—</span></td>
+          <td><span class="badge badge-failed"><span class="dot dot-red"></span> Failed</span></td>
+          <td><span class="reason-text failed">FR-019 registration failure — generated code rejected by promotion service</span></td>
+        </tr>
+
+        <tr style="background:#fff8f6;">
+          <td><input type="checkbox" checked /></td>
+          <td>
+            <div class="affiliate-name">The Influence Studio</div>
+            <div class="affiliate-id">AFF-00261</div>
+          </td>
+          <td><span class="code-empty">—</span></td>
+          <td><span class="badge badge-failed"><span class="dot dot-red"></span> Failed</span></td>
+          <td><span class="reason-text failed">Duplicate generated code — code pattern collision detected</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- Action bar -->
+    <div class="action-bar">
+      <button class="btn btn-warning">&#8635; Retry Failed Only (2)</button>
+      <div class="action-bar-spacer"></div>
+      <button class="btn btn-default">&#8595; Download Results (CSV)</button>
+      <button class="btn btn-default">View Codes →</button>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

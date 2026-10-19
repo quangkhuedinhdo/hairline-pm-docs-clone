@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 2 — Add/Edit Affiliate Form</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #42526e;
+    }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #b3bac5; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-header-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* ── Autosave indicator ── */
+    .autosave-indicator {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84;
+    }
+    .autosave-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #36b37e;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none; text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-link {
+      background: none; border: none; color: #0052cc;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      padding: 0; text-decoration: none;
+    }
+    .btn-link:hover { text-decoration: underline; }
+
+    /* ── Mode toggle (Add / Edit preview) ── */
+    .mode-toggle {
+      display: flex; gap: 0; border: 1px solid #dfe1e6;
+      border-radius: 4px; overflow: hidden; margin-bottom: 20px;
+      width: fit-content;
+    }
+    .mode-btn {
+      padding: 6px 16px; font-size: 13px; font-weight: 500;
+      cursor: pointer; border: none; background: #fff; color: #42526e;
+    }
+    .mode-btn.active { background: #0052cc; color: #fff; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .form-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .form-card-title {
+      font-size: 14px; font-weight: 600; color: #172b4d;
+    }
+    .form-card-body { padding: 20px; }
+
+    /* ── Form grid ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .col-span-2 { grid-column: span 2; }
+    .col-span-3 { grid-column: span 3; }
+
+    /* ── Form field ── */
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .form-label {
+      font-size: 12px; font-weight: 600; color: #172b4d; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .form-label .required { color: #de350b; margin-left: 2px; }
+    .form-label .optional { color: #5e6c84; font-size: 11px; text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 4px; }
+    .form-label .conditional { color: #0052cc; font-size: 11px; text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 4px; }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: #172b4d;
+      background: #fff;
+      outline: none;
+      width: 100%;
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px #deebff; }
+    .form-input::placeholder { color: #b3bac5; }
+    .form-input.masked {
+      font-family: monospace;
+      letter-spacing: 2px;
+      color: #5e6c84;
+    }
+    .form-input:disabled,
+    .form-select:disabled {
+      background: #f4f5f7;
+      color: #5e6c84;
+      cursor: not-allowed;
+    }
+    .form-textarea { min-height: 90px; resize: vertical; }
+    .form-hint {
+      font-size: 11px; color: #5e6c84; margin-top: 2px;
+    }
+    .form-error { font-size: 11px; color: #de350b; margin-top: 2px; }
+
+    /* ── Read-only display value ── */
+    .form-display {
+      padding: 7px 0;
+      font-size: 13px;
+      color: #172b4d;
+      min-height: 32px;
+    }
+    .form-display.muted { color: #5e6c84; font-style: italic; }
+
+    /* ── Multi-select tags ── */
+    .tags-input {
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 5px 8px;
+      min-height: 34px;
+      display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+      background: #fff; cursor: text;
+    }
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #e8f0fe; border-radius: 3px;
+      padding: 2px 7px 2px 8px; font-size: 12px; color: #172b4d;
+    }
+    .tag-remove { color: #5e6c84; cursor: pointer; font-size: 14px; line-height: 1; }
+    .tags-input-placeholder { font-size: 13px; color: #b3bac5; }
+
+    /* ── Radio group ── */
+    .radio-group { display: flex; gap: 20px; padding: 4px 0; }
+    .radio-option { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+    .radio-option input[type="radio"] { accent-color: #0052cc; width: 15px; height: 15px; cursor: pointer; }
+    .radio-option label { font-size: 13px; color: #172b4d; cursor: pointer; }
+
+    /* ── Commission preview box ── */
+    .commission-preview {
+      background: #e8f0fe;
+      border: 1px solid #b3d4ff;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #0052cc;
+      margin-top: 8px;
+    }
+
+    /* ── Warning banner ── */
+    .warning-banner {
+      background: #fffae6;
+      border: 1px solid #f6c344;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #974f0c;
+      display: flex; align-items: flex-start; gap: 8px;
+      margin-top: 8px;
+    }
+    .warning-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Status badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+    }
+    .badge-pending  { background: #fff7d1; color: #974f0c; }
+    .badge-active   { background: #e3fcef; color: #006644; }
+    .badge-invited  { background: #fffae6; color: #974f0c; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* ── Section divider ── */
+    .section-divider {
+      height: 1px; background: #dfe1e6; margin: 20px 0;
+    }
+
+    /* ── Read-only info row ── */
+    .info-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f4f5f7;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row-label {
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.03em;
+      min-width: 160px;
+    }
+    .info-row-value { font-size: 13px; color: #172b4d; flex: 1; }
+
+    /* ── Payout fixed display ── */
+    .payout-fixed {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 0; font-size: 13px; color: #5e6c84;
+    }
+    .payout-lock { font-size: 12px; }
+
+    /* ── Form footer ── */
+    .form-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid #dfe1e6;
+      background: #f8f9fb;
+      border-radius: 0 0 6px 6px;
+    }
+
+    /* ── Edit mode notice ── */
+    .edit-notice {
+      background: #deebff;
+      border: 1px solid #b3d4ff;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #0052cc;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Resend activation ── */
+    .resend-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      background: #fffae6;
+      border: 1px solid #f6c344;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #974f0c;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Finance</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── Page wrap ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <!-- In Add mode: "Add New Affiliate" | In Edit mode: affiliate name -->
+    <span id="bc-current">Edit Affiliate — Glow Clinic Partners</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title" id="page-title">Edit Affiliate</div>
+      <div class="page-subtitle">Update affiliate account details. Commission changes must be made via Edit Commission Structure.</div>
+    </div>
+    <div class="page-header-actions">
+      <div class="autosave-indicator">
+        <div class="autosave-dot"></div>
+        Draft auto-saved 10s ago
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode toggle (wireframe helper) -->
+  <div style="margin-bottom:16px;">
+    <span style="font-size:12px;color:#5e6c84;margin-right:8px;">Wireframe mode:</span>
+    <div class="mode-toggle">
+      <button class="mode-btn" onclick="setMode('add')">Add Mode</button>
+      <button class="mode-btn active" onclick="setMode('edit')">Edit Mode</button>
+    </div>
+  </div>
+
+  <!-- Edit mode notice (hidden in Add mode) -->
+  <div class="edit-notice" id="edit-notice">
+    ℹ️ You are editing an existing affiliate. Contact email cannot be changed after account creation.
+    Commission structure changes must be made via <strong>Edit Commission Structure</strong> (Screen 3.2).
+  </div>
+
+  <!-- ── Section 1: Basic Information ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-title">Basic Information</div>
+    </div>
+    <div class="form-card-body">
+      <div class="form-grid">
+
+        <!-- Affiliate Name -->
+        <div class="form-field">
+          <label class="form-label">Affiliate Name <span class="required">*</span></label>
+          <input type="text" class="form-input" value="Glow Clinic Partners" maxlength="200"
+            placeholder="Organization or individual name" />
+          <div class="form-hint">Max 200 characters, no special characters</div>
+        </div>
+
+        <!-- Contact Email -->
+        <div class="form-field">
+          <label class="form-label">Contact Email <span class="required">*</span></label>
+          <!-- Disabled in Edit mode -->
+          <input type="email" class="form-input" value="partner@glowclinic.com"
+            id="field-email" disabled />
+          <div class="form-hint" id="email-hint-edit">Email cannot be changed after account creation.</div>
+          <div class="form-hint" id="email-hint-add" style="display:none;">
+            Used for login and payout notifications. Must be unique across affiliates.
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-field">
+          <label class="form-label">Phone Number <span class="optional">(optional)</span></label>
+          <input type="tel" class="form-input" value="+1 (415) 555-0182" placeholder="+1 (___) ___-____" />
+          <div class="form-hint">Include country code, e.g. +1 (US), +44 (UK)</div>
+        </div>
+
+        <!-- Country/Region -->
+        <div class="form-field">
+          <label class="form-label">Country / Region <span class="optional">(optional)</span></label>
+          <select class="form-select">
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>Australia</option>
+            <option>Canada</option>
+            <option>Vietnam</option>
+          </select>
+        </div>
+
+        <!-- Affiliate Type -->
+        <div class="form-field">
+          <label class="form-label">Affiliate Type <span class="optional">(optional)</span></label>
+          <select class="form-select">
+            <option value="">— Select type —</option>
+            <option selected>Clinic Partner</option>
+            <option>Influencer</option>
+            <option>Organization</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <!-- Tax / VAT / Business Reg ID -->
+        <div class="form-field">
+          <label class="form-label">Tax / VAT / Business Reg ID <span class="optional">(optional)</span></label>
+          <input type="text" class="form-input" value="US-TAX-88123456" maxlength="50"
+            placeholder="e.g. EIN, VAT number" />
+          <div class="form-hint">Max 50 chars; format validated per country if provided</div>
+        </div>
+
+        <!-- Language(s) -->
+        <div class="form-field col-span-2">
+          <label class="form-label">Language(s) <span class="optional">(optional)</span></label>
+          <div class="tags-input">
+            <span class="tag">English <span class="tag-remove">×</span></span>
+            <span class="tag">Spanish <span class="tag-remove">×</span></span>
+            <span class="tags-input-placeholder">+ Add language</span>
+          </div>
+          <div class="form-hint">Select one or more supported languages</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 2: Bank / Payout Details ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-title">Bank / Payout Details</div>
+      <span style="font-size:12px;color:#5e6c84;">All payouts via Stripe transfer · No PayPal</span>
+    </div>
+    <div class="form-card-body">
+      <div class="form-grid">
+
+        <!-- Account Holder Name -->
+        <div class="form-field">
+          <label class="form-label">Account Holder Name <span class="required">*</span></label>
+          <input type="text" class="form-input" value="Glow Clinic Partners LLC" maxlength="200" />
+        </div>
+
+        <!-- Bank Name -->
+        <div class="form-field">
+          <label class="form-label">Bank Name <span class="required">*</span></label>
+          <input type="text" class="form-input" value="Chase Bank" maxlength="200" />
+        </div>
+
+        <!-- Account Number -->
+        <div class="form-field">
+          <label class="form-label">Account Number <span class="required">*</span></label>
+          <!-- Masked after initial entry: show last 4 digits only -->
+          <input type="text" class="form-input masked" value="•••• •••• •••• 4782"
+            placeholder="Account number" />
+          <div class="form-hint">Masked — showing last 4 digits. Encrypted at rest. Format validated per country.</div>
+        </div>
+
+        <!-- Routing / SWIFT Code -->
+        <div class="form-field">
+          <label class="form-label">Routing / SWIFT Code <span class="required">*</span></label>
+          <input type="text" class="form-input" value="CHASUS33" placeholder="e.g. 021000021 or CHASUS33" />
+          <div class="form-hint">US routing number (9 digits) or SWIFT/BIC code</div>
+        </div>
+
+        <!-- IBAN -->
+        <div class="form-field col-span-2">
+          <label class="form-label">IBAN <span class="conditional">(conditional — required where applicable)</span></label>
+          <input type="text" class="form-input" placeholder="e.g. GB29 NWBK 6016 1331 9268 19" />
+          <div class="form-hint">Leave blank if not applicable in this country</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 3: Commission Structure ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-title">Commission Structure</div>
+      <!-- In Edit mode, show link to Screen 3.2 instead of inline fields -->
+      <span id="commission-edit-notice" style="font-size:12px;color:#5e6c84;">
+        To change commission on an existing affiliate, use
+        <a href="#" class="btn-link">Edit Commission Structure</a> (captures effective date).
+      </span>
+    </div>
+    <div class="form-card-body">
+
+      <!-- Commission type (disabled in Edit mode to prevent retroactive changes) -->
+      <div class="form-field" style="margin-bottom:16px;">
+        <label class="form-label">Commission Type <span class="required">*</span></label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="commission-type" value="percentage" checked id="radio-pct" onchange="toggleCommission()" />
+            <label for="radio-pct">Percentage of Booking Revenue</label>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="commission-type" value="fixed" id="radio-fixed" onchange="toggleCommission()" />
+            <label for="radio-fixed">Fixed Amount per Booking</label>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Commission Percentage (shown when Percentage selected) -->
+        <div class="form-field" id="field-pct">
+          <label class="form-label">Commission Percentage <span class="conditional">(if Percentage selected)</span></label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="number" class="form-input" value="15" min="5" max="25"
+              style="max-width:100px;" id="pct-input" oninput="updatePreview()" />
+            <span style="font-size:13px;color:#5e6c84;">% &nbsp; (range: 5% – 25%)</span>
+          </div>
+          <!-- Commission preview -->
+          <div class="commission-preview" id="commission-preview">
+            For a $1,000 booking at <strong>15%</strong> of booking revenue, affiliate earns <strong>$150</strong>.
+          </div>
+          <!-- High-commission warning (shown when > 20%) -->
+          <div class="warning-banner" id="high-commission-warning" style="display:none;">
+            <span class="warning-icon">⚠️</span>
+            High commission rate — please confirm business approval before saving.
+          </div>
+        </div>
+
+        <!-- Commission Fixed Amount (hidden by default) -->
+        <div class="form-field" id="field-fixed" style="display:none;">
+          <label class="form-label">Commission Fixed Amount <span class="conditional">(if Fixed Amount selected)</span></label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;color:#5e6c84;">$</span>
+            <input type="number" class="form-input" value="75" min="50"
+              style="max-width:100px;" />
+            <span style="font-size:13px;color:#5e6c84;">per completed booking &nbsp; (min $50)</span>
+          </div>
+        </div>
+
+        <!-- Payout Schedule (always fixed, read-only) -->
+        <div class="form-field">
+          <label class="form-label">Payout Schedule</label>
+          <div class="payout-fixed">
+            <span class="payout-lock">🔒</span>
+            Monthly on the 7th (fixed — not configurable)
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 4: Account Status (Edit mode only) ── -->
+  <div class="form-card" id="section-account-status">
+    <div class="form-card-header">
+      <div class="form-card-title">Account Status</div>
+    </div>
+    <div class="form-card-body">
+
+      <div class="info-row">
+        <div class="info-row-label">Performance Tier</div>
+        <div class="info-row-value">
+          <span class="badge badge-active">Gold</span>
+          <span style="font-size:12px;color:#5e6c84;margin-left:8px;">System-calculated · read-only</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-row-label">Activation Status</div>
+        <div class="info-row-value">
+          <span class="badge badge-invited">
+            <span class="badge-dot"></span>
+            Invited
+          </span>
+          <span style="font-size:12px;color:#5e6c84;margin-left:8px;">Password not yet set · system-managed</span>
+        </div>
+      </div>
+
+      <div class="resend-row">
+        ⚠️ This affiliate has not yet completed activation (password not set).
+        <button class="btn btn-default btn-sm" style="flex-shrink:0;">Resend Activation Email</button>
+      </div>
+
+      <div class="info-row" style="margin-top:8px;">
+        <div class="info-row-label">Last Login</div>
+        <div class="info-row-value form-display muted">Never logged in</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 5: Internal Notes ── -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-title">Internal Notes</div>
+      <span style="font-size:12px;color:#5e6c84;">Not visible to the affiliate</span>
+    </div>
+    <div class="form-card-body">
+      <div class="form-field">
+        <label class="form-label">Notes <span class="optional">(optional)</span></label>
+        <textarea class="form-textarea" maxlength="1000"
+          placeholder="Admin notes about this affiliate relationship…">Referred by marketing team Q3 2025. High engagement rate in US west coast market. Pending legal sign-off on partnership contract.</textarea>
+        <div class="form-hint" style="display:flex;justify-content:space-between;">
+          <span>Max 1,000 characters</span>
+          <span id="notes-count">167 / 1,000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form footer -->
+    <div class="form-footer">
+      <button class="btn btn-default">Cancel</button>
+      <button class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  function setMode(mode) {
+    const btns = document.querySelectorAll('.mode-btn');
+    btns[0].classList.toggle('active', mode === 'add');
+    btns[1].classList.toggle('active', mode === 'edit');
+
+    const isEdit = mode === 'edit';
+
+    // Page title
+    document.getElementById('page-title').textContent = isEdit ? 'Edit Affiliate' : 'Add New Affiliate';
+    document.getElementById('bc-current').textContent = isEdit ? 'Edit Affiliate — Glow Clinic Partners' : 'Add New Affiliate';
+    document.querySelector('.page-subtitle').textContent = isEdit
+      ? 'Update affiliate account details. Commission changes must be made via Edit Commission Structure.'
+      : 'Create a new affiliate account. The affiliate will receive an activation email to set their password.';
+
+    // Edit notice
+    document.getElementById('edit-notice').style.display = isEdit ? 'flex' : 'none';
+
+    // Email field
+    document.getElementById('field-email').disabled = isEdit;
+    document.getElementById('email-hint-edit').style.display = isEdit ? 'block' : 'none';
+    document.getElementById('email-hint-add').style.display = isEdit ? 'none' : 'block';
+    if (!isEdit) document.getElementById('field-email').value = '';
+
+    // Commission edit notice
+    document.getElementById('commission-edit-notice').style.display = isEdit ? 'block' : 'none';
+
+    // Account Status section (read-only, only in Edit mode)
+    document.getElementById('section-account-status').style.display = isEdit ? 'block' : 'none';
+
+    // Save button label
+    document.querySelector('.btn-primary').textContent = isEdit ? 'Save Changes' : 'Create Affiliate';
+  }
+
+  function toggleCommission() {
+    const isPct = document.getElementById('radio-pct').checked;
+    document.getElementById('field-pct').style.display = isPct ? 'block' : 'none';
+    document.getElementById('field-fixed').style.display = isPct ? 'none' : 'block';
+  }
+
+  function updatePreview() {
+    const pct = parseFloat(document.getElementById('pct-input').value) || 0;
+    const earned = (1000 * pct / 100).toFixed(0);
+    document.getElementById('commission-preview').innerHTML =
+      `For a $1,000 booking at <strong>${pct}%</strong> of booking revenue, affiliate earns <strong>$${earned}</strong>.`;
+
+    // Show warning if > 20%
+    document.getElementById('high-commission-warning').style.display = pct > 20 ? 'flex' : 'none';
+  }
+</script>
+</body>
+</html>

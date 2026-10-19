@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 9.1 — Affiliate Portal: Overview Tab</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      padding: 0 24px;
+      gap: 0;
+    }
+    .tab-nav a {
+      display: block;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: #42526e;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab-nav a.active {
+      color: #0052cc;
+      font-weight: 600;
+      border-bottom-color: #0052cc;
+    }
+    .tab-nav a:hover:not(.active) { color: #172b4d; background: #f4f5f7; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-actions { display: flex; align-items: center; gap: 10px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-primary { background: #0052cc; color: #fff; border-color: #0052cc; }
+    .btn-default { background: #fff; color: #42526e; border-color: #dfe1e6; }
+
+    /* ── Toggle ── */
+    .toggle-group {
+      display: flex; border: 1px solid #dfe1e6; border-radius: 4px;
+      overflow: hidden; background: #fff;
+    }
+    .toggle-group button {
+      padding: 6px 16px; font-size: 12px; font-weight: 500;
+      border: none; background: transparent; color: #42526e; cursor: pointer;
+    }
+    .toggle-group button.active {
+      background: #0052cc; color: #fff;
+    }
+
+    /* ── Stat cards ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 18px 20px;
+    }
+    .stat-card.highlight {
+      border-color: #0052cc;
+      background: #f0f5ff;
+    }
+    .stat-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #172b4d; }
+    .stat-value.accent { color: #0052cc; }
+    .stat-sub { font-size: 11px; color: #5e6c84; margin-top: 5px; }
+    .stat-sub.countdown { color: #ff991f; font-weight: 600; }
+
+    /* ── Pending payout banner ── */
+    .payout-banner {
+      background: #fffae6;
+      border: 1px solid #ffe380;
+      border-radius: 6px;
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .payout-banner-left { display: flex; align-items: center; gap: 12px; }
+    .payout-icon { font-size: 20px; }
+    .payout-banner-title { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .payout-banner-detail { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+    .payout-amount { font-size: 20px; font-weight: 700; color: #172b4d; }
+
+    /* ── Referral link ── */
+    .referral-link-row {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px;
+    }
+    .referral-link-label { font-size: 12px; font-weight: 600; color: #5e6c84; white-space: nowrap; }
+    .referral-link-url {
+      flex: 1;
+      font-size: 13px; color: #172b4d;
+      background: #f4f5f7; border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 6px 12px;
+      font-family: monospace;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* ── Charts row ── */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ── Chart card ── */
+    .chart-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px;
+    }
+    .chart-card-title {
+      font-size: 13px; font-weight: 700; color: #172b4d; margin-bottom: 16px;
+    }
+
+    /* ── Line chart (SVG) ── */
+    .line-chart-wrap { width: 100%; }
+
+    /* ── Funnel / Pie chart ── */
+    .funnel-wrap { display: flex; flex-direction: column; gap: 0; }
+    .funnel-step {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f4f5f7;
+    }
+    .funnel-step:last-child { border-bottom: none; }
+    .funnel-bar-track {
+      flex: 1; height: 8px; background: #f4f5f7; border-radius: 4px; overflow: hidden;
+    }
+    .funnel-bar-fill { height: 100%; border-radius: 4px; }
+    .funnel-step-label { font-size: 12px; color: #42526e; white-space: nowrap; min-width: 130px; }
+    .funnel-step-count { font-size: 12px; font-weight: 600; color: #172b4d; min-width: 40px; text-align: right; }
+
+    .pie-legend { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .pie-legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #42526e; }
+    .pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Note ── */
+    .note {
+      font-size: 11px; color: #5e6c84; font-style: italic;
+      border-left: 3px solid #dfe1e6; padding-left: 10px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">HairLine</span>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">SA</div>
+    <span>Sarah Anderson</span>
+  </div>
+</div>
+
+<!-- ── Tab navigation (Screen 9 shell) ── -->
+<div class="tab-nav">
+  <a href="#" class="active">Overview</a>
+  <a href="#">Promo Codes</a>
+  <a href="#">Payouts</a>
+  <a href="#">Profile</a>
+</div>
+
+<!-- ── Page content ── -->
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Overview</div>
+      <div class="page-subtitle">Performance summary and trends — data refreshes every 5 minutes</div>
+    </div>
+    <div class="page-actions">
+      <div class="toggle-group">
+        <button class="active">All-Time</button>
+        <button>Current Month</button>
+      </div>
+      <button class="btn btn-default">&#8681; Export Report (PDF)</button>
+    </div>
+  </div>
+
+  <!-- Pending payout banner (shown prominently when pending payout exists) -->
+  <div class="payout-banner">
+    <div class="payout-banner-left">
+      <span class="payout-icon">&#9200;</span>
+      <div>
+        <div class="payout-banner-title">Pending Payout</div>
+        <div class="payout-banner-detail">Next payout: July 7, 2026 &nbsp;·&nbsp; <strong style="color:#ff991f;">6 days remaining</strong></div>
+      </div>
+    </div>
+    <div class="payout-amount">$1,240.00</div>
+  </div>
+
+  <!-- KPI stat cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Referrals (All-Time)</div>
+      <div class="stat-value">284</div>
+      <div class="stat-sub">Completed bookings with referral attribution</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Referrals This Month</div>
+      <div class="stat-value">18</div>
+      <div class="stat-sub">Completed bookings in current month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Revenue Generated</div>
+      <div class="stat-value">$142,000</div>
+      <div class="stat-sub">Sum of booking values from referrals</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Commissions Earned</div>
+      <div class="stat-value">$14,200</div>
+      <div class="stat-sub">Sum of all commissions earned to date</div>
+    </div>
+  </div>
+
+  <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="stat-card">
+      <div class="stat-label">Commissions Paid</div>
+      <div class="stat-value">$12,960</div>
+      <div class="stat-sub">Sum of commissions already paid out</div>
+    </div>
+    <div class="stat-card highlight">
+      <div class="stat-label">Pending Payout</div>
+      <div class="stat-value accent">$1,240</div>
+      <div class="stat-sub countdown">Commission awaiting next payout (unpaid balance)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Next Payout Date</div>
+      <div class="stat-value" style="font-size:18px;">July 7, 2026</div>
+      <div class="stat-sub">Fixed: 7th of each month</div>
+    </div>
+  </div>
+
+  <!-- Referral link -->
+  <div class="referral-link-row">
+    <span class="referral-link-label">Referral Link</span>
+    <div class="referral-link-url">https://hairlineclinic.com/?ref=SARAH2026&amp;code=SARAH10</div>
+    <button class="btn btn-default" style="white-space:nowrap;">&#128203; Copy Link</button>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+
+    <!-- Line graph: referrals over time -->
+    <div class="chart-card">
+      <div class="chart-card-title">Referrals Over Time</div>
+      <div class="line-chart-wrap">
+        <svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+          <!-- Y-axis labels -->
+          <text x="0" y="14" font-size="10" fill="#5e6c84">30</text>
+          <text x="0" y="54" font-size="10" fill="#5e6c84">20</text>
+          <text x="0" y="94" font-size="10" fill="#5e6c84">10</text>
+          <text x="0" y="134" font-size="10" fill="#5e6c84">0</text>
+
+          <!-- Grid lines -->
+          <line x1="28" y1="10" x2="580" y2="10" stroke="#f4f5f7" stroke-width="1"/>
+          <line x1="28" y1="50" x2="580" y2="50" stroke="#f4f5f7" stroke-width="1"/>
+          <line x1="28" y1="90" x2="580" y2="90" stroke="#f4f5f7" stroke-width="1"/>
+          <line x1="28" y1="130" x2="580" y2="130" stroke="#dfe1e6" stroke-width="1"/>
+
+          <!-- Area fill -->
+          <polygon
+            points="40,110 120,90 200,80 280,60 360,50 440,70 520,40 580,50 580,130 40,130"
+            fill="#deebff" opacity="0.6"/>
+
+          <!-- Line -->
+          <polyline
+            points="40,110 120,90 200,80 280,60 360,50 440,70 520,40 580,50"
+            fill="none" stroke="#0052cc" stroke-width="2.5" stroke-linejoin="round"/>
+
+          <!-- Data points -->
+          <circle cx="40" cy="110" r="4" fill="#0052cc"/>
+          <circle cx="120" cy="90" r="4" fill="#0052cc"/>
+          <circle cx="200" cy="80" r="4" fill="#0052cc"/>
+          <circle cx="280" cy="60" r="4" fill="#0052cc"/>
+          <circle cx="360" cy="50" r="4" fill="#0052cc"/>
+          <circle cx="440" cy="70" r="4" fill="#0052cc"/>
+          <circle cx="520" cy="40" r="4" fill="#0052cc"/>
+          <circle cx="580" cy="50" r="4" fill="#0052cc"/>
+
+          <!-- X-axis labels -->
+          <text x="30" y="148" font-size="10" fill="#5e6c84">Dec</text>
+          <text x="110" y="148" font-size="10" fill="#5e6c84">Jan</text>
+          <text x="190" y="148" font-size="10" fill="#5e6c84">Feb</text>
+          <text x="270" y="148" font-size="10" fill="#5e6c84">Mar</text>
+          <text x="350" y="148" font-size="10" fill="#5e6c84">Apr</text>
+          <text x="430" y="148" font-size="10" fill="#5e6c84">May</text>
+          <text x="510" y="148" font-size="10" fill="#5e6c84">Jun</text>
+          <text x="566" y="148" font-size="10" fill="#5e6c84">Jul</text>
+        </svg>
+      </div>
+      <div class="note">Read-only · system-calculated · refreshes every 5 min</div>
+    </div>
+
+    <!-- Conversion funnel: Code Applied → Checkout Started → Payment Completed -->
+    <div class="chart-card">
+      <div class="chart-card-title">Conversion Funnel</div>
+
+      <!-- SVG pie chart placeholder -->
+      <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:160px;display:block;margin:0 auto 16px;">
+        <!-- Outer circle (Code Applied = 100%) -->
+        <circle cx="80" cy="80" r="70" fill="#deebff"/>
+        <!-- Checkout Started arc (~72%) -->
+        <path d="M80,80 L80,10 A70,70 0 1,1 23,118 Z" fill="#0052cc" opacity="0.85"/>
+        <!-- Payment Completed arc (~54%) -->
+        <path d="M80,80 L80,10 A70,70 0 0,1 149,96 Z" fill="#0747a6"/>
+        <!-- Center white circle -->
+        <circle cx="80" cy="80" r="36" fill="#fff"/>
+        <text x="80" y="76" font-size="11" font-weight="700" fill="#172b4d" text-anchor="middle">54%</text>
+        <text x="80" y="89" font-size="9" fill="#5e6c84" text-anchor="middle">Converted</text>
+      </svg>
+
+      <!-- Funnel steps -->
+      <div class="funnel-wrap">
+        <div class="funnel-step">
+          <span class="funnel-step-label">Code Applied</span>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill" style="width:100%;background:#deebff;"></div>
+          </div>
+          <span class="funnel-step-count">526</span>
+        </div>
+        <div class="funnel-step">
+          <span class="funnel-step-label">Checkout Started</span>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill" style="width:72%;background:#0052cc;opacity:0.85;"></div>
+          </div>
+          <span class="funnel-step-count">378</span>
+        </div>
+        <div class="funnel-step">
+          <span class="funnel-step-label">Payment Completed</span>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill" style="width:54%;background:#0747a6;"></div>
+          </div>
+          <span class="funnel-step-count">284</span>
+        </div>
+      </div>
+
+      <div class="pie-legend">
+        <div class="pie-legend-item"><span class="pie-dot" style="background:#deebff;border:1px solid #0052cc;"></span>Code Applied — 526</div>
+        <div class="pie-legend-item"><span class="pie-dot" style="background:#0052cc;opacity:0.85;"></span>Checkout Started — 378</div>
+        <div class="pie-legend-item"><span class="pie-dot" style="background:#0747a6;"></span>Payment Completed — 284</div>
+      </div>
+
+      <div class="note">Read-only · system-calculated</div>
+    </div>
+
+  </div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

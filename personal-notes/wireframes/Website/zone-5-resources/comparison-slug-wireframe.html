@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe — /resources/comparisons/[slug] — Comparison Pages ★ — Hairline.app §4.5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS ──────────────────────────────────────────── */
+    :root {
+      --bg:           #FAF8F5;
+      --surface:      #FFFFFF;
+      --surface-sub:  #F5F1EC;
+      --accent:       #B85C38;
+      --accent-lt:    #F5EDE8;
+      --accent-hover: #9C4E2E;
+      --ink:          #1A1611;
+      --ink-2:        #5C544A;
+      --ink-3:        #9A9087;
+      --border:       #E8E2D9;
+      --cluster-bg:   #EEE9E2;
+      --tag-bg:       #EDE8E2;
+      --green:        #2D6A4F;
+      --green-bg:     #EAF4EE;
+      --blue:         #1E5FA8;
+      --blue-bg:      #EAF0FA;
+      --amber:        #92600A;
+      --amber-bg:     #FEF3E2;
+      --compare-a:    #1E5FA8;   /* Treatment A colour */
+      --compare-b:    #2D6A4F;   /* Treatment B colour */
+      --compare-a-bg: #EAF0FA;
+      --compare-b-bg: #EAF4EE;
+
+      --sans:  'Inter', system-ui, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+
+      --nav-h:     64px;
+      --toc-w:     240px;
+      --content-w: 720px;
+      --r-sm:  6px; --r-md: 12px; --r-lg: 16px;
+      --r-xl:  20px; --r-2xl: 24px; --r-full: 9999px;
+      --sh-sm: 0 1px 3px rgba(26,22,17,.06), 0 1px 2px rgba(26,22,17,.04);
+      --sh-md: 0 4px 16px rgba(26,22,17,.08), 0 2px 4px rgba(26,22,17,.04);
+    }
+
+    /* ── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); font-size: 16px; color: var(--ink); background: var(--bg); line-height: 1.6; }
+    h1, h2, h3, h4, h5 { font-family: var(--sans); font-weight: 600; line-height: 1.2; color: var(--ink); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { list-style: none; }
+
+    /* ── WIREFRAME ANNOTATIONS ──────────────────────────────────── */
+    .wf-banner {
+      background: #6366F1; color: #fff; text-align: center; padding: 10px 24px;
+      font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .wf-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(99,102,241,.12); color: #6366F1;
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: var(--r-sm); margin-bottom: 6px;
+    }
+    .wf-note {
+      font-size: 11px; color: #6366F1; border-left: 2px solid #6366F1;
+      padding-left: 10px; margin-top: 8px; font-style: italic; line-height: 1.5;
+    }
+
+    /* ── BUTTONS ────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #fff;
+      font-size: 14px; font-weight: 600; padding: 10px 22px;
+      border-radius: var(--r-full); border: none; cursor: pointer; text-decoration: none; transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--accent-hover); text-decoration: none; color: #fff; }
+    .btn-lg { font-size: 15px; padding: 14px 30px; }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; color: var(--ink);
+      font-size: 13px; font-weight: 500; padding: 8px 16px;
+      border-radius: var(--r-sm); border: 1px solid var(--border); cursor: pointer;
+      transition: all .15s; text-decoration: none;
+    }
+    .btn-ghost:hover { background: var(--tag-bg); text-decoration: none; color: var(--ink); }
+    .btn-outline-a {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--compare-a-bg); color: var(--compare-a);
+      font-size: 13px; font-weight: 600; padding: 8px 18px;
+      border-radius: var(--r-full); border: 1.5px solid var(--compare-a);
+      text-decoration: none; transition: all .15s;
+    }
+    .btn-outline-b {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--compare-b-bg); color: var(--compare-b);
+      font-size: 13px; font-weight: 600; padding: 8px 18px;
+      border-radius: var(--r-full); border: 1.5px solid var(--compare-b);
+      text-decoration: none; transition: all .15s;
+    }
+
+    /* ── NAV ────────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,248,245,.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); height: var(--nav-h);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 32px; height: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    }
+    .nav-logo { font-weight: 700; font-size: 20px; color: var(--ink); letter-spacing: -.02em; text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; justify-content: center; }
+    .nav-links li a {
+      font-size: 13px; font-weight: 500; color: var(--ink); padding: 8px 12px;
+      border-radius: var(--r-sm); display: flex; align-items: center; gap: 4px; transition: background .15s;
+    }
+    .nav-links li a:hover { background: var(--tag-bg); text-decoration: none; }
+    .nav-links li a.active { color: var(--accent); background: var(--accent-lt); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .nav-pill {
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      border: 1.5px solid var(--accent); padding: 5px 14px; border-radius: var(--r-full);
+      letter-spacing: .02em; transition: all .15s; text-decoration: none;
+    }
+    .nav-pill:hover { background: var(--accent); color: #fff; text-decoration: none; }
+
+    /* ── BREADCRUMB ─────────────────────────────────────────────── */
+    .breadcrumb { background: var(--bg); border-bottom: 1px solid var(--border); padding: 10px 0; }
+    .bc-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-3);
+    }
+    .bc-inner a { color: var(--ink-3); }
+    .bc-inner a:hover { color: var(--accent); text-decoration: none; }
+    .bc-inner .sep { opacity: .4; }
+    .bc-inner .cur { color: var(--ink-2); font-weight: 500; }
+    .bc-tag {
+      background: var(--compare-a-bg); color: var(--compare-a);
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: var(--r-full); margin-left: 4px;
+    }
+
+    /* ── ARTICLE HEADER ─────────────────────────────────────────── */
+    .article-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 48px 0 40px;
+    }
+    .ah-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+    .ah-category-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+    }
+    .tag-comparison {
+      background: var(--compare-a-bg); color: var(--compare-a);
+      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      padding: 3px 12px; border-radius: var(--r-full);
+    }
+    .tag-vs {
+      background: var(--ink); color: #fff;
+      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: var(--r-full);
+    }
+    .tag-seo {
+      background: var(--amber-bg); color: var(--amber);
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: var(--r-full);
+    }
+    .ah-h1 {
+      font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1;
+      color: var(--ink); max-width: 820px; margin-bottom: 18px;
+    }
+    .ah-h1 .t-a { color: var(--compare-a); }
+    .ah-h1 .t-b { color: var(--compare-b); }
+    .ah-subtitle {
+      font-family: var(--serif); font-size: 18px; line-height: 1.65;
+      color: var(--ink-2); max-width: 680px; margin-bottom: 28px;
+    }
+    .ah-meta-row {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      padding-top: 20px; border-top: 1px solid var(--border);
+    }
+    .ah-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-3); }
+    .ah-meta-item svg { opacity: .55; }
+    .ah-meta-divider { width: 1px; height: 16px; background: var(--border); }
+    .share-row { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .share-label { font-size: 12px; color: var(--ink-3); }
+    .share-btn {
+      width: 32px; height: 32px; border-radius: var(--r-sm);
+      background: var(--tag-bg); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer; transition: background .15s;
+    }
+    .share-btn:hover { background: var(--accent-lt); }
+
+    /* ── AUTHOR BLOCK ───────────────────────────────────────────── */
+    .author-block {
+      background: var(--surface-sub); border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .ab-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+    }
+    .ab-person { display: flex; align-items: center; gap: 12px; }
+    .ab-avatar {
+      width: 44px; height: 44px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, #D4C5B5 0%, #C9B09A 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--ink-3); font-weight: 600; flex-shrink: 0;
+    }
+    .ab-info { display: flex; flex-direction: column; gap: 2px; }
+    .ab-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+    .ab-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .ab-cred { font-size: 11px; color: var(--ink-3); }
+    .ab-divider { width: 1px; height: 44px; background: var(--border); }
+    .ab-reviewed {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--green-bg); border: 1px solid rgba(45,106,79,.2);
+      border-radius: var(--r-sm); padding: 6px 14px;
+    }
+    .ab-reviewed-icon { font-size: 14px; }
+    .ab-reviewed-text { font-size: 12px; color: var(--green); font-weight: 500; }
+    .ab-updated { font-size: 12px; color: var(--ink-3); margin-left: auto; }
+
+    /* ── PAGE BODY (3-column grid) ──────────────────────────────── */
+    .page-body {
+      max-width: 1280px; margin: 0 auto; padding: 48px 32px;
+      display: grid;
+      grid-template-columns: var(--toc-w) minmax(0, var(--content-w)) 280px;
+      gap: 48px; align-items: start;
+    }
+
+    /* ── LEFT RAIL: Sticky ToC ──────────────────────────────────── */
+    .toc-rail {
+      position: sticky; top: calc(var(--nav-h) + 24px);
+      max-height: calc(100vh - var(--nav-h) - 48px);
+      overflow-y: auto;
+    }
+    .toc-rail::-webkit-scrollbar { width: 3px; }
+    .toc-rail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .toc-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 20px; box-shadow: var(--sh-sm);
+    }
+    .toc-title {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .toc-list li a {
+      display: block; font-size: 12px; color: var(--ink-2); padding: 7px 10px;
+      border-radius: var(--r-sm); border-left: 2px solid transparent;
+      transition: all .15s; text-decoration: none; line-height: 1.35;
+    }
+    .toc-list li a:hover { background: var(--accent-lt); color: var(--accent); text-decoration: none; }
+    .toc-list li a.active {
+      background: var(--accent-lt); color: var(--accent); font-weight: 600;
+      border-left-color: var(--accent);
+    }
+    .toc-list li.toc-sub a { padding-left: 20px; font-size: 11px; color: var(--ink-3); }
+    .toc-progress {
+      margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+    }
+    .toc-prog-label { font-size: 10px; color: var(--ink-3); margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .toc-prog-bar { height: 3px; background: var(--border); border-radius: var(--r-full); overflow: hidden; }
+    .toc-prog-fill { height: 100%; width: 35%; background: var(--accent); border-radius: var(--r-full); }
+
+    /* ── MAIN CONTENT ───────────────────────────────────────────── */
+    .main-content { min-width: 0; display: flex; flex-direction: column; gap: 0; }
+
+    /* Comparison quick-glance card (prominent, top of content) */
+    .compare-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-2xl); overflow: hidden; box-shadow: var(--sh-md);
+      margin-bottom: 48px;
+    }
+    .cc-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .cc-head-a, .cc-head-b {
+      padding: 18px 24px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .cc-head-a { background: var(--compare-a-bg); border-right: 1px solid var(--border); }
+    .cc-head-b { background: var(--compare-b-bg); }
+    .cc-treatment-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .cc-head-a .cc-treatment-label { color: var(--compare-a); }
+    .cc-head-b .cc-treatment-label { color: var(--compare-b); }
+    .cc-treatment-name { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); }
+    .cc-treatment-short { font-size: 12px; color: var(--ink-3); }
+    .cc-rows { display: flex; flex-direction: column; }
+    .cc-row {
+      display: grid; grid-template-columns: 180px 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .cc-row:last-child { border-bottom: none; }
+    .cc-row-label {
+      padding: 14px 20px; font-size: 12px; font-weight: 600; color: var(--ink-2);
+      background: var(--surface-sub); border-right: 1px solid var(--border);
+      display: flex; align-items: center;
+    }
+    .cc-cell-a, .cc-cell-b {
+      padding: 14px 24px; font-size: 13px; color: var(--ink);
+      display: flex; align-items: center; gap: 6px; line-height: 1.4;
+    }
+    .cc-cell-a { border-right: 1px solid var(--border); }
+    .cc-pill {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 600; padding: 2px 9px;
+      border-radius: var(--r-full);
+    }
+    .cc-pill-good { background: var(--green-bg); color: var(--green); }
+    .cc-pill-mid  { background: var(--amber-bg); color: var(--amber); }
+    .cc-pill-note { background: var(--tag-bg); color: var(--ink-2); }
+    .cc-footer {
+      padding: 16px 24px; background: var(--surface-sub);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .cc-footer-text { font-size: 12px; color: var(--ink-3); font-style: italic; }
+
+    /* ── ARTICLE BODY ───────────────────────────────────────────── */
+    .article-body { font-family: var(--serif); font-size: 17px; line-height: 1.75; color: var(--ink-2); }
+    .article-body p { margin-bottom: 20px; max-width: 68ch; }
+    .article-body h2 {
+      font-family: var(--sans); font-size: 22px; font-weight: 700;
+      letter-spacing: -.02em; color: var(--ink);
+      margin: 48px 0 16px; padding-top: 48px; border-top: 1px solid var(--border);
+    }
+    .article-body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+    .article-body h3 {
+      font-family: var(--sans); font-size: 17px; font-weight: 600;
+      color: var(--ink); margin: 28px 0 10px;
+    }
+    .article-body ul, .article-body ol {
+      list-style: disc; padding-left: 24px; margin-bottom: 20px; max-width: 68ch;
+    }
+    .article-body ul li, .article-body ol li { margin-bottom: 6px; }
+
+    /* Split-column comparison block (per dimension) */
+    .compare-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: var(--r-xl);
+      overflow: hidden; margin: 28px 0;
+    }
+    .cs-col { padding: 20px 22px; }
+    .cs-col-a { background: var(--compare-a-bg); border-right: 1px solid var(--border); }
+    .cs-col-b { background: var(--compare-b-bg); }
+    .cs-col-label {
+      font-family: var(--sans); font-size: 10px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .cs-col-a .cs-col-label { color: var(--compare-a); }
+    .cs-col-b .cs-col-label { color: var(--compare-b); }
+    .cs-col-name { font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .cs-col p { font-size: 14px; line-height: 1.65; color: var(--ink-2); margin-bottom: 0; }
+
+    /* Pull-quote */
+    .pullquote {
+      border-left: 3px solid var(--accent); padding: 16px 24px;
+      margin: 32px 0; background: var(--accent-lt); border-radius: 0 var(--r-md) var(--r-md) 0;
+    }
+    .pullquote p {
+      font-family: var(--serif); font-size: 19px; line-height: 1.55;
+      color: var(--ink); font-style: italic; margin: 0; max-width: 60ch;
+    }
+
+    /* Key takeaway */
+    .key-takeaway {
+      background: var(--cluster-bg); border: 1px solid #DDD8D0;
+      border-radius: var(--r-xl); padding: 20px 24px; margin: 32px 0;
+    }
+    .kt-header {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+      margin-bottom: 12px;
+    }
+    .kt-icon { font-size: 14px; }
+    .key-takeaway ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .key-takeaway ul li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-family: var(--sans); font-size: 13px; color: var(--ink-2); line-height: 1.5;
+    }
+    .kt-check { color: var(--green); font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+
+    /* Citation */
+    .citation-inline {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border-radius: var(--r-full);
+      background: var(--blue-bg); color: var(--blue);
+      font-size: 9px; font-weight: 700; vertical-align: super;
+      cursor: pointer; text-decoration: none; margin-left: 2px;
+    }
+    .citation-inline:hover { background: var(--blue); color: #fff; text-decoration: none; }
+
+    /* ── VERDICT BLOCK ──────────────────────────────────────────── */
+    .verdict-block {
+      background: var(--ink); color: #fff; border-radius: var(--r-2xl);
+      padding: 32px 36px; margin: 48px 0 40px;
+    }
+    .vb-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(255,255,255,.5); margin-bottom: 12px;
+    }
+    .vb-heading {
+      font-size: 24px; font-weight: 700; letter-spacing: -.02em;
+      color: #fff; line-height: 1.2; margin-bottom: 24px;
+    }
+    .vb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .vb-card {
+      border-radius: var(--r-xl); padding: 18px 20px;
+    }
+    .vb-card-a { background: rgba(30,95,168,.25); border: 1px solid rgba(30,95,168,.4); }
+    .vb-card-b { background: rgba(45,106,79,.25); border: 1px solid rgba(45,106,79,.4); }
+    .vb-card-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .vb-card-a .vb-card-label { color: #7FB3E8; }
+    .vb-card-b .vb-card-label { color: #7EC8A0; }
+    .vb-card-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+    .vb-card-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .vb-card-list li {
+      font-size: 12px; color: rgba(255,255,255,.75); line-height: 1.4;
+      display: flex; align-items: flex-start; gap: 6px;
+    }
+    .vb-card-list li::before { content: "·"; flex-shrink: 0; }
+    .vb-cta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .vb-cta-label { font-size: 13px; color: rgba(255,255,255,.65); }
+    .btn-verdict-primary {
+      background: #fff; color: var(--accent);
+      font-size: 13px; font-weight: 700; padding: 10px 22px;
+      border-radius: var(--r-full); border: none; cursor: pointer; text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-verdict-primary:hover { opacity: .9; text-decoration: none; color: var(--accent); }
+    .btn-verdict-ghost {
+      background: transparent; color: #fff;
+      font-size: 13px; font-weight: 500; padding: 10px 20px;
+      border-radius: var(--r-full); border: 1px solid rgba(255,255,255,.25);
+      cursor: pointer; text-decoration: none; transition: all .15s;
+    }
+    .btn-verdict-ghost:hover { background: rgba(255,255,255,.1); text-decoration: none; color: #fff; }
+
+    /* ── IN-ARTICLE CTA MODULES ─────────────────────────────────── */
+    .cta-module {
+      border-radius: var(--r-xl); padding: 24px 28px;
+      margin: 40px 0; display: flex; align-items: center; gap: 20px;
+    }
+    .cta-module-assessment {
+      background: var(--accent-lt); border: 1px solid rgba(184,92,56,.2);
+    }
+    .cta-module-clinic {
+      background: var(--compare-b-bg); border: 1px solid rgba(45,106,79,.2);
+    }
+    .cta-module-icon {
+      width: 48px; height: 48px; border-radius: var(--r-xl);
+      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .cta-module-assessment .cta-module-icon { background: rgba(184,92,56,.15); }
+    .cta-module-clinic .cta-module-icon { background: rgba(45,106,79,.15); }
+    .cta-module-body { flex: 1; }
+    .cta-module-body h4 { font-family: var(--sans); font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .cta-module-body p { font-family: var(--sans); font-size: 13px; color: var(--ink-2); margin: 0; line-height: 1.5; }
+    .cta-module-assessment .cta-module-body p em { color: var(--accent); font-style: normal; }
+    .cta-module-btn { flex-shrink: 0; }
+
+    /* ── CITATIONS LIST ─────────────────────────────────────────── */
+    .citations-section {
+      margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);
+    }
+    .citations-title {
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
+      color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .citations-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .cit-item { display: flex; gap: 10px; }
+    .cit-num {
+      width: 18px; height: 18px; border-radius: var(--r-full);
+      background: var(--blue-bg); color: var(--blue);
+      font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px;
+    }
+    .cit-text { font-family: var(--sans); font-size: 12px; color: var(--ink-3); line-height: 1.6; }
+    .cit-text a { color: var(--blue); }
+
+    /* Reviewed-by footer block */
+    .reviewed-block {
+      margin-top: 32px; padding: 20px 24px;
+      background: var(--surface-sub); border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .rb-avatar {
+      width: 52px; height: 52px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, #D4C5B5 0%, #C9B09A 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: var(--ink-3); font-weight: 600; flex-shrink: 0;
+    }
+    .rb-info { flex: 1; }
+    .rb-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+    .rb-name { font-size: 15px; font-weight: 700; color: var(--ink); margin: 2px 0; }
+    .rb-cred { font-size: 12px; color: var(--ink-3); }
+    .rb-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--green-bg); color: var(--green);
+      font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: var(--r-full);
+      flex-shrink: 0;
+    }
+
+    /* ── RIGHT RAIL ─────────────────────────────────────────────── */
+    .right-rail {
+      position: sticky; top: calc(var(--nav-h) + 24px);
+      display: flex; flex-direction: column; gap: 20px;
+      max-height: calc(100vh - var(--nav-h) - 48px); overflow-y: auto;
+    }
+    .right-rail::-webkit-scrollbar { width: 3px; }
+    .right-rail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .rr-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 20px; box-shadow: var(--sh-sm);
+    }
+    .rr-card-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Quick-fact card */
+    .qf-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .qf-item { display: flex; flex-direction: column; gap: 2px; }
+    .qf-label { font-size: 10px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+    .qf-vals { display: flex; gap: 6px; }
+    .qf-val {
+      font-size: 12px; font-weight: 600; padding: 2px 10px;
+      border-radius: var(--r-full);
+    }
+    .qf-val-a { background: var(--compare-a-bg); color: var(--compare-a); }
+    .qf-val-b { background: var(--compare-b-bg); color: var(--compare-b); }
+
+    /* Related treatments rail */
+    .rr-treatment-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .rr-treatment-list li a {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--ink-2); padding: 8px 10px;
+      border-radius: var(--r-sm); transition: all .15s;
+    }
+    .rr-treatment-list li a:hover { background: var(--accent-lt); color: var(--accent); text-decoration: none; }
+    .rr-treatment-dot {
+      width: 6px; height: 6px; border-radius: var(--r-full);
+      background: var(--ink-3); flex-shrink: 0;
+    }
+
+    /* Assessment card in rail */
+    .rr-assess-card {
+      background: var(--accent); border-radius: var(--r-xl); padding: 20px;
+    }
+    .rr-assess-card h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .rr-assess-card p { font-size: 12px; color: rgba(255,255,255,.8); line-height: 1.5; margin-bottom: 16px; }
+    .rr-assess-btn {
+      display: block; text-align: center; background: #fff; color: var(--accent);
+      font-size: 13px; font-weight: 700; padding: 10px 20px;
+      border-radius: var(--r-full); text-decoration: none; transition: opacity .15s;
+    }
+    .rr-assess-btn:hover { opacity: .9; text-decoration: none; color: var(--accent); }
+
+    /* ── RELATED CONTENT (foot) ─────────────────────────────────── */
+    .related-section {
+      background: var(--surface); border-top: 1px solid var(--border); padding: 56px 0;
+    }
+    .related-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+    .related-heading {
+      font-size: 22px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--ink); margin-bottom: 28px;
+    }
+    .related-sub { font-size: 13px; color: var(--ink-3); margin-bottom: 28px; margin-top: -18px; }
+
+    /* Comparison cards (horizontal) */
+    .compare-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+    .compare-card-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 20px; transition: box-shadow .15s;
+    }
+    .compare-card-item:hover { box-shadow: var(--sh-md); }
+    .cc-item-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--compare-a); background: var(--compare-a-bg);
+      padding: 2px 8px; border-radius: var(--r-full); margin-bottom: 10px;
+    }
+    .cc-item-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+    .cc-item-meta { font-size: 11px; color: var(--ink-3); }
+    .cc-item-vs {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--ink-3); margin: 8px 0;
+    }
+    .vs-pill {
+      padding: 1px 6px; border-radius: var(--r-full); font-size: 10px; font-weight: 700;
+    }
+    .vs-pill-a { background: var(--compare-a-bg); color: var(--compare-a); }
+    .vs-pill-b { background: var(--compare-b-bg); color: var(--compare-b); }
+    .vs-divider { font-size: 10px; color: var(--ink-3); font-weight: 700; }
+
+    /* Article cards (related) */
+    .article-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .article-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); overflow: hidden; transition: box-shadow .15s;
+    }
+    .article-card:hover { box-shadow: var(--sh-md); }
+    .ac-img-ph {
+      height: 140px; background: linear-gradient(135deg, #EDE0D4 0%, #D4C5B5 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; opacity: .3;
+    }
+    .ac-body { padding: 16px; }
+    .ac-cat {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .ac-title { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.35; margin-bottom: 8px; }
+    .ac-meta { font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; }
+
+    /* ── FAQ SECTION ────────────────────────────────────────────── */
+    .faq-section {
+      background: var(--surface-sub); padding: 56px 0;
+      border-top: 1px solid var(--border);
+    }
+    .faq-inner { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+    .faq-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 10px;
+    }
+    .faq-heading { font-size: 28px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 32px; }
+    .faq-list { display: flex; flex-direction: column; gap: 0; }
+    .faq-item {
+      border: 1px solid var(--border); border-bottom: none;
+      background: var(--surface); overflow: hidden;
+    }
+    .faq-item:first-child { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+    .faq-item:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 16px 20px; cursor: pointer;
+      font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--ink);
+    }
+    .faq-q:hover { background: var(--tag-bg); }
+    .faq-chevron { font-size: 12px; color: var(--ink-3); flex-shrink: 0; transition: transform .2s; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a {
+      padding: 0 20px 16px; font-family: var(--serif);
+      font-size: 14px; color: var(--ink-2); line-height: 1.7;
+    }
+    .faq-schema-note {
+      text-align: right; font-size: 11px; color: var(--ink-3); margin-top: 12px; font-style: italic;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--ink); color: rgba(255,255,255,.7);
+      padding: 56px 0 32px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+      padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .footer-brand-name { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -.02em; margin-bottom: 10px; }
+    .footer-brand-name span { color: var(--accent); }
+    .footer-brand-desc { font-size: 13px; line-height: 1.6; margin-bottom: 20px; max-width: 280px; }
+    .footer-col-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 14px; }
+    .footer-col-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col-list li a { font-size: 13px; color: rgba(255,255,255,.6); transition: color .15s; }
+    .footer-col-list li a:hover { color: #fff; text-decoration: none; }
+    .footer-bottom {
+      padding-top: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-legal { font-size: 12px; }
+    .footer-legal a { color: rgba(255,255,255,.45); margin-left: 16px; }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  WIREFRAME BANNER                                               -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<div class="wf-banner">
+  ★ Wireframe — /resources/comparisons/[slug] — Comparison Pages — Hairline.app §4.5 / §6.3
+  &nbsp;·&nbsp; Example slug: /resources/comparisons/fue-vs-fut
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  NAV (sticky)                                                   -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">Hair<span>line</span></a>
+    <ul class="nav-links">
+      <li><a href="/treatments">Treatments ▾</a></li>
+      <li><a href="/hair-loss">Hair Loss ▾</a></li>
+      <li><a href="/find-a-clinic">Find a Clinic</a></li>
+      <li><a href="/resources" class="active">Resources ▾</a></li>
+      <li><a href="/for-providers">For Clinics</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a class="btn-ghost" href="/assessment">Start assessment</a>
+      <a class="btn-primary" href="/assessment">Download app</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  BREADCRUMB                                                     -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<div class="breadcrumb">
+  <div class="bc-inner">
+    <a href="/">Home</a>
+    <span class="sep">›</span>
+    <a href="/resources">Resources</a>
+    <span class="sep">›</span>
+    <a href="/resources/comparisons">Comparisons</a>
+    <span class="sep">›</span>
+    <span class="cur">FUE vs. FUT</span>
+    <span class="bc-tag">COMPARISON</span>
+    <div class="wf-note" style="margin-left: auto; margin-top: 0;">§7.1 — Breadcrumb required on every page below top nav (SEO: schema breadcrumb markup)</div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  SECTION 3 — ARTICLE META (reading time, category, share)       -->
+<!--  + SECTION 1 — ARTICLE HEADER (H1, subtitle)                   -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<div class="article-header">
+  <div class="ah-inner">
+
+    <div class="wf-label">Section 1 · Article Meta + H1 Header</div>
+
+    <!-- Category / tag row -->
+    <div class="ah-category-row">
+      <span class="tag-comparison">Comparison</span>
+      <span class="tag-vs">FUE vs FUT</span>
+      <span class="tag-seo">★ SEO-Critical</span>
+    </div>
+
+    <!-- H1 — single, clear (§7.1) -->
+    <h1 class="ah-h1">
+      <span class="t-a">FUE</span> vs <span class="t-b">FUT</span> Hair Transplant:<br>
+      Which Is Right for You?
+    </h1>
+
+    <!-- Subtitle — editorial serif -->
+    <p class="ah-subtitle">
+      Both FUE and FUT are proven hair transplant methods — but they differ in technique, scarring, recovery time and cost. Here's everything you need to make an informed decision.
+    </p>
+
+    <!-- Meta row: reading time · reviewed date · share -->
+    <div class="ah-meta-row">
+      <div class="ah-meta-item">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        9 min read
+      </div>
+      <div class="ah-meta-divider"></div>
+      <div class="ah-meta-item">
+        Published 14 Jan 2025
+      </div>
+      <div class="ah-meta-divider"></div>
+      <div class="ah-meta-item">
+        Last reviewed 2 Jun 2026
+      </div>
+      <div class="ah-meta-divider"></div>
+      <div class="ah-meta-item" style="color: var(--green); font-weight: 500;">
+        ✓ Medically reviewed
+      </div>
+      <div class="share-row">
+        <span class="share-label">Share</span>
+        <button class="share-btn" title="Copy link">🔗</button>
+        <button class="share-btn" title="Share to X">𝕏</button>
+        <button class="share-btn" title="Share to Facebook">f</button>
+      </div>
+    </div>
+
+    <div class="wf-note">§7.1 — Single H1 per page. §5.4 — Reading time, category breadcrumb, share buttons in article meta.</div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  SECTION 2 — AUTHOR + MEDICAL REVIEWER BLOCK                   -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<div class="author-block">
+  <div class="ab-inner">
+
+    <div class="wf-label" style="margin-bottom: 0; align-self: center;">Section 2 · Author + Medical Reviewer</div>
+
+    <!-- Author -->
+    <div class="ab-person">
+      <div class="ab-avatar">SM</div>
+      <div class="ab-info">
+        <span class="ab-role">Written by</span>
+        <span class="ab-name">Sophie Marshall</span>
+        <span class="ab-cred">Health & Science Editor · Hairline</span>
+      </div>
+    </div>
+
+    <div class="ab-divider"></div>
+
+    <!-- Medical reviewer -->
+    <div class="ab-person">
+      <div class="ab-avatar">DK</div>
+      <div class="ab-info">
+        <span class="ab-role">Medically reviewed by</span>
+        <span class="ab-name">Dr. Daniil Korolev</span>
+        <span class="ab-cred">MBBS · Hair Transplant Surgeon · 14 yrs experience</span>
+      </div>
+    </div>
+
+    <div class="ab-reviewed">
+      <span class="ab-reviewed-icon">✓</span>
+      <span class="ab-reviewed-text">Fact-checked · Jun 2026</span>
+    </div>
+
+    <span class="ab-updated">Last updated: 2 Jun 2026</span>
+    <div class="wf-note" style="margin-left: 0; align-self: center;">§7.1 — Author/reviewer block = E-E-A-T signal. Must include photos, credentials, last-reviewed date.</div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  PAGE BODY — 3-column grid                                      -->
+<!--  Left: Sticky ToC · Centre: Main content · Right: Quick facts  -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<div class="page-body">
+
+  <!-- ── LEFT RAIL: STICKY TABLE OF CONTENTS (Section 1) ── -->
+  <aside class="toc-rail">
+    <div class="wf-label">Section 1 · Sticky Table of Contents</div>
+    <div class="toc-card">
+      <div class="toc-title">In this comparison</div>
+      <ul class="toc-list">
+        <li><a href="#overview" class="active">Quick overview table</a></li>
+        <li><a href="#technique">The technique</a></li>
+        <li class="toc-sub"><a href="#how-fue-works">How FUE works</a></li>
+        <li class="toc-sub"><a href="#how-fut-works">How FUT works</a></li>
+        <li><a href="#scarring">Scarring &amp; donor site</a></li>
+        <li><a href="#recovery">Recovery time</a></li>
+        <li><a href="#results">Results &amp; graft survival</a></li>
+        <li><a href="#cost">Cost comparison</a></li>
+        <li><a href="#eligibility">Who is each right for?</a></li>
+        <li><a href="#verdict">Verdict: which to choose</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="toc-progress">
+        <div class="toc-prog-label">
+          <span>Reading progress</span>
+          <span>35%</span>
+        </div>
+        <div class="toc-prog-bar"><div class="toc-prog-fill"></div></div>
+      </div>
+    </div>
+    <div class="wf-note">§5.4 / §7.1 — Desktop: sticky left rail. Mobile: collapsible. Anchors to H2 sections in body.</div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- ── SECTION 4 — COMPARISON OVERVIEW TABLE ── -->
+    <div>
+      <div class="wf-label">Section 4 · Comparison Overview Table (side-by-side)</div>
+      <div class="compare-card" id="overview">
+        <!-- Column headers -->
+        <div class="cc-header">
+          <div class="cc-head-a">
+            <span class="cc-treatment-label">Option A</span>
+            <span class="cc-treatment-name">FUE</span>
+            <span class="cc-treatment-short">Follicular Unit Extraction</span>
+          </div>
+          <div class="cc-head-b">
+            <span class="cc-treatment-label">Option B</span>
+            <span class="cc-treatment-name">FUT</span>
+            <span class="cc-treatment-short">Follicular Unit Transplantation</span>
+          </div>
+        </div>
+
+        <!-- Comparison rows -->
+        <div class="cc-rows">
+          <div class="cc-row">
+            <div class="cc-row-label">Average cost</div>
+            <div class="cc-cell-a">£4,000 – £12,000</div>
+            <div class="cc-cell-b">£3,000 – £9,000</div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Scarring</div>
+            <div class="cc-cell-a"><span class="cc-pill cc-pill-good">Minimal dot scars</span></div>
+            <div class="cc-cell-b"><span class="cc-pill cc-pill-mid">Linear scar (nape)</span></div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Recovery time</div>
+            <div class="cc-cell-a">7–10 days</div>
+            <div class="cc-cell-b">10–14 days</div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Graft yield</div>
+            <div class="cc-cell-a">1,000 – 4,000 grafts</div>
+            <div class="cc-cell-b">2,000 – 6,000 grafts</div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Technique</div>
+            <div class="cc-cell-a">Individual follicle extraction</div>
+            <div class="cc-cell-b">Strip of scalp removed</div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Best for</div>
+            <div class="cc-cell-a"><span class="cc-pill cc-pill-note">Smaller sessions · shaved head style</span></div>
+            <div class="cc-cell-b"><span class="cc-pill cc-pill-note">Large coverage · maximum grafts</span></div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Pain level</div>
+            <div class="cc-cell-a">Low (local anaesthetic)</div>
+            <div class="cc-cell-b">Low – moderate</div>
+          </div>
+          <div class="cc-row">
+            <div class="cc-row-label">Success rate</div>
+            <div class="cc-cell-a">85–95%</div>
+            <div class="cc-cell-b">90–97%</div>
+          </div>
+        </div>
+
+        <!-- Footer note -->
+        <div class="cc-footer">
+          <span class="cc-footer-text">Cost ranges are indicative. Your quote will depend on graft count, clinic location, and surgeon experience.</span>
+          <a class="btn-outline-a" href="/assessment">Get a personalised estimate →</a>
+        </div>
+      </div>
+      <div class="wf-note">§sitemap row 4 — Comparison overview table: cost / recovery / suitability / technique. Pinned near top so users can orient quickly before reading body copy.</div>
+    </div>
+
+    <!-- ── SECTION 5 — ARTICLE BODY ── -->
+    <article class="article-body">
+      <div class="wf-label">Section 5 · Article Body — editorial, section-by-section comparison</div>
+
+      <!-- ─ Technique ─ -->
+      <h2 id="technique">The Technique</h2>
+      <p>
+        Both procedures transplant follicular units — naturally occurring groups of 1–4 hairs — from a donor area (typically the back and sides of the scalp) to thinning or bald regions. The key difference is <em>how</em> those grafts are harvested.
+        <a class="citation-inline" href="#cit-1" title="International Society of Hair Restoration Surgery, 2023">1</a>
+      </p>
+
+      <div class="compare-split" id="how-fue-works">
+        <div class="cs-col cs-col-a">
+          <div class="cs-col-label">FUE</div>
+          <div class="cs-col-name">Individual extraction</div>
+          <p>A 0.8–1mm circular punch tool removes each follicular unit one-by-one directly from the scalp. No strip of skin is removed, which means no linear scar. The technique demands more surgical time but leaves only faint dot scars that are virtually invisible with a short-cropped hairstyle.</p>
+        </div>
+        <div class="cs-col cs-col-b" id="how-fut-works">
+          <div class="cs-col-label">FUT</div>
+          <div class="cs-col-name">Strip harvesting</div>
+          <p>A narrow horizontal strip of scalp (typically 1–2 cm wide) is removed from the donor area under local anaesthetic. Individual follicular units are then dissected from this strip under a microscope. The wound is closed with sutures, leaving a single linear scar that can be concealed with hair of medium length or longer.</p>
+        </div>
+      </div>
+
+      <!-- Pull-quote -->
+      <div class="pullquote">
+        <p>"The best technique is the one your surgeon recommends for your specific hair characteristics — not the one with the most marketing behind it."</p>
+      </div>
+      <div class="wf-note">Pull-quote component: §5.4 / §6.2. Used for clinically credible statements or notable surgeon quotes. Accent left-border style.</div>
+
+      <!-- ─ Scarring ─ -->
+      <h2 id="scarring">Scarring &amp; Donor Site</h2>
+      <p>
+        Scarring is the most frequently cited reason patients choose FUE over FUT — but it's worth understanding the full picture.
+        <a class="citation-inline" href="#cit-2" title="Bernstein, R.M. et al. Hair Transplant Forum International, 2019">2</a>
+      </p>
+
+      <!-- Key takeaway box -->
+      <div class="key-takeaway">
+        <div class="kt-header"><span class="kt-icon">💡</span> Key takeaway</div>
+        <ul>
+          <li><span class="kt-check">✓</span> FUE leaves hundreds of tiny dot scars — invisible unless the head is shaved very close.</li>
+          <li><span class="kt-check">✓</span> FUT leaves one linear scar — visible if the hair is worn very short.</li>
+          <li><span class="kt-check">✓</span> In skilled hands, both are well-tolerated and unlikely to draw attention.</li>
+          <li><span class="kt-check">✓</span> Patients who regularly shave their heads to grade 1–2 should strongly consider FUE.</li>
+        </ul>
+      </div>
+      <div class="wf-note">Key-takeaway component: §5.4 / §6.2. Used to surface 3–5 clinically validated points. Helps SEO snippet extraction.</div>
+
+      <!-- ─ Recovery ─ -->
+      <h2 id="recovery">Recovery Time</h2>
+      <p>
+        Neither procedure requires a hospital stay, and both are performed under local anaesthetic in a single session. Recovery differences are modest but meaningful for patients planning around work or social commitments.
+      </p>
+
+      <!-- In-article CTA module: Assessment (§5.4 pattern) -->
+      <div class="cta-module cta-module-assessment">
+        <div class="cta-module-icon">📋</div>
+        <div class="cta-module-body">
+          <h4>Not sure which suits your hair loss stage?</h4>
+          <p>Take the free Hairline assessment — our algorithm matches you to the right treatment based on your <em>Norwood scale</em> and donor density.</p>
+        </div>
+        <div class="cta-module-btn">
+          <a class="btn-primary" href="/assessment">Start assessment →</a>
+        </div>
+      </div>
+      <div class="wf-note">Section 8 — In-article CTA module (assessment). §5.4: "don't feel like ads — see how Healthline subtly inserts these." Appears mid-article near relevant decision point.</div>
+
+      <!-- ─ Results ─ -->
+      <h2 id="results">Results &amp; Graft Survival</h2>
+      <p>
+        Long-term clinical outcomes between FUE and FUT are broadly comparable when performed by experienced surgeons.
+        <a class="citation-inline" href="#cit-3" title="Rassman, W.R. Dermatol Surg, 2022">3</a>
+        FUT typically yields a higher total graft count in a single session — an important consideration for patients requiring large-scale coverage.
+      </p>
+
+      <!-- ─ Cost ─ -->
+      <h2 id="cost">Cost Comparison</h2>
+      <p>
+        FUE is almost always priced higher than FUT because it is more labour-intensive — each follicle is extracted individually, which can take 4–8 hours for a mid-range session.
+      </p>
+
+      <!-- In-article CTA module: Find a clinic -->
+      <div class="cta-module cta-module-clinic">
+        <div class="cta-module-icon">🏥</div>
+        <div class="cta-module-body">
+          <h4>Find verified clinics offering both FUE and FUT</h4>
+          <p>Compare pricing, surgeon credentials and patient reviews across clinics in your city or treatment destination.</p>
+        </div>
+        <div class="cta-module-btn">
+          <a class="btn-primary" href="/find-a-clinic" style="background: var(--green);">Browse clinics →</a>
+        </div>
+      </div>
+      <div class="wf-note">Section 8 — In-article CTA module (find-a-clinic). §sitemap row 8. Second CTA appears near the cost section — highest-intent moment.</div>
+
+      <!-- ─ Eligibility ─ -->
+      <h2 id="eligibility">Who Is Each Right For?</h2>
+      <div class="compare-split">
+        <div class="cs-col cs-col-a">
+          <div class="cs-col-label">FUE is better if you…</div>
+          <ul style="list-style: disc; padding-left: 16px; font-size: 14px; color: var(--ink-2); line-height: 1.65;">
+            <li>Want to wear hair very short (grade 1–3 clippers)</li>
+            <li>Have a smaller coverage area (Norwood 2–4)</li>
+            <li>Want a quicker return to physical activity</li>
+            <li>Are having a secondary or "touch-up" procedure</li>
+          </ul>
+        </div>
+        <div class="cs-col cs-col-b">
+          <div class="cs-col-label">FUT is better if you…</div>
+          <ul style="list-style: disc; padding-left: 16px; font-size: 14px; color: var(--ink-2); line-height: 1.65;">
+            <li>Need maximum graft yield (Norwood 5–7)</li>
+            <li>Always wear hair medium length or longer</li>
+            <li>Want the most cost-effective large session</li>
+            <li>Have lower donor density (FUT preserves it better)</li>
+          </ul>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ── SECTION 6 — VERDICT / RECOMMENDATION BLOCK ── -->
+    <div>
+      <div class="wf-label">Section 6 · Verdict — "Which is right for you?" guidance block</div>
+      <div class="verdict-block" id="verdict">
+        <div class="vb-eyebrow">Our verdict</div>
+        <h2 class="vb-heading" style="font-family: var(--sans);">Which should you choose?</h2>
+        <div class="vb-grid">
+          <div class="vb-card vb-card-a">
+            <div class="vb-card-label">Choose FUE if</div>
+            <div class="vb-card-title">You want flexibility &amp; minimal visible scarring</div>
+            <ul class="vb-card-list">
+              <li>Norwood stage 2–4 hair loss</li>
+              <li>Short hairstyles (grade 1–3)</li>
+              <li>Active lifestyle, faster recovery</li>
+              <li>Secondary / revision procedure</li>
+            </ul>
+          </div>
+          <div class="vb-card vb-card-b">
+            <div class="vb-card-label">Choose FUT if</div>
+            <div class="vb-card-title">You need maximum coverage at lower cost</div>
+            <ul class="vb-card-list">
+              <li>Norwood stage 5–7 hair loss</li>
+              <li>Medium-to-long hairstyles</li>
+              <li>Large graft count needed (3,000+)</li>
+              <li>Budget is a key constraint</li>
+            </ul>
+          </div>
+        </div>
+        <div class="vb-cta-row">
+          <span class="vb-cta-label">Still unsure? Your assessment will tell you.</span>
+          <a class="btn-verdict-primary" href="/assessment">Start free assessment →</a>
+          <a class="btn-verdict-ghost" href="/find-a-clinic">Find a surgeon near you</a>
+        </div>
+      </div>
+      <div class="wf-note">§sitemap row 6 — Verdict / recommendation: 'Which is right for you?' guidance block. Dark background for visual contrast. Always ends with an action, not just information.</div>
+    </div>
+
+    <!-- ── SECTION 7 — CITATIONS ── -->
+    <div class="citations-section">
+      <div class="wf-label">Section 7 · Inline Citations</div>
+      <div class="citations-title">References</div>
+      <ol class="citations-list">
+        <li class="cit-item">
+          <span class="cit-num">1</span>
+          <span class="cit-text">International Society of Hair Restoration Surgery. <em>ISHRS Practice Census.</em> 2023. Available at: <a href="#">ishrs.org/statistics</a></span>
+        </li>
+        <li class="cit-item">
+          <span class="cit-num">2</span>
+          <span class="cit-text">Bernstein R.M., Rassman W.R. <em>Follicular unit extraction: minimally invasive surgery for hair transplantation.</em> Dermatologic Surgery, 2019; 45(2): 147–159.</span>
+        </li>
+        <li class="cit-item">
+          <span class="cit-num">3</span>
+          <span class="cit-text">Rassman W.R. et al. <em>Follicular unit transplantation: 2020.</em> Dermatologic Surgery. 2022; 48(4): 421–429.</span>
+        </li>
+      </ol>
+      <div class="wf-note">§5.4 — Inline citations with hover-reveal. Numbers in body link to this list. §7.1 — E-E-A-T signal.</div>
+    </div>
+
+    <!-- Reviewed-by footer block -->
+    <div class="reviewed-block">
+      <div class="rb-avatar">DK</div>
+      <div class="rb-info">
+        <div class="rb-role">Medically reviewed by</div>
+        <div class="rb-name">Dr. Daniil Korolev MBBS</div>
+        <div class="rb-cred">Hair Transplant Surgeon · 14 years experience · Member, ISHRS</div>
+      </div>
+      <div class="rb-badge">✓ Reviewed Jun 2026</div>
+    </div>
+
+  </main><!-- /main-content -->
+
+  <!-- ── RIGHT RAIL ── -->
+  <aside class="right-rail">
+
+    <!-- Quick facts card -->
+    <div class="rr-card">
+      <div class="rr-card-title">Quick facts</div>
+      <ul class="qf-list">
+        <li class="qf-item">
+          <span class="qf-label">Cost (avg.)</span>
+          <div class="qf-vals">
+            <span class="qf-val qf-val-a">FUE: £4–12k</span>
+            <span class="qf-val qf-val-b">FUT: £3–9k</span>
+          </div>
+        </li>
+        <li class="qf-item">
+          <span class="qf-label">Recovery</span>
+          <div class="qf-vals">
+            <span class="qf-val qf-val-a">7–10 days</span>
+            <span class="qf-val qf-val-b">10–14 days</span>
+          </div>
+        </li>
+        <li class="qf-item">
+          <span class="qf-label">Scarring</span>
+          <div class="qf-vals">
+            <span class="qf-val qf-val-a">Dot scars</span>
+            <span class="qf-val qf-val-b">Linear scar</span>
+          </div>
+        </li>
+        <li class="qf-item">
+          <span class="qf-label">Max grafts / session</span>
+          <div class="qf-vals">
+            <span class="qf-val qf-val-a">~4,000</span>
+            <span class="qf-val qf-val-b">~6,000</span>
+          </div>
+        </li>
+        <li class="qf-item">
+          <span class="qf-label">Success rate</span>
+          <div class="qf-vals">
+            <span class="qf-val qf-val-a">85–95%</span>
+            <span class="qf-val qf-val-b">90–97%</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Assessment CTA -->
+    <div class="rr-assess-card">
+      <h4>Which treatment suits your hair loss?</h4>
+      <p>Answer 5 questions and get a personalised recommendation from our clinical algorithm.</p>
+      <a class="rr-assess-btn" href="/assessment">Start free assessment →</a>
+    </div>
+
+    <!-- Related treatments -->
+    <div class="rr-card">
+      <div class="rr-card-title">Related treatments</div>
+      <ul class="rr-treatment-list">
+        <li><a href="/treatments/hair-transplant/dhi"><span class="rr-treatment-dot"></span>DHI Hair Transplant</a></li>
+        <li><a href="/treatments/prp"><span class="rr-treatment-dot"></span>PRP Therapy</a></li>
+        <li><a href="/treatments/finasteride"><span class="rr-treatment-dot"></span>Finasteride</a></li>
+        <li><a href="/treatments/scalp-micropigmentation"><span class="rr-treatment-dot"></span>Scalp Micropigmentation</a></li>
+      </ul>
+    </div>
+
+    <!-- Related comparisons -->
+    <div class="rr-card">
+      <div class="rr-card-title">More comparisons</div>
+      <ul class="rr-treatment-list">
+        <li><a href="/resources/comparisons/fue-vs-dhi"><span class="rr-treatment-dot"></span>FUE vs DHI</a></li>
+        <li><a href="/resources/comparisons/prp-vs-minoxidil"><span class="rr-treatment-dot"></span>PRP vs Minoxidil</a></li>
+        <li><a href="/resources/comparisons/finasteride-vs-minoxidil"><span class="rr-treatment-dot"></span>Finasteride vs Minoxidil</a></li>
+      </ul>
+    </div>
+
+    <div class="wf-note">Right rail: quick-facts summary card, assessment CTA, related treatments, related comparisons. Sticky until content ends.</div>
+
+  </aside>
+</div><!-- /page-body -->
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  FAQ SECTION (schema-ready, §7.1)                              -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="wf-label">FAQ Block · Section 10 · Schema-marked-up accordion</div>
+    <div class="faq-eyebrow">Common questions</div>
+    <h2 class="faq-heading">FUE vs FUT: frequently asked questions</h2>
+
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q">
+          Is FUE more painful than FUT?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">Both procedures are performed under local anaesthetic, so you should feel minimal discomfort during the surgery itself. Post-operative soreness is generally mild with FUE; FUT patients may experience slightly more tenderness at the donor strip site for the first week.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Can FUT scars be repaired with FUE?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a" style="display:none;">Yes — this is a common revision strategy. FUE grafts can be transplanted directly into an existing FUT linear scar to break it up and make it less visible. The procedure is typically a small session (200–600 grafts).</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Which lasts longer — FUE or FUT?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a" style="display:none;">Both procedures use permanent donor hair that is genetically resistant to DHT (the hormone that causes hair loss). Results from either technique are considered permanent, provided the donor area remains stable.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          How do I know which Norwood stage I am?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a" style="display:none;">The Norwood scale classifies male-pattern hair loss from stage 1 (minimal hairline recession) to stage 7 (extensive baldness). The Hairline in-app assessment uses photos and pattern-recognition to estimate your stage and suggest appropriate treatments.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          How much does a hair transplant cost in Istanbul vs the UK?
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a" style="display:none;">Istanbul is the world's most popular destination for hair transplants, with prices typically 60–70% lower than the UK for equivalent graft counts. Hairline Travel bundles flights, hotel and transfers into a coordinated package — see our Istanbul clinic directory for verified options.</div>
+      </div>
+    </div>
+
+    <p class="faq-schema-note">
+      FAQ block is structured with schema.org/FAQPage JSON-LD for rich-result eligibility — §7.1
+    </p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  SECTION 9 — RELATED COMPARISONS + RELATED ARTICLES RAIL      -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section class="related-section">
+  <div class="related-inner">
+
+    <!-- Related comparisons -->
+    <div class="wf-label">Section 9 · Related Comparisons</div>
+    <h2 class="related-heading">More comparisons</h2>
+    <div class="compare-cards">
+
+      <div class="compare-card-item">
+        <span class="cc-item-badge">Comparison</span>
+        <div class="cc-item-vs">
+          <span class="vs-pill vs-pill-a">FUE</span>
+          <span class="vs-divider">vs</span>
+          <span class="vs-pill vs-pill-b" style="background:var(--purple-bg, #F0EBFA); color: #5B3E9B;">DHI</span>
+        </div>
+        <div class="cc-item-title">FUE vs DHI: what's the difference and which gives denser results?</div>
+        <div class="cc-item-meta">7 min read · Transplants</div>
+      </div>
+
+      <div class="compare-card-item">
+        <span class="cc-item-badge">Comparison</span>
+        <div class="cc-item-vs">
+          <span class="vs-pill" style="background: var(--amber-bg); color: var(--amber);">PRP</span>
+          <span class="vs-divider">vs</span>
+          <span class="vs-pill" style="background: var(--green-bg); color: var(--green);">Minoxidil</span>
+        </div>
+        <div class="cc-item-title">PRP vs Minoxidil: which non-surgical option actually works?</div>
+        <div class="cc-item-meta">6 min read · Non-surgical</div>
+      </div>
+
+      <div class="compare-card-item">
+        <span class="cc-item-badge">Comparison</span>
+        <div class="cc-item-vs">
+          <span class="vs-pill" style="background: var(--accent-lt); color: var(--accent);">Finasteride</span>
+          <span class="vs-divider">vs</span>
+          <span class="vs-pill" style="background: var(--green-bg); color: var(--green);">Minoxidil</span>
+        </div>
+        <div class="cc-item-title">Finasteride vs Minoxidil: comparing the two most-prescribed hair loss drugs</div>
+        <div class="cc-item-meta">8 min read · Medications</div>
+      </div>
+
+    </div>
+
+    <!-- Related articles -->
+    <div class="wf-label">Section 9 · Related Articles</div>
+    <h2 class="related-heading" style="margin-top: 0;">Related reading</h2>
+    <p class="related-sub">§7.1 — every article must surface 6–8 related links for internal linking</p>
+
+    <div class="article-cards">
+      <div class="article-card">
+        <div class="ac-img-ph">✂️</div>
+        <div class="ac-body">
+          <div class="ac-cat">Treatments</div>
+          <div class="ac-title">What is the Norwood scale and how is it used to plan a transplant?</div>
+          <div class="ac-meta"><span>6 min read</span><span>·</span><span>Jan 2025</span></div>
+        </div>
+      </div>
+      <div class="article-card">
+        <div class="ac-img-ph">🔬</div>
+        <div class="ac-body">
+          <div class="ac-cat">Recovery</div>
+          <div class="ac-title">Hair transplant aftercare: the complete 12-month recovery guide</div>
+          <div class="ac-meta"><span>11 min read</span><span>·</span><span>Mar 2025</span></div>
+        </div>
+      </div>
+      <div class="article-card">
+        <div class="ac-img-ph">🌍</div>
+        <div class="ac-body">
+          <div class="ac-cat">Travel</div>
+          <div class="ac-title">Istanbul hair transplant: what to expect, where to go, and how much it costs</div>
+          <div class="ac-meta"><span>9 min read</span><span>·</span><span>Apr 2025</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  FOOTER                                                         -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">Hair<span>line</span></div>
+        <p class="footer-brand-desc">
+          Hair restoration, done right. Verified providers, evidence-based content, and technology that puts patients first.
+        </p>
+        <div style="display:flex; gap:8px;">
+          <a class="btn-primary" href="/assessment" style="font-size:13px; padding:9px 18px;">Download app</a>
+          <a class="btn-ghost" href="/for-providers" style="background:transparent; border-color:rgba(255,255,255,.2); color:rgba(255,255,255,.7); font-size:13px;">For clinics →</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Treatments</div>
+        <ul class="footer-col-list">
+          <li><a href="/treatments/hair-transplant/fue">FUE Transplant</a></li>
+          <li><a href="/treatments/hair-transplant/fut">FUT Transplant</a></li>
+          <li><a href="/treatments/hair-transplant/dhi">DHI Transplant</a></li>
+          <li><a href="/treatments/prp">PRP</a></li>
+          <li><a href="/treatments/finasteride">Finasteride</a></li>
+          <li><a href="/treatments/minoxidil">Minoxidil</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Resources</div>
+        <ul class="footer-col-list">
+          <li><a href="/resources">Article hub</a></li>
+          <li><a href="/resources/comparisons">Comparisons</a></li>
+          <li><a href="/hair-loss">Hair loss guide</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/assessment">Free assessment</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-col-list">
+          <li><a href="/about">About</a></li>
+          <li><a href="/for-providers">For providers</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Hairline.app · Samasu Digital LTD</span>
+      <span>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/cookies">Cookies</a>
+        <a href="/accessibility">Accessibility</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<!--  WIREFRAME ANNOTATION SUMMARY                                   -->
+<!-- ─────────────────────────────────────────────────────────────── -->
+<div style="background:#F0EBFF; border-top: 3px solid #6366F1; padding: 32px; font-family: monospace; font-size: 12px; color: #3730A3; line-height: 1.8;">
+  <strong style="font-size: 14px; display:block; margin-bottom: 12px;">📋 WIREFRAME ANNOTATION — /resources/comparisons/[slug] — Comparison Pages ★</strong>
+  <strong>Sections mapped (from sitemap-v1.md):</strong><br>
+  § 1 · Sticky Table of Contents — left rail, anchored to H2 sections, reading-progress bar, desktop sticky / mobile collapsible<br>
+  § 2 · Author + Medical Reviewer Block — photos, credentials, last-reviewed date, medically-reviewed badge (E-E-A-T §7.1)<br>
+  § 3 · Article Meta — reading time, category breadcrumb, share buttons (top of header)<br>
+  § 4 · Comparison Overview Table — side-by-side summary pinned near top: cost / recovery / suitability / technique / scarring / success rate<br>
+  § 5 · Article Body — editorial serif, section-by-section comparison per dimension, split-column comparison blocks, pull-quote, key-takeaway, inline citations<br>
+  § 6 · Verdict / Recommendation — 'Which is right for you?' dark-background card with choose-A / choose-B split and action CTAs<br>
+  § 7 · Inline Citations — numbered hover-reveal, linked to references list at foot<br>
+  § 8 · In-Article CTA Modules — two placements: (a) assessment at recovery section, (b) find-a-clinic at cost section<br>
+  § 9 · Related Comparisons + Related Articles Rail — foot of page, 3-column grid each<br>
+  + FAQ accordion (schema.org/FAQPage, §7.1)<br>
+  + Right rail: quick-facts card, assessment CTA, related treatments, related comparisons<br>
+  <br>
+  <strong>Design system tokens applied:</strong> palette (off-white bg, terracotta accent, deep ink), Inter sans + Georgia serif, r-xl/2xl cards, sh-md shadows, generous section spacing<br>
+  <strong>SEO requirements (§7.1):</strong> single H1 ✓ · breadcrumb ✓ · author/reviewer block ✓ · last-reviewed date ✓ · FAQ schema ✓ · sticky ToC ✓ · internal links ✓<br>
+  <strong>Comparison-specific:</strong> dual colour coding (blue = FUE / green = FUT) carried through table, split blocks, verdict card, right-rail pills<br>
+  <strong>Breakpoints to design:</strong> 360px (mobile) / 768px (tablet) / 1280px (desktop) — ToC and right rail collapse on mobile
+</div>
+
+</body>
+</html>

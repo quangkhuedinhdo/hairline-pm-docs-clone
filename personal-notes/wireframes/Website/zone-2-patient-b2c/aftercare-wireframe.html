@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — /aftercare Wireframe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Palette */
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+      --green:        #2E6B4F;
+      --green-light:  #D4EAE0;
+      --green-dark:   #1A4030;
+
+      /* Typography */
+      --font-ui: 'Inter', system-ui, sans-serif;
+
+      /* Spacing */
+      --section-py:  120px;
+      --container:   1200px;
+
+      /* Radius */
+      --radius-md:   12px;
+      --radius-lg:   20px;
+      --radius-xl:   28px;
+
+      /* Shadow */
+      --shadow-sm:   0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:   0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utility ─────────────────────────────────────────────────────── */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .section { padding: var(--section-py) 0; }
+
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-secondary:hover { border-color: var(--ink-mid); }
+
+    .text-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .text-link:hover { text-decoration: underline; }
+
+    /* ─── NAV ────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,248,245,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 64px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      text-decoration: none;
+      margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a.active { color: var(--ink); font-weight: 600; }
+    .nav-cta-b2b {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ─────────────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .breadcrumb a {
+      font-size: 13px;
+      color: var(--ink-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb-sep { font-size: 13px; color: var(--border); }
+    .breadcrumb-current {
+      font-size: 13px;
+      color: var(--ink-mid);
+      font-weight: 500;
+    }
+
+    /* ─── SECTION 1 — HERO ───────────────────────────────────────────── */
+    .hero {
+      padding: 96px 0 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .hero-eyebrow { margin-bottom: 20px; }
+    .hero h1 {
+      font-size: 58px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.07;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--green);
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--ink-mid);
+      line-height: 1.55;
+      max-width: 440px;
+      margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; flex-direction: column; gap: 14px; }
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-app-note {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 4px;
+    }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .hero-bg-panel {
+      position: absolute;
+      top: -96px;
+      right: -80px;
+      width: 82%;
+      height: calc(100% + 96px);
+      background: var(--green-light);
+      border-radius: var(--radius-xl) 0 0 0;
+      z-index: 0;
+    }
+    .hero-phone-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 20px;
+      padding-right: 60px;
+    }
+    .phone-mockup {
+      width: 240px;
+      height: 490px;
+      background: var(--ink);
+      border-radius: 36px;
+      box-shadow: 0 32px 80px rgba(28,26,23,.28);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 5px solid #2e2b27;
+      flex-shrink: 0;
+    }
+    .phone-notch {
+      width: 90px;
+      height: 24px;
+      background: var(--ink);
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto;
+    }
+    .phone-screen {
+      flex: 1;
+      background: #F7FBF8;
+      margin: 0 5px 5px;
+      border-radius: 26px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .phone-screen-label {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--green);
+    }
+    .phone-screen-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .phone-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .phone-stat-tile {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .phone-stat-num {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .phone-stat-lbl {
+      font-size: 9px;
+      color: var(--ink-muted);
+      margin-top: 1px;
+    }
+    .phone-progress-bar-wrap {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 2px;
+    }
+    .phone-progress-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--ink-mid);
+      margin-bottom: 6px;
+    }
+    .phone-progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .phone-progress-fill {
+      height: 100%;
+      width: 38%;
+      background: var(--green);
+      border-radius: 3px;
+    }
+    .phone-log-item {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .phone-log-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+    .phone-log-text { font-size: 10px; color: var(--ink-mid); flex: 1; }
+    .phone-log-time { font-size: 9px; color: var(--ink-muted); }
+    .phone-cta-btn {
+      margin-top: auto;
+      background: var(--green);
+      color: var(--white);
+      border-radius: 10px;
+      padding: 11px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Floating card */
+    .hero-float-card {
+      position: absolute;
+      left: -24px;
+      top: 40%;
+      transform: translateY(-50%);
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-md);
+      z-index: 2;
+      min-width: 160px;
+    }
+    .float-card-label {
+      font-size: 10px;
+      color: var(--ink-muted);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .float-card-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: -.02em;
+    }
+    .float-card-sub {
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* Trust strip */
+    .trust-strip {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      padding: 16px 0;
+      margin-top: 80px;
+    }
+    .trust-strip-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+    .trust-icon { font-size: 15px; }
+    .trust-sep { width: 1px; height: 16px; background: var(--border); }
+
+    /* ─── SECTION 2 — WHAT IS AFTERCARE ─────────────────────────────── */
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .intro-copy h2 {
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-top: 12px;
+      margin-bottom: 20px;
+    }
+    .intro-copy h2 em {
+      font-style: normal;
+      color: var(--green);
+    }
+    .intro-copy p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .intro-pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .intro-pillar {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .pillar-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .pillar-text h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .pillar-text p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      margin: 0;
+    }
+    /* Aftercare visual — timeline card */
+    .intro-visual {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .intro-visual-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    .intro-visual-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .procedure-day-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+    .timeline-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-mini-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding-bottom: 18px;
+      position: relative;
+    }
+    .timeline-mini-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 26px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-mini-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .timeline-mini-dot.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+    }
+    .timeline-mini-body h5 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .timeline-mini-body p {
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+
+    /* ─── SECTION 3 — FEATURES ───────────────────────────────────────── */
+    .features-section {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .features-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .features-header h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+    }
+    .features-header p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      margin-top: 12px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 40px 36px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: box-shadow .2s;
+    }
+    .feature-card:hover { box-shadow: var(--shadow-md); }
+    .feature-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.02em;
+    }
+    .feature-card-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+    .feature-card p {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.65;
+    }
+    /* Feature card — inline UI mockup */
+    .feature-ui-block {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .feature-ui-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feature-ui-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-green  { background: var(--green); }
+    .dot-amber  { background: #D4940A; }
+    .dot-red    { background: #C0392B; }
+    .feature-ui-text {
+      font-size: 12px;
+      color: var(--ink-mid);
+      flex: 1;
+    }
+    .feature-ui-val {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    /* Scan mockup */
+    .scan-block {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .scan-head {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px dashed var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      background: var(--white);
+    }
+    .scan-info { flex: 1; }
+    .scan-info-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--green);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .scan-months {
+      display: flex;
+      gap: 6px;
+    }
+    .scan-month-chip {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      background: var(--white);
+    }
+    .scan-month-chip.active {
+      background: var(--green);
+      color: var(--white);
+      border-color: var(--green);
+    }
+    /* Video follow-up mockup */
+    .video-block {
+      background: var(--ink);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .video-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .video-info { flex: 1; }
+    .video-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .video-role {
+      font-size: 11px;
+      color: rgba(255,255,255,.45);
+      margin-top: 2px;
+    }
+    .video-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      background: var(--green);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    /* 24/7 mockup */
+    .chat-block {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-bubble {
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      max-width: 80%;
+    }
+    .chat-bubble.them {
+      background: var(--white);
+      color: var(--ink-mid);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+    }
+    .chat-bubble.us {
+      background: var(--green);
+      color: var(--white);
+      align-self: flex-end;
+    }
+    .chat-meta {
+      font-size: 10px;
+      color: var(--ink-muted);
+      align-self: flex-start;
+    }
+
+    /* ─── SECTION 4 — RECOVERY TIMELINE ─────────────────────────────── */
+    .timeline-section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .timeline-section-header h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+    }
+    .timeline-section-header p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      margin-top: 12px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .recovery-track {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .recovery-track::before {
+      content: '';
+      position: absolute;
+      top: 52px;
+      left: calc(12.5% + 8px);
+      right: calc(12.5% + 8px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--green) 0%, var(--green) 38%, var(--border) 38%, var(--border) 100%);
+    }
+    .recovery-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      position: relative;
+    }
+    .recovery-step-marker {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .recovery-step-marker.done {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+    }
+    .recovery-step-marker.current {
+      background: var(--white);
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 0 4px var(--green-light);
+    }
+    .recovery-step-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+    .recovery-step h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .recovery-step p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+    }
+    .recovery-step-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      margin-top: 16px;
+      width: 100%;
+      box-shadow: var(--shadow-sm);
+    }
+    .recovery-step-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .recovery-step-card li {
+      font-size: 12px;
+      color: var(--ink-mid);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .recovery-step-card li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      font-size: 11px;
+      margin-top: 1px;
+    }
+    .recovery-disclaimer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 12px;
+      color: var(--ink-muted);
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ─── SECTION 5 — CONNECTED TO CLINIC ───────────────────────────── */
+    .clinic-connect-section {
+      background: var(--bg-dark);
+    }
+    .clinic-connect-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .clinic-connect-copy .label { color: rgba(255,255,255,.4); }
+    .clinic-connect-copy h2 {
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      color: var(--white);
+      margin-top: 14px;
+      margin-bottom: 20px;
+    }
+    .clinic-connect-copy h2 em {
+      font-style: normal;
+      color: var(--green-light);
+    }
+    .clinic-connect-copy p {
+      font-size: 17px;
+      color: rgba(255,255,255,.65);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .connect-points {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 32px;
+    }
+    .connect-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .connect-point-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(46,107,79,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .connect-point-text h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+    .connect-point-text p {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+      margin: 0;
+    }
+    /* Clinic flow visual */
+    .clinic-flow-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .flow-node {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .flow-node-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(46,107,79,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .flow-node-body h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .flow-node-body p {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      margin: 2px 0 0;
+    }
+    .flow-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.2);
+      font-size: 20px;
+      height: 16px;
+    }
+
+    /* ─── SECTION 6 — PATIENT STORIES ───────────────────────────────── */
+    .testimonials-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 52px;
+    }
+    .testimonials-header .label { color: var(--ink-muted); }
+    .testimonials-header h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      max-width: 460px;
+      line-height: 1.1;
+      margin-top: 12px;
+    }
+    .testimonials-nav {
+      display: flex;
+      gap: 10px;
+    }
+    .nav-arrow {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--ink-mid);
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .nav-arrow:hover { border-color: var(--ink-mid); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .testimonial-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 3px;
+      color: var(--accent);
+      font-size: 14px;
+    }
+    .testimonial-progress-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      background: var(--green-light);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .testimonial-quote {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.65;
+      font-style: italic;
+      flex: 1;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: 1px solid var(--border);
+    }
+    .author-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .author-meta {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-light);
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+    /* ─── SECTION 7 — FAQ ────────────────────────────────────────────── */
+    .faq-section {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .faq-sticky-col h2 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
+    .faq-sticky-col p {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .faq-item:first-child { border-top: 1px solid var(--border); }
+    .faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+    }
+    .faq-question h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .faq-toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--ink-mid);
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+    .faq-item.open .faq-toggle {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+    }
+    .faq-answer {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.7;
+      margin-top: 14px;
+      padding-right: 44px;
+      display: none;
+    }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-schema-note {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+
+    /* ─── SECTION 8 — FINAL CTA ──────────────────────────────────────── */
+    .final-cta-section {
+      text-align: center;
+    }
+    .final-cta-section h2 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      max-width: 640px;
+      margin: 16px auto 16px;
+      line-height: 1.1;
+    }
+    .final-cta-section h2 em {
+      font-style: normal;
+      color: var(--green);
+    }
+    .final-cta-section p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      max-width: 480px;
+      margin: 0 auto 36px;
+    }
+    .app-badges-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .app-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .app-badge:hover { opacity: .88; }
+    .app-badge-icon { font-size: 24px; }
+    .app-badge-text .store-label { font-size: 10px; opacity: .6; display: block; }
+    .app-badge-text .store-name { font-size: 15px; font-weight: 600; }
+    .final-cta-note {
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+    .final-cta-phone-row {
+      margin-top: 64px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .final-phone-mini {
+      width: 160px;
+      height: 300px;
+      background: var(--ink);
+      border-radius: 28px;
+      border: 4px solid #2e2b27;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .final-phone-mini:first-child { transform: translateY(20px) rotate(-4deg); }
+    .final-phone-mini:last-child  { transform: translateY(20px) rotate(4deg); }
+    .final-phone-mini-screen {
+      height: 100%;
+      margin: 3px;
+      border-radius: 22px;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark);
+      padding: 64px 0 40px;
+    }
+    .footer-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .footer-brand .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -.02em;
+      margin-bottom: 12px;
+    }
+    .footer-brand .logo span { color: var(--accent); }
+    .footer-brand p {
+      font-size: 13px;
+      color: rgba(255,255,255,.45);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 16px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col ul a {
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+    }
+    .footer-legal {
+      font-size: 12px;
+      color: rgba(255,255,255,.3);
+    }
+    .footer-legal a {
+      color: rgba(255,255,255,.4);
+      text-decoration: none;
+    }
+    .footer-legal a:hover { color: rgba(255,255,255,.7); }
+    .footer-socials { display: flex; gap: 16px; }
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    .social-link:hover { border-color: rgba(255,255,255,.4); color: var(--white); }
+
+    /* ─── Annotation ─────────────────────────────────────────────────── */
+    .anno {
+      display: inline-block;
+      background: #FFE066;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: #6B5000;
+      vertical-align: middle;
+      margin-left: 8px;
+      font-style: normal;
+    }
+    .wireframe-badge {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 8px 16px;
+      border-radius: 999px;
+      z-index: 999;
+      opacity: .8;
+    }
+
+    /* ─── Section heading helper ─────────────────────────────────────── */
+    .section-heading { margin-bottom: 52px; }
+    .section-heading h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+    .section-heading p {
+      font-size: 17px;
+      color: var(--ink-mid);
+      max-width: 560px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Hairline<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/how-it-works">How it works</a></li>
+      <li><a href="/for-patients">For Patients</a></li>
+      <li><a href="/treatments">Treatments</a></li>
+      <li><a href="/find-a-clinic">Find a Clinic</a></li>
+      <li><a href="/aftercare" class="active">Aftercare</a></li>
+      <li><a href="/resources">Resources</a></li>
+    </ul>
+    <a href="/for-providers" class="nav-cta-b2b">For Clinics →</a>
+  </div>
+</nav>
+
+<!-- ─── BREADCRUMB ────────────────────────────────────────────────────── -->
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="/">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="/for-patients">For Patients</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Hairline Aftercare</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 1 — HERO
+     Headline · sub-headline · app download CTA · phone mockup (aftercare dashboard)
+     Trust strip: starts day of procedure · 24/7 specialist · 3D scan tracking
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- Copy column -->
+      <div class="hero-copy">
+        <div class="hero-eyebrow">
+          <span class="badge">Hairline Aftercare</span>
+        </div>
+        <h1>Recovery, supported from <em>day one</em>.</h1>
+        <p class="hero-sub">
+          Your procedure is the beginning, not the end. Hairline Aftercare tracks your recovery, monitors symptoms and connects you to specialists — for as long as you need.
+        </p>
+        <div class="hero-actions">
+          <div class="hero-cta-row">
+            <a href="#" class="btn-primary">Download the app →</a>
+            <a href="/how-it-works" class="btn-secondary">How it works</a>
+          </div>
+          <p class="hero-app-note">Free · Available on iOS &amp; Android · Works with any verified clinic</p>
+        </div>
+      </div>
+
+      <!-- Visual column — phone showing aftercare dashboard -->
+      <div class="hero-visual">
+        <div class="hero-bg-panel"></div>
+
+        <!-- Floating progress card -->
+        <div class="hero-float-card">
+          <div class="float-card-label">Recovery progress</div>
+          <div class="float-card-val">Month 3</div>
+          <div class="float-card-sub">Graft retention: 82%</div>
+        </div>
+
+        <div class="hero-phone-wrap">
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-screen-label">Aftercare · Day 94</div>
+              <div class="phone-screen-title">Your recovery is on track.</div>
+
+              <div class="phone-stat-row">
+                <div class="phone-stat-tile">
+                  <div class="phone-stat-num">82%</div>
+                  <div class="phone-stat-lbl">Graft retention</div>
+                </div>
+                <div class="phone-stat-tile">
+                  <div class="phone-stat-num">0</div>
+                  <div class="phone-stat-lbl">Open alerts</div>
+                </div>
+              </div>
+
+              <div class="phone-progress-bar-wrap">
+                <div class="phone-progress-bar-label">
+                  <span>Day 1</span>
+                  <span>Month 12</span>
+                </div>
+                <div class="phone-progress-bar">
+                  <div class="phone-progress-fill"></div>
+                </div>
+              </div>
+
+              <div class="phone-log-item">
+                <div class="phone-log-dot"></div>
+                <div class="phone-log-text">No itching reported today</div>
+                <div class="phone-log-time">10:32</div>
+              </div>
+              <div class="phone-log-item">
+                <div class="phone-log-dot" style="background:var(--accent);"></div>
+                <div class="phone-log-text">Scan due in 3 days</div>
+                <div class="phone-log-time">Reminder</div>
+              </div>
+
+              <div class="phone-cta-btn">Log today's symptoms →</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /hero-grid -->
+  </div><!-- /container -->
+
+  <!-- Trust strip -->
+  <div class="trust-strip">
+    <div class="trust-strip-inner">
+      <div class="trust-item">
+        <span class="trust-icon">🌿</span>
+        <span>Starts the day of your procedure</span>
+      </div>
+      <div class="trust-sep"></div>
+      <div class="trust-item">
+        <span class="trust-icon">🕐</span>
+        <span>24/7 specialist access</span>
+      </div>
+      <div class="trust-sep"></div>
+      <div class="trust-item">
+        <span class="trust-icon">📡</span>
+        <span>3D scan progress tracking</span>
+      </div>
+      <div class="trust-sep"></div>
+      <div class="trust-item">
+        <span class="trust-icon">🏥</span>
+        <span>Coordinated with your clinic</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 2 — WHAT IS HAIRLINE AFTERCARE
+     Service overview: starts the moment your procedure ends
+     Left: editorial copy + three pillars · Right: visual timeline card
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="intro-grid">
+
+      <!-- Copy -->
+      <div class="intro-copy">
+        <div class="label">What is Hairline Aftercare</div>
+        <h2>Recovery doesn't stop when you leave the <em>clinic</em>.</h2>
+        <p>
+          Most hair restoration patients are handed a printed leaflet and sent home. Hairline Aftercare replaces that with a structured, app-based recovery programme that begins the moment your procedure ends.
+        </p>
+        <p>
+          We monitor your recovery in three ways: through daily symptom logs you complete in under 60 seconds, through 3D scan comparisons at key milestones, and through direct access to a specialist team whenever you need reassurance.
+        </p>
+
+        <div class="intro-pillars">
+          <div class="intro-pillar">
+            <div class="pillar-icon-wrap">📋</div>
+            <div class="pillar-text">
+              <h4>Symptom logging</h4>
+              <p>A 60-second daily check-in flags anything that needs clinical attention before it becomes a problem.</p>
+            </div>
+          </div>
+          <div class="intro-pillar">
+            <div class="pillar-icon-wrap">📡</div>
+            <div class="pillar-text">
+              <h4>3D scan milestones</h4>
+              <p>Capture your scalp at 1, 3, 6 and 12 months. Side-by-side comparisons show measurable progress.</p>
+            </div>
+          </div>
+          <div class="intro-pillar">
+            <div class="pillar-icon-wrap">🎥</div>
+            <div class="pillar-text">
+              <h4>Video follow-ups</h4>
+              <p>Scheduled video consultations with your surgeon — no travel, no waiting room, no re-booking fees.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual: mini timeline card -->
+      <div class="intro-visual">
+        <div class="intro-visual-label">Your aftercare journey</div>
+        <div class="intro-visual-title">From procedure day to full recovery</div>
+        <div class="procedure-day-tag">
+          ✓ Procedure complete — Aftercare starts now
+        </div>
+
+        <div class="timeline-mini">
+          <div class="timeline-mini-item">
+            <div class="timeline-mini-dot active">✓</div>
+            <div class="timeline-mini-body">
+              <h5>Day 1–7 — Critical phase</h5>
+              <p>Daily symptom logs · Swelling &amp; scabbing monitored · Clinic alert if thresholds exceeded</p>
+            </div>
+          </div>
+          <div class="timeline-mini-item">
+            <div class="timeline-mini-dot active">✓</div>
+            <div class="timeline-mini-body">
+              <h5>Month 1 — First check-in</h5>
+              <p>First 3D scan · Video follow-up with surgeon · Shedding phase explained</p>
+            </div>
+          </div>
+          <div class="timeline-mini-item">
+            <div class="timeline-mini-dot active">3</div>
+            <div class="timeline-mini-body">
+              <h5>Month 3 — Growth begins</h5>
+              <p>3D scan comparison · Early growth visible · Log adjusted for this phase</p>
+            </div>
+          </div>
+          <div class="timeline-mini-item">
+            <div class="timeline-mini-dot">6</div>
+            <div class="timeline-mini-body">
+              <h5>Month 6 — Mid-recovery</h5>
+              <p>Significant growth · Side-by-side scan · Progress report shared with clinic</p>
+            </div>
+          </div>
+          <div class="timeline-mini-item" style="padding-bottom:0;">
+            <div class="timeline-mini-dot">12</div>
+            <div class="timeline-mini-body">
+              <h5>Month 12 — Final review</h5>
+              <p>Full outcome assessment · Final 3D comparison · Aftercare programme closes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 3 — FEATURES
+     Four feature cards: Symptom logging / 3D scan timeline / Video follow-ups / 24/7 access
+     Each card has inline UI mockup showing the feature in action
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section features-section">
+  <div class="container">
+
+    <div class="features-header">
+      <div class="label">What's included</div>
+      <h2>Four tools. One recovery.</h2>
+      <p>Every feature in Hairline Aftercare is designed to catch problems early, track progress honestly, and keep you connected to the people who performed your procedure.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <!-- Feature 1: Symptom logging & alerts -->
+      <div class="feature-card">
+        <div class="feature-card-top">
+          <div class="feature-icon">📋</div>
+          <div>
+            <div class="feature-card-eyebrow">Feature 01</div>
+            <h3>Symptom logging &amp; alerts</h3>
+          </div>
+        </div>
+        <p>
+          A daily 60-second check-in tracks itching, swelling, redness, and any unusual sensations. Our algorithm flags anything outside normal recovery ranges and alerts your clinic automatically — before it becomes a complication.
+        </p>
+        <div class="feature-ui-block">
+          <div style="font-size:11px; font-weight:600; color:var(--ink-muted); margin-bottom:4px;">Today's log · Day 94</div>
+          <div class="feature-ui-row">
+            <div class="feature-ui-dot dot-green"></div>
+            <div class="feature-ui-text">Itching / irritation</div>
+            <div class="feature-ui-val">None</div>
+          </div>
+          <div class="feature-ui-row">
+            <div class="feature-ui-dot dot-green"></div>
+            <div class="feature-ui-text">Redness / inflammation</div>
+            <div class="feature-ui-val">Mild</div>
+          </div>
+          <div class="feature-ui-row">
+            <div class="feature-ui-dot dot-amber"></div>
+            <div class="feature-ui-text">Scabbing / crusting</div>
+            <div class="feature-ui-val">Healing</div>
+          </div>
+          <div class="feature-ui-row">
+            <div class="feature-ui-dot dot-green"></div>
+            <div class="feature-ui-text">Swelling</div>
+            <div class="feature-ui-val">Resolved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2: 3D scan progress timeline -->
+      <div class="feature-card">
+        <div class="feature-card-top">
+          <div class="feature-icon">📡</div>
+          <div>
+            <div class="feature-card-eyebrow">Feature 02</div>
+            <h3>3D scan progress timeline</h3>
+          </div>
+        </div>
+        <p>
+          Use your phone's camera to capture a standardised 3D scan of your scalp at each milestone. Our AI overlays scans from different months so you can see — not just believe — that growth is happening.
+        </p>
+        <div class="scan-block">
+          <div class="scan-head">👤</div>
+          <div class="scan-info">
+            <div class="scan-info-label">Scan milestones</div>
+            <div class="scan-months">
+              <div class="scan-month-chip active">Day 1</div>
+              <div class="scan-month-chip active">Mo. 1</div>
+              <div class="scan-month-chip active">Mo. 3</div>
+              <div class="scan-month-chip">Mo. 6</div>
+              <div class="scan-month-chip">Mo. 12</div>
+            </div>
+            <div style="font-size:11px; color:var(--ink-muted); margin-top:8px;">
+              Next scan due: Month 6 · in 87 days
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3: Video follow-ups with surgeon -->
+      <div class="feature-card">
+        <div class="feature-card-top">
+          <div class="feature-icon">🎥</div>
+          <div>
+            <div class="feature-card-eyebrow">Feature 03</div>
+            <h3>Video follow-ups with your surgeon</h3>
+          </div>
+        </div>
+        <p>
+          Scheduled video consultations with the surgeon who performed your procedure — at 1 month, 3 months, and 12 months. No travel, no re-booking fees. Your scan data is shared with the surgeon before each call so they can review your progress before the session starts.
+        </p>
+        <div class="video-block">
+          <div class="video-avatar">👨‍⚕️</div>
+          <div class="video-info">
+            <div class="video-name">Dr. Mehmet Yilmaz</div>
+            <div class="video-role">Lead Surgeon · Vera Clinic, Istanbul</div>
+          </div>
+          <div class="video-pill">📹 Month 3 call</div>
+        </div>
+      </div>
+
+      <!-- Feature 4: 24/7 specialist access -->
+      <div class="feature-card">
+        <div class="feature-card-top">
+          <div class="feature-icon">🕐</div>
+          <div>
+            <div class="feature-card-eyebrow">Feature 04</div>
+            <h3>24/7 specialist access</h3>
+          </div>
+        </div>
+        <p>
+          Recovery anxiety doesn't keep office hours. Our in-app specialist team responds to questions within 2 hours, day or night. If your query requires clinical input, it's escalated to your treating clinic automatically.
+        </p>
+        <div class="chat-block">
+          <div class="chat-meta">Hairline Aftercare Specialist · 2 min ago</div>
+          <div class="chat-bubble them">
+            "The shedding you're seeing at Month 2 is completely normal — this is the telogen phase. It typically resolves by Month 4."
+          </div>
+          <div class="chat-bubble us">That's really reassuring, thank you.</div>
+          <div class="chat-meta" style="align-self:flex-end;">You · just now</div>
+        </div>
+      </div>
+
+    </div><!-- /features-grid -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 4 — RECOVERY TIMELINE
+     What to expect: Day 1–7 / Month 1 / Month 3 / Month 12
+     4-column horizontal track with milestone cards below each stop
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <div class="timeline-section-header">
+      <div class="label">What to expect</div>
+      <h2>Recovery is a process, not an event.</h2>
+      <p>Hair transplant recovery unfolds over 12 months. Here's what Hairline Aftercare monitors at each stage — and what's normal.</p>
+    </div>
+
+    <div class="recovery-track">
+
+      <!-- Phase 1: Day 1–7 -->
+      <div class="recovery-step">
+        <div class="recovery-step-marker done">✓</div>
+        <div class="recovery-step-tag">Days 1–7</div>
+        <h3>Critical phase</h3>
+        <p>The grafts are establishing. This is the most important week of your recovery.</p>
+        <div class="recovery-step-card">
+          <ul>
+            <li>Daily symptom log activated</li>
+            <li>Swelling peaks &amp; resolves</li>
+            <li>Scabbing begins — do not touch</li>
+            <li>Sleep position monitored</li>
+            <li>Clinic alerted if anomalies flagged</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Phase 2: Month 1 -->
+      <div class="recovery-step">
+        <div class="recovery-step-marker current">1</div>
+        <div class="recovery-step-tag">Month 1</div>
+        <h3>Shedding phase</h3>
+        <p>Transplanted hair sheds. This is expected and does not indicate failure.</p>
+        <div class="recovery-step-card">
+          <ul>
+            <li>First 3D scan captured</li>
+            <li>Video follow-up with surgeon</li>
+            <li>Shedding explained &amp; normalised</li>
+            <li>Minoxidil / Finasteride check-in</li>
+            <li>Donor area healing reviewed</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Phase 3: Month 6 -->
+      <div class="recovery-step">
+        <div class="recovery-step-marker">6</div>
+        <div class="recovery-step-tag">Month 6</div>
+        <h3>Visible growth</h3>
+        <p>Significant new growth is visible. Most patients report a confidence shift at this stage.</p>
+        <div class="recovery-step-card">
+          <ul>
+            <li>3D scan comparison (vs. Month 1)</li>
+            <li>Video follow-up review</li>
+            <li>Density assessment</li>
+            <li>Progress report to clinic</li>
+            <li>PRP or adjunct therapy review</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Phase 4: Month 12 -->
+      <div class="recovery-step">
+        <div class="recovery-step-marker">12</div>
+        <div class="recovery-step-tag">Month 12</div>
+        <h3>Final outcome</h3>
+        <p>Full result is visible. The aftercare programme closes with a comprehensive outcome review.</p>
+        <div class="recovery-step-card">
+          <ul>
+            <li>Final 3D scan (full comparison set)</li>
+            <li>Outcome assessment with surgeon</li>
+            <li>Before-and-after gallery unlocked</li>
+            <li>Long-term maintenance plan</li>
+            <li>Aftercare programme completes</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /recovery-track -->
+
+    <p class="recovery-disclaimer">
+      Recovery timelines are indicative and vary by individual, procedure type and clinic. Your Hairline Aftercare programme is personalised to your specific procedure and clinic's protocols.
+    </p>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 5 — CONNECTED TO YOUR CLINIC
+     Aftercare is coordinated with the treating provider
+     Dark background · left: copy + points · right: flow diagram
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section clinic-connect-section">
+  <div class="container">
+    <div class="clinic-connect-grid">
+
+      <!-- Copy -->
+      <div class="clinic-connect-copy">
+        <div class="label">Clinic integration</div>
+        <h2>Your aftercare is <em>linked</em> to your clinic.</h2>
+        <p>
+          Hairline Aftercare isn't a standalone app that replaces your clinic — it's a layer that connects you to them more efficiently. Your surgeon sees your symptom logs, your scan milestones, and any alerts that need clinical attention.
+        </p>
+        <p>
+          No more emailing photos to a clinic's general inbox. No more waiting to know if something is normal. Your aftercare data is structured, shared and acted on.
+        </p>
+
+        <div class="connect-points">
+          <div class="connect-point">
+            <div class="connect-point-icon">🔔</div>
+            <div class="connect-point-text">
+              <h4>Automatic clinical alerts</h4>
+              <p>If your symptom log triggers a threshold, your clinic is notified before you even reach out.</p>
+            </div>
+          </div>
+          <div class="connect-point">
+            <div class="connect-point-icon">📊</div>
+            <div class="connect-point-text">
+              <h4>Shared recovery dashboard</h4>
+              <p>Your surgeon accesses the same progress data you see — no friction, no re-explaining.</p>
+            </div>
+          </div>
+          <div class="connect-point">
+            <div class="connect-point-icon">📅</div>
+            <div class="connect-point-text">
+              <h4>Clinic-coordinated milestones</h4>
+              <p>Scan and video call schedules are set in agreement with your clinic's post-op protocol.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow visual -->
+      <div class="clinic-flow-visual">
+        <div class="flow-node">
+          <div class="flow-node-icon">👤</div>
+          <div class="flow-node-body">
+            <h4>You — Hairline app</h4>
+            <p>Log symptoms · Capture scans · Message specialists</p>
+          </div>
+        </div>
+        <div class="flow-connector">↓</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">🌿</div>
+          <div class="flow-node-body">
+            <h4>Hairline Aftercare platform</h4>
+            <p>Processes logs · Detects anomalies · Schedules milestones · Routes alerts</p>
+          </div>
+        </div>
+        <div class="flow-connector">↓</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">🏥</div>
+          <div class="flow-node-body">
+            <h4>Your treating clinic</h4>
+            <p>Receives structured data · Responds to alerts · Reviews scans before video calls</p>
+          </div>
+        </div>
+        <div class="flow-connector">↓</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">👨‍⚕️</div>
+          <div class="flow-node-body">
+            <h4>Your surgeon</h4>
+            <p>Video follow-ups at Month 1, 3, 12 · Reviews scan comparisons · Closes programme</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 6 — PATIENT STORIES
+     Recovery testimonials with progress context + verified badges
+     Light background, distinct from Section 5
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <div class="testimonials-header">
+      <div>
+        <div class="label">Patient stories</div>
+        <h2>Recovery, in their own words.</h2>
+      </div>
+      <div class="testimonials-nav">
+        <button class="nav-arrow">←</button>
+        <button class="nav-arrow">→</button>
+      </div>
+    </div>
+
+    <div class="testimonials-grid">
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <span class="testimonial-progress-tag">✓ Month 12 complete</span>
+        <p class="testimonial-quote">
+          "The thing I wasn't expecting was the anxiety. Every time I noticed shedding I panicked. The Aftercare app talked me through what was normal within hours — at 11pm on a Tuesday. That's not something any clinic was going to do."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👤</div>
+          <div>
+            <div class="author-name">Marcus B.</div>
+            <div class="author-meta">FUE at Vera Clinic, Istanbul</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="verified-badge">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <span class="testimonial-progress-tag">Month 6 milestone</span>
+        <p class="testimonial-quote">
+          "The 3D scan comparison at Month 6 was the moment it became real for me. Seeing the overlay of Day 1 versus now — actual measurable coverage, not just guessing in the mirror — was worth the entire app on its own."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👤</div>
+          <div>
+            <div class="author-name">Anya K.</div>
+            <div class="author-meta">DHI at Harley Street Hair Clinic, London</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="verified-badge">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <span class="testimonial-progress-tag">Month 3 milestone</span>
+        <p class="testimonial-quote">
+          "I had a mild infection scare at Day 14. The symptom log flagged it, my clinic was notified automatically, and I had a prescription within 24 hours. I genuinely think it caught something that would have been a real problem if I'd waited."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👤</div>
+          <div>
+            <div class="author-name">Tom R.</div>
+            <div class="author-meta">FUE at Dubai Hair Restoration Centre</div>
+          </div>
+          <div style="margin-left:auto;">
+            <span class="verified-badge">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 7 — FAQ
+     Common aftercare questions · schema-marked-up accordion
+     Left sticky col: heading + CTA · Right col: accordion list
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section faq-section">
+  <div class="container">
+    <div class="faq-grid">
+
+      <!-- Sticky heading col -->
+      <div class="faq-sticky-col">
+        <div class="label">Common questions</div>
+        <h2>Aftercare, explained.</h2>
+        <p>
+          Everything you need to know about how Hairline Aftercare works, what's included, and how it connects to your clinic.
+        </p>
+        <a href="/contact" class="btn-secondary">Ask a question →</a>
+        <div class="faq-schema-note">
+          <span>📋</span>
+          <span>FAQ is schema-marked-up for Google rich results</span>
+          <span class="anno">SEO</span>
+        </div>
+      </div>
+
+      <!-- Accordion col -->
+      <div class="faq-list">
+
+        <div class="faq-item open">
+          <div class="faq-question">
+            <h4>When does Hairline Aftercare start?</h4>
+            <div class="faq-toggle">−</div>
+          </div>
+          <div class="faq-answer">
+            Hairline Aftercare activates on your procedure day. Your clinic registers your treatment in the platform before you leave, and you receive a setup prompt in the app within hours. Day 1 of your recovery log begins that evening.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h4>Does it work with any clinic, or only Hairline-verified ones?</h4>
+            <div class="faq-toggle">+</div>
+          </div>
+          <div class="faq-answer">
+            Full integration — shared dashboards, automatic alerts, and video follow-ups — requires your clinic to be on the Hairline platform. If you've already had a procedure at a non-verified clinic, you can still use the symptom logging and 3D scan features independently, though clinical alerts will route to our specialist team rather than your clinic.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h4>Is the 24/7 access staffed by actual medical professionals?</h4>
+            <div class="faq-toggle">+</div>
+          </div>
+          <div class="faq-answer">
+            The initial response is handled by trained aftercare specialists, not AI chatbots. If your query requires clinical judgement — for example, identifying whether a symptom pattern is medically significant — it's escalated to a hair restoration clinician within the same session. Urgent queries are prioritised and always reach a clinician.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h4>How does the 3D scan work on a standard phone?</h4>
+            <div class="faq-toggle">+</div>
+          </div>
+          <div class="faq-answer">
+            The Hairline app guides you through a standardised capture sequence using your phone's rear camera. You don't need a special device — the app stitches multiple photos taken from fixed angles into a 3D reference model. Scans taken at different milestones use the same reference points, so comparisons are consistent and accurate. iPhone 12 or later and most Android phones from 2021 onward are supported.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h4>What happens if my symptom log flags something concerning?</h4>
+            <div class="faq-toggle">+</div>
+          </div>
+          <div class="faq-answer">
+            If your log crosses a clinical threshold — for example, sustained redness, unexpected swelling, or reported pain above a certain level — the platform automatically notifies your treating clinic. You also receive an in-app prompt explaining what's been flagged and what steps to take. The clinic is required to respond within 4 hours under our partner agreement.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h4>Is Hairline Aftercare included in my treatment cost?</h4>
+            <div class="faq-toggle">+</div>
+          </div>
+          <div class="faq-answer">
+            This depends on the arrangement with your clinic. Many Hairline-partner clinics include the 12-month aftercare programme as part of their procedure package. Where it is not included, Hairline Aftercare is available as a standalone subscription. Pricing is shown in the app after you link your procedure.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h4>How long does the aftercare programme run?</h4>
+            <div class="faq-toggle">+</div>
+          </div>
+          <div class="faq-answer">
+            The standard programme runs for 12 months — which is the full recovery window for most hair transplant procedures. After Month 12, the programme closes with a final outcome review. Patients who want ongoing monitoring (for example, if continuing with Finasteride or Minoxidil) can extend the programme on a rolling basis.
+          </div>
+        </div>
+
+      </div><!-- /faq-list -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 8 — FINAL CTA
+     App download badges · supporting copy · decorative phone trio (aftercare screens)
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section final-cta-section">
+  <div class="container">
+    <div class="label">Start your recovery right</div>
+    <h2>Don't leave recovery to <em>chance</em>.</h2>
+    <p>Download Hairline and activate your aftercare programme from day one. It's free, it works with any Hairline-verified clinic, and it's the closest thing to having your surgeon in your pocket.</p>
+
+    <div class="app-badges-row">
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">🍎</span>
+        <div class="app-badge-text">
+          <span class="store-label">Download on the</span>
+          <span class="store-name">App Store</span>
+        </div>
+      </a>
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">▶</span>
+        <div class="app-badge-text">
+          <span class="store-label">Get it on</span>
+          <span class="store-name">Google Play</span>
+        </div>
+      </a>
+    </div>
+    <p class="final-cta-note">Free · Available on iOS &amp; Android · Works with verified Hairline clinics</p>
+
+    <!-- Decorative phone trio — aftercare screens -->
+    <div class="final-cta-phone-row">
+      <div class="final-phone-mini">
+        <div class="final-phone-mini-screen" style="background: var(--green-light);"></div>
+      </div>
+      <div class="final-phone-mini" style="transform: translateY(-10px);">
+        <div class="final-phone-mini-screen" style="background: #F7FBF8;"></div>
+      </div>
+      <div class="final-phone-mini">
+        <div class="final-phone-mini-screen" style="background: var(--accent-light);"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        <div class="logo">Hairline<span>.</span></div>
+        <p>Hair restoration, done right. Connecting patients with vetted providers worldwide.</p>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">For Patients</div>
+        <ul>
+          <li><a href="/for-patients">Overview</a></li>
+          <li><a href="/assessment">Start assessment</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/aftercare">Aftercare</a></li>
+          <li><a href="/travel">Travel</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Treatments</div>
+        <ul>
+          <li><a href="/treatments/hair-transplant">Hair Transplant</a></li>
+          <li><a href="/treatments/fue">FUE</a></li>
+          <li><a href="/treatments/prp">PRP</a></li>
+          <li><a href="/treatments/finasteride">Finasteride</a></li>
+          <li><a href="/treatments">View all →</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">For Clinics</div>
+        <ul>
+          <li><a href="/for-providers">Overview</a></li>
+          <li><a href="/for-providers/features">Features</a></li>
+          <li><a href="/for-providers/case-studies">Case studies</a></li>
+          <li><a href="/for-providers/book-demo">Book a demo</a></li>
+        </ul>
+      </div>
+
+    </div><!-- /footer-top -->
+
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        © 2026 Hairline Technologies Ltd. &nbsp;·&nbsp;
+        <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+        <a href="/terms">Terms</a> &nbsp;·&nbsp;
+        <a href="/cookies">Cookies</a>
+      </div>
+      <div class="footer-socials">
+        <a href="#" class="social-link">𝕏</a>
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">IG</a>
+        <a href="#" class="social-link">YT</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Wireframe stamp -->
+<div class="wireframe-badge">WIREFRAME · /aftercare</div>
+
+<!-- Simple FAQ accordion toggle -->
+<script>
+  document.querySelectorAll('.faq-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      var item = this.closest('.faq-item');
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>

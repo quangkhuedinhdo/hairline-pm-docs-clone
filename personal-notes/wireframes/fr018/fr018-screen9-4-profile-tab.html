@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 9.4 — Affiliate Portal: Profile Tab</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      padding: 0 24px;
+      gap: 0;
+    }
+    .tab-nav a {
+      display: block;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: #42526e;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab-nav a.active {
+      color: #0052cc;
+      font-weight: 600;
+      border-bottom-color: #0052cc;
+    }
+    .tab-nav a:hover:not(.active) { color: #172b4d; background: #f4f5f7; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-actions { display: flex; align-items: center; gap: 10px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-primary { background: #0052cc; color: #fff; border-color: #0052cc; }
+    .btn-default { background: #fff; color: #42526e; border-color: #dfe1e6; }
+    .btn-danger { background: #fff; color: #de350b; border-color: #de350b; }
+
+    /* ── Section card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 13px; font-weight: 700; color: #172b4d;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f4f5f7;
+    }
+    .card-admin-note {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 400; color: #5e6c84;
+      text-transform: none; letter-spacing: 0;
+      margin-left: 10px;
+    }
+    .lock-icon { font-size: 11px; }
+
+    /* ── Form grid ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 32px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full-width { grid-column: 1 / -1; }
+
+    .form-label {
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .required-star { color: #de350b; margin-left: 2px; }
+
+    /* ── Form controls ── */
+    .form-input, .form-select {
+      padding: 7px 10px; border-radius: 4px;
+      border: 1px solid #dfe1e6; font-size: 13px; color: #172b4d;
+      background: #fff; width: 100%; outline: none;
+    }
+    .form-input:focus, .form-select:focus { border-color: #0052cc; box-shadow: 0 0 0 2px rgba(0,82,204,0.15); }
+
+    /* Read-only field */
+    .form-input.readonly, .form-select.readonly {
+      background: #f4f5f7;
+      color: #42526e;
+      cursor: default;
+      border-color: #dfe1e6;
+    }
+    .readonly-label-row {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .admin-tag {
+      font-size: 10px; color: #5e6c84; background: #f4f5f7;
+      border: 1px solid #dfe1e6; border-radius: 3px;
+      padding: 1px 5px; font-weight: 500;
+    }
+
+    /* Multi-select mockup */
+    .multi-select-wrap {
+      border: 1px solid #dfe1e6; border-radius: 4px; background: #fff;
+      padding: 5px 8px; min-height: 36px;
+      display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+    }
+    .multi-select-wrap:focus-within { border-color: #0052cc; box-shadow: 0 0 0 2px rgba(0,82,204,0.15); }
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #e6f0ff; color: #0052cc; border-radius: 3px;
+      font-size: 12px; padding: 2px 7px; font-weight: 500;
+    }
+    .tag-remove { cursor: pointer; font-size: 14px; line-height: 1; color: #0052cc; }
+    .multi-select-placeholder { font-size: 13px; color: #97a0af; }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 3px;
+      font-size: 12px; font-weight: 600;
+    }
+    .status-active { background: #e3fcef; color: #006644; }
+    .status-invited { background: #fffae6; color: #974f0c; }
+    .status-pending { background: #fffae6; color: #974f0c; }
+    .status-suspended { background: #ffebe6; color: #bf2600; }
+    .status-inactive { background: #f4f5f7; color: #5e6c84; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .form-hint {
+      font-size: 11px; color: #5e6c84; margin-top: 2px;
+    }
+    .form-hint.info { color: #0065ff; }
+
+    /* ── Change Password expanded section ── */
+    .password-section {
+      border: 1px solid #dfe1e6; border-radius: 6px;
+      overflow: hidden;
+    }
+    .password-section-header {
+      padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #fafbfc;
+      border-bottom: 1px solid #dfe1e6;
+    }
+    .password-section-title {
+      font-size: 13px; font-weight: 600; color: #172b4d;
+    }
+    .password-section-body {
+      padding: 18px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* Password strength meter */
+    .strength-track {
+      height: 4px; border-radius: 2px; background: #dfe1e6;
+      overflow: hidden; margin-top: 6px;
+    }
+    .strength-fill {
+      height: 100%; border-radius: 2px;
+      width: 60%; background: #ff991f;
+    }
+    .strength-label { font-size: 11px; color: #ff991f; margin-top: 4px; font-weight: 600; }
+
+    /* ── MFA toggle row ── */
+    .mfa-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px;
+      border: 1px solid #dfe1e6; border-radius: 6px;
+      background: #fafbfc;
+    }
+    .mfa-info {}
+    .mfa-title { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .mfa-subtitle { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+    .mfa-badge {
+      font-size: 10px; background: #f4f5f7; color: #5e6c84;
+      border: 1px solid #dfe1e6; border-radius: 3px;
+      padding: 1px 6px; font-weight: 600; margin-left: 8px;
+      vertical-align: middle;
+    }
+    .toggle-switch {
+      position: relative; width: 36px; height: 20px;
+      cursor: not-allowed; opacity: 0.4;
+    }
+    .toggle-switch-track {
+      width: 36px; height: 20px; border-radius: 10px; background: #dfe1e6;
+    }
+    .toggle-switch-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 14px; height: 14px; border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    /* ── Save bar ── */
+    .save-bar {
+      background: #fff; border: 1px solid #dfe1e6; border-radius: 6px;
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 4px;
+    }
+    .save-bar-hint { font-size: 12px; color: #5e6c84; }
+
+    /* ── Note ── */
+    .note {
+      font-size: 11px; color: #5e6c84; font-style: italic;
+      border-left: 3px solid #dfe1e6; padding-left: 10px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">HairLine</span>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">SA</div>
+    <span>Sarah Anderson</span>
+  </div>
+</div>
+
+<!-- ── Tab navigation (Screen 9 shell) ── -->
+<div class="tab-nav">
+  <a href="#">Overview</a>
+  <a href="#">Promo Codes</a>
+  <a href="#">Payouts</a>
+  <a href="#" class="active">Profile</a>
+</div>
+
+<!-- ── Page content ── -->
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Profile</div>
+      <div class="page-subtitle">View and manage your account information and security settings</div>
+    </div>
+  </div>
+
+  <!-- ── Section 1: Account Information ── -->
+  <div class="card">
+    <div class="card-title">
+      Account Information
+    </div>
+
+    <div class="form-grid">
+
+      <!-- Affiliate Name -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Affiliate Name</span>
+          <span class="admin-tag">Admin-controlled</span>
+        </div>
+        <input type="text" class="form-input readonly" value="Sarah Anderson" readonly />
+      </div>
+
+      <!-- Contact Email -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Contact Email</span>
+          <span class="admin-tag">Read-only</span>
+        </div>
+        <input type="email" class="form-input readonly" value="sarah.anderson@example.com" readonly />
+        <span class="form-hint">Email cannot be changed. A new account is required to use a different email.</span>
+      </div>
+
+      <!-- Phone Number -->
+      <div class="form-group">
+        <span class="form-label">Phone Number</span>
+        <input type="tel" class="form-input" value="+1 555 012 3456" placeholder="+XX XXX XXX XXXX" />
+        <span class="form-hint">Include country code (e.g., +1, +44)</span>
+      </div>
+
+      <!-- Language(s) -->
+      <div class="form-group">
+        <span class="form-label">Language(s)</span>
+        <div class="multi-select-wrap">
+          <span class="tag">English <span class="tag-remove">×</span></span>
+          <span class="tag">Spanish <span class="tag-remove">×</span></span>
+          <span class="multi-select-placeholder">+ Add language…</span>
+        </div>
+      </div>
+
+      <!-- Country/Region -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Country / Region</span>
+          <span class="admin-tag">Admin-controlled</span>
+        </div>
+        <select class="form-select readonly" disabled>
+          <option>United States</option>
+        </select>
+      </div>
+
+      <!-- Affiliate Type -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Affiliate Type</span>
+          <span class="admin-tag">Admin-controlled</span>
+        </div>
+        <input type="text" class="form-input readonly" value="Influencer" readonly />
+      </div>
+
+      <!-- Tax / VAT / Business Reg ID -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Tax / VAT / Business Reg ID</span>
+          <span class="admin-tag">Admin-controlled</span>
+        </div>
+        <input type="text" class="form-input readonly" value="US-12-3456789" readonly />
+      </div>
+
+      <!-- Member Since -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Member Since</span>
+          <span class="admin-tag">Read-only</span>
+        </div>
+        <input type="text" class="form-input readonly" value="March 14, 2024" readonly />
+      </div>
+
+      <!-- Activation Status -->
+      <div class="form-group">
+        <div class="readonly-label-row">
+          <span class="form-label">Activation Status</span>
+          <span class="admin-tag">Read-only</span>
+        </div>
+        <div style="padding: 6px 0;">
+          <span class="status-badge status-active"><span class="status-dot"></span> Active</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 2: Payout & Commission ── -->
+  <div class="card">
+    <div class="card-title">
+      Payout &amp; Commission
+      <span class="card-admin-note"><span class="lock-icon">🔒</span> Admin-controlled — read-only</span>
+    </div>
+
+    <div class="form-grid">
+
+      <!-- Bank Account -->
+      <div class="form-group">
+        <span class="form-label">Bank Account</span>
+        <input type="text" class="form-input readonly" value="•••• •••• •••• 4321" readonly />
+        <span class="form-hint">Masked — last 4 digits only</span>
+      </div>
+
+      <!-- Bank Name -->
+      <div class="form-group">
+        <span class="form-label">Bank Name</span>
+        <input type="text" class="form-input readonly" value="Chase Bank" readonly />
+      </div>
+
+      <!-- Commission Structure -->
+      <div class="form-group">
+        <span class="form-label">Commission Structure</span>
+        <input type="text" class="form-input readonly" value="15% per referred consultation" readonly />
+      </div>
+
+      <!-- Payout Schedule -->
+      <div class="form-group">
+        <span class="form-label">Payout Schedule</span>
+        <input type="text" class="form-input readonly" value="Monthly on 7th" readonly />
+      </div>
+
+      <!-- Account Status -->
+      <div class="form-group">
+        <span class="form-label">Account Status</span>
+        <div style="padding: 6px 0;">
+          <span class="status-badge status-active"><span class="status-dot"></span> Active</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 3: Account Security ── -->
+  <div class="card">
+    <div class="card-title">Account Security</div>
+
+    <!-- Change Password -->
+    <div class="password-section" style="margin-bottom: 16px;">
+      <div class="password-section-header">
+        <span class="password-section-title">Change Password</span>
+        <button class="btn btn-default" style="font-size: 12px; padding: 5px 12px;">Change</button>
+      </div>
+      <div class="password-section-body">
+
+        <div class="form-group">
+          <span class="form-label">Current Password<span class="required-star">*</span></span>
+          <input type="password" class="form-input" value="••••••••••••" />
+        </div>
+
+        <div class="form-grid" style="gap: 16px 32px;">
+          <div class="form-group">
+            <span class="form-label">New Password<span class="required-star">*</span></span>
+            <input type="password" class="form-input" value="••••••••••••••" />
+            <div class="strength-track"><div class="strength-fill"></div></div>
+            <span class="strength-label">Strength: Fair</span>
+            <span class="form-hint">Min 12 characters — uppercase, lowercase, number, special character</span>
+          </div>
+
+          <div class="form-group">
+            <span class="form-label">Confirm New Password<span class="required-star">*</span></span>
+            <input type="password" class="form-input" value="••••••••••••••" />
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn btn-default">Cancel</button>
+          <button class="btn btn-primary">Save Password</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MFA -->
+    <div class="mfa-row">
+      <div class="mfa-info">
+        <div class="mfa-title">
+          Multi-Factor Authentication (MFA)
+          <span class="mfa-badge">Future / Non-MVP</span>
+        </div>
+        <div class="mfa-subtitle">Enable MFA for additional account security (pending FR-026 / FR-031)</div>
+      </div>
+      <div class="toggle-switch" title="Not available yet">
+        <div class="toggle-switch-track"></div>
+        <div class="toggle-switch-thumb"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Save bar ── -->
+  <div class="save-bar">
+    <span class="save-bar-hint">Changes to Phone Number and Language(s) will sync to the admin view.</span>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-default">Discard</button>
+      <button class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top: 16px;">
+    Screen 9.4 — Profile Tab &nbsp;·&nbsp; FR-018 Affiliate Management &nbsp;·&nbsp; Wireframe only — not production UI
+  </div>
+
+</div>
+</body>
+</html>

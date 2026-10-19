@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 3 — Affiliate Detail</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #42526e;
+    }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #b3bac5; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none; text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-danger { background: #fff; color: #de350b; border: 1px solid #de350b; }
+    .btn-danger:hover { background: #ffebe6; }
+    .btn-warning { background: #fff; color: #974f0c; border: 1px solid #f6c344; }
+    .btn-warning:hover { background: #fffae6; }
+    .btn-disabled {
+      background: #f4f5f7; color: #b3bac5; border: 1px solid #dfe1e6;
+      cursor: not-allowed;
+    }
+    .btn-link {
+      background: none; border: none; color: #0052cc;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      padding: 0; text-decoration: none;
+    }
+    .btn-link:hover { text-decoration: underline; }
+
+    /* ── Status badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+    }
+    .badge-pending   { background: #fff7d1; color: #974f0c; }
+    .badge-active    { background: #e3fcef; color: #006644; }
+    .badge-suspended { background: #ffebe6; color: #de350b; }
+    .badge-inactive  { background: #f4f5f7; color: #5e6c84; }
+    .badge-invited   { background: #fffae6; color: #974f0c; }
+    .badge-expired   { background: #f4f5f7; color: #5e6c84; }
+    .badge-paid      { background: #e3fcef; color: #006644; }
+    .badge-processing { background: #deebff; color: #0052cc; }
+    .badge-failed    { background: #ffebe6; color: #de350b; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* ── Affiliate header card ── */
+    .affiliate-header-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .affiliate-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 16px;
+    }
+    .affiliate-header-identity { display: flex; flex-direction: column; gap: 8px; }
+    .affiliate-name {
+      font-size: 22px; font-weight: 700; color: #172b4d;
+    }
+    .affiliate-meta {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+      font-size: 13px; color: #5e6c84;
+    }
+    .affiliate-meta-item { display: flex; align-items: center; gap: 4px; }
+    .affiliate-meta-sep { color: #dfe1e6; }
+    .affiliate-actions {
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* ── Activation alert banner ── */
+    .activation-alert {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+      background: #fffae6; border: 1px solid #f6c344;
+      border-radius: 4px; padding: 10px 16px;
+      font-size: 13px; color: #974f0c;
+      margin-top: 16px;
+    }
+
+    /* ── Summary metrics strip ── */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .metric-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 14px 16px;
+    }
+    .metric-label {
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .metric-value {
+      font-size: 22px; font-weight: 700; color: #172b4d; line-height: 1;
+    }
+    .metric-sub {
+      font-size: 11px; color: #5e6c84; margin-top: 4px;
+    }
+
+    /* ── Panel card ── */
+    .panel-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .panel-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 14px; font-weight: 600; color: #172b4d;
+    }
+    .panel-header-actions { display: flex; align-items: center; gap: 8px; }
+    .panel-body { padding: 20px; }
+
+    /* ── Info grid (Account Details) ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .info-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f4f5f7;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row-label {
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.03em;
+      min-width: 160px; flex-shrink: 0;
+    }
+    .info-row-value { font-size: 13px; color: #172b4d; flex: 1; }
+    .info-row-value.masked {
+      font-family: monospace; letter-spacing: 1px; color: #5e6c84;
+    }
+    .info-row-value.muted { color: #5e6c84; font-style: italic; }
+
+    /* ── Section divider ── */
+    .section-divider {
+      height: 1px; background: #dfe1e6; margin: 4px 0 16px;
+    }
+    .section-sub-title {
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    /* ── Data table ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 8px 12px;
+      border-bottom: 2px solid #dfe1e6;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .data-table td {
+      font-size: 13px; color: #172b4d;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f4f5f7;
+      vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr.clickable:hover td { background: #f8f9fb; cursor: pointer; }
+
+    /* ── Code badge / mono ── */
+    .code-text {
+      font-family: monospace; font-size: 12px;
+      background: #f4f5f7; border-radius: 3px;
+      padding: 2px 7px; color: #172b4d; font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .link-cell { color: #0052cc; text-decoration: none; }
+    .link-cell:hover { text-decoration: underline; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      background: #f8f9fb;
+    }
+    .filter-bar-label { font-size: 12px; color: #5e6c84; margin-right: 4px; }
+    .filter-chip {
+      padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500;
+      cursor: pointer; border: 1px solid #dfe1e6; background: #fff; color: #42526e;
+    }
+    .filter-chip.active {
+      background: #0052cc; color: #fff; border-color: #0052cc;
+    }
+
+    /* ── Upcoming payout panel ── */
+    .upcoming-payout {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .upcoming-item { display: flex; flex-direction: column; gap: 4px; }
+    .upcoming-label {
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .upcoming-value { font-size: 18px; font-weight: 700; color: #172b4d; }
+    .upcoming-sub { font-size: 12px; color: #5e6c84; }
+
+    /* ── Audit log ── */
+    .audit-list { list-style: none; }
+    .audit-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f4f5f7;
+    }
+    .audit-item:last-child { border-bottom: none; }
+    .audit-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #deebff; color: #0052cc;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0; margin-top: 1px;
+    }
+    .audit-content { flex: 1; }
+    .audit-event { font-size: 13px; color: #172b4d; }
+    .audit-meta { font-size: 11px; color: #5e6c84; margin-top: 2px; }
+
+    /* ── Internal notes textarea ── */
+    .form-textarea {
+      border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 8px 10px; font-size: 13px; color: #172b4d;
+      background: #fff; outline: none; width: 100%;
+      min-height: 90px; resize: vertical;
+    }
+    .form-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px #deebff; }
+    .form-hint { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center; padding: 32px;
+      color: #5e6c84; font-size: 13px;
+    }
+
+    /* ── Tooltip indicator ── */
+    .tooltip-hint {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; color: #0052cc; cursor: help;
+      border-bottom: 1px dashed #0052cc;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Finance</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── Page wrap ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Glow Clinic Partners</span>
+  </div>
+
+  <!-- ── Affiliate Header Card ── -->
+  <div class="affiliate-header-card">
+    <div class="affiliate-header-top">
+      <div class="affiliate-header-identity">
+        <div class="affiliate-name">Glow Clinic Partners</div>
+        <div class="affiliate-meta">
+          <span class="badge badge-active">
+            <span class="badge-dot"></span>
+            Active
+          </span>
+          <span class="affiliate-meta-sep">|</span>
+          <span class="affiliate-meta-item">ID: AFF-00482</span>
+          <span class="affiliate-meta-sep">|</span>
+          <span class="affiliate-meta-item">Clinic Partner</span>
+          <span class="affiliate-meta-sep">|</span>
+          <span class="affiliate-meta-item">🌏 United States</span>
+          <span class="affiliate-meta-sep">|</span>
+          <span class="affiliate-meta-item">
+            Activation:
+            <span class="badge badge-invited" style="margin-left:4px;">
+              <span class="badge-dot"></span>
+              Invited
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="affiliate-actions">
+        <button class="btn btn-default" title="Opens Screen 2">✏️ Edit</button>
+        <button class="btn btn-default" title="Opens Screen 4 (Single mode)">+ Add Discount Code</button>
+        <button class="btn btn-default" title="Opens Screen 4 (Bulk mode)">⚡ Generate Codes</button>
+        <!-- Resend Activation: enabled when Activation Status = "Invited" -->
+        <button class="btn btn-warning" title="Resend activation email (A5 flow) — enabled while Activation Status is Invited">
+          📧 Resend Activation Email
+        </button>
+        <button class="btn btn-warning" title="Opens Screen 3.1 (Suspend / Reinstate)">⏸ Suspend</button>
+        <button class="btn btn-danger" title="Opens Screen 3.3 (Deactivate / Offboard — permanent terminal state)">
+          🚫 Deactivate / Offboard
+        </button>
+        <button class="btn btn-default" title="Export affiliate performance to PDF">📄 Generate Report</button>
+      </div>
+    </div>
+
+    <!-- Activation pending alert (shown while Activation Status = "Invited") -->
+    <div class="activation-alert">
+      <span>⚠️ <strong>Invited — activation pending.</strong> This affiliate has not yet set their password. The activation link was sent to <strong>partner@glowclinic.com</strong>. Links expire in 24 hours.</span>
+      <button class="btn btn-warning" style="flex-shrink:0;font-size:12px;padding:5px 12px;">
+        Resend Activation Email
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Summary Metrics Strip ── -->
+  <div class="metrics-strip">
+    <div class="metric-card">
+      <div class="metric-label">Total Referrals</div>
+      <div class="metric-value">1,284</div>
+      <div class="metric-sub">Completed bookings via affiliate</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Revenue</div>
+      <div class="metric-value">$487,320</div>
+      <div class="metric-sub">Booking revenue from referrals</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Commissions Paid</div>
+      <div class="metric-value">$68,230</div>
+      <div class="metric-sub">All-time paid</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Pending Payout</div>
+      <div class="metric-value" style="color:#006644;">$4,875</div>
+      <div class="metric-sub">Awaiting next cycle</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Next Payout Date</div>
+      <div class="metric-value" style="font-size:16px;">Jul 7, 2026</div>
+      <div class="metric-sub">Monthly on the 7th (fixed)</div>
+    </div>
+  </div>
+
+  <!-- ── Account Details Panel ── -->
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">Account Details</div>
+      <div class="panel-header-actions">
+        <span style="font-size:12px;color:#5e6c84;">Read-only · payment details masked</span>
+        <button class="btn btn-default" style="font-size:12px;padding:5px 12px;">
+          ✏️ Edit (Screen 2)
+        </button>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      <!-- Basic Information -->
+      <div class="section-sub-title">Basic Information</div>
+      <div class="info-grid">
+        <div>
+          <div class="info-row">
+            <div class="info-row-label">Affiliate Name</div>
+            <div class="info-row-value">Glow Clinic Partners</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Contact Email</div>
+            <div class="info-row-value">partner@glowclinic.com</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Phone Number</div>
+            <div class="info-row-value">+1 (415) 555-0182</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Language(s)</div>
+            <div class="info-row-value">English, Spanish</div>
+          </div>
+        </div>
+        <div>
+          <div class="info-row">
+            <div class="info-row-label">Country / Region</div>
+            <div class="info-row-value">United States</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Affiliate Type</div>
+            <div class="info-row-value">Clinic Partner</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Tax / VAT / Business ID</div>
+            <div class="info-row-value">US-TAX-88123456</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Performance Tier</div>
+            <div class="info-row-value">
+              <span class="badge badge-active">Gold</span>
+              <span style="font-size:11px;color:#5e6c84;margin-left:6px;">System-calculated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Bank / Payout Details -->
+      <div class="section-sub-title">Bank / Payout Details</div>
+      <div class="info-grid">
+        <div>
+          <div class="info-row">
+            <div class="info-row-label">Account Holder</div>
+            <div class="info-row-value">Glow Clinic Partners LLC</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Bank Name</div>
+            <div class="info-row-value">Chase Bank</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Account Number</div>
+            <div class="info-row-value masked">•••• •••• •••• 4782</div>
+          </div>
+        </div>
+        <div>
+          <div class="info-row">
+            <div class="info-row-label">Routing / SWIFT</div>
+            <div class="info-row-value masked">••••••••• / CHASUS33</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">IBAN</div>
+            <div class="info-row-value muted">Not provided</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Payout Method</div>
+            <div class="info-row-value">Stripe transfer</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Commission Structure -->
+      <div class="section-sub-title">Commission Structure</div>
+      <div class="info-grid">
+        <div>
+          <div class="info-row">
+            <div class="info-row-label">Commission Type</div>
+            <div class="info-row-value">Percentage of Booking Revenue</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Commission Rate</div>
+            <div class="info-row-value"><strong>15%</strong> per completed booking</div>
+          </div>
+        </div>
+        <div>
+          <div class="info-row">
+            <div class="info-row-label">Payout Schedule</div>
+            <div class="info-row-value">🔒 Monthly on the 7th (fixed)</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">Activation Status</div>
+            <div class="info-row-value">
+              <span class="badge badge-invited">
+                <span class="badge-dot"></span>
+                Invited
+              </span>
+              <span style="font-size:11px;color:#5e6c84;margin-left:6px;">Password not yet set</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <div class="info-row">
+          <div class="info-row-label">Last Login</div>
+          <div class="info-row-value muted">Never logged in</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="btn btn-default" style="font-size:12px;padding:5px 12px;"
+          title="Opens Screen 3.2 — captures effective date; historical commissions are not recalculated">
+          Edit Commission Structure (Screen 3.2)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Assigned Promo Codes ── -->
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">Assigned Promo Codes</div>
+      <div class="panel-header-actions">
+        <span style="font-size:12px;color:#5e6c84;">3 codes · click a row to open Screen 6</span>
+        <button class="btn btn-primary" style="font-size:12px;padding:5px 12px;">
+          + Add New Discount Code
+        </button>
+      </div>
+    </div>
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <span class="filter-bar-label">Filter:</span>
+      <span class="filter-chip active">All (3)</span>
+      <span class="filter-chip">Active (2)</span>
+      <span class="filter-chip">Inactive (0)</span>
+      <span class="filter-chip">Expired (1)</span>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Campaign</th>
+          <th>Status</th>
+          <th>Applied / Completed</th>
+          <th>Conversion</th>
+          <th>Revenue</th>
+          <th>Commission</th>
+          <th>Expiry</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="clickable" title="Opens Screen 6 — Promo Code Detail">
+          <td><span class="code-text">GLOW2026</span></td>
+          <td>Summer Campaign 2026</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>824 / 613</td>
+          <td>74.4%</td>
+          <td>$318,450</td>
+          <td>$47,768</td>
+          <td>Dec 31, 2026</td>
+        </tr>
+        <tr class="clickable" title="Opens Screen 6 — Promo Code Detail">
+          <td><span class="code-text">PARTNER10</span></td>
+          <td>Partner Onboarding</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>312 / 218</td>
+          <td>69.9%</td>
+          <td>$112,640</td>
+          <td>$16,896</td>
+          <td>—</td>
+        </tr>
+        <tr class="clickable" title="Opens Screen 6 — Promo Code Detail">
+          <td><span class="code-text">WINTER2025</span></td>
+          <td>Winter Promo 2025</td>
+          <td><span class="badge badge-expired">Expired</span></td>
+          <td>148 / 103</td>
+          <td>69.6%</td>
+          <td>$56,230</td>
+          <td>$8,435</td>
+          <td>Feb 28, 2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Upcoming Payout Panel ── -->
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">Upcoming Payout</div>
+      <span style="font-size:12px;color:#5e6c84;">Next scheduled: Jul 7, 2026 · Read-only, system-calculated</span>
+    </div>
+    <div class="panel-body">
+      <div class="upcoming-payout">
+        <div class="upcoming-item">
+          <div class="upcoming-label">Pending Amount</div>
+          <div class="upcoming-value" style="color:#006644;">$4,875.00</div>
+          <div class="upcoming-sub">Net commission for Jun 2026</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-label">Scheduled Date</div>
+          <div class="upcoming-value">Jul 7, 2026</div>
+          <div class="upcoming-sub">Monthly on the 7th (fixed)</div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-label">Included Bookings</div>
+          <div class="upcoming-value">
+            <span class="tooltip-hint" title="Hover to see booking breakdown: Booking #7841 ($320), Booking #7853 ($275), Booking #7901 ($410) …">
+              32 bookings ℹ️
+            </span>
+          </div>
+          <div class="upcoming-sub">Completed in Jun 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Payout History ── -->
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">Payout History</div>
+      <span style="font-size:12px;color:#5e6c84;">Click a row to open Screen 8 — Payout / Transaction Detail</span>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Net Amount</th>
+          <th>Status</th>
+          <th>Completed Bookings</th>
+          <th>Payout Date</th>
+          <th>Transaction ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="clickable" title="Opens Screen 8 — Payout / Transaction Detail">
+          <td>May 2026</td>
+          <td><strong>$4,320.00</strong></td>
+          <td><span class="badge badge-paid">Paid</span></td>
+          <td>28</td>
+          <td>Jun 7, 2026</td>
+          <td><span style="font-family:monospace;font-size:12px;color:#5e6c84;">tr_3Qx8K...</span></td>
+        </tr>
+        <tr class="clickable" title="Opens Screen 8 — Payout / Transaction Detail">
+          <td>Apr 2026</td>
+          <td><strong>$3,975.00</strong></td>
+          <td><span class="badge badge-paid">Paid</span></td>
+          <td>25</td>
+          <td>May 7, 2026</td>
+          <td><span style="font-family:monospace;font-size:12px;color:#5e6c84;">tr_3Pw7J...</span></td>
+        </tr>
+        <tr class="clickable" title="Opens Screen 8 — Payout / Transaction Detail">
+          <td>Mar 2026</td>
+          <td><strong>$2,100.00</strong></td>
+          <td><span class="badge badge-failed">Failed</span></td>
+          <td>14</td>
+          <td>—</td>
+          <td><span style="font-size:12px;color:#de350b;">Invalid bank account</span></td>
+        </tr>
+        <tr class="clickable" title="Opens Screen 8 — Payout / Transaction Detail">
+          <td>Feb 2026</td>
+          <td><strong>$5,610.00</strong></td>
+          <td><span class="badge badge-paid">Paid</span></td>
+          <td>36</td>
+          <td>Mar 7, 2026</td>
+          <td><span style="font-family:monospace;font-size:12px;color:#5e6c84;">tr_3Mv5H...</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Activity / Audit Log ── -->
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">Activity / Audit Log</div>
+      <span style="font-size:12px;color:#5e6c84;">Chronological · append-only · read-only</span>
+    </div>
+    <div class="panel-body" style="padding: 0 20px;">
+      <ul class="audit-list">
+        <li class="audit-item">
+          <div class="audit-icon">📧</div>
+          <div class="audit-content">
+            <div class="audit-event">Activation email resent to <strong>partner@glowclinic.com</strong></div>
+            <div class="audit-meta">Jun 24, 2026 · 09:14 UTC · by Admin (admin@hairline.com) · Previous link invalidated</div>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-icon">💳</div>
+          <div class="audit-content">
+            <div class="audit-event">Payout processed for May 2026 — <strong>$4,320.00</strong> via Stripe</div>
+            <div class="audit-meta">Jun 7, 2026 · 02:00 UTC · System (automated monthly run) · Transaction: tr_3Qx8K...</div>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-icon">🏷️</div>
+          <div class="audit-content">
+            <div class="audit-event">Promo code <span class="code-text">GLOW2026</span> created and linked to affiliate</div>
+            <div class="audit-meta">May 15, 2026 · 14:32 UTC · by Admin (admin@hairline.com) · Campaign: Summer Campaign 2026</div>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-icon">💰</div>
+          <div class="audit-content">
+            <div class="audit-event">Commission structure changed: <strong>12% → 15%</strong> effective May 1, 2026</div>
+            <div class="audit-meta">Apr 28, 2026 · 11:05 UTC · by Admin (admin@hairline.com) · Historical commissions unchanged</div>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-icon">✅</div>
+          <div class="audit-content">
+            <div class="audit-event">Affiliate account created — activation email sent</div>
+            <div class="audit-meta">Nov 12, 2025 · 10:00 UTC · by Admin (admin@hairline.com) · Status: Pending</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Internal Notes ── -->
+  <div class="panel-card">
+    <div class="panel-header">
+      <div class="panel-title">Internal Notes</div>
+      <span style="font-size:12px;color:#5e6c84;">Not visible to the affiliate</span>
+    </div>
+    <div class="panel-body">
+      <textarea class="form-textarea" maxlength="1000"
+        placeholder="Admin notes about this affiliate relationship…">Referred by marketing team Q3 2025. High engagement rate in US west coast market. Pending legal sign-off on partnership contract renewal (due Q3 2026).</textarea>
+      <div class="form-hint" style="display:flex;justify-content:space-between;margin-top:6px;">
+        <span>Max 1,000 characters</span>
+        <span>168 / 1,000</span>
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" style="font-size:12px;padding:5px 14px;">Save Notes</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-021 Screen 10 — Admin: Machine Translation Provider &amp; Draft Generation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: #f4f5f7; color: #172b4d; }
+
+    /* ── Top bar ── */
+    .topbar { background: #fff; border-bottom: 1px solid #dfe1e6; height: 52px; display: flex; align-items: center; padding: 0 24px; gap: 16px; }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-lang { display: flex; align-items: center; gap: 6px; border: 1px solid #dfe1e6; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 13px; color: #42526e; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 24px 24px 60px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5e6c84; margin-bottom: 16px; }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #c1c7d0; }
+    .breadcrumb-current { color: #172b4d; font-weight: 500; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; text-decoration: none; }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-warning { background: #ff991f; color: #fff; }
+    .btn-warning:hover { background: #e08000; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-link { background: none; border: none; color: #0052cc; padding: 0; font-size: 13px; cursor: pointer; text-decoration: underline; }
+    .btn:disabled, .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Cards ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; margin-bottom: 16px; }
+    .card-header { padding: 14px 20px; border-bottom: 1px solid #dfe1e6; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Section step ── */
+    .section-step { display: flex; align-items: center; gap: 10px; margin-bottom: 0; }
+    .step-number { width: 24px; height: 24px; border-radius: 50%; background: #0052cc; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+    /* ── Form fields ── */
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .field-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+    .field-label.required::after { content: ' *'; color: #bf2600; }
+    .field-label.conditional::after { content: ' (conditional)'; color: #974f0c; font-style: italic; text-transform: none; font-weight: 400; letter-spacing: 0; }
+    .field-label.optional::after { content: ' (optional)'; color: #5e6c84; font-style: italic; text-transform: none; font-weight: 400; letter-spacing: 0; }
+    .field-input {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit;
+    }
+    .field-input:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-input.secret { letter-spacing: 3px; color: #5e6c84; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .field-select {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235e6c84' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 30px;
+    }
+    .field-select:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-select-ro {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #e0e2e7;
+      background: #f4f5f7; font-family: inherit;
+    }
+    .field-textarea {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 8px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; resize: vertical;
+      min-height: 80px; line-height: 1.5;
+    }
+    .field-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-hint { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Multiselect pills ── */
+    .multiselect-box {
+      border: 1px solid #dfe1e6; border-radius: 4px; background: #fff;
+      padding: 6px 8px; min-height: 38px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; cursor: pointer;
+    }
+    .multiselect-box:focus-within { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .ms-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #deebff; color: #0052cc; border-radius: 3px;
+      padding: 2px 7px; font-size: 12px; font-weight: 500;
+    }
+    .ms-pill-x { font-size: 14px; line-height: 1; cursor: pointer; color: #0052cc; opacity: 0.7; }
+    .ms-placeholder { font-size: 13px; color: #8993a4; }
+
+    /* ── Provider status badge row ── */
+    .provider-status-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border: 1px solid #dfe1e6; border-radius: 6px;
+      background: #fafbfc;
+    }
+    .provider-status-row.connected { border-color: #00875a; background: #e3fcef; }
+    .provider-status-row.error     { border-color: #de350b; background: #ffebe6; }
+    .provider-status-row.not-configured { border-color: #c1c7d0; background: #f4f5f7; }
+
+    /* ── Supported languages list ── */
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .lang-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      border: 1px solid #dfe1e6; border-radius: 10px;
+      padding: 3px 10px; font-size: 12px; color: #42526e; background: #fff;
+    }
+    .lang-chip.supported { border-color: #00875a; background: #e3fcef; color: #006644; }
+
+    /* ── Radio group ── */
+    .radio-group { display: flex; flex-direction: column; gap: 10px; }
+    .radio-option {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px; border: 1px solid #dfe1e6; border-radius: 6px;
+      cursor: pointer; background: #fff; transition: border-color 0.15s, background 0.15s;
+    }
+    .radio-option:hover { border-color: #4c9aff; background: #f8f9ff; }
+    .radio-option.selected { border-color: #0052cc; background: #f0f4ff; }
+    .radio-option.disabled { opacity: 0.5; cursor: not-allowed; background: #f4f5f7; }
+    .radio-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid #c1c7d0; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .radio-option.selected .radio-dot { border-color: #0052cc; }
+    .radio-option.selected .radio-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #0052cc; }
+    .radio-label { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .radio-desc { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+
+    /* ── Preview counts panel ── */
+    .preview-panel {
+      border: 1px solid #dfe1e6; border-radius: 6px; overflow: hidden;
+    }
+    .preview-panel.ready { border-color: #00875a; }
+    .preview-panel-header {
+      padding: 10px 16px; background: #f4f5f7;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .preview-panel.ready .preview-panel-header { background: #e3fcef; border-bottom-color: #00875a; }
+    .preview-panel-title { font-size: 13px; font-weight: 600; color: #172b4d; display: flex; align-items: center; gap: 6px; }
+    .preview-panel-body { padding: 16px; }
+    .preview-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    .stat-item { text-align: center; padding: 10px 6px; border-radius: 6px; border: 1px solid #dfe1e6; background: #fafbfc; }
+    .stat-item.eligible  { border-color: #0052cc; background: #deebff; }
+    .stat-item.missing   { border-color: #00875a; background: #e3fcef; }
+    .stat-item.skipped   { border-color: #c1c7d0; background: #f4f5f7; }
+    .stat-item.replace   { border-color: #6554c0; background: #eae6ff; }
+    .stat-item.errors    { border-color: #de350b; background: #ffebe6; }
+    .stat-item.usage     { border-color: #f5a623; background: #fffae6; }
+    .stat-number { font-size: 20px; font-weight: 700; color: #172b4d; line-height: 1; }
+    .stat-item.eligible  .stat-number { color: #0052cc; }
+    .stat-item.missing   .stat-number { color: #006644; }
+    .stat-item.replace   .stat-number { color: #6554c0; }
+    .stat-item.errors    .stat-number { color: #bf2600; }
+    .stat-item.usage     .stat-number { color: #974f0c; }
+    .stat-label { font-size: 10px; color: #5e6c84; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+    /* ── Info banners ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;
+    }
+    .info-banner.info    { background: #deebff; border: 1px solid #4c9aff; color: #0052cc; }
+    .info-banner.warning { background: #fffae6; border: 1px solid #f5a623; color: #974f0c; }
+    .info-banner.danger  { background: #ffebe6; border: 1px solid #de350b; color: #bf2600; }
+    .info-banner-icon { flex-shrink: 0; font-size: 15px; }
+    .info-banner-text { font-size: 13px; line-height: 1.5; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .badge-connected    { background: #e3fcef; color: #006644; }
+    .badge-not-config   { background: #f4f5f7; color: #5e6c84; }
+    .badge-error        { background: #ffebe6; color: #bf2600; }
+    .badge-disabled     { background: #f4f5f7; color: #8993a4; }
+    .badge-review       { background: #fff0b3; color: #974f0c; }
+    .badge-draft        { background: #deebff; color: #0052cc; }
+    .badge-running      { background: #deebff; color: #0052cc; }
+    .badge-done         { background: #e3fcef; color: #006644; }
+    .badge-failed       { background: #ffebe6; color: #bf2600; }
+
+    /* ── Credential row ── */
+    .credential-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .credential-masked {
+      flex: 1; font-size: 13px; color: #42526e; font-family: 'SF Mono', 'Fira Code', monospace;
+      padding: 7px 10px; border: 1px solid #dfe1e6; border-radius: 4px; background: #f4f5f7;
+      letter-spacing: 2px;
+    }
+
+    /* ── Grid helpers ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Action bar ── */
+    .action-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid #dfe1e6; background: #fafbff;
+      border-radius: 0 0 6px 6px;
+    }
+    .action-bar-left { font-size: 12px; color: #5e6c84; display: flex; align-items: center; gap: 6px; }
+    .action-bar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Job history table ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      padding: 8px 12px; background: #f4f5f7; border-bottom: 2px solid #dfe1e6;
+      text-align: left; font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid #f4f5f7; }
+    tbody tr:hover { background: #f8f9ff; }
+    tbody td { padding: 10px 12px; color: #172b4d; vertical-align: middle; }
+    .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+    .text-muted { color: #5e6c84; }
+    .text-sm { font-size: 12px; }
+
+    /* ── Divider ── */
+    .section-divider { margin: 4px 0 20px; border: none; border-top: 1px solid #dfe1e6; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div class="topbar-logo">AdminPortal</div>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Users</a>
+    <a href="#" class="active">Localization</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-lang">🌐 EN (Admin)</div>
+</div>
+
+<!-- ── Page wrap ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Localization</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Turkish (tr)</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Machine Translation</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Machine Translation Provider &amp; Draft Generation</div>
+      <div class="page-subtitle">Configure a machine-translation provider and generate review-required draft translations for a non-English language.</div>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-default">← Back to Language Detail</button>
+    </div>
+  </div>
+
+  <!-- Info banner -->
+  <div class="info-banner info">
+    <div class="info-banner-icon">ℹ️</div>
+    <div class="info-banner-text">
+      Machine translation generates <strong>draft values only</strong> — all generated values are marked <strong>Review Needed</strong> and are not served to runtime clients until published through Language Version History &amp; Rollback (Screen 9).
+    </div>
+  </div>
+
+  <!-- ── Section 1: Provider Configuration ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="section-step">
+        <div class="step-number">1</div>
+        <div class="card-title">Provider Configuration</div>
+      </div>
+      <span class="badge badge-connected">● Connected</span>
+    </div>
+    <div class="card-body">
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+
+        <!-- Provider select -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label required">Provider</div>
+          <select class="field-select">
+            <option value="">Select provider…</option>
+            <option value="google" selected>Google Cloud Translation</option>
+            <option value="deepl">DeepL</option>
+            <option value="azure">Microsoft Azure Translator</option>
+            <option value="amazon">Amazon Translate</option>
+          </select>
+          <div class="field-hint">Custom provider allowed only if integration exists.</div>
+        </div>
+
+        <!-- Provider status -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label required">Provider status</div>
+          <div class="provider-status-row connected">
+            <span style="font-size:18px;">✅</span>
+            <div>
+              <div style="font-size:13px; font-weight:600; color:#006644;">Connected</div>
+              <div style="font-size:11px; color:#5e6c84; margin-top:2px;">Last verified: 2026-06-02 09:14 UTC</div>
+            </div>
+          </div>
+          <div class="field-hint">System-generated from credential and health checks. Values: Connected, Not Configured, Error, Disabled.</div>
+        </div>
+
+      </div>
+
+      <!-- API key / credential -->
+      <div class="form-group">
+        <div class="field-label conditional">API key / credential</div>
+        <div class="credential-row">
+          <div class="credential-masked">AIza••••••••••••••••••••••••••••••••••••</div>
+          <button class="btn btn-default btn-sm">Update Key</button>
+          <button class="btn btn-default btn-sm" style="color:#bf2600; border-color:#bf2600;">Revoke</button>
+        </div>
+        <div class="field-hint">Encrypted at rest. Masked after save. Never exported in JSON files or audit detail. Required to enable provider.</div>
+      </div>
+
+      <!-- Supported languages -->
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="field-label optional">Supported languages</div>
+        <div class="lang-chips">
+          <span class="lang-chip supported">🇹🇷 Turkish (tr)</span>
+          <span class="lang-chip supported">🇩🇪 German (de)</span>
+          <span class="lang-chip supported">🇫🇷 French (fr)</span>
+          <span class="lang-chip supported">🇪🇸 Spanish (es)</span>
+          <span class="lang-chip supported">🇮🇹 Italian (it)</span>
+          <span class="lang-chip supported">🇵🇹 Portuguese (pt)</span>
+          <span class="lang-chip supported">🇸🇦 Arabic (ar)</span>
+          <span class="lang-chip supported">🇯🇵 Japanese (ja)</span>
+          <span class="lang-chip supported">🇨🇳 Chinese Simplified (zh-CN)</span>
+          <span class="lang-chip" style="color:#5e6c84;">+ 47 more</span>
+        </div>
+        <div class="field-hint">Retrieved from provider metadata or configured integration. English (en) is excluded as the source locale.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 2: Generation Settings ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="section-step">
+        <div class="step-number">2</div>
+        <div class="card-title">Draft Generation Settings</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+
+        <!-- Target language -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label required">Target language</div>
+          <select class="field-select">
+            <option value="">Select language…</option>
+            <option value="tr" selected>🇹🇷 Turkish (tr)</option>
+            <option value="de">🇩🇪 German (de)</option>
+            <option value="fr">🇫🇷 French (fr)</option>
+            <option value="es">🇪🇸 Spanish (es)</option>
+            <option value="ar">🇸🇦 Arabic (ar)</option>
+          </select>
+          <div class="field-hint">Must be a non-English locale supported by FR-021 catalog and the selected provider. English/source locale is blocked.</div>
+        </div>
+
+        <!-- Group/namespace scope -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label optional">Group / Namespace scope</div>
+          <div class="multiselect-box">
+            <span class="ms-placeholder">All groups (blank = all groups for selected surfaces)</span>
+          </div>
+          <div class="field-hint">Leave blank to include all groups. Optional key groups to include.</div>
+        </div>
+
+      </div>
+
+      <!-- Tenant/surface scope -->
+      <div class="form-group">
+        <div class="field-label required">Tenant / Surface scope</div>
+        <div class="multiselect-box">
+          <span class="ms-pill">Patient App <span class="ms-pill-x">×</span></span>
+          <span class="ms-pill">Provider Dashboard <span class="ms-pill-x">×</span></span>
+          <span class="ms-pill">Admin Platform <span class="ms-pill-x">×</span></span>
+          <span class="ms-pill">Shared / Notification <span class="ms-pill-x">×</span></span>
+        </div>
+        <div class="field-hint">Default: all surfaces selected for the target language. Patient App, Provider Dashboard, Admin Platform, Shared/Notification.</div>
+      </div>
+
+      <!-- Generation mode -->
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="field-label required">Generation mode</div>
+        <div class="radio-group">
+          <div class="radio-option selected">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Prefill Missing Keys</div>
+              <div class="radio-desc">Generate draft values only where the selected target language has no value. Existing values are not replaced.</div>
+            </div>
+          </div>
+          <div class="radio-option">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Replace Entire Language</div>
+              <div class="radio-desc">Generate replacement draft values for <em>all</em> selected target-language keys in the selected scope, except protected English/source values. Requires explicit confirmation — this can overwrite many existing draft values.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 3: Preview Counts ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="section-step">
+        <div class="step-number">3</div>
+        <div class="card-title">Preview Counts</div>
+      </div>
+      <button class="btn btn-default btn-sm">↻ Refresh Preview</button>
+    </div>
+    <div class="card-body">
+
+      <div class="preview-panel ready">
+        <div class="preview-panel-header">
+          <div class="preview-panel-title">
+            <span>✅</span> Preview ready — Turkish (tr) · All surfaces · Prefill Missing Keys
+          </div>
+          <span class="text-muted text-sm">Calculated 2026-06-02 09:16 UTC</span>
+        </div>
+        <div class="preview-panel-body">
+          <div class="preview-stats">
+            <div class="stat-item eligible">
+              <div class="stat-number">1,842</div>
+              <div class="stat-label">Eligible keys</div>
+            </div>
+            <div class="stat-item missing">
+              <div class="stat-number">347</div>
+              <div class="stat-label">Missing (to fill)</div>
+            </div>
+            <div class="stat-item skipped">
+              <div class="stat-number">1,495</div>
+              <div class="stat-label">Skipped (already has value)</div>
+            </div>
+            <div class="stat-item replace">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Replacements</div>
+            </div>
+            <div class="stat-item errors">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Errors</div>
+            </div>
+            <div class="stat-item usage">
+              <div class="stat-number">~$0.52</div>
+              <div class="stat-label">Est. usage cost</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-hint" style="margin-top: 10px;">Preview is required before generation confirmation. Cost/usage estimates are shown where provider metadata is available.</div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 4: Confirmation & Generate ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="section-step">
+        <div class="step-number">4</div>
+        <div class="card-title">Confirmation</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Confirmation reason -->
+      <div class="form-group">
+        <div class="field-label required">Confirmation reason</div>
+        <textarea class="field-textarea" rows="3" placeholder="Enter the business reason for running machine translation for this language and scope…">Initial draft generation for Turkish (tr) launch preparation — filling 347 missing keys across all surfaces to accelerate human review before Q3 release.</textarea>
+        <div class="field-hint">Required for audit trail. Logged with actor, timestamp, provider, target language, mode, scope, and counts.</div>
+      </div>
+
+    </div>
+
+    <!-- Action bar -->
+    <div class="action-bar">
+      <div class="action-bar-left">
+        <span>🔒</span> Requires active provider, completed preview, reason, and authorization. All generated values will be marked <strong>Review Needed</strong>.
+      </div>
+      <div class="action-bar-right">
+        <button class="btn btn-default">Cancel</button>
+        <button class="btn btn-warning">⚡ Generate Draft — 347 keys</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 5: Job History ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Job History</div>
+      <span class="text-muted text-sm">Prior machine-translation runs for all languages</span>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Job ID</th>
+              <th>Actor</th>
+              <th>Language</th>
+              <th>Provider</th>
+              <th>Mode</th>
+              <th>Scope</th>
+              <th>Keys</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Errors</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono text-muted">MT-0041</td>
+              <td>m.chen@hairline.com</td>
+              <td>🇹🇷 Turkish (tr)</td>
+              <td>Google</td>
+              <td>Prefill Missing</td>
+              <td>All surfaces</td>
+              <td>
+                <span style="color:#006644; font-weight:600;">347</span>
+                <span class="text-muted"> / 347</span>
+              </td>
+              <td><span class="badge badge-running">● Running</span></td>
+              <td class="text-sm text-muted">2026-06-02 09:17</td>
+              <td class="text-sm text-muted">—</td>
+            </tr>
+            <tr>
+              <td class="mono text-muted">MT-0040</td>
+              <td>admin@hairline.com</td>
+              <td>🇹🇷 Turkish (tr)</td>
+              <td>Google</td>
+              <td>Prefill Missing</td>
+              <td>Patient App</td>
+              <td>
+                <span style="color:#006644; font-weight:600;">92</span>
+                <span class="text-muted"> / 95</span>
+              </td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td class="text-sm text-muted">2026-05-28 14:32</td>
+              <td class="text-sm" style="color:#bf2600;">3 placeholder errors</td>
+            </tr>
+            <tr>
+              <td class="mono text-muted">MT-0039</td>
+              <td>admin@hairline.com</td>
+              <td>🇩🇪 German (de)</td>
+              <td>Google</td>
+              <td>Replace Entire</td>
+              <td>All surfaces</td>
+              <td>
+                <span style="color:#6554c0; font-weight:600;">1,842</span>
+                <span class="text-muted"> / 1,842</span>
+              </td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td class="text-sm text-muted">2026-05-20 10:05</td>
+              <td class="text-sm text-muted">—</td>
+            </tr>
+            <tr>
+              <td class="mono text-muted">MT-0038</td>
+              <td>admin@hairline.com</td>
+              <td>🇫🇷 French (fr)</td>
+              <td>DeepL</td>
+              <td>Prefill Missing</td>
+              <td>Provider Dashboard</td>
+              <td>
+                <span style="color:#bf2600; font-weight:600;">0</span>
+                <span class="text-muted"> / 210</span>
+              </td>
+              <td><span class="badge badge-failed">Failed</span></td>
+              <td class="text-sm text-muted">2026-05-15 08:44</td>
+              <td class="text-sm" style="color:#bf2600;">Provider quota exceeded</td>
+            </tr>
+            <tr>
+              <td class="mono text-muted">MT-0037</td>
+              <td>j.smith@hairline.com</td>
+              <td>🇹🇷 Turkish (tr)</td>
+              <td>Google</td>
+              <td>Prefill Missing</td>
+              <td>All surfaces</td>
+              <td>
+                <span style="color:#006644; font-weight:600;">504</span>
+                <span class="text-muted"> / 504</span>
+              </td>
+              <td><span class="badge badge-done">Done</span></td>
+              <td class="text-sm text-muted">2026-04-10 16:22</td>
+              <td class="text-sm text-muted">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

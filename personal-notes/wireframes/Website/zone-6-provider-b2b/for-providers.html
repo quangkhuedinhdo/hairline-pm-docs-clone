@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — /for-providers (For Providers Landing)</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0ede8;
+      color: #1a1a1a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Wireframe legend (top of page) ──────────────────── */
+    .wf-legend {
+      background: #1a1a1a;
+      color: #f0ede8;
+      padding: 12px 32px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .wf-legend strong { font-size: 13px; letter-spacing: 0.05em; }
+    .wf-legend span { color: #aaa; }
+    .legend-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .chip-section { background: #3a3a4a; color: #ccc; }
+    .chip-b2b { background: #1e3a2f; color: #6fcf97; }
+    .chip-cta { background: #3a1e1e; color: #f2994a; }
+    .chip-placeholder { background: #3a3a3a; color: #999; border: 1px dashed #555; }
+
+    /* ── Layout ───────────────────────────────────────────── */
+    .page-wrapper { max-width: 1280px; margin: 0 auto; }
+
+    /* Section label annotation */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 24px;
+      background: #e8e4de;
+      border-left: 3px solid #8b7355;
+      font-size: 11px;
+      font-weight: 700;
+      color: #5c4b30;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-label .sec-num {
+      background: #8b7355;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; flex-shrink: 0;
+    }
+    .section-note {
+      font-weight: 400;
+      color: #7a6a52;
+      font-style: italic;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* ── Placeholder blocks ───────────────────────────────── */
+    .ph {
+      background: #ddd8d0;
+      border: 1px dashed #bbb;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* ── NAV ──────────────────────────────────────────────── */
+    .wf-nav {
+      background: #fff;
+      border-bottom: 1px solid #e5e0d8;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: #1a1a1a;
+    }
+    .nav-logo span { color: #8b7355; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links li a {
+      font-size: 14px;
+      color: #555;
+      text-decoration: none;
+    }
+    .nav-links li a.active { color: #1a1a1a; font-weight: 600; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 18px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary { background: #1a1a1a; color: #fff; }
+    .btn-ghost { background: transparent; border: 1.5px solid #ccc; color: #333; }
+    .btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 10px; }
+    .btn-xl { padding: 16px 36px; font-size: 18px; border-radius: 12px; }
+    .nav-b2b-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #1e3a2f;
+      color: #6fcf97;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── S1 HERO ──────────────────────────────────────────── */
+    .hero-section {
+      background: #16211c;
+      color: #f0ede8;
+      padding: 100px 80px;
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6fcf97;
+      margin-bottom: 20px;
+      padding: 4px 10px;
+      border: 1px solid #2a4a3a;
+      border-radius: 4px;
+    }
+    .hero-h1 {
+      font-size: 52px;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
+    .hero-h1 em { color: #6fcf97; font-style: normal; }
+    .hero-sub {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #a8b5a8;
+      margin-bottom: 40px;
+      max-width: 480px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .btn-book {
+      background: #6fcf97;
+      color: #16211c;
+      font-weight: 700;
+    }
+    .btn-deck {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: #f0ede8;
+    }
+    .hero-trust-strip {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .trust-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .trust-stat strong { font-size: 28px; font-weight: 800; color: #fff; }
+    .trust-stat span { font-size: 12px; color: #7a8f7a; }
+    .hero-visual { display: flex; flex-direction: column; gap: 12px; }
+    .hero-dashboard-mock {
+      background: #1e2e28;
+      border: 1px solid #2a3d34;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .dash-topbar {
+      background: #1a2820;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #2a3d34;
+    }
+    .dash-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .dash-dot.red { background: #ff5f57; }
+    .dash-dot.yellow { background: #febc2e; }
+    .dash-dot.green { background: #28c840; }
+    .dash-title {
+      margin-left: 8px;
+      font-size: 12px;
+      color: #6a8a7a;
+    }
+    .dash-body { padding: 20px; }
+    .dash-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .dash-metric {
+      background: #1a2820;
+      border: 1px solid #2a3d34;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .dash-metric-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #6fcf97;
+    }
+    .dash-metric-lbl {
+      font-size: 10px;
+      color: #6a8a7a;
+      margin-top: 2px;
+    }
+    .ph-dark {
+      background: #1e2e28;
+      border: 1px dashed #2a3d34;
+      border-radius: 6px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a6a5a;
+      font-size: 11px;
+    }
+    .ph-dark-sm {
+      background: #1e2e28;
+      border: 1px dashed #2a3d34;
+      border-radius: 6px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a6a5a;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    /* ── S2 LOGO WALL ─────────────────────────────────────── */
+    .logo-wall-section {
+      background: #faf8f5;
+      padding: 48px 80px;
+      border-bottom: 1px solid #ebe6de;
+    }
+    .logo-wall-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 32px;
+    }
+    .logo-grid {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo-chip {
+      background: #eee8df;
+      border: 1px solid #ddd5c8;
+      border-radius: 10px;
+      padding: 14px 32px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #8a7860;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    /* ── S3 THREE PILLARS ─────────────────────────────────── */
+    .pillars-section {
+      background: #fff;
+      padding: 100px 80px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8b7355;
+      margin-bottom: 14px;
+    }
+    .section-h2 {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #1a1a1a;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: #666;
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .pillar-card {
+      border: 1.5px solid #e8e2da;
+      border-radius: 20px;
+      padding: 40px 32px;
+      background: #faf8f5;
+    }
+    .pillar-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: #eee8df;
+      border: 1px dashed #c8b89a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #999;
+      margin-bottom: 24px;
+    }
+    .pillar-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+    }
+    .pillar-body {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .pillar-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .metric-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .metric-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a1a;
+      min-width: 64px;
+    }
+    .metric-lbl {
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* ── S4 DASHBOARD SHOWCASE ────────────────────────────── */
+    .dashboard-section {
+      background: #16211c;
+      padding: 100px 80px;
+      color: #f0ede8;
+    }
+    .dash-showcase-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      margin-bottom: 64px;
+      align-items: end;
+    }
+    .dash-showcase-h2 {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #f0ede8;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .dash-showcase-sub {
+      font-size: 16px;
+      color: #7a9080;
+      line-height: 1.6;
+    }
+    .dash-nav-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .dash-pill {
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .dash-pill.active {
+      background: #6fcf97;
+      color: #16211c;
+    }
+    .dash-pill:not(.active) {
+      background: #1e2e28;
+      color: #7a9080;
+      border: 1px solid #2a3d34;
+    }
+    .dash-showcase-body {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .dash-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .dash-step {
+      padding: 20px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .dash-step.active {
+      background: #1e2e28;
+      border-left: 3px solid #6fcf97;
+    }
+    .dash-step-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #4a6a5a;
+      margin-bottom: 4px;
+    }
+    .dash-step.active .dash-step-num { color: #6fcf97; }
+    .dash-step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #7a9080;
+      margin-bottom: 4px;
+    }
+    .dash-step.active .dash-step-title { color: #f0ede8; }
+    .dash-step-copy {
+      font-size: 13px;
+      color: #4a6a5a;
+      line-height: 1.5;
+    }
+    .dash-step.active .dash-step-copy { color: #7a9080; }
+    .dash-screen-frame {
+      background: #1e2e28;
+      border: 1px solid #2a3d34;
+      border-radius: 20px;
+      overflow: hidden;
+      min-height: 480px;
+    }
+    .dash-frame-topbar {
+      background: #1a2820;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #2a3d34;
+    }
+    .dash-frame-tab {
+      font-size: 12px;
+      color: #4a6a5a;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .dash-frame-tab.active {
+      background: #2a3d34;
+      color: #6fcf97;
+    }
+    .dash-frame-body {
+      padding: 24px;
+    }
+    .dash-big-metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .dash-big-metric {
+      background: #1a2820;
+      border: 1px solid #2a3d34;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .dbm-val { font-size: 26px; font-weight: 800; color: #6fcf97; }
+    .dbm-lbl { font-size: 11px; color: #4a6a5a; margin-top: 2px; }
+    .dbm-delta { font-size: 11px; color: #6fcf97; margin-top: 4px; }
+    .ph-dark-chart {
+      background: #1a2820;
+      border: 1px dashed #2a3d34;
+      border-radius: 10px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3a5a4a;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    .ph-dark-table {
+      background: #1a2820;
+      border: 1px dashed #2a3d34;
+      border-radius: 10px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3a5a4a;
+      font-size: 12px;
+    }
+
+    /* ── S5 CASE STUDIES ──────────────────────────────────── */
+    .case-studies-section {
+      background: #faf8f5;
+      padding: 100px 80px;
+    }
+    .case-studies-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .case-card {
+      background: #fff;
+      border: 1.5px solid #e8e2da;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .case-card-img {
+      background: #ece7df;
+      border-bottom: 1px dashed #d8d0c5;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #bbb;
+    }
+    .case-card-body { padding: 28px; }
+    .case-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8b7355;
+      background: #f5efe6;
+      border-radius: 4px;
+      padding: 3px 8px;
+      margin-bottom: 14px;
+    }
+    .case-clinic-name {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .case-location {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 16px;
+    }
+    .case-metrics {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .case-metric-val { font-size: 22px; font-weight: 800; color: #1a1a1a; }
+    .case-metric-lbl { font-size: 11px; color: #999; }
+    .case-quote {
+      font-size: 13px;
+      color: #666;
+      font-style: italic;
+      line-height: 1.6;
+      border-left: 2px solid #e8e2da;
+      padding-left: 12px;
+      margin-bottom: 16px;
+    }
+    .case-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+    .case-cta-row {
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    /* ── S6 PRICING TEASER ────────────────────────────────── */
+    .pricing-section {
+      background: #fff;
+      padding: 100px 80px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .pricing-card {
+      border: 1.5px solid #e8e2da;
+      border-radius: 20px;
+      padding: 36px 28px;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border-color: #1a1a1a;
+      background: #1a1a1a;
+      color: #f0ede8;
+    }
+    .pricing-tier { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #888; }
+    .pricing-card.featured .pricing-tier { color: #7a9080; }
+    .pricing-price {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .pricing-model {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 28px;
+    }
+    .pricing-card.featured .pricing-model { color: #6a8a7a; }
+    .pricing-features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .pricing-feat {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 14px;
+      color: #444;
+    }
+    .pricing-card.featured .pricing-feat { color: #a8c0a8; }
+    .feat-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #e8f4ee;
+      border: 1.5px solid #6fcf97;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #2d8a5a;
+      flex-shrink: 0;
+    }
+    .pricing-card.featured .feat-check {
+      background: #2a4a3a;
+      border-color: #6fcf97;
+      color: #6fcf97;
+    }
+    .popular-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #6fcf97;
+      color: #16211c;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 14px;
+      border-radius: 100px;
+    }
+    .pricing-note {
+      text-align: center;
+      font-size: 13px;
+      color: #999;
+      margin-top: 32px;
+    }
+
+    /* ── S7 COMPLIANCE ────────────────────────────────────── */
+    .compliance-section {
+      background: #f5f2ed;
+      padding: 80px;
+      border-top: 1px solid #e8e2da;
+      border-bottom: 1px solid #e8e2da;
+    }
+    .compliance-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .compliance-h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 16px;
+    }
+    .compliance-sub {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+    .compliance-badges {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .compliance-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: #fff;
+      border: 1.5px solid #ddd5c8;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .badge-icon {
+      width: 24px; height: 24px;
+      background: #e8f4ee;
+      border-radius: 6px;
+      border: 1px dashed #6fcf97;
+      display: inline-block;
+    }
+    .compliance-details {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .compliance-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e8e2da;
+    }
+    .compliance-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #eee8df;
+      border: 1px dashed #c8b89a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #999; flex-shrink: 0;
+    }
+    .compliance-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .compliance-text p { font-size: 13px; color: #777; line-height: 1.5; }
+
+    /* ── S8 FAQ ───────────────────────────────────────────── */
+    .faq-section {
+      background: #fff;
+      padding: 100px 80px;
+    }
+    .faq-container {
+      max-width: 720px;
+      margin: 48px auto 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid #e8e2da;
+    }
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 0;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #1a1a1a;
+    }
+    .faq-toggle {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid #e8e2da;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: #aaa; flex-shrink: 0;
+    }
+    .faq-answer {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.7;
+      padding-bottom: 20px;
+    }
+    .faq-answer.closed { display: none; }
+
+    /* ── S9 FINAL CTA ─────────────────────────────────────── */
+    .final-cta-section {
+      background: #16211c;
+      padding: 100px 80px;
+      text-align: center;
+    }
+    .final-cta-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #4a6a5a;
+      margin-bottom: 20px;
+    }
+    .final-cta-h2 {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: #f0ede8;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .final-cta-sub {
+      font-size: 17px;
+      color: #7a9080;
+      margin-bottom: 48px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    .final-cta-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+    .final-social-proof {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .fsp-item { font-size: 13px; color: #4a6a5a; }
+    .fsp-item strong { color: #7a9080; }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    .footer {
+      background: #111;
+      padding: 56px 80px 32px;
+      color: #555;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {
+      font-size: 18px;
+      font-weight: 800;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .footer-brand span { color: #5a7a5a; }
+    .footer-tagline { font-size: 12px; color: #444; line-height: 1.6; }
+    .footer-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #666; margin-bottom: 16px; text-transform: uppercase; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 13px; color: #444; text-decoration: none; }
+    .footer-bottom {
+      border-top: 1px solid #222;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    /* ── ANNOTATION TOOLTIP ───────────────────────────────── */
+    .annotation {
+      display: inline-block;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      font-size: 10px;
+      padding: 2px 7px;
+      color: #856404;
+      font-style: italic;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Responsive hint strip ────────────────────────────── */
+    .breakpoint-hint {
+      background: #fff;
+      border-top: 2px dashed #ddd;
+      border-bottom: 2px dashed #ddd;
+      padding: 10px 32px;
+      font-size: 11px;
+      color: #aaa;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .bp-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      font-weight: 600;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     WIREFRAME LEGEND
+══════════════════════════════════════════════════════════ -->
+<div class="wf-legend">
+  <strong>WIREFRAME</strong>
+  <span>hairline.app /for-providers — For Providers Landing (B2B)</span>
+  <span class="legend-chip chip-b2b">B2B Zone 6</span>
+  <span class="legend-chip chip-section">Brief §5.6 · Sitemap §Zone 6</span>
+  <span style="color:#555;">Desktop 1280px · 9 sections</span>
+  <span style="margin-left:auto; color:#555;">Design Brief v2.0 — May 2026</span>
+</div>
+
+<div class="page-wrapper">
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION — Provider-specific top nav
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">NAV</span>
+  Provider Navigation — sticky top bar, visually distinct from consumer nav
+  <span class="section-note">— darker tone, "For Clinics" context already established</span>
+</div>
+
+<nav class="wf-nav">
+  <div style="display:flex; align-items:center; gap:20px;">
+    <div class="nav-logo">hairline<span>.</span></div>
+    <span class="nav-b2b-badge">FOR CLINICS</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Overview</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Case Studies</a></li>
+    <li><a href="#">Enterprise</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost" style="font-size:13px;">Sign in</a>
+    <a href="#" class="btn btn-primary">Book a demo →</a>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1 — HERO
+     Brief §5.6 §1: '[X] verified clinics use Hairline to fill their books', CTA: 'Book a demo'
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">1</span>
+  HERO — stat-led headline, demo CTA, inline dashboard mockup
+  <span class="section-note">— Brief §5.6 §1 · "more metrics and proof, less white-space-luxurious" (closer to Stripe)</span>
+</div>
+
+<section class="hero-section">
+  <div class="hero-left">
+    <div class="hero-tag">★ For Clinics &amp; Providers</div>
+    <h1 class="hero-h1">
+      <em>340+ verified clinics</em><br>
+      use Hairline<br>to fill their books.
+    </h1>
+    <p class="hero-sub">
+      Join the platform that sends pre-qualified hair-loss patients to clinics across 14 countries — and gives your team the tools to manage them.
+    </p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn-xl btn-book">Book a demo →</a>
+      <a href="#" class="btn btn-xl btn-deck">Download provider deck</a>
+    </div>
+    <div class="hero-trust-strip">
+      <div class="trust-stat">
+        <strong>340+</strong>
+        <span>Verified clinic partners</span>
+      </div>
+      <div class="trust-stat">
+        <strong>14</strong>
+        <span>Countries</span>
+      </div>
+      <div class="trust-stat">
+        <strong>3.2×</strong>
+        <span>Avg. CAC reduction</span>
+      </div>
+      <div class="trust-stat">
+        <strong>4.9★</strong>
+        <span>App Store patient rating</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard preview mockup -->
+  <div class="hero-visual">
+    <div class="hero-dashboard-mock">
+      <div class="dash-topbar">
+        <div class="dash-dot red"></div>
+        <div class="dash-dot yellow"></div>
+        <div class="dash-dot green"></div>
+        <span class="dash-title">Hairline Provider Dashboard — Overview</span>
+      </div>
+      <div class="dash-body">
+        <div class="dash-metrics-row">
+          <div class="dash-metric">
+            <div class="dash-metric-val">48</div>
+            <div class="dash-metric-lbl">New leads this week</div>
+          </div>
+          <div class="dash-metric">
+            <div class="dash-metric-val">£312</div>
+            <div class="dash-metric-lbl">Cost per acquisition</div>
+          </div>
+          <div class="dash-metric">
+            <div class="dash-metric-val">91%</div>
+            <div class="dash-metric-lbl">Lead qualification rate</div>
+          </div>
+        </div>
+        <div class="ph-dark-sm">[ Leads pipeline chart — bar chart placeholder ]</div>
+        <div class="ph-dark">[ Recent patients table — name · treatment · status · date ]</div>
+      </div>
+    </div>
+    <div style="text-align:center; font-size:11px; color:#4a6a5a; margin-top:8px;">
+      Provider dashboard — actual UI shown in section 4
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2 — LOGO WALL
+     Brief §5.6 §2: Logo wall of existing partner clinics
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">2</span>
+  LOGO WALL — trusted partner clinics
+  <span class="section-note">— Brief §5.6 §2 · proof of scale, establishes credibility immediately below hero</span>
+</div>
+
+<section class="logo-wall-section">
+  <div class="logo-wall-label">Trusted by leading hair restoration clinics worldwide</div>
+  <div class="logo-grid">
+    <div class="logo-chip">Elithair <span style="font-weight:400; font-size:11px">Istanbul</span></div>
+    <div class="logo-chip">Vera Clinic <span style="font-weight:400; font-size:11px">Turkey</span></div>
+    <div class="logo-chip">DHI London <span style="font-weight:400; font-size:11px">UK</span></div>
+    <div class="logo-chip">HRBR <span style="font-weight:400; font-size:11px">Ireland</span></div>
+    <div class="logo-chip">AEK Hair <span style="font-weight:400; font-size:11px">Dubai</span></div>
+    <div class="logo-chip">Eugenix <span style="font-weight:400; font-size:11px">India</span></div>
+    <div class="logo-chip">Asmed <span style="font-weight:400; font-size:11px">Turkey</span></div>
+    <div class="logo-chip">Crown Clinic <span style="font-weight:400; font-size:11px">UK</span></div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3 — THREE-PILLAR VALUE PROP
+     Brief §5.6 §3: Pre-qualified patients · Lower CAC · Operational tools
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">3</span>
+  THREE-PILLAR VALUE PROP — patient quality, acquisition cost, tools
+  <span class="section-note">— Brief §5.6 §3 · §2.2: "what they need to see in 10 seconds"</span>
+</div>
+
+<section class="pillars-section">
+  <div class="section-header">
+    <div class="section-eyebrow">Why Hairline</div>
+    <h2 class="section-h2">Everything that moves the needle<br>for your clinic.</h2>
+    <p class="section-sub">We built Hairline from the clinic side up — because better-matched patients and lower acquisition costs aren't marketing promises, they're measurable outcomes.</p>
+  </div>
+
+  <div class="pillars-grid">
+
+    <!-- Pillar 1: Pre-qualified patients -->
+    <div class="pillar-card">
+      <div class="pillar-icon">icon</div>
+      <div class="pillar-title">Pre-qualified patients</div>
+      <p class="pillar-body">
+        Every lead has completed a structured hair-loss assessment, confirmed their treatment intent and budget, and been matched to your clinic's specific capabilities — before they ever contact you.
+      </p>
+      <div class="pillar-metrics">
+        <div class="metric-row">
+          <div class="metric-val">91%</div>
+          <div class="metric-lbl">of Hairline leads meet minimum consultation criteria</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-val">4.1×</div>
+          <div class="metric-lbl">higher consult-to-procedure rate vs. Google Ads</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pillar 2: Lower CAC -->
+    <div class="pillar-card">
+      <div class="pillar-icon">icon</div>
+      <div class="pillar-title">Lower cost per acquisition</div>
+      <p class="pillar-body">
+        Our performance-based model means you pay for results, not impressions. No monthly retainers, no agency fees, no ad spend with no accountability. Your CAC drops because we absorb the top-of-funnel.
+      </p>
+      <div class="pillar-metrics">
+        <div class="metric-row">
+          <div class="metric-val">–67%</div>
+          <div class="metric-lbl">average CAC reduction after 3 months on Hairline</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-val">£290</div>
+          <div class="metric-lbl">median cost-per-booked-consultation on platform</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pillar 3: Operational tools -->
+    <div class="pillar-card">
+      <div class="pillar-icon">icon</div>
+      <div class="pillar-title">Operational tools</div>
+      <p class="pillar-body">
+        The Provider Portal is a full operating layer: lead management, calendar and consultation booking, patient messaging, aftercare coordination, and performance analytics — all in one dashboard.
+      </p>
+      <div class="pillar-metrics">
+        <div class="metric-row">
+          <div class="metric-val">–3.2h</div>
+          <div class="metric-lbl">average admin time saved per clinic per week</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-val">1 tab</div>
+          <div class="metric-lbl">to manage your entire Hairline patient pipeline</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4 — DASHBOARD SHOWCASE
+     Brief §5.6 §4: scroll-synced module showing provider dashboard screens
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">4</span>
+  DASHBOARD SHOWCASE — scroll-synced module, mirrors consumer phone showcase (§3.2)
+  <span class="section-note">— Brief §5.6 §4 · step-by-step walkthrough of provider portal screens</span>
+</div>
+
+<section class="dashboard-section">
+  <div class="dash-showcase-header">
+    <div>
+      <div style="font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#4a6a5a; margin-bottom:14px;">The Provider Portal</div>
+      <h2 class="dash-showcase-h2">Your clinic's command<br>centre, built for<br>hair restoration.</h2>
+    </div>
+    <div>
+      <p class="dash-showcase-sub">
+        Everything from first lead to final follow-up — in one place. Scroll through to see how your team will use Hairline day-to-day.
+      </p>
+      <div style="margin-top:24px;">
+        <a href="#" class="btn btn-book btn-lg">Book a demo →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen navigator pills -->
+  <div style="margin-bottom:32px;">
+    <div class="dash-nav-pills">
+      <div class="dash-pill active">1. Lead inbox</div>
+      <div class="dash-pill">2. Patient profile</div>
+      <div class="dash-pill">3. Booking calendar</div>
+      <div class="dash-pill">4. Aftercare tracking</div>
+      <div class="dash-pill">5. Analytics</div>
+    </div>
+  </div>
+
+  <div class="dash-showcase-body">
+    <!-- Step list (left rail) -->
+    <div class="dash-steps">
+      <div class="dash-step active">
+        <div class="dash-step-num">STEP 01</div>
+        <div class="dash-step-title">Lead inbox</div>
+        <div class="dash-step-copy">Pre-qualified leads land directly in your inbox, sorted by treatment match score and urgency. One click to accept, defer or decline.</div>
+      </div>
+      <div class="dash-step">
+        <div class="dash-step-num">STEP 02</div>
+        <div class="dash-step-title">Patient profile</div>
+        <div class="dash-step-copy">Full assessment data, 3D scan baseline, hair-loss stage, budget range and travel availability — all before your first call.</div>
+      </div>
+      <div class="dash-step">
+        <div class="dash-step-num">STEP 03</div>
+        <div class="dash-step-title">Booking calendar</div>
+        <div class="dash-step-copy">Sync with your existing calendar. Consultation requests auto-confirm against your availability. Automated reminders reduce no-shows by 62%.</div>
+      </div>
+      <div class="dash-step">
+        <div class="dash-step-num">STEP 04</div>
+        <div class="dash-step-title">Aftercare tracking</div>
+        <div class="dash-step-copy">Post-procedure patients stay connected through the Hairline app. You see symptom logs, photo check-ins and recovery milestones in real time.</div>
+      </div>
+      <div class="dash-step">
+        <div class="dash-step-num">STEP 05</div>
+        <div class="dash-step-title">Analytics</div>
+        <div class="dash-step-copy">Track lead volume, CAC, conversion rate, and patient satisfaction. Monthly reports auto-generated, ready to share with your ops team.</div>
+      </div>
+    </div>
+
+    <!-- Dashboard screen frame (right) -->
+    <div class="dash-screen-frame">
+      <div class="dash-frame-topbar">
+        <div class="dash-dot red"></div>
+        <div class="dash-dot yellow"></div>
+        <div class="dash-dot green"></div>
+        <div style="margin-left:16px; display:flex; gap:4px;">
+          <div class="dash-frame-tab active">Lead Inbox</div>
+          <div class="dash-frame-tab">Patients</div>
+          <div class="dash-frame-tab">Calendar</div>
+          <div class="dash-frame-tab">Analytics</div>
+        </div>
+      </div>
+      <div class="dash-frame-body">
+        <div class="dash-big-metric-row">
+          <div class="dash-big-metric">
+            <div class="dbm-val">12</div>
+            <div class="dbm-lbl">New leads today</div>
+            <div class="dbm-delta">↑ 4 from yesterday</div>
+          </div>
+          <div class="dash-big-metric">
+            <div class="dbm-val">48</div>
+            <div class="dbm-lbl">Leads this week</div>
+            <div class="dbm-delta">↑ 18%</div>
+          </div>
+          <div class="dash-big-metric">
+            <div class="dbm-val">92%</div>
+            <div class="dbm-lbl">Match quality score</div>
+            <div class="dbm-delta">Above avg.</div>
+          </div>
+          <div class="dash-big-metric">
+            <div class="dbm-val">£312</div>
+            <div class="dbm-lbl">Avg. CAC</div>
+            <div class="dbm-delta">↓ vs. prev month</div>
+          </div>
+        </div>
+        <div class="ph-dark-chart">
+          [ Lead inbox list — patient name · hair-loss stage · match score · treatment · budget · action buttons ]
+          <span class="annotation">Static layout in wireframe — scroll-sync in Figma prototype</span>
+        </div>
+        <div style="height:12px;"></div>
+        <div class="ph-dark-table">
+          [ Pagination / load more — 48 leads this week, showing 10 ]
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 5 — CASE STUDIES
+     Brief §5.6 §5: Real clinics with before/after metrics
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">5</span>
+  CASE STUDIES — real clinic outcomes with headline metrics
+  <span class="section-note">— Brief §5.6 §5 · links to /for-providers/case-studies for full stories</span>
+</div>
+
+<section class="case-studies-section">
+  <div class="section-header">
+    <div class="section-eyebrow">Results that speak</div>
+    <h2 class="section-h2">Clinics that grew with Hairline.</h2>
+    <p class="section-sub">Real outcomes from real partners — not projections. Each story includes the actual before/after metrics, methodology and growth timeline.</p>
+  </div>
+
+  <div class="case-studies-grid">
+
+    <div class="case-card">
+      <div class="case-card-img">[ Clinic photo — real facility image ]</div>
+      <div class="case-card-body">
+        <div class="case-tag">Istanbul · FUE Specialist</div>
+        <div class="case-clinic-name">Elithair Clinic</div>
+        <div class="case-location">Istanbul, Turkey · Est. 2014</div>
+        <div class="case-metrics">
+          <div>
+            <div class="case-metric-val">3.8×</div>
+            <div class="case-metric-lbl">More qualified leads</div>
+          </div>
+          <div>
+            <div class="case-metric-val">–58%</div>
+            <div class="case-metric-lbl">Cost per acquisition</div>
+          </div>
+        </div>
+        <div class="case-quote">"Within 6 months of joining Hairline, we stopped running Google Ads entirely. The leads were better quality and cost us less."</div>
+        <a href="#" class="case-link">Read case study →</a>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-card-img">[ Clinic photo — real facility image ]</div>
+      <div class="case-card-body">
+        <div class="case-tag">London · Multi-treatment</div>
+        <div class="case-clinic-name">DHI London</div>
+        <div class="case-location">London, UK · Est. 2009</div>
+        <div class="case-metrics">
+          <div>
+            <div class="case-metric-val">+212%</div>
+            <div class="case-metric-lbl">International patient bookings</div>
+          </div>
+          <div>
+            <div class="case-metric-val">4.1×</div>
+            <div class="case-metric-lbl">Consult-to-procedure rate</div>
+          </div>
+        </div>
+        <div class="case-quote">"Hairline Travel patients arrive knowing exactly what they're getting. The conversion rate is in another league."</div>
+        <a href="#" class="case-link">Read case study →</a>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-card-img">[ Clinic photo — real facility image ]</div>
+      <div class="case-card-body">
+        <div class="case-tag">Dubai · Hair Restoration</div>
+        <div class="case-clinic-name">AEK Hair Dubai</div>
+        <div class="case-location">Dubai, UAE · Est. 2017</div>
+        <div class="case-metrics">
+          <div>
+            <div class="case-metric-val">£2.1M</div>
+            <div class="case-metric-lbl">Revenue attributed to Hairline</div>
+          </div>
+          <div>
+            <div class="case-metric-val">6 mo.</div>
+            <div class="case-metric-lbl">Time to ROI-positive</div>
+          </div>
+        </div>
+        <div class="case-quote">"We went from one Hairline booking a week to four a day. The dashboard makes the whole pipeline visible for the first time."</div>
+        <a href="#" class="case-link">Read case study →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="case-cta-row">
+    <a href="#" class="btn btn-ghost btn-lg">See all case studies →</a>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 6 — PRICING TEASER
+     Brief §5.6 §6: Pricing teaser or commission model explanation
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">6</span>
+  PRICING TEASER — commission model overview, not a full pricing table
+  <span class="section-note">— Brief §5.6 §6 · links to /for-providers/pricing (future) · full details via demo</span>
+</div>
+
+<section class="pricing-section">
+  <div class="section-header">
+    <div class="section-eyebrow">Transparent pricing</div>
+    <h2 class="section-h2">Pay for results,<br>not promises.</h2>
+    <p class="section-sub">Our model is performance-based. You only pay when Hairline delivers a procedure booking — not for impressions, clicks or consultations that go nowhere.</p>
+  </div>
+
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-price">Performance</div>
+      <div class="pricing-model">Commission per booked procedure</div>
+      <div class="pricing-features">
+        <div class="pricing-feat"><span class="feat-check">✓</span> Up to 20 active leads/month</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Lead inbox + patient profiles</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Booking calendar sync</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Basic analytics dashboard</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Hairline Aftercare for patients</div>
+      </div>
+      <a href="#" class="btn btn-ghost" style="width:100%; justify-content:center;">Book a demo →</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="popular-badge">Most popular</div>
+      <div class="pricing-tier">Growth</div>
+      <div class="pricing-price">Performance+</div>
+      <div class="pricing-model">Commission per booking · priority placement</div>
+      <div class="pricing-features">
+        <div class="pricing-feat"><span class="feat-check">✓</span> Unlimited leads</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Priority search placement</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Hairline Travel patient routing</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Full analytics + CAC reporting</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Dedicated account manager</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Verified badge + featured profile</div>
+      </div>
+      <a href="#" class="btn btn-book btn-lg" style="width:100%; justify-content:center;">Book a demo →</a>
+    </div>
+
+    <div class="pricing-card">
+      <div class="pricing-tier">Enterprise</div>
+      <div class="pricing-price">Custom</div>
+      <div class="pricing-model">Multi-location · white-label options · API</div>
+      <div class="pricing-features">
+        <div class="pricing-feat"><span class="feat-check">✓</span> Multi-location management</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Custom integrations + API</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> SLA + uptime guarantees</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Executive account support</div>
+        <div class="pricing-feat"><span class="feat-check">✓</span> Negotiated exclusivity terms</div>
+      </div>
+      <a href="#" class="btn btn-ghost" style="width:100%; justify-content:center;">Contact sales →</a>
+    </div>
+
+  </div>
+
+  <p class="pricing-note">
+    Exact commission rates discussed on your demo call. No setup fees. No contracts. Cancel anytime.
+    <a href="#" style="color:#8b7355; margin-left:6px;">Full pricing details →</a>
+  </p>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 7 — COMPLIANCE & SECURITY
+     Brief §5.6 §7: HIPAA, GDPR, data-protection statements
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">7</span>
+  COMPLIANCE & SECURITY — HIPAA, GDPR, data-protection
+  <span class="section-note">— Brief §5.6 §7 · §2.2: "clinical credibility of the platform" is a key B2B decision factor</span>
+</div>
+
+<section class="compliance-section">
+  <div class="compliance-inner">
+    <div>
+      <div style="font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#8b7355; margin-bottom:14px;">Compliance &amp; Security</div>
+      <h2 class="compliance-h2">Built to meet<br>clinical standards.</h2>
+      <p class="compliance-sub">
+        Hairline is designed for healthcare. Patient data is handled with the rigour your patients expect and your regulators require. We maintain compliance across every geography we operate in.
+      </p>
+      <div class="compliance-badges">
+        <div class="compliance-badge">
+          <span class="badge-icon"></span>
+          HIPAA Compliant
+        </div>
+        <div class="compliance-badge">
+          <span class="badge-icon"></span>
+          GDPR Ready
+        </div>
+        <div class="compliance-badge">
+          <span class="badge-icon"></span>
+          ISO 27001
+        </div>
+        <div class="compliance-badge">
+          <span class="badge-icon"></span>
+          SOC 2 Type II
+        </div>
+      </div>
+    </div>
+    <div class="compliance-details">
+      <div class="compliance-row">
+        <div class="compliance-icon">icon</div>
+        <div class="compliance-text">
+          <h4>Data residency by region</h4>
+          <p>Patient data for EU patients is stored on EU infrastructure. UK data stays in-country. We never commingle clinical and marketing data.</p>
+        </div>
+      </div>
+      <div class="compliance-row">
+        <div class="compliance-icon">icon</div>
+        <div class="compliance-text">
+          <h4>End-to-end encryption</h4>
+          <p>All patient records, 3D scan data and communication threads are encrypted at rest and in transit. TLS 1.3 minimum for all API calls.</p>
+        </div>
+      </div>
+      <div class="compliance-row">
+        <div class="compliance-icon">icon</div>
+        <div class="compliance-text">
+          <h4>Consent &amp; access controls</h4>
+          <p>Patients control which clinics can view their profile. Clinics see only the data necessary for the consultation — no data is shared without explicit consent.</p>
+        </div>
+      </div>
+      <div class="compliance-row">
+        <div class="compliance-icon">icon</div>
+        <div class="compliance-text">
+          <h4>Audit logs &amp; reporting</h4>
+          <p>Full audit trail for every data access event. Exportable compliance reports available on Growth and Enterprise tiers.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 8 — FAQ FOR CLINIC OWNERS
+     Brief §5.6 §8
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">8</span>
+  FAQ — schema-marked-up accordion, clinic-owner questions
+  <span class="section-note">— Brief §5.6 §8 · §7.1: FAQ blocks schema-ready on all B2B pages</span>
+</div>
+
+<section class="faq-section">
+  <div class="section-header">
+    <div class="section-eyebrow">Frequently asked</div>
+    <h2 class="section-h2">Questions from<br>clinic owners.</h2>
+  </div>
+
+  <div class="faq-container">
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How does the matching algorithm decide which clinic a patient sees?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        Patients are matched based on treatment type requested, geography (with travel preference factored in), budget range, and language preference. Clinics are ranked by verification status, patient rating, and response rate. You can set your own intake criteria in your clinic settings to filter out enquiries that don't fit your specialisation.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What does the onboarding process look like?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer closed">
+        After your demo, a Hairline account manager works with your team to complete the onboarding checklist: clinic verification, profile setup, surgeon credentials, treatment menu and pricing ranges. Most clinics are live within 5–7 business days.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I control which treatments or patient profiles I receive leads for?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer closed">
+        Yes. In your Provider Portal settings, you can specify which treatment types you accept, your preferred hair-loss stage range (Norwood I–VII), minimum and maximum budget brackets, patient travel capacity (local-only vs. medical travel), and language requirements.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What happens if a patient cancels or doesn't show up for their consultation?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer closed">
+        Hairline's automated reminder system (SMS + in-app notification) achieves a 62% reduction in no-shows vs. self-managed bookings. If a patient cancels within 24 hours, the lead is returned to your inbox for rescheduling. You are not charged for no-shows.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do reviews and ratings work on the platform?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer closed">
+        Only patients who completed a procedure booked through Hairline can leave a review — verified-purchase only. Reviews are submitted via the Hairline Aftercare app. Your rating is calculated from treatment satisfaction, communication score, and outcome at 12 months (where available). All reviews are visible to you before publication; you have 7 days to flag any inaccuracies.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Is there a contract or minimum commitment period?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer closed">
+        No. The Starter and Growth tiers are month-to-month with no minimum commitment. Enterprise arrangements are typically annual, negotiated case-by-case. You can pause or close your account at any time with no penalty — all patient data is exportable on closure.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Does Hairline integrate with our existing clinic management software?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer closed">
+        Calendar sync (Google Calendar, Microsoft Outlook, Calendly) is available on all tiers. CRM integrations (Salesforce, HubSpot) and EMR/EHR connections are available on Enterprise. A RESTful API is available for custom integrations — documentation available after sign-up.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 9 — FINAL CTA
+     Brief §5.6 §9: 'Book your demo'
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">9</span>
+  FINAL CTA — 'Book your demo' conversion band
+  <span class="section-note">— Brief §5.6 §9 · §2.4: primary B2B conversion action · dark background, visually distinct</span>
+</div>
+
+<section class="final-cta-section">
+  <div class="final-cta-eyebrow">Ready to grow?</div>
+  <h2 class="final-cta-h2">See Hairline in<br>action — 30 minutes.</h2>
+  <p class="final-cta-sub">
+    We'll walk through the lead flow, the dashboard, and the numbers. No pressure. If it's not right for your clinic, we'll tell you.
+  </p>
+  <div class="final-cta-btns">
+    <a href="/for-providers/book-demo" class="btn btn-xl btn-book">Book your demo →</a>
+    <a href="#" class="btn btn-xl btn-deck">Download provider deck</a>
+  </div>
+  <div class="final-social-proof">
+    <div class="fsp-item"><strong>340+</strong> clinic partners</div>
+    <div class="fsp-item"><strong>14</strong> countries</div>
+    <div class="fsp-item"><strong>No</strong> setup fees</div>
+    <div class="fsp-item"><strong>No</strong> minimum commitment</div>
+    <div class="fsp-item"><strong>Live</strong> in 5–7 days</div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">hairline<span>.</span></div>
+      <div class="footer-tagline">Hair restoration, done right. The platform connecting patients and clinics worldwide.</div>
+    </div>
+    <div class="footer-col">
+      <h4>For Providers</h4>
+      <ul>
+        <li><a href="#">Overview</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Enterprise</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Book a demo</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>For Patients</h4>
+      <ul>
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Find a clinic</a></li>
+        <li><a href="#">Treatments</a></li>
+        <li><a href="#">Aftercare</a></li>
+        <li><a href="#">Travel</a></li>
+        <li><a href="#">Assessment</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">HIPAA Notice</a></li>
+        <li><a href="#">GDPR</a></li>
+        <li><a href="#">Cookie Settings</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Hairline Technologies Ltd. All rights reserved.</span>
+    <span style="color:#333;">EN · AR · TR · DE · FR</span>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     BREAKPOINT / RESPONSIVE NOTES
+══════════════════════════════════════════════════════════ -->
+<div class="breakpoint-hint">
+  <strong>Responsive notes (wireframe shown at 1280px desktop):</strong>
+  <span class="bp-chip">768px tablet</span> Two-column hero → stacks; dashboard showcase: steps above screen frame
+  <span class="bp-chip">360px mobile</span> Hero full-width; logo wall carousel; pillars stacked; dashboard steps collapse to pill nav; FAQ accordion unchanged; final CTA stacks vertically
+  <span class="bp-chip">Sticky nav</span> Mobile: hamburger → full-screen drawer with same 5 links + Book a demo CTA at bottom
+</div>
+
+</div><!-- /.page-wrapper -->
+</body>
+</html>

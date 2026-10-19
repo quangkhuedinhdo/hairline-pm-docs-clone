@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — 404 — Hairline.app</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #1A1814;
+      --ink-soft: #4A4540;
+      --accent:   #B5713A;
+      --border:   #E4DFD8;
+      --surface:  #FAF9F7;
+      --white:    #FFFFFF;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      color: var(--ink);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 48px;
+    }
+
+    .content {
+      max-width: 480px;
+    }
+
+    .number {
+      font-size: 120px;
+      font-weight: 800;
+      letter-spacing: -6px;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 32px;
+    }
+    .number span { color: var(--accent); }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin-bottom: 40px;
+    }
+
+    .btn-home {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink);
+      padding: 28px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .foot-logo { font-size: 15px; font-weight: 700; color: #fff; }
+    .foot-logo span { color: var(--accent); }
+    .foot-copy { font-size: 13px; color: #7A746E; }
+
+    /* ─── WIREFRAME LABEL ─── */
+    .wf-label {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #6B63FF;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 8px;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Hairline<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#">For Patients</a></li>
+    <li><a href="#">Treatments</a></li>
+    <li><a href="#">Find a Clinic</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">For Clinics</a></li>
+  </ul>
+  <button class="btn-primary">Download the app</button>
+</nav>
+
+<main>
+  <div class="content">
+    <div class="number">4<span>0</span>4</div>
+    <h1>That page doesn't exist.</h1>
+    <p>The URL may have changed, or the page may have moved.<br>Head back to the homepage to find what you need.</p>
+    <a class="btn-home" href="/">Go to homepage</a>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-logo">Hairline<span>.</span></div>
+  <div class="foot-copy">© 2026 Hairline.app · Privacy · Terms</div>
+</footer>
+
+<div class="wf-label">Wireframe — /404</div>
+
+</body>
+</html>

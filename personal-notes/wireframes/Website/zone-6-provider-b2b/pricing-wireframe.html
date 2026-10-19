@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — /for-providers/pricing (Pricing, future)</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0ede8;
+      color: #1a1a1a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Wireframe legend (top of page) ──────────────────── */
+    .wf-legend {
+      background: #1a1a1a;
+      color: #f0ede8;
+      padding: 12px 32px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .wf-legend strong { font-size: 13px; letter-spacing: 0.05em; }
+    .wf-legend span { color: #aaa; }
+    .legend-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .chip-section { background: #3a3a4a; color: #ccc; }
+    .chip-b2b { background: #1e3a2f; color: #6fcf97; }
+    .chip-future { background: #3a2a1e; color: #f2994a; }
+
+    /* ── Layout ───────────────────────────────────────────── */
+    .page-wrapper { max-width: 1280px; margin: 0 auto; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 24px;
+      background: #e8e4de;
+      border-left: 3px solid #8b7355;
+      font-size: 11px;
+      font-weight: 700;
+      color: #5c4b30;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-label .sec-num {
+      background: #8b7355;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; flex-shrink: 0;
+    }
+    .section-note {
+      font-weight: 400;
+      color: #7a6a52;
+      font-style: italic;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* ── Future-flag banner ───────────────────────────────── */
+    .future-banner {
+      background: #3a2a1e;
+      color: #f2c89a;
+      padding: 10px 24px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      border-bottom: 1px dashed #5c4226;
+    }
+
+    /* ── NAV ──────────────────────────────────────────────── */
+    .wf-nav {
+      background: #fff;
+      border-bottom: 1px solid #e5e0d8;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: #1a1a1a;
+    }
+    .nav-logo span { color: #8b7355; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links li a {
+      font-size: 14px;
+      color: #555;
+      text-decoration: none;
+    }
+    .nav-links li a.active { color: #1a1a1a; font-weight: 600; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 18px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary { background: #1a1a1a; color: #fff; }
+    .btn-ghost { background: transparent; border: 1.5px solid #ccc; color: #333; }
+    .btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 10px; }
+    .btn-xl { padding: 16px 36px; font-size: 18px; border-radius: 12px; }
+    .nav-b2b-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #1e3a2f;
+      color: #6fcf97;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── BREADCRUMB ───────────────────────────────────────── */
+    .breadcrumb {
+      padding: 16px 80px 0;
+      font-size: 13px;
+      color: #999;
+    }
+    .breadcrumb a { color: #999; text-decoration: none; }
+    .breadcrumb .current { color: #1a1a1a; font-weight: 600; }
+
+    /* ── S1 HERO ──────────────────────────────────────────── */
+    .hero-section {
+      background: #16211c;
+      color: #f0ede8;
+      padding: 80px 80px 64px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6fcf97;
+      margin-bottom: 20px;
+      padding: 4px 10px;
+      border: 1px solid #2a4a3a;
+      border-radius: 4px;
+    }
+    .hero-h1 {
+      font-size: 46px;
+      line-height: 1.12;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-h1 em { color: #6fcf97; font-style: normal; }
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.6;
+      color: #a8b5a8;
+      margin-bottom: 36px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-book {
+      background: #6fcf97;
+      color: #16211c;
+      font-weight: 700;
+    }
+
+    /* ── S2 PRICING MODEL ─────────────────────────────────── */
+    .pricing-model-section {
+      background: #faf8f5;
+      padding: 80px 80px;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8b7355;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .section-h2 {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: #1a1a1a;
+      line-height: 1.1;
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto 16px;
+    }
+    .section-sub {
+      font-size: 15px;
+      color: #666;
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 56px;
+      line-height: 1.6;
+    }
+    .pricing-toggle-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 48px;
+    }
+    .toggle-chip {
+      padding: 9px 20px;
+      border-radius: 100px;
+      border: 1.5px solid #e0dace;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      background: #fff;
+      cursor: pointer;
+    }
+    .toggle-chip.active { background: #16211c; border-color: #16211c; color: #f0ede8; }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .tier-card {
+      background: #fff;
+      border: 1.5px solid #e8e2da;
+      border-radius: 20px;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tier-card.featured {
+      background: #16211c;
+      color: #f0ede8;
+      border-color: #16211c;
+      position: relative;
+      transform: scale(1.02);
+    }
+    .tier-featured-badge {
+      position: absolute;
+      top: -12px;
+      left: 32px;
+      background: #6fcf97;
+      color: #16211c;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .tier-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8b7355;
+      margin-bottom: 18px;
+    }
+    .tier-card.featured .tier-name { color: #6fcf97; }
+    .tier-price {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+    .tier-price-unit { font-size: 14px; font-weight: 500; color: #999; }
+    .tier-card.featured .tier-price-unit { color: #7a9080; }
+    .tier-desc {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .tier-card.featured .tier-desc { color: #a8b5a8; }
+    .tier-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-grow: 1;
+    }
+    .tier-features li {
+      font-size: 13px;
+      color: #444;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .tier-card.featured .tier-features li { color: #d8e0d8; }
+    .tier-features li::before {
+      content: "✓";
+      color: #6fcf97;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .tier-cta {
+      width: 100%;
+      justify-content: center;
+    }
+    .pricing-footnote {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 32px;
+    }
+
+    /* ── S3 FEATURE COMPARISON TABLE ──────────────────────── */
+    .compare-section {
+      background: #fff;
+      padding: 80px 80px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    .compare-table th, .compare-table td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid #ece6dc;
+      font-size: 13px;
+    }
+    .compare-table th:first-child, .compare-table td:first-child {
+      text-align: left;
+      color: #444;
+      font-weight: 600;
+      width: 36%;
+    }
+    .compare-table thead th {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8b7355;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e0dace;
+    }
+    .compare-table thead th.featured-col { color: #16211c; background: #f5f1e9; border-radius: 8px 8px 0 0; }
+    .compare-table td.featured-col { background: #faf8f5; }
+    .compare-table td .check { color: #6fcf97; font-weight: 700; }
+    .compare-table td .dash { color: #ccc; }
+    .compare-category-row td {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #999;
+      background: #faf8f5;
+      border-bottom: none;
+      padding-top: 24px;
+      padding-bottom: 8px;
+    }
+
+    /* ── S4 FAQ ───────────────────────────────────────────── */
+    .faq-section {
+      background: #faf8f5;
+      padding: 80px 80px;
+    }
+    .faq-list {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: #fff;
+      border: 1.5px solid #e8e2da;
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .faq-q {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+      cursor: pointer;
+    }
+    .faq-q .caret { font-size: 13px; color: #8b7355; }
+    .faq-a {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed #e8e2da;
+    }
+    .faq-schema-note {
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+      margin-top: 24px;
+      font-style: italic;
+    }
+
+    /* ── S5 FINAL CTA ─────────────────────────────────────── */
+    .final-cta-section {
+      background: #16211c;
+      padding: 96px 80px;
+      text-align: center;
+    }
+    .final-cta-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6fcf97;
+      margin-bottom: 20px;
+    }
+    .final-cta-h2 {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      color: #f0ede8;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .final-cta-sub {
+      font-size: 16px;
+      color: #a8b5a8;
+      margin-bottom: 40px;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    .final-cta-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    .cta-ghost-light {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: #f0ede8;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    .footer {
+      background: #111;
+      padding: 56px 80px 32px;
+      color: #555;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {
+      font-size: 18px;
+      font-weight: 800;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .footer-brand span { color: #5a7a5a; }
+    .footer-tagline { font-size: 12px; color: #444; line-height: 1.6; }
+    .footer-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #666; margin-bottom: 16px; text-transform: uppercase; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 13px; color: #444; text-decoration: none; }
+    .footer-bottom {
+      border-top: 1px solid #222;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    /* ── ANNOTATION TOOLTIP ───────────────────────────────── */
+    .annotation {
+      display: inline-block;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      font-size: 10px;
+      padding: 2px 7px;
+      color: #856404;
+      font-style: italic;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Responsive hint strip ────────────────────────────── */
+    .breakpoint-hint {
+      background: #fff;
+      border-top: 2px dashed #ddd;
+      border-bottom: 2px dashed #ddd;
+      padding: 10px 32px;
+      font-size: 11px;
+      color: #aaa;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .bp-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      font-weight: 600;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     WIREFRAME LEGEND
+══════════════════════════════════════════════════════════ -->
+<div class="wf-legend">
+  <strong>WIREFRAME</strong>
+  <span>hairline.app /for-providers/pricing — Pricing (B2B, future)</span>
+  <span class="legend-chip chip-b2b">B2B Zone 6</span>
+  <span class="legend-chip chip-future">Marked "future" — not launch-critical</span>
+  <span class="legend-chip chip-section">Brief §4.6 · §5.6 §6 · Sitemap §Zone 6</span>
+  <span style="color:#555;">Desktop 1280px · 5 sections</span>
+  <span style="margin-left:auto; color:#555;">Design Brief v2.0 — May 2026</span>
+</div>
+
+<div class="future-banner">
+  ⚠ FUTURE PAGE — Sitemap §4.6 marks /for-providers/pricing as "(future)". This wireframe is speculative; at launch /for-providers links to Book a Demo for pricing discussion instead.
+</div>
+
+<div class="page-wrapper">
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION — Provider-specific top nav
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">NAV</span>
+  Provider Navigation — sticky top bar, shared across all /for-providers/* pages
+  <span class="section-note">— "Pricing" highlighted as active item</span>
+</div>
+
+<nav class="wf-nav">
+  <div style="display:flex; align-items:center; gap:20px;">
+    <div class="nav-logo">hairline<span>.</span></div>
+    <span class="nav-b2b-badge">FOR CLINICS</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Overview</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Case Studies</a></li>
+    <li><a href="#">Enterprise</a></li>
+    <li><a href="#" class="active">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost" style="font-size:13px;">Sign in</a>
+    <a href="#" class="btn btn-primary">Book a demo →</a>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="#">For Providers</a> / <span class="current">Pricing</span>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1 — HERO
+     Sitemap §Zone 6 /pricing §1: pricing headline, CTA to book a demo
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">1</span>
+  HERO — pricing headline, demo CTA
+  <span class="section-note">— Sitemap §Zone 6 /pricing §1 · "Book a demo to discuss your plan"</span>
+</div>
+
+<section class="hero-section">
+  <div class="hero-tag">Pricing</div>
+  <h1 class="hero-h1">
+    Simple, <em>performance-based</em> pricing — no flat platform fee.
+  </h1>
+  <p class="hero-sub">
+    You only pay when Hairline sends you a patient. No setup costs, no long-term contracts. Final numbers are confirmed on a call with our team.
+  </p>
+  <a href="/for-providers/book-demo" class="btn btn-book btn-xl">Book a demo to discuss your plan →</a>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2 — PRICING MODEL
+     Sitemap §Zone 6 /pricing §2: commission structure or tier overview
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">2</span>
+  PRICING MODEL — commission structure / tier overview
+  <span class="section-note">— Sitemap §Zone 6 /pricing §2 · Brief §5.6 §6 "pricing teaser or commission model explanation"</span>
+</div>
+
+<section class="pricing-model-section">
+  <div class="section-eyebrow">Choose your plan</div>
+  <h2 class="section-h2">Three tiers, one principle: pay for results, not seats.</h2>
+  <p class="section-sub">Per-lead commission scales down as your booked-procedure volume grows. Enterprise pricing is custom — see Section 3 for the full feature breakdown.</p>
+
+  <div class="pricing-toggle-row">
+    <div class="toggle-chip active">Monthly volume</div>
+    <div class="toggle-chip">Annual commitment <span class="annotation">−10%</span></div>
+  </div>
+
+  <div class="tier-grid">
+    <div class="tier-card">
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">12% <span class="tier-price-unit">/ booked procedure</span></div>
+      <div class="tier-desc">For independent clinics just getting started with Hairline lead flow.</div>
+      <ul class="tier-features">
+        <li>Up to 15 leads / month</li>
+        <li>Standard clinic profile listing</li>
+        <li>Basic scheduling tools</li>
+        <li>Email support</li>
+        <li>1 location</li>
+      </ul>
+      <a href="#" class="btn btn-ghost tier-cta">Book a demo →</a>
+    </div>
+
+    <div class="tier-card featured">
+      <div class="tier-featured-badge">Most popular</div>
+      <div class="tier-name">Growth</div>
+      <div class="tier-price">9% <span class="tier-price-unit">/ booked procedure</span></div>
+      <div class="tier-desc">For established clinics ready to scale lead volume and operations.</div>
+      <ul class="tier-features">
+        <li>Up to 60 leads / month</li>
+        <li>Featured clinic profile placement</li>
+        <li>Full Provider Portal: scheduling + patient management</li>
+        <li>Priority support, 24/7</li>
+        <li>Up to 3 locations</li>
+        <li>Analytics & CAC reporting</li>
+      </ul>
+      <a href="#" class="btn btn-book tier-cta">Book a demo →</a>
+    </div>
+
+    <div class="tier-card">
+      <div class="tier-name">Enterprise</div>
+      <div class="tier-price">Custom <span class="tier-price-unit">pricing</span></div>
+      <div class="tier-desc">For multi-location chains and high-volume operators. See /for-providers/enterprise.</div>
+      <ul class="tier-features">
+        <li>Unlimited leads</li>
+        <li>White-label options</li>
+        <li>API access & custom integrations</li>
+        <li>Dedicated account manager</li>
+        <li>Unlimited locations</li>
+        <li>Custom SLA</li>
+      </ul>
+      <a href="/for-providers/enterprise" class="btn btn-ghost tier-cta">Contact sales →</a>
+    </div>
+  </div>
+  <div class="pricing-footnote">Commission applies only to procedures booked through Hairline-sourced leads. No charge for leads that don't convert.</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3 — FEATURE COMPARISON TABLE
+     Sitemap §Zone 6 /pricing §3: what's included per tier
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">3</span>
+  FEATURE COMPARISON TABLE — what's included per tier
+  <span class="section-note">— Sitemap §Zone 6 /pricing §3</span>
+</div>
+
+<section class="compare-section">
+  <div class="section-eyebrow" style="text-align:left;">Compare plans</div>
+  <h2 class="section-h2" style="text-align:left; margin-left:0;">Every feature, side by side.</h2>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Starter</th>
+        <th class="featured-col">Growth</th>
+        <th>Enterprise</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="compare-category-row"><td colspan="4">Lead flow</td></tr>
+      <tr>
+        <td>Monthly lead cap</td>
+        <td>15</td>
+        <td class="featured-col">60</td>
+        <td>Unlimited</td>
+      </tr>
+      <tr>
+        <td>Featured profile placement</td>
+        <td><span class="dash">—</span></td>
+        <td class="featured-col"><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td>Pre-qualified patient matching</td>
+        <td><span class="check">✓</span></td>
+        <td class="featured-col"><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr class="compare-category-row"><td colspan="4">Operational tools</td></tr>
+      <tr>
+        <td>Scheduling & booking</td>
+        <td>Basic</td>
+        <td class="featured-col">Full</td>
+        <td>Full + custom workflows</td>
+      </tr>
+      <tr>
+        <td>Patient management dashboard</td>
+        <td><span class="dash">—</span></td>
+        <td class="featured-col"><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td>Analytics & CAC reporting</td>
+        <td><span class="dash">—</span></td>
+        <td class="featured-col"><span class="check">✓</span></td>
+        <td><span class="check">✓ Advanced</span></td>
+      </tr>
+      <tr>
+        <td>API access</td>
+        <td><span class="dash">—</span></td>
+        <td class="featured-col"><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr class="compare-category-row"><td colspan="4">Support & scale</td></tr>
+      <tr>
+        <td>Locations included</td>
+        <td>1</td>
+        <td class="featured-col">3</td>
+        <td>Unlimited</td>
+      </tr>
+      <tr>
+        <td>Support</td>
+        <td>Email</td>
+        <td class="featured-col">Priority 24/7</td>
+        <td>Dedicated account manager</td>
+      </tr>
+      <tr>
+        <td>White-label options</td>
+        <td><span class="dash">—</span></td>
+        <td class="featured-col"><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td>Custom SLA</td>
+        <td><span class="dash">—</span></td>
+        <td class="featured-col"><span class="dash">—</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4 — FAQ
+     Sitemap §Zone 6 /pricing §4: pricing and billing questions
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">4</span>
+  FAQ — pricing & billing questions
+  <span class="section-note">— Sitemap §Zone 6 /pricing §4 · schema-marked-up accordion, per Brief §7.1</span>
+</div>
+
+<section class="faq-section">
+  <div class="section-eyebrow">Pricing FAQ</div>
+  <h2 class="section-h2">Questions clinic owners ask us.</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">How is the commission calculated? <span class="caret">▾</span></div>
+      <div class="faq-a">Commission is charged as a percentage of the booked procedure value, only once the patient completes their consultation and confirms treatment — not on lead volume alone.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is there a setup fee or minimum contract length? <span class="caret">▾</span></div>
+      <div class="faq-a">No. Starter and Growth plans are month-to-month with no setup fee. Annual commitment is optional and reduces your commission rate by 10%.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What happens if a lead doesn't convert? <span class="caret">▾</span></div>
+      <div class="faq-a">You're not charged. Commission only applies to procedures actually booked and confirmed through a Hairline-sourced lead.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I switch plans later? <span class="caret">▾</span></div>
+      <div class="faq-a">Yes, you can upgrade or downgrade at the start of any billing cycle from the Provider Portal, or by contacting your account manager on Enterprise.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does Enterprise pricing work? <span class="caret">▾</span></div>
+      <div class="faq-a">Enterprise pricing is custom, based on location count, expected volume and integration needs. Book a call with sales for a tailored quote.</div>
+    </div>
+  </div>
+  <div class="faq-schema-note">FAQPage schema markup applied per question for SEO (Brief §7.1)</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 5 — FINAL CTA
+     Sitemap §Zone 6 /pricing §5: 'Book a demo'
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">5</span>
+  FINAL CTA — 'Book a demo'
+  <span class="section-note">— Sitemap §Zone 6 /pricing §5 · primary B2B conversion action</span>
+</div>
+
+<section class="final-cta-section">
+  <div class="final-cta-eyebrow">Still have questions?</div>
+  <h2 class="final-cta-h2">Let's find the right plan for your clinic.</h2>
+  <p class="final-cta-sub">
+    30 minutes with our team — we'll walk through the numbers based on your current patient volume.
+  </p>
+  <div class="final-cta-btns">
+    <a href="/for-providers/book-demo" class="btn btn-xl btn-book">Book a demo →</a>
+    <a href="#" class="btn btn-xl cta-ghost-light">Download provider deck</a>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">hairline<span>.</span></div>
+      <div class="footer-tagline">Hair restoration, done right. The platform connecting patients and clinics worldwide.</div>
+    </div>
+    <div class="footer-col">
+      <h4>For Providers</h4>
+      <ul>
+        <li><a href="#">Overview</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Enterprise</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Book a demo</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>For Patients</h4>
+      <ul>
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Find a clinic</a></li>
+        <li><a href="#">Treatments</a></li>
+        <li><a href="#">Aftercare</a></li>
+        <li><a href="#">Travel</a></li>
+        <li><a href="#">Assessment</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">HIPAA Notice</a></li>
+        <li><a href="#">GDPR</a></li>
+        <li><a href="#">Cookie Settings</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Hairline Technologies Ltd. All rights reserved.</span>
+    <span style="color:#333;">EN · AR · TR · DE · FR</span>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     BREAKPOINT / RESPONSIVE NOTES
+══════════════════════════════════════════════════════════ -->
+<div class="breakpoint-hint">
+  <strong>Responsive notes (wireframe shown at 1280px desktop):</strong>
+  <span class="bp-chip">768px tablet</span> Tier grid → 1 column stack, featured tier shown first; comparison table scrolls horizontally with sticky first column
+  <span class="bp-chip">360px mobile</span> Hero CTA full-width; tier cards stack with featured tier pinned to top; comparison table converts to per-tier accordion cards; FAQ unchanged
+  <span class="bp-chip">Future flag</span> This page ships post-launch — at MVP, /for-providers nav links Pricing → /for-providers/book-demo directly
+</div>
+
+</div><!-- /.page-wrapper -->
+</body>
+</html>

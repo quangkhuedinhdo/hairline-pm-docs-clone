@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 1 — Affiliate Management Dashboard (Overview)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #42526e;
+    }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1400px; margin: 0 auto; padding: 28px 24px; }
+
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-header-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none; text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-warning { background: #fff; color: #974f0c; border: 1px solid #f6c344; }
+    .btn-warning:hover { background: #fffae6; }
+    .btn-danger { background: #fff; color: #bf2600; border: 1px solid #ffbdad; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .filter-label { font-size: 12px; font-weight: 600; color: #5e6c84; margin-right: 2px; }
+    .filter-select {
+      font-size: 12px; color: #172b4d;
+      border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 5px 24px 5px 8px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2342526e'/%3E%3C/svg%3E") no-repeat right 8px center;
+      appearance: none; cursor: pointer;
+    }
+    .search-input {
+      font-size: 13px; color: #172b4d;
+      border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 5px 10px 5px 28px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8' fill='none' stroke='%2342526e' stroke-width='2'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65' stroke='%2342526e' stroke-width='2'/%3E%3C/svg%3E") no-repeat left 8px center;
+      width: 220px;
+    }
+    .filter-divider {
+      height: 24px; width: 1px; background: #dfe1e6;
+    }
+
+    /* ── Toolbar (selection bar) ── */
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; }
+    .result-count { font-size: 13px; color: #5e6c84; }
+    .selection-info {
+      font-size: 13px; color: #0052cc; font-weight: 500;
+      background: #e9f0ff; padding: 4px 10px; border-radius: 4px;
+    }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Table ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      overflow: auto;
+    }
+
+    table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+    thead tr { background: #f4f5f7; }
+    thead th {
+      padding: 10px 12px; text-align: left;
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      border-bottom: 1px solid #dfe1e6;
+      white-space: nowrap;
+      user-select: none;
+    }
+    thead th.sortable { cursor: pointer; }
+    thead th.sortable:hover { color: #172b4d; }
+    thead th .sort-icon { font-size: 10px; margin-left: 3px; color: #0052cc; }
+
+    tbody tr { border-bottom: 1px solid #f4f5f7; transition: background 0.1s; }
+    tbody tr:hover { background: #f8f9fd; }
+    tbody tr.row-pending-high { background: #fffae6; }
+    tbody tr.row-pending-high:hover { background: #fff7cc; }
+
+    tbody td {
+      padding: 10px 12px; font-size: 13px; color: #172b4d;
+      vertical-align: middle;
+    }
+
+    /* ── Checkbox ── */
+    .cb { width: 16px; height: 16px; accent-color: #0052cc; cursor: pointer; }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-active   { background: #e3fcef; color: #006644; }
+    .badge-pending  { background: #fff8cc; color: #974f0c; }
+    .badge-suspended { background: #ffebe6; color: #bf2600; }
+    .badge-inactive { background: #f4f5f7; color: #5e6c84; }
+
+    /* ── Tier & eligibility chips ── */
+    .chip {
+      display: inline-block; padding: 2px 7px; border-radius: 4px;
+      font-size: 11px; font-weight: 500; white-space: nowrap;
+    }
+    .chip-gold    { background: #fffae6; color: #974f0c; }
+    .chip-silver  { background: #f4f5f7; color: #42526e; }
+    .chip-bronze  { background: #fdf5ee; color: #974f0c; }
+    .chip-yes     { background: #e3fcef; color: #006644; }
+    .chip-no      { background: #f4f5f7; color: #5e6c84; }
+
+    /* ── Affiliate name cell ── */
+    .affiliate-name { font-weight: 600; color: #0052cc; cursor: pointer; }
+    .affiliate-name:hover { text-decoration: underline; }
+    .affiliate-email { font-size: 11px; color: #5e6c84; margin-top: 1px; }
+
+    /* ── Tooltip ── */
+    .tooltip-wrap { position: relative; display: inline-block; }
+    .tooltip-wrap .tooltip-text {
+      display: none;
+      position: absolute;
+      bottom: 125%; left: 50%; transform: translateX(-50%);
+      background: #172b4d; color: #fff;
+      font-size: 11px; padding: 5px 9px; border-radius: 4px;
+      white-space: nowrap; z-index: 10;
+      pointer-events: none;
+    }
+    .tooltip-wrap:hover .tooltip-text { display: block; }
+    .tooltip-wrap .tooltip-text::after {
+      content: '';
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: #172b4d;
+    }
+
+    /* ── Action buttons inline ── */
+    .actions { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      border-top: 1px solid #dfe1e6;
+      background: #fff;
+    }
+    .pagination-info { font-size: 12px; color: #5e6c84; }
+    .pagination-controls { display: flex; gap: 4px; align-items: center; }
+    .page-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 4px;
+      font-size: 13px; cursor: pointer; border: 1px solid #dfe1e6;
+      background: #fff; color: #42526e;
+    }
+    .page-btn:hover { background: #f4f5f7; }
+    .page-btn.active { background: #0052cc; color: #fff; border-color: #0052cc; }
+    .page-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex; gap: 16px; align-items: center;
+      font-size: 11px; color: #5e6c84; margin-top: 12px; flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-swatch {
+      width: 12px; height: 12px; border-radius: 2px; border: 1px solid #dfe1e6;
+    }
+    .legend-swatch-yellow { background: #fffae6; border-color: #f6c344; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<header class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#">Patients</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Bookings</a>
+    <a href="#">Finance</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</header>
+
+<!-- ── Page content ── -->
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Affiliate Management</div>
+      <div class="page-subtitle">Overview of all affiliates and their performance metrics</div>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-default">Export All</button>
+      <button class="btn btn-primary">+ Add New Affiliate</button>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <span class="filter-label">Filter by:</span>
+
+    <select class="filter-select">
+      <option>Status: All</option>
+      <option>Active</option>
+      <option>Pending</option>
+      <option>Suspended</option>
+      <option>Inactive</option>
+    </select>
+
+    <select class="filter-select">
+      <option>Country/Region: All</option>
+      <option>United States</option>
+      <option>United Kingdom</option>
+      <option>Australia</option>
+      <option>Canada</option>
+    </select>
+
+    <select class="filter-select">
+      <option>Affiliate Type: All</option>
+      <option>Influencer</option>
+      <option>Clinic Partner</option>
+      <option>Organization</option>
+      <option>Other</option>
+    </select>
+
+    <select class="filter-select">
+      <option>Language: All</option>
+      <option>English</option>
+      <option>Vietnamese</option>
+      <option>Spanish</option>
+      <option>Mandarin</option>
+    </select>
+
+    <select class="filter-select">
+      <option>Performance Tier: All</option>
+      <option>Gold</option>
+      <option>Silver</option>
+      <option>Bronze</option>
+    </select>
+
+    <select class="filter-select">
+      <option>Campaign Eligibility: All</option>
+      <option>Eligible</option>
+      <option>Not Eligible</option>
+    </select>
+
+    <select class="filter-select">
+      <option>Payout Setup: All</option>
+      <option>Complete</option>
+      <option>Incomplete</option>
+    </select>
+
+    <div class="filter-divider"></div>
+
+    <input class="search-input" type="text" placeholder="Search by name or email…" />
+
+    <button class="btn btn-default btn-sm" style="margin-left:auto;">Clear Filters</button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="result-count">Showing <strong>25</strong> of <strong>87</strong> affiliates</span>
+      <span class="selection-info">3 selected</span>
+    </div>
+    <div class="toolbar-right">
+      <!-- Generate Codes active when ≥1 eligible active affiliate selected -->
+      <button class="btn btn-warning">⚡ Generate Codes (3)</button>
+      <button class="btn btn-default btn-sm">Generate Report</button>
+    </div>
+  </div>
+
+  <!-- Data table -->
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px;"><input type="checkbox" class="cb" /></th>
+          <th class="sortable">Affiliate Name ↕</th>
+          <th class="sortable">Contact Email ↕</th>
+          <th class="sortable">Total Referrals ↕</th>
+          <th class="sortable">Total Revenue ↕ <span class="sort-icon">▼</span></th>
+          <th class="sortable">Total Commissions Paid ↕</th>
+          <th class="sortable">Pending Payout ↕</th>
+          <th>Status</th>
+          <th>Country/Region</th>
+          <th>Affiliate Type</th>
+          <th>Performance Tier</th>
+          <th>Campaign Eligibility</th>
+          <th>Active Codes</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Row 1: Active, high pending payout → yellow highlight -->
+        <tr class="row-pending-high">
+          <td><input type="checkbox" class="cb" checked /></td>
+          <td>
+            <div class="affiliate-name">Glow & Grow Media</div>
+            <div class="affiliate-email">contact@glowgrow.com</div>
+          </td>
+          <td>contact@glowgrow.com</td>
+          <td>312</td>
+          <td>$148,200</td>
+          <td>
+            <div class="tooltip-wrap">
+              $18,640
+              <span class="tooltip-text">Last payout: 7 Jun 2026</span>
+            </div>
+          </td>
+          <td>$2,340</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>United States</td>
+          <td>Influencer</td>
+          <td><span class="chip chip-gold">Gold</span></td>
+          <td><span class="chip chip-yes">Eligible</span></td>
+          <td>3</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 2: Active, high pending payout → yellow highlight -->
+        <tr class="row-pending-high">
+          <td><input type="checkbox" class="cb" checked /></td>
+          <td>
+            <div class="affiliate-name">HairRevive Clinic Network</div>
+            <div class="affiliate-email">partnerships@hairrevive.au</div>
+          </td>
+          <td>partnerships@hairrevive.au</td>
+          <td>278</td>
+          <td>$134,500</td>
+          <td>
+            <div class="tooltip-wrap">
+              $16,980
+              <span class="tooltip-text">Last payout: 7 Jun 2026</span>
+            </div>
+          </td>
+          <td>$1,980</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>Australia</td>
+          <td>Clinic Partner</td>
+          <td><span class="chip chip-gold">Gold</span></td>
+          <td><span class="chip chip-yes">Eligible</span></td>
+          <td>5</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 3: Active, normal pending payout -->
+        <tr>
+          <td><input type="checkbox" class="cb" checked /></td>
+          <td>
+            <div class="affiliate-name">Scalp Society UK</div>
+            <div class="affiliate-email">hello@scalpsociety.co.uk</div>
+          </td>
+          <td>hello@scalpsociety.co.uk</td>
+          <td>195</td>
+          <td>$92,100</td>
+          <td>
+            <div class="tooltip-wrap">
+              $11,420
+              <span class="tooltip-text">Last payout: 7 Jun 2026</span>
+            </div>
+          </td>
+          <td>$880</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>United Kingdom</td>
+          <td>Organization</td>
+          <td><span class="chip chip-silver">Silver</span></td>
+          <td><span class="chip chip-yes">Eligible</span></td>
+          <td>2</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 4: Pending (activation not complete) -->
+        <tr>
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">Nguyen Hair Collective</div>
+            <div class="affiliate-email">info@nguyenhair.vn</div>
+          </td>
+          <td>info@nguyenhair.vn</td>
+          <td>—</td>
+          <td>—</td>
+          <td>
+            <div class="tooltip-wrap">
+              —
+              <span class="tooltip-text">No payout yet</span>
+            </div>
+          </td>
+          <td>—</td>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td>Vietnam</td>
+          <td>Influencer</td>
+          <td><span class="chip chip-bronze">—</span></td>
+          <td><span class="chip chip-no">Not Eligible</span></td>
+          <td>0</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-default btn-sm btn-disabled">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 5: Suspended -->
+        <tr>
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">FakeRef Agency</div>
+            <div class="affiliate-email">ops@fakeref.com</div>
+          </td>
+          <td>ops@fakeref.com</td>
+          <td>43</td>
+          <td>$18,900</td>
+          <td>
+            <div class="tooltip-wrap">
+              $2,100
+              <span class="tooltip-text">Last payout: 7 May 2026</span>
+            </div>
+          </td>
+          <td>$0 (held)</td>
+          <td><span class="badge badge-suspended">Suspended</span></td>
+          <td>United States</td>
+          <td>Other</td>
+          <td><span class="chip chip-bronze">Bronze</span></td>
+          <td><span class="chip chip-no">Not Eligible</span></td>
+          <td>0 (disabled)</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-primary btn-sm">Reinstate</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 6: Inactive (offboarded) -->
+        <tr style="opacity:0.75;">
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">OldPartner Inc.</div>
+            <div class="affiliate-email">accounts@oldpartner.com</div>
+          </td>
+          <td>accounts@oldpartner.com</td>
+          <td>102</td>
+          <td>$47,300</td>
+          <td>
+            <div class="tooltip-wrap">
+              $5,840
+              <span class="tooltip-text">Last payout: 7 Jan 2026</span>
+            </div>
+          </td>
+          <td>$0 (settled)</td>
+          <td><span class="badge badge-inactive">Inactive</span></td>
+          <td>Canada</td>
+          <td>Organization</td>
+          <td><span class="chip chip-silver">Silver</span></td>
+          <td><span class="chip chip-no">Not Eligible</span></td>
+          <td>0 (disabled)</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm btn-disabled">Edit</button>
+              <button class="btn btn-default btn-sm btn-disabled">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 7: Active, Silver tier -->
+        <tr>
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">BeautyFirst Singapore</div>
+            <div class="affiliate-email">affiliate@beautyfirst.sg</div>
+          </td>
+          <td>affiliate@beautyfirst.sg</td>
+          <td>158</td>
+          <td>$74,600</td>
+          <td>
+            <div class="tooltip-wrap">
+              $9,200
+              <span class="tooltip-text">Last payout: 7 Jun 2026</span>
+            </div>
+          </td>
+          <td>$720</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>Singapore</td>
+          <td>Influencer</td>
+          <td><span class="chip chip-silver">Silver</span></td>
+          <td><span class="chip chip-yes">Eligible</span></td>
+          <td>2</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 8: Active, high pending payout → yellow highlight -->
+        <tr class="row-pending-high">
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">MedAesthetics Canada</div>
+            <div class="affiliate-email">growth@medaesthetics.ca</div>
+          </td>
+          <td>growth@medaesthetics.ca</td>
+          <td>210</td>
+          <td>$98,750</td>
+          <td>
+            <div class="tooltip-wrap">
+              $12,440
+              <span class="tooltip-text">Last payout: 7 Jun 2026</span>
+            </div>
+          </td>
+          <td>$1,560</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>Canada</td>
+          <td>Clinic Partner</td>
+          <td><span class="chip chip-gold">Gold</span></td>
+          <td><span class="chip chip-yes">Eligible</span></td>
+          <td>4</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 9: Active, Bronze tier, payout setup incomplete -->
+        <tr>
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">Tress & Trust Co.</div>
+            <div class="affiliate-email">hello@tressandtrust.com</div>
+          </td>
+          <td>hello@tressandtrust.com</td>
+          <td>64</td>
+          <td>$29,300</td>
+          <td>
+            <div class="tooltip-wrap">
+              $3,480
+              <span class="tooltip-text">Last payout: 7 May 2026</span>
+            </div>
+          </td>
+          <td>$390</td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td>United States</td>
+          <td>Other</td>
+          <td><span class="chip chip-bronze">Bronze</span></td>
+          <td><span class="chip chip-no">Not Eligible</span></td>
+          <td>1</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Row 10: Pending (activation not complete) -->
+        <tr>
+          <td><input type="checkbox" class="cb" /></td>
+          <td>
+            <div class="affiliate-name">Lumina Wellness GmbH</div>
+            <div class="affiliate-email">partners@luminawellness.de</div>
+          </td>
+          <td>partners@luminawellness.de</td>
+          <td>—</td>
+          <td>—</td>
+          <td>
+            <div class="tooltip-wrap">
+              —
+              <span class="tooltip-text">No payout yet</span>
+            </div>
+          </td>
+          <td>—</td>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td>Germany</td>
+          <td>Organization</td>
+          <td><span class="chip chip-bronze">—</span></td>
+          <td><span class="chip chip-no">Not Eligible</span></td>
+          <td>0</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-default btn-sm">View Details</button>
+              <button class="btn btn-default btn-sm">Edit</button>
+              <button class="btn btn-default btn-sm btn-disabled">Suspend</button>
+              <button class="btn btn-default btn-sm">Generate Report</button>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <span class="pagination-info">Page 1 of 4 · 87 total affiliates · 25 per page</span>
+      <div class="pagination-controls">
+        <button class="page-btn disabled">‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">4</button>
+        <button class="page-btn">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <strong style="font-size:11px;color:#5e6c84;">Legend:</strong>
+    <span class="legend-item"><span class="badge badge-active">Active</span> Activated &amp; operating</span>
+    <span class="legend-item"><span class="badge badge-pending">Pending</span> Account created, activation not completed</span>
+    <span class="legend-item"><span class="badge badge-suspended">Suspended</span> Temporarily suspended — codes disabled, payouts held</span>
+    <span class="legend-item"><span class="badge badge-inactive">Inactive</span> Permanently offboarded — read-only portal access</span>
+    <span class="legend-item">
+      <span class="legend-swatch legend-swatch-yellow"></span>
+      Pending payout &gt; $1,000 (highlighted row)
+    </span>
+    <span class="legend-item" style="margin-left:auto;font-style:italic;">
+      Hover over "Total Commissions Paid" to see last payout date
+    </span>
+  </div>
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>

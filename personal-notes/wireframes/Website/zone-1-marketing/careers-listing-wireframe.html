@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — Careers Wireframe (/careers)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --section-py:   120px;
+      --container:    1200px;
+      --radius-md:    12px;
+      --radius-lg:    20px;
+      --radius-xl:    28px;
+      --shadow-sm:    0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:    0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utilities ───────────────────────────────────────────────────── */
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 48px; }
+    .section   { padding: var(--section-py) 0; }
+    .section-alt { background: var(--bg-subtle); }
+    .section-dark { background: var(--bg-dark); color: var(--white); }
+
+    .label {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .label-light { color: rgba(255,255,255,.5); }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: .05em;
+    }
+    .badge-accent  { background: var(--accent-light); color: var(--accent); }
+    .badge-ink     { background: rgba(28,26,23,.08); color: var(--ink-mid); }
+    .badge-outline { background: transparent; color: var(--ink-muted); border: 1px solid var(--border); }
+
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; background: var(--ink); color: var(--white);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: opacity .15s; border: none; cursor: pointer;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-accent {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; background: var(--accent); color: var(--white);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: opacity .15s; border: none; cursor: pointer;
+    }
+    .btn-accent:hover { opacity: .88; }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; background: transparent; color: var(--ink);
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: var(--ink-mid); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0; background: none; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--accent);
+      text-decoration: none;
+    }
+    .btn-ghost:hover { text-decoration: underline; }
+
+    /* ─── NAV ─────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,248,245,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; gap: 32px; height: 64px;
+      max-width: var(--container); margin: 0 auto; padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--ink); text-decoration: none; margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--ink-mid);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+    .nav-cta-b2b {
+      font-size: 13px; font-weight: 600; color: var(--ink-muted);
+      text-decoration: none; border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ──────────────────────────────────────────────────── */
+    .breadcrumb { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .breadcrumb ol { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .breadcrumb li { display: flex; align-items: center; gap: 8px; }
+    .breadcrumb a { font-size: 13px; color: var(--ink-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb .crumb-sep { font-size: 13px; color: var(--border); }
+    .breadcrumb .crumb-current { font-size: 13px; color: var(--ink-mid); font-weight: 500; }
+
+    /* ─── SECTION 1 — HERO ───────────────────────────────────────────── */
+    .hero {
+      padding: 96px 0 80px;
+      position: relative; overflow: hidden;
+      background: var(--bg-base);
+    }
+    .hero-inner { max-width: 720px; }
+    .hero-eyebrow { margin-bottom: 20px; }
+    .hero h1 {
+      font-size: 64px; font-weight: 700; letter-spacing: -.03em;
+      line-height: 1.06; color: var(--ink); margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 20px; color: var(--ink-mid); line-height: 1.55;
+      max-width: 560px; margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 42%; height: 100%;
+      background: linear-gradient(135deg, var(--accent-light) 0%, transparent 70%);
+      opacity: .3;
+      pointer-events: none;
+    }
+    /* Culture quote */
+    .hero-quote {
+      margin-top: 60px;
+      padding: 28px 36px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-lg);
+      display: flex; align-items: flex-start; gap: 20px;
+      max-width: 620px;
+    }
+    .hero-quote-mark {
+      font-size: 48px; line-height: .8; color: var(--accent);
+      font-weight: 700; flex-shrink: 0; margin-top: 4px;
+    }
+    .hero-quote-text {
+      font-size: 17px; color: var(--ink-mid); line-height: 1.6; font-style: italic;
+    }
+    .hero-quote-author {
+      margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--ink);
+      font-style: normal;
+    }
+    .hero-quote-author span { color: var(--ink-muted); font-weight: 400; }
+
+    /* ─── SECTION 2 — MISSION & VALUES ───────────────────────────────── */
+    .section-header { margin-bottom: 56px; }
+    .section-header h2 {
+      font-size: 44px; font-weight: 700; letter-spacing: -.025em;
+      line-height: 1.1; margin-top: 12px; margin-bottom: 20px;
+    }
+    .section-header p {
+      font-size: 18px; color: var(--ink-mid); line-height: 1.6; max-width: 560px;
+    }
+
+    .values-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    }
+    .value-card {
+      padding: 32px 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .value-card:hover {
+      box-shadow: var(--shadow-md); transform: translateY(-2px);
+    }
+    .value-icon {
+      width: 48px; height: 48px;
+      background: var(--accent-light);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .value-card h3 {
+      font-size: 17px; font-weight: 700; letter-spacing: -.01em;
+      margin-bottom: 10px;
+    }
+    .value-card p {
+      font-size: 14px; color: var(--ink-mid); line-height: 1.6;
+    }
+
+    /* ─── SECTION 3 — OPEN ROLES ──────────────────────────────────────── */
+    .roles-layout {
+      display: grid; grid-template-columns: 260px 1fr; gap: 48px; align-items: start;
+    }
+
+    /* Sidebar filters */
+    .roles-sidebar { position: sticky; top: 80px; }
+    .filter-block { margin-bottom: 32px; }
+    .filter-block-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--ink-muted);
+      margin-bottom: 12px;
+    }
+    .filter-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .filter-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: var(--radius-md);
+      cursor: pointer; transition: background .15s;
+      font-size: 14px; color: var(--ink-mid);
+    }
+    .filter-item:hover { background: var(--bg-subtle); }
+    .filter-item.active {
+      background: var(--accent-light); color: var(--accent); font-weight: 600;
+    }
+    .filter-count {
+      font-size: 12px; color: var(--ink-muted);
+      background: var(--bg-subtle); padding: 1px 7px;
+      border-radius: 999px;
+    }
+    .filter-item.active .filter-count {
+      background: rgba(184,92,56,.15); color: var(--accent);
+    }
+
+    /* Roles main */
+    .roles-main {}
+    .roles-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .roles-count { font-size: 15px; color: var(--ink-mid); }
+    .roles-count strong { color: var(--ink); font-weight: 700; }
+    .roles-sort {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; color: var(--ink-mid);
+    }
+    .roles-sort select {
+      font-size: 14px; font-family: inherit; color: var(--ink);
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    /* Department groups */
+    .dept-group { margin-bottom: 40px; }
+    .dept-heading {
+      font-size: 13px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--ink-muted);
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .job-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .job-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      text-decoration: none; color: inherit;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .job-card:hover {
+      border-color: var(--ink-mid); box-shadow: var(--shadow-sm);
+    }
+    .job-card-left { display: flex; flex-direction: column; gap: 8px; }
+    .job-title {
+      font-size: 16px; font-weight: 600; letter-spacing: -.01em; color: var(--ink);
+    }
+    .job-meta {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .job-meta-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 13px; color: var(--ink-muted);
+    }
+    .job-meta-item svg { opacity: .6; }
+    .job-meta-sep { color: var(--border); font-size: 11px; }
+
+    .job-card-right {
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .job-arrow {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--ink-mid);
+      transition: border-color .15s, background .15s;
+    }
+    .job-card:hover .job-arrow {
+      border-color: var(--ink); background: var(--ink); color: var(--white);
+    }
+
+    /* ─── SECTION 4 — BENEFITS ───────────────────────────────────────── */
+    .benefits-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .benefit-card {
+      padding: 32px 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .benefit-icon {
+      width: 44px; height: 44px;
+      background: var(--bg-subtle); border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 16px;
+    }
+    .benefit-card h3 {
+      font-size: 15px; font-weight: 700; margin-bottom: 8px;
+    }
+    .benefit-card p {
+      font-size: 14px; color: var(--ink-mid); line-height: 1.6;
+    }
+
+    /* ─── SECTION 5 — LIFE AT HAIRLINE PHOTOS ────────────────────────── */
+    .photos-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 240px 240px;
+      gap: 12px;
+    }
+    .photo-cell {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-cell.span-col { grid-row: 1 / 3; }
+    .photo-placeholder {
+      font-size: 12px; color: var(--ink-muted); text-align: center;
+      padding: 20px;
+    }
+    .photo-placeholder-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+    .photo-caption {
+      position: absolute; bottom: 16px; left: 16px;
+      font-size: 12px; font-weight: 600; color: var(--white);
+      background: rgba(28,26,23,.6); backdrop-filter: blur(4px);
+      padding: 4px 10px; border-radius: 999px;
+    }
+
+    /* ─── SECTION 6 — NO OPEN ROLE CTA ──────────────────────────────── */
+    .no-role-band {
+      padding: 72px 0;
+      background: var(--bg-dark);
+    }
+    .no-role-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 48px;
+    }
+    .no-role-text h2 {
+      font-size: 36px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--white); margin-bottom: 12px; line-height: 1.15;
+    }
+    .no-role-text p {
+      font-size: 17px; color: rgba(255,255,255,.6); line-height: 1.55; max-width: 460px;
+    }
+    .no-role-form {
+      display: flex; gap: 12px; flex-shrink: 0;
+    }
+    .no-role-input {
+      width: 280px; padding: 14px 18px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+      border-radius: var(--radius-md); color: var(--white);
+      font-size: 15px; font-family: inherit;
+      outline: none;
+    }
+    .no-role-input::placeholder { color: rgba(255,255,255,.4); }
+    .no-role-input:focus { border-color: rgba(255,255,255,.4); }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 24px; background: var(--white); color: var(--ink);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      border: none; cursor: pointer; transition: opacity .15s;
+      white-space: nowrap;
+    }
+    .btn-white:hover { opacity: .92; }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark); color: rgba(255,255,255,.6);
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .footer-inner {
+      padding: 64px 0 40px;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 48px;
+    }
+    .footer-brand-name {
+      font-size: 18px; font-weight: 700; color: var(--white);
+      margin-bottom: 12px;
+    }
+    .footer-brand-name span { color: var(--accent); }
+    .footer-tagline {
+      font-size: 13px; line-height: 1.6; margin-bottom: 20px;
+    }
+    .footer-col-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+      margin-bottom: 16px;
+    }
+    .footer-col-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col-links a {
+      font-size: 13px; color: rgba(255,255,255,.55);
+      text-decoration: none; transition: color .15s;
+    }
+    .footer-col-links a:hover { color: var(--white); }
+    .footer-bottom {
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,.07);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-legal { font-size: 12px; display: flex; gap: 20px; }
+    .footer-legal a { color: rgba(255,255,255,.4); text-decoration: none; }
+    .footer-legal a:hover { color: rgba(255,255,255,.7); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- NAV                                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">hairline<span>.</span></a>
+      <ul class="nav-links">
+        <li><a href="/how-it-works">How it works</a></li>
+        <li><a href="/find-a-clinic">Find a clinic</a></li>
+        <li><a href="/treatments">Treatments</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+      <a href="/for-providers" class="nav-cta-b2b">For clinics →</a>
+      <a href="/assessment" class="btn-primary" style="padding:10px 20px;font-size:14px;">Start assessment</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- BREADCRUMB                                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep">/</span></li>
+        <li><span class="crumb-current">Careers</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1 — HERO                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-eyebrow">
+          <span class="label">Careers at Hairline</span>
+        </div>
+        <h1>Come build the future of<br><em>hair restoration.</em></h1>
+        <p class="hero-sub">
+          We're a small, ambitious team on a mission to make hair restoration
+          honest, accessible, and genuinely patient-first. If that sounds like
+          your kind of work, we'd love to hear from you.
+        </p>
+        <div class="hero-actions">
+          <a href="#open-roles" class="btn-primary">See open roles ↓</a>
+          <a href="/about" class="btn-outline">About us →</a>
+        </div>
+
+        <!-- Culture quote -->
+        <div class="hero-quote">
+          <div class="hero-quote-mark">&ldquo;</div>
+          <div>
+            <p class="hero-quote-text">
+              We believe the best healthcare products come from teams who actually
+              care — about the science, the patient, and each other.
+            </p>
+            <p class="hero-quote-author">
+              Dr. Sarah Okonkwo <span>— Head of Clinical, Hairline</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2 — MISSION & VALUES                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <span class="label">Mission & values</span>
+        <h2>What we believe in</h2>
+        <p>
+          We've built a set of values that are less about posters on the wall
+          and more about how we make decisions every day.
+        </p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">🔬</div>
+          <h3>Evidence, always</h3>
+          <p>We don't make claims we can't back up. Every feature, every piece of content is grounded in clinical evidence.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🤝</div>
+          <h3>Patient first</h3>
+          <p>Commercial pressures are real, but they never override what's right for the patient. Full stop.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">⚡</div>
+          <h3>Move with purpose</h3>
+          <p>We move fast, but we're deliberate. Speed without thought isn't ambition — it's noise.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🌍</div>
+          <h3>Radically inclusive</h3>
+          <p>Hair loss affects everyone. Our team, our product, and our providers should reflect that.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3 — OPEN ROLES                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section" id="open-roles">
+    <div class="container">
+      <div class="section-header">
+        <span class="label">Open roles</span>
+        <h2>Join the team</h2>
+        <p>
+          We're hiring across Product, Engineering, Clinical, and Go-to-Market.
+          All roles are open to remote-first applicants unless noted.
+        </p>
+      </div>
+
+      <div class="roles-layout">
+        <!-- Sidebar: filters -->
+        <aside class="roles-sidebar">
+          <div class="filter-block">
+            <div class="filter-block-title">Department</div>
+            <ul class="filter-list">
+              <li class="filter-item active">
+                All departments
+                <span class="filter-count">12</span>
+              </li>
+              <li class="filter-item">
+                Engineering
+                <span class="filter-count">5</span>
+              </li>
+              <li class="filter-item">
+                Product & Design
+                <span class="filter-count">3</span>
+              </li>
+              <li class="filter-item">
+                Clinical & Medical
+                <span class="filter-count">2</span>
+              </li>
+              <li class="filter-item">
+                Marketing & Growth
+                <span class="filter-count">1</span>
+              </li>
+              <li class="filter-item">
+                Operations
+                <span class="filter-count">1</span>
+              </li>
+            </ul>
+          </div>
+          <div class="filter-block">
+            <div class="filter-block-title">Location</div>
+            <ul class="filter-list">
+              <li class="filter-item active">
+                All locations
+                <span class="filter-count">12</span>
+              </li>
+              <li class="filter-item">
+                Remote
+                <span class="filter-count">7</span>
+              </li>
+              <li class="filter-item">
+                London, UK
+                <span class="filter-count">3</span>
+              </li>
+              <li class="filter-item">
+                Dubai, UAE
+                <span class="filter-count">2</span>
+              </li>
+            </ul>
+          </div>
+          <div class="filter-block">
+            <div class="filter-block-title">Employment type</div>
+            <ul class="filter-list">
+              <li class="filter-item active">
+                All types
+                <span class="filter-count">12</span>
+              </li>
+              <li class="filter-item">
+                Full-time
+                <span class="filter-count">10</span>
+              </li>
+              <li class="filter-item">
+                Contract
+                <span class="filter-count">2</span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Main: job listings -->
+        <div class="roles-main">
+          <div class="roles-toolbar">
+            <p class="roles-count">Showing <strong>12 roles</strong></p>
+            <div class="roles-sort">
+              Sort by:
+              <select>
+                <option>Newest first</option>
+                <option>Department</option>
+                <option>Location</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Engineering -->
+          <div class="dept-group">
+            <div class="dept-heading">Engineering — 5 roles</div>
+            <div class="job-list">
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Senior Backend Engineer — Patient Platform</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+                      Full-time
+                    </span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">
+                      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>
+                      Remote
+                    </span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 2 days ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="badge badge-accent">New</span>
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">iOS Engineer — Mobile App</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote / London</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 1 week ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Staff Engineer — Infrastructure & Data</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 2 weeks ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Frontend Engineer — Marketing Web</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote / London</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 3 weeks ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Security Engineer</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">London, UK</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 1 month ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Product & Design -->
+          <div class="dept-group">
+            <div class="dept-heading">Product & Design — 3 roles</div>
+            <div class="job-list">
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Senior Product Designer — Patient Experience</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 3 days ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="badge badge-accent">New</span>
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Product Manager — Provider Platform</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">London / Dubai</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 2 weeks ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">UX Researcher — Patient Insights</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Contract</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 1 month ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="badge badge-ink">Contract</span>
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Clinical & Medical -->
+          <div class="dept-group">
+            <div class="dept-heading">Clinical & Medical — 2 roles</div>
+            <div class="job-list">
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Clinical Content Writer (Medically Qualified)</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 1 week ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Provider Partnerships Manager — MENA</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Dubai, UAE</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 1 month ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Marketing & Operations -->
+          <div class="dept-group">
+            <div class="dept-heading">Marketing & Operations — 2 roles</div>
+            <div class="job-list">
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">SEO Content Strategist</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Remote</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 5 days ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="badge badge-accent">New</span>
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+              <a href="careers-detail-wireframe.html" class="job-card">
+                <div class="job-card-left">
+                  <span class="job-title">Head of Operations</span>
+                  <div class="job-meta">
+                    <span class="job-meta-item">Full-time</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">London, UK</span>
+                    <span class="job-meta-sep">·</span>
+                    <span class="job-meta-item">Posted 3 weeks ago</span>
+                  </div>
+                </div>
+                <div class="job-card-right">
+                  <span class="job-arrow">→</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4 — BENEFITS                                               -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <span class="label">What we offer</span>
+        <h2>Benefits built for real life</h2>
+        <p>We want you to do the best work of your career. That starts with making sure you're looked after.</p>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">💰</div>
+          <h3>Competitive compensation</h3>
+          <p>Salary benchmarked to the top 25th percentile of your market, reviewed annually. Equity package included for all permanent hires.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🌐</div>
+          <h3>Remote-first, genuinely</h3>
+          <p>Work from wherever you do your best thinking. We have hubs in London and Dubai, but remote is a first-class option — not a compromise.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🏥</div>
+          <h3>Private health cover</h3>
+          <p>Comprehensive private health insurance for you and your dependents from day one. Mental health support included.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">📚</div>
+          <h3>Learning budget</h3>
+          <p>£2,000 / year for courses, conferences, and books. Plus a structured mentorship programme and internal knowledge shares.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🏖️</div>
+          <h3>Generous time off</h3>
+          <p>28 days holiday plus bank holidays, plus an extra day on your birthday. We mean it — we track that people actually take it.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🧬</div>
+          <h3>Hair health benefit</h3>
+          <p>Every Hairline employee gets access to the full platform, including a funded consultation with one of our vetted providers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5 — LIFE AT HAIRLINE (PHOTO GRID)                          -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:40px;">
+        <span class="label">Life at Hairline</span>
+        <h2>The team behind the platform</h2>
+      </div>
+      <div class="photos-grid">
+        <div class="photo-cell span-col" style="background:var(--bg-subtle);">
+          <div class="photo-placeholder">
+            <span class="photo-placeholder-icon">📷</span>
+            Team photo — London office / all-hands
+          </div>
+          <span class="photo-caption">Our London team, May 2026</span>
+        </div>
+        <div class="photo-cell">
+          <div class="photo-placeholder">
+            <span class="photo-placeholder-icon">💻</span>
+            Remote team on a video call
+          </div>
+        </div>
+        <div class="photo-cell">
+          <div class="photo-placeholder">
+            <span class="photo-placeholder-icon">🤝</span>
+            Provider partnership event
+          </div>
+        </div>
+        <div class="photo-cell">
+          <div class="photo-placeholder">
+            <span class="photo-placeholder-icon">🎉</span>
+            Team offsite — Barcelona
+          </div>
+        </div>
+        <div class="photo-cell">
+          <div class="photo-placeholder">
+            <span class="photo-placeholder-icon">🔬</span>
+            Clinical review session
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6 — NO OPEN ROLE CTA                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="no-role-band">
+    <div class="container">
+      <div class="no-role-inner">
+        <div class="no-role-text">
+          <h2>Don't see the right role?</h2>
+          <p>
+            We're growing fast and new positions open often. Leave your email
+            and we'll reach out the moment something relevant comes up.
+            No spam, ever.
+          </p>
+        </div>
+        <div class="no-role-form">
+          <input type="email" class="no-role-input" placeholder="your@email.com" />
+          <button class="btn-white">Stay in touch</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">hairline<span>.</span></div>
+          <p class="footer-tagline">Hair restoration, finally done right. Connecting patients with the world's best hair restoration providers.</p>
+          <div style="display:flex;gap:12px;margin-top:16px;">
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Instagram</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Twitter / X</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">LinkedIn</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <ul class="footer-col-links">
+            <li><a href="/how-it-works">How it works</a></li>
+            <li><a href="/find-a-clinic">Find a clinic</a></li>
+            <li><a href="/assessment">Hair assessment</a></li>
+            <li><a href="/aftercare">Aftercare</a></li>
+            <li><a href="/travel">Travel</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Treatments</div>
+          <ul class="footer-col-links">
+            <li><a href="/treatments/hair-transplant">Hair transplant</a></li>
+            <li><a href="/treatments/fue">FUE</a></li>
+            <li><a href="/treatments/finasteride">Finasteride</a></li>
+            <li><a href="/treatments/minoxidil">Minoxidil</a></li>
+            <li><a href="/treatments/prp">PRP</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-col-links">
+            <li><a href="/about">About</a></li>
+            <li><a href="/careers" style="color:rgba(255,255,255,.8);">Careers</a></li>
+            <li><a href="/press">Press</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/for-providers">For clinics</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Resources</div>
+          <ul class="footer-col-links">
+            <li><a href="/resources">All articles</a></li>
+            <li><a href="/hair-loss">Hair loss guide</a></li>
+            <li><a href="/resources/comparisons">Treatment comparisons</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span style="font-size:12px;color:rgba(255,255,255,.3);">© 2026 Hairline Technologies Ltd. All rights reserved.</span>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/cookies">Cookies</a>
+          <a href="/accessibility">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — About Wireframe (/about)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --section-py:   120px;
+      --container:    1200px;
+      --radius-md:    12px;
+      --radius-lg:    20px;
+      --radius-xl:    28px;
+      --shadow-sm:    0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:    0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utilities ───────────────────────────────────────────────────── */
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 48px; }
+    .section   { padding: var(--section-py) 0; }
+    .section-alt { background: var(--bg-subtle); }
+
+    .label {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: .05em;
+      background: var(--accent-light); color: var(--accent);
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; background: var(--ink); color: var(--white);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; background: transparent; color: var(--ink);
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: var(--ink-mid); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0; background: none; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--accent);
+      text-decoration: none;
+    }
+    .btn-ghost:hover { text-decoration: underline; }
+
+    /* ─── NAV ─────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,248,245,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; gap: 32px; height: 64px;
+      max-width: var(--container); margin: 0 auto; padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--ink); text-decoration: none; margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--ink-mid);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+    .nav-cta-b2b {
+      font-size: 13px; font-weight: 600; color: var(--ink-muted);
+      text-decoration: none; border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ──────────────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb ol {
+      display: flex; align-items: center; gap: 8px; list-style: none;
+    }
+    .breadcrumb li { display: flex; align-items: center; gap: 8px; }
+    .breadcrumb a { font-size: 13px; color: var(--ink-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb .crumb-sep { font-size: 13px; color: var(--border); }
+    .breadcrumb .crumb-current { font-size: 13px; color: var(--ink-mid); font-weight: 500; }
+
+    /* ─── SECTION 1 — HERO ───────────────────────────────────────────── */
+    .hero {
+      padding: 96px 0 80px;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+    .hero-inner {
+      max-width: 760px;
+    }
+    .hero-eyebrow { margin-bottom: 20px; }
+    .hero h1 {
+      font-size: 64px; font-weight: 700; letter-spacing: -.03em;
+      line-height: 1.06; color: var(--ink); margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 20px; color: var(--ink-mid); line-height: 1.55;
+      max-width: 580px; margin-bottom: 0;
+    }
+    /* Decorative accent bar */
+    .hero::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 40%; height: 100%;
+      background: linear-gradient(135deg, var(--accent-light) 0%, transparent 70%);
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    /* Stats strip below hero */
+    .hero-stats {
+      margin-top: 56px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 64px;
+    }
+    .stat-item {}
+    .stat-number {
+      font-size: 40px; font-weight: 700; letter-spacing: -.02em; color: var(--ink);
+      line-height: 1;
+    }
+    .stat-number span { color: var(--accent); }
+    .stat-label {
+      font-size: 14px; color: var(--ink-muted); margin-top: 6px;
+    }
+
+    /* ─── SECTION 2 — OUR MISSION ─────────────────────────────────────── */
+    .mission-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+    }
+    .mission-left {}
+    .mission-left h2 {
+      font-size: 44px; font-weight: 700; letter-spacing: -.025em;
+      line-height: 1.1; margin-bottom: 28px;
+    }
+    .mission-right {}
+    .mission-right p {
+      font-size: 17px; color: var(--ink-mid); line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .mission-right p:last-child { margin-bottom: 0; }
+
+    /* Pull quote */
+    .pull-quote {
+      margin: 40px 0 0;
+      padding: 24px 32px;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-light);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+    .pull-quote p {
+      font-size: 18px !important; font-weight: 600;
+      color: var(--ink) !important; line-height: 1.5 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ─── SECTION 3 — WHAT WE DO ──────────────────────────────────────── */
+    .pillars-header { text-align: center; max-width: 600px; margin: 0 auto 56px; }
+    .pillars-header h2 {
+      font-size: 40px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 16px;
+    }
+    .pillars-header p {
+      font-size: 17px; color: var(--ink-mid); line-height: 1.6;
+    }
+    .pillars-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    }
+    .pillar-card {
+      padding: 40px; background: var(--white); border-radius: var(--radius-xl);
+      border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .pillar-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .pillar-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-md);
+      background: var(--accent-light); display: flex; align-items: center;
+      justify-content: center; font-size: 22px; margin-bottom: 24px;
+    }
+    .pillar-card h3 {
+      font-size: 20px; font-weight: 700; margin-bottom: 12px; letter-spacing: -.01em;
+    }
+    .pillar-card p {
+      font-size: 15px; color: var(--ink-mid); line-height: 1.65;
+    }
+    .pillar-card .pillar-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 20px; font-size: 14px; font-weight: 600;
+      color: var(--accent); text-decoration: none;
+    }
+    .pillar-card .pillar-link:hover { text-decoration: underline; }
+
+    /* ─── SECTION 4 — THE TEAM ────────────────────────────────────────── */
+    .team-header { max-width: 520px; margin-bottom: 56px; }
+    .team-header h2 {
+      font-size: 40px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 16px;
+    }
+    .team-header p { font-size: 17px; color: var(--ink-mid); line-height: 1.6; }
+
+    .team-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    }
+    .team-card {
+      background: var(--white); border-radius: var(--radius-xl);
+      border: 1px solid var(--border); overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .team-photo {
+      width: 100%; aspect-ratio: 4/3;
+      background: var(--bg-subtle);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .team-photo-placeholder {
+      width: 72px; height: 72px; border-radius: 999px;
+      background: var(--border); display: flex; align-items: center;
+      justify-content: center; font-size: 28px; color: var(--ink-muted);
+    }
+    .team-info { padding: 28px; }
+    .team-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .team-role { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+    .team-bio { font-size: 14px; color: var(--ink-mid); line-height: 1.65; }
+
+    /* ─── SECTION 5 — MEDICAL ADVISORS ───────────────────────────────── */
+    .advisors-header { max-width: 520px; margin-bottom: 48px; }
+    .advisors-header h2 {
+      font-size: 40px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 16px;
+    }
+    .advisors-header p { font-size: 17px; color: var(--ink-mid); line-height: 1.6; }
+
+    .eeeat-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-md); margin-bottom: 48px;
+    }
+    .eeeat-badge .badge-icon { font-size: 16px; }
+    .eeeat-badge .badge-text {
+      font-size: 12px; font-weight: 600; color: var(--ink-mid); letter-spacing: .04em;
+    }
+
+    .advisors-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    }
+    .advisor-card {
+      padding: 28px 24px; background: var(--white); border-radius: var(--radius-lg);
+      border: 1px solid var(--border); text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .advisor-photo {
+      width: 72px; height: 72px; border-radius: 999px; background: var(--bg-subtle);
+      margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 26px; border: 2px solid var(--border);
+    }
+    .advisor-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .advisor-title { font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+    .advisor-institution { font-size: 12px; color: var(--ink-muted); line-height: 1.5; }
+
+    /* ─── SECTION 6 — PRESS & RECOGNITION ────────────────────────────── */
+    .press-header { text-align: center; max-width: 540px; margin: 0 auto 48px; }
+    .press-header h2 {
+      font-size: 40px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 16px;
+    }
+    .press-header p { font-size: 17px; color: var(--ink-mid); line-height: 1.6; }
+
+    .press-logos {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 40px; margin-bottom: 56px;
+    }
+    .press-logo-item {
+      padding: 16px 28px; background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-md); font-size: 16px; font-weight: 700;
+      color: var(--ink-muted); letter-spacing: .02em;
+      transition: border-color .15s, color .15s;
+      cursor: pointer;
+    }
+    .press-logo-item:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+    .press-articles {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .press-card {
+      padding: 28px; background: var(--white); border-radius: var(--radius-lg);
+      border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+    }
+    .press-publication { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px; }
+    .press-headline { font-size: 15px; font-weight: 600; line-height: 1.45; color: var(--ink); margin-bottom: 12px; }
+    .press-date { font-size: 13px; color: var(--ink-muted); }
+    .press-kit-link {
+      text-align: center; margin-top: 40px;
+    }
+
+    /* ─── SECTION 7 — FINAL CTA ───────────────────────────────────────── */
+    .cta-band {
+      padding: 96px 0;
+    }
+    .cta-band-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+    }
+    .cta-panel {
+      padding: 64px; border-radius: var(--radius-xl);
+    }
+    .cta-panel-patient {
+      background: var(--ink); color: var(--white);
+      border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+    }
+    .cta-panel-clinic {
+      background: var(--accent); color: var(--white);
+      border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+    }
+    .cta-panel .cta-eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; opacity: .6; margin-bottom: 16px;
+    }
+    .cta-panel h3 {
+      font-size: 32px; font-weight: 700; letter-spacing: -.02em;
+      line-height: 1.2; margin-bottom: 16px;
+    }
+    .cta-panel p {
+      font-size: 16px; opacity: .75; line-height: 1.6; margin-bottom: 32px;
+    }
+    .cta-panel .app-badges {
+      display: flex; gap: 12px;
+    }
+    .cta-panel .app-badge {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 20px; background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      color: var(--white); border-radius: var(--radius-md);
+      text-decoration: none; transition: background .15s;
+    }
+    .cta-panel .app-badge:hover { background: rgba(255,255,255,.25); }
+    .cta-panel .app-badge-icon { font-size: 20px; }
+    .cta-panel .app-badge-text .store-label { font-size: 9px; opacity: .7; display: block; }
+    .cta-panel .app-badge-text .store-name { font-size: 13px; font-weight: 600; }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; background: var(--white); color: var(--accent);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 700;
+      text-decoration: none; transition: opacity .15s;
+    }
+    .btn-white:hover { opacity: .9; }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark); color: var(--white); padding: 80px 0 40px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 48px;
+      margin-bottom: 64px;
+    }
+    .footer-brand {}
+    .footer-brand .logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--white); margin-bottom: 16px;
+    }
+    .footer-brand .logo span { color: var(--accent); }
+    .footer-brand p { font-size: 14px; color: rgba(255,255,255,.45); line-height: 1.65; max-width: 260px; }
+    .footer-col h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a {
+      font-size: 14px; color: rgba(255,255,255,.65); text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1); padding-top: 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-legal { font-size: 13px; color: rgba(255,255,255,.35); }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: var(--radius-md);
+      background: rgba(255,255,255,.08); display: flex; align-items: center;
+      justify-content: center; font-size: 15px; text-decoration: none;
+      transition: background .15s;
+    }
+    .footer-social a:hover { background: rgba(255,255,255,.16); }
+
+    /* ─── Annotation layer ────────────────────────────────────────────── */
+    .annotation {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 700; letter-spacing: .06em;
+      background: rgba(184,92,56,.12); color: var(--accent);
+      vertical-align: middle; margin-left: 6px;
+    }
+    .section-label {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 48px;
+    }
+    .section-label .label {}
+    .section-label hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAV
+════════════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Hairline<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/how-it-works">How it works</a></li>
+      <li><a href="/treatments">Treatments</a></li>
+      <li><a href="/find-a-clinic">Find a clinic</a></li>
+      <li><a href="/resources">Resources</a></li>
+      <li><a href="/about" class="active">About</a></li>
+    </ul>
+    <a href="/for-providers" class="nav-cta-b2b">For clinics →</a>
+  </div>
+</nav>
+
+<!-- ─── Breadcrumb ──────────────────────────────────────────────── -->
+<div class="breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><span class="crumb-sep">/</span></li>
+      <li><span class="crumb-current">About</span></li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — HERO
+     Brief ref: §1.1, §1.2, §1.3
+════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <div class="hero-eyebrow">
+        <span class="badge">Our story</span>
+      </div>
+
+      <h1>
+        Hair restoration,<br>
+        built around the <em>patient.</em>
+      </h1>
+
+      <p class="hero-sub">
+        Hairline connects people navigating hair loss with the world's best
+        verified providers — combining diagnostic technology, honest education,
+        and end-to-end care coordination in one platform.
+      </p>
+
+      <!-- Stats strip -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">14<span>+</span></div>
+          <div class="stat-label">Countries with verified providers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4.9<span>★</span></div>
+          <div class="stat-label">App Store rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">50<span>k+</span></div>
+          <div class="stat-label">Patients matched to date</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100<span>%</span></div>
+          <div class="stat-label">Medically reviewed content</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 — OUR MISSION
+     Brief ref: §1.2 (Strategic job), §2.1 (Emotional context), §1.3 (Brand positioning)
+════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">Our mission</span>
+      <hr />
+    </div>
+
+    <div class="mission-grid">
+
+      <div class="mission-left">
+        <h2>The hair-loss industry was broken. We're fixing it.</h2>
+      </div>
+
+      <div class="mission-right">
+        <p>
+          Hair loss is one of the most common medical concerns people face —
+          yet the path to treatment is riddled with misinformation, opaque
+          pricing, and clinics prioritising margin over outcomes. Patients
+          have been let down by stock-photo promises and pressure-sell
+          consultations.
+        </p>
+        <p>
+          Hairline was built to change that. We started from a simple
+          belief: every person deserves transparent, evidence-based guidance
+          and access to providers who have earned their trust — wherever in
+          the world those providers happen to be.
+        </p>
+        <p>
+          We are not a clinic. We are not a content farm. We are a platform
+          that sits firmly on the patient's side of the table.
+        </p>
+
+        <div class="pull-quote">
+          <p>"The care you've always deserved — and the information to make
+          the right decision."</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — WHAT WE DO
+     Brief ref: §1.1 (four product pillars)
+════════════════════════════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">What we do</span>
+      <hr />
+    </div>
+
+    <div class="pillars-header">
+      <h2>Four pillars. One platform.</h2>
+      <p>Everything a patient needs — from first suspicion to full recovery —
+        and the tools clinics need to deliver it.</p>
+    </div>
+
+    <div class="pillars-grid">
+
+      <!-- Pillar 1 -->
+      <div class="pillar-card">
+        <div class="pillar-icon">🔍</div>
+        <h3>Patient–Provider Matching</h3>
+        <p>
+          Complete a structured assessment and 3D head-scan, then receive a
+          ranked list of verified providers with transparent pricing and booking built in.
+        </p>
+        <a href="/how-it-works" class="pillar-link">See how matching works →</a>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div class="pillar-card">
+        <div class="pillar-icon">🩹</div>
+        <h3>Hairline Aftercare</h3>
+        <p>
+          Symptom logging, 3D scan progress tracking, and 24/7 specialist
+          access — coordinated with your clinic from day one of recovery.
+        </p>
+        <a href="/aftercare" class="pillar-link">Explore Aftercare →</a>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="pillar-card">
+        <div class="pillar-icon">✈️</div>
+        <h3>Hairline Travel</h3>
+        <p>
+          Flights, hotels, transfers and visa support bundled into one
+          coordinated package — so you can focus on treatment, not logistics.
+        </p>
+        <a href="/travel" class="pillar-link">Explore Travel →</a>
+      </div>
+
+      <!-- Pillar 4 -->
+      <div class="pillar-card">
+        <div class="pillar-icon">🏥</div>
+        <h3>Provider Platform</h3>
+        <p>
+          Pre-qualified patient leads, a scheduling dashboard, and tools to
+          manage journeys end-to-end — at a fraction of traditional acquisition costs.
+        </p>
+        <a href="/for-providers" class="pillar-link">Partner with us →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4 — THE TEAM
+     Brief ref: §1.3 (brand positioning / authority)
+════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">The team</span>
+      <hr />
+    </div>
+
+    <div class="team-header">
+      <h2>Built by people who care deeply about getting this right.</h2>
+      <p>Our founding team combines backgrounds in health-tech, clinical
+        operations, consumer product and medical publishing.</p>
+    </div>
+
+    <div class="team-grid">
+
+      <!-- Team member 1 -->
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">👤</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Alex Morgan</div>
+          <div class="team-role">Co-Founder & CEO</div>
+          <p class="team-bio">
+            Former VP Product at a leading telehealth platform. Experienced
+            firsthand the opacity of the hair restoration market and set out
+            to rebuild it from first principles.
+          </p>
+        </div>
+      </div>
+
+      <!-- Team member 2 -->
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">👤</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Dr. Jamie Osei</div>
+          <div class="team-role">Co-Founder & Chief Medical Officer</div>
+          <p class="team-bio">
+            Board-certified dermatologist with 12 years in hair restoration.
+            Designed the clinical vetting framework used to verify every
+            provider on the platform.
+          </p>
+        </div>
+      </div>
+
+      <!-- Team member 3 -->
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">👤</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Sam Chen</div>
+          <div class="team-role">Co-Founder & CTO</div>
+          <p class="team-bio">
+            Previously led engineering at a Series B medical-travel startup.
+            Built Hairline's 3D diagnostic pipeline and provider-matching
+            algorithm from the ground up.
+          </p>
+        </div>
+      </div>
+
+      <!-- Team member 4 -->
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">👤</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Priya Nair</div>
+          <div class="team-role">Head of Patient Experience</div>
+          <p class="team-bio">
+            Joined from Zocdoc where she led the patient-communications
+            team. Oversees the Aftercare product, in-app content quality,
+            and clinical onboarding.
+          </p>
+        </div>
+      </div>
+
+      <!-- Team member 5 -->
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">👤</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Lena Brandt</div>
+          <div class="team-role">Head of Provider Partnerships</div>
+          <p class="team-bio">
+            10 years in clinic management across London and Dubai. Built the
+            provider vetting and onboarding programme and manages
+            relationships with Hairline's clinic partners.
+          </p>
+        </div>
+      </div>
+
+      <!-- Team member 6 — Join us card -->
+      <div class="team-card" style="background: var(--bg-subtle); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 48px 32px; border-style: dashed;">
+        <div style="font-size: 32px; margin-bottom: 16px;">+</div>
+        <div class="team-name" style="margin-bottom: 8px;">You?</div>
+        <p class="team-bio" style="margin-bottom: 20px;">We're building the team that will define this category. See open roles.</p>
+        <a href="/careers" class="btn-ghost">View open roles →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5 — MEDICAL ADVISORS
+     Brief ref: §7.1 (E-E-A-T signal), §5.2 (Reviewed by block)
+     Purpose: Clinical authority, Google E-E-A-T signal
+════════════════════════════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">Medical advisors</span>
+      <hr />
+    </div>
+
+    <div class="advisors-header">
+      <h2>Medically reviewed. Clinically grounded.</h2>
+      <p>Every piece of content on Hairline is reviewed by an independent
+        clinical advisor before publication. Our advisory board sets the
+        standards that every provider on our platform must meet.</p>
+    </div>
+
+    <div class="eeeat-badge">
+      <span class="badge-icon">✅</span>
+      <span class="badge-text">All Hairline content meets Google E-E-A-T standards · Last reviewed June 2026</span>
+    </div>
+
+    <div class="advisors-grid">
+
+      <div class="advisor-card">
+        <div class="advisor-photo">👩‍⚕️</div>
+        <div class="advisor-name">Prof. Sarah Liu</div>
+        <div class="advisor-title">Lead Medical Reviewer</div>
+        <div class="advisor-institution">Professor of Dermatology<br>King's College London</div>
+      </div>
+
+      <div class="advisor-card">
+        <div class="advisor-photo">👨‍⚕️</div>
+        <div class="advisor-name">Dr. Hassan Al-Rashid</div>
+        <div class="advisor-title">Hair Transplant Advisor</div>
+        <div class="advisor-institution">Consultant Hair Restoration Surgeon<br>Dubai Aesthetic Institute</div>
+      </div>
+
+      <div class="advisor-card">
+        <div class="advisor-photo">👩‍⚕️</div>
+        <div class="advisor-name">Dr. Elena Vasquez</div>
+        <div class="advisor-title">Trichology Advisor</div>
+        <div class="advisor-institution">Board-Certified Trichologist<br>Harvard Medical School</div>
+      </div>
+
+      <div class="advisor-card">
+        <div class="advisor-photo">👨‍⚕️</div>
+        <div class="advisor-name">Dr. Tom Okwu</div>
+        <div class="advisor-title">Patient Safety Advisor</div>
+        <div class="advisor-institution">Specialist in Patient Safety<br>NHS England</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6 — PRESS & RECOGNITION
+     Sitemap ref: §6 (media logos, link to /press)
+════════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <div class="section-label">
+      <span class="label">Press & recognition</span>
+      <hr />
+    </div>
+
+    <div class="press-header">
+      <h2>As seen in</h2>
+      <p>Hairline has been featured by leading health, technology and
+        consumer media outlets across the UK, US and MENA.</p>
+    </div>
+
+    <!-- Logo wall -->
+    <div class="press-logos">
+      <div class="press-logo-item">The Times</div>
+      <div class="press-logo-item">Forbes</div>
+      <div class="press-logo-item">Wired</div>
+      <div class="press-logo-item">TechCrunch</div>
+      <div class="press-logo-item">The Guardian</div>
+      <div class="press-logo-item">Healthline</div>
+    </div>
+
+    <!-- Featured press articles -->
+    <div class="press-articles">
+
+      <div class="press-card">
+        <div class="press-publication">Forbes</div>
+        <div class="press-headline">"Hairline is bringing the transparency of Zocdoc to the world of hair restoration"</div>
+        <div class="press-date">April 2026</div>
+      </div>
+
+      <div class="press-card">
+        <div class="press-publication">The Times</div>
+        <div class="press-headline">"The startup taking the guesswork out of hair transplants — and undercutting the clinic chains"</div>
+        <div class="press-date">March 2026</div>
+      </div>
+
+      <div class="press-card">
+        <div class="press-publication">TechCrunch</div>
+        <div class="press-headline">"Hairline raises $12M Series A to expand its verified provider network across MENA and Europe"</div>
+        <div class="press-date">January 2026</div>
+      </div>
+
+    </div>
+
+    <div class="press-kit-link" style="margin-top: 40px;">
+      <a href="/press" class="btn-outline">View all press coverage →</a>
+      &nbsp;&nbsp;
+      <a href="/press#press-kit" class="btn-ghost" style="margin-left: 8px;">Download press kit →</a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 7 — FINAL CTA
+     Sitemap ref: §7 — 'Download the app' / 'Partner with Hairline →'
+════════════════════════════════════════════════════════════════ -->
+<section class="cta-band">
+  <div class="container">
+    <div class="cta-band-inner">
+
+      <!-- Patient CTA (dark) -->
+      <div class="cta-panel cta-panel-patient">
+        <div class="cta-eyebrow">For patients</div>
+        <h3>Start your journey<br>today.</h3>
+        <p>Download the Hairline app, complete your free assessment, and get matched with verified providers in minutes.</p>
+        <div class="app-badges">
+          <a href="#" class="app-badge">
+            <span class="app-badge-icon">🍎</span>
+            <span class="app-badge-text">
+              <span class="store-label">Download on the</span>
+              <span class="store-name">App Store</span>
+            </span>
+          </a>
+          <a href="#" class="app-badge">
+            <span class="app-badge-icon">▶</span>
+            <span class="app-badge-text">
+              <span class="store-label">Get it on</span>
+              <span class="store-name">Google Play</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Clinic CTA (terracotta) -->
+      <div class="cta-panel cta-panel-clinic">
+        <div class="cta-eyebrow">For clinics</div>
+        <h3>Partner with<br>Hairline.</h3>
+        <p>Join 100+ verified clinics reaching pre-qualified patients across 14 countries. Book a demo to see the platform in action.</p>
+        <a href="/for-providers/book-demo" class="btn-white">Book a demo →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+        <div class="logo">Hairline<span style="color:var(--accent)">.</span></div>
+        <p>Hair restoration, finally done right. Verified providers. Honest education. End-to-end care.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Patients</h4>
+        <ul>
+          <li><a href="/for-patients">Overview</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/treatments">Treatments</a></li>
+          <li><a href="/aftercare">Aftercare</a></li>
+          <li><a href="/travel">Travel</a></li>
+          <li><a href="/assessment">Free assessment</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="/hair-loss">Hair loss guide</a></li>
+          <li><a href="/resources">Articles</a></li>
+          <li><a href="/how-it-works">How it works</a></li>
+          <li><a href="/resources/comparisons">Comparisons</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Providers</h4>
+        <ul>
+          <li><a href="/for-providers">Overview</a></li>
+          <li><a href="/for-providers/features">Features</a></li>
+          <li><a href="/for-providers/case-studies">Case studies</a></li>
+          <li><a href="/for-providers/book-demo">Book a demo</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        © 2026 Hairline Technologies Ltd · <a href="#" style="color:inherit">Privacy</a> · <a href="#" style="color:inherit">Terms</a> · <a href="#" style="color:inherit">Cookie settings</a>
+      </div>
+      <div class="footer-social">
+        <a href="#">𝕏</a>
+        <a href="#">in</a>
+        <a href="#">📷</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

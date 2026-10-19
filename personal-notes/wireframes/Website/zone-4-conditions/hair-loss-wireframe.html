@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — /hair-loss Wireframe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+
+      --font-ui:      'Inter', system-ui, sans-serif;
+      --section-py:   120px;
+      --container:    1200px;
+      --radius-md:    12px;
+      --radius-lg:    20px;
+      --radius-xl:    28px;
+      --shadow-sm:    0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:    0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utility ─────────────────────────────────────────────────────── */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+    .pill-genetic    { background: #FFF0EB; color: #B85C38; }
+    .pill-hormonal   { background: #FFF3E0; color: #D97706; }
+    .pill-autoimmune { background: #E8F4FD; color: #2980B9; }
+    .pill-lifestyle  { background: #E6FAF0; color: #2B9A66; }
+    .pill-temporary  { background: #F3E8FF; color: #7C3AED; }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .88; }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+      padding: 14px 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--white);
+    }
+    .btn-ghost:hover { border-color: var(--ink-mid); }
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,248,245,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 64px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      text-decoration: none;
+      margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+    }
+    .nav-links a.active { color: var(--accent); font-weight: 600; }
+    .nav-cta-b2b {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 16px;
+    }
+
+    /* ─── BREADCRUMB ─────────────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+    }
+    .breadcrumb-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+    .breadcrumb-inner a { color: var(--ink-muted); text-decoration: none; }
+    .breadcrumb-inner a:hover { color: var(--accent); }
+    .breadcrumb-sep { opacity: .4; }
+    .breadcrumb-current { color: var(--ink-mid); font-weight: 500; }
+
+    /* ─── HERO ───────────────────────────────────────────────────────── */
+    .hero {
+      padding: 80px 0 72px;
+      background: linear-gradient(180deg, var(--bg-subtle) 0%, var(--bg-base) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 80px;
+      align-items: center;
+    }
+    .hero-eyebrow { margin-bottom: 18px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .hero h1 {
+      font-size: 54px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 32px;
+    }
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Hero stat block */
+    .hero-stats { display: flex; flex-direction: column; gap: 16px; }
+    .hero-stat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-stat-card .stat-value {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .hero-stat-card .stat-value span { color: var(--accent); font-size: 18px; }
+    .hero-stat-card .stat-label {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.4;
+    }
+    .hero-stat-card .stat-source {
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 8px;
+      opacity: .7;
+    }
+    .hero-conditions-pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .condition-mini-pill {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px;
+    }
+
+    /* Trust strip */
+    .trust-strip {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+    .trust-strip-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--ink-muted);
+      font-weight: 500;
+    }
+    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    /* ─── BODY LAYOUT: Sidebar + Main ───────────────────────────────── */
+    .body-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 56px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+      align-items: start;
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      padding: 48px 0;
+    }
+    .sidebar-section { margin-bottom: 32px; }
+    .sidebar-heading {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-nav { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: background .12s, color .12s;
+    }
+    .sidebar-nav li a:hover { background: var(--bg-subtle); color: var(--ink); }
+    .sidebar-nav li a.active {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .sidebar-nav-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      background: var(--bg-subtle);
+      border-radius: 999px;
+      padding: 1px 7px;
+    }
+    .sidebar-cta-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 32px;
+    }
+    .sidebar-cta-card p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .sidebar-cta-card p strong { color: var(--ink); }
+
+    /* ─── MAIN CONTENT ───────────────────────────────────────────────── */
+    .main-content { padding: 48px 0; }
+
+    .section-hd { margin-bottom: 36px; }
+    .section-hd .label { margin-bottom: 10px; display: block; }
+    .section-hd h2 {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .section-hd p {
+      font-size: 16px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    .section-divider { height: 1px; background: var(--border); margin: 56px 0; }
+
+    /* ─── SECTION 2: Conditions Grid ─────────────────────────────────── */
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 64px;
+    }
+
+    /* Top row: two most common conditions — featured/wider feel */
+    .condition-card-featured {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      text-decoration: none;
+      position: relative;
+      transition: box-shadow .2s, transform .2s;
+      overflow: hidden;
+    }
+    .condition-card-featured:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .condition-card-featured::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    .condition-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+      text-decoration: none;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .condition-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .card-badge-row { display: flex; gap: 7px; flex-wrap: wrap; }
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 2px;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .card-featured-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.015em;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .card-stat {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+    .card-stat strong { color: var(--ink); font-weight: 600; }
+    .card-desc {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.55;
+      flex: 1;
+    }
+    .card-symptoms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .symptom-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: auto;
+    }
+    .card-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .card-meta-item strong { color: var(--ink-mid); font-weight: 600; }
+    .card-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+    /* ─── SECTION 3: Am I Losing Hair? ──────────────────────────────── */
+    .self-assessment-callout {
+      background: linear-gradient(135deg, var(--bg-subtle) 0%, rgba(245,221,212,.25) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-bottom: 64px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: center;
+    }
+    .assessment-left h3 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .assessment-left p {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      max-width: 420px;
+      margin-bottom: 20px;
+    }
+    .assessment-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .assessment-check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink-mid);
+    }
+    .check-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      flex-shrink: 0;
+    }
+    .check-box.checked {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .assessment-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .assessment-phone-mockup {
+      width: 140px;
+      height: 200px;
+      background: var(--ink);
+      border-radius: 20px;
+      border: 2px solid rgba(255,255,255,.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      box-shadow: 0 16px 48px rgba(28,26,23,.2);
+    }
+    .phone-screen-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+    }
+    .phone-screen-content {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .phone-screen-content .psc-label {
+      font-size: 8px;
+      color: rgba(255,255,255,.5);
+      margin-bottom: 6px;
+      font-weight: 500;
+      display: block;
+    }
+    .phone-pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin-bottom: 6px;
+    }
+    .pattern-dot {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 3px;
+      background: rgba(255,255,255,.15);
+    }
+    .pattern-dot.active { background: var(--accent); }
+    .phone-btn {
+      width: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      padding: 4px;
+      font-size: 7px;
+      font-weight: 600;
+      color: var(--white);
+      text-align: center;
+    }
+    .assessment-cta-note {
+      font-size: 11px;
+      color: var(--ink-muted);
+      text-align: center;
+      max-width: 140px;
+    }
+
+    /* ─── SECTION 4: Common Causes ───────────────────────────────────── */
+    .causes-section { margin-bottom: 64px; }
+    .causes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .cause-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cause-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--accent-light);
+      border: 1px solid rgba(184,92,56,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .cause-card h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.01em;
+    }
+    .cause-card p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .cause-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .cause-example {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .cause-bullet {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .cause-conditions-link {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 4px;
+    }
+    .causes-note {
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+    }
+    .causes-note strong { color: var(--ink); }
+
+    /* ─── SECTION 5: Treatment Options Overview ──────────────────────── */
+    .treatments-overview { margin-bottom: 64px; }
+    .treatment-tiles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .treatment-tile {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: box-shadow .15s, transform .15s;
+    }
+    .treatment-tile:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .tile-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .tile-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .tile-meta {
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.4;
+    }
+    .tile-arrow {
+      font-size: 13px;
+      color: var(--accent);
+      margin-top: auto;
+    }
+    .treatments-hub-link {
+      margin-top: 20px;
+      padding: 16px 24px;
+      background: var(--bg-subtle);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+    }
+    .treatments-hub-link span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+    .treatments-hub-link .link-cta {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ─── SECTION 7: Related Resources ──────────────────────────────── */
+    .resources-section { margin-bottom: 64px; }
+    .article-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .article-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      text-decoration: none;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .article-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .article-card-img {
+      width: 100%;
+      height: 140px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .article-card-body { padding: 20px; }
+    .article-category {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .article-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.35;
+      letter-spacing: -.01em;
+      margin-bottom: 8px;
+    }
+    .article-card p {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+    .article-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+    /* Reviewed-by bar */
+    .reviewed-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .reviewed-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .reviewed-bar strong { color: var(--ink-mid); }
+
+    /* ─── FINAL CTA ──────────────────────────────────────────────────── */
+    .final-cta-section {
+      background: var(--ink);
+      padding: 96px 0;
+    }
+    .final-cta-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+    }
+    .final-cta-copy h2 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.025em;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .final-cta-copy h2 em { font-style: normal; color: var(--accent); }
+    .final-cta-copy p {
+      font-size: 16px;
+      color: rgba(255,255,255,.6);
+      line-height: 1.6;
+      max-width: 440px;
+    }
+    .final-cta-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+    .final-cta-actions .btn-primary {
+      background: var(--accent);
+      font-size: 15px;
+      padding: 16px 32px;
+    }
+    .final-cta-actions .btn-ghost {
+      background: transparent;
+      border-color: rgba(255,255,255,.2);
+      color: rgba(255,255,255,.7);
+      font-size: 14px;
+    }
+    .final-cta-actions .btn-ghost:hover { border-color: rgba(255,255,255,.5); color: var(--white); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.55);
+      padding: 64px 0 32px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .footer-brand .nav-logo { color: var(--white); margin-bottom: 12px; display: block; }
+    .footer-brand p { font-size: 13px; line-height: 1.6; max-width: 220px; margin-bottom: 20px; }
+    .footer-app-badges { display: flex; flex-direction: column; gap: 8px; }
+    .footer-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.7);
+      text-decoration: none;
+    }
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; }
+    .footer-col a:hover { color: rgba(255,255,255,.9); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      font-size: 12px;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-legal { display: flex; gap: 20px; }
+    .footer-legal a { color: rgba(255,255,255,.35); text-decoration: none; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ──────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">hairline<span>.</span></a>
+      <ul class="nav-links">
+        <li><a href="#">Treatments</a></li>
+        <li><a href="#" class="active">Hair Loss</a></li>
+        <li><a href="#">Find a Clinic</a></li>
+        <li><a href="#">Aftercare</a></li>
+        <li><a href="#">Resources</a></li>
+      </ul>
+      <a href="#" class="nav-cta-b2b">For Clinics →</a>
+    </div>
+  </nav>
+
+  <!-- ─── BREADCRUMB ───────────────────────────────────────────────────── -->
+  <div class="breadcrumb">
+    <div class="container">
+      <div class="breadcrumb-inner">
+        <a href="#">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Hair Loss</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       SECTION 1 — HERO
+       Source: sitemap-v1 §/hair-loss row 1
+       Headline · editorial authority intro · CTA · stats
+       ════════════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-layout">
+
+        <!-- Left: copy -->
+        <div class="hero-copy">
+          <div class="hero-eyebrow">
+            <span class="badge">Medically reviewed</span>
+            <span class="label" style="color: var(--ink-muted);">Updated June 2026</span>
+          </div>
+          <h1>Understanding<br><em>hair loss.</em></h1>
+          <p class="hero-sub">
+            Hair loss affects more than half the global population. This guide explains what causes it, how it's diagnosed, and what your options are — written and reviewed by hair-loss specialists.
+          </p>
+          <div class="hero-cta-row">
+            <a href="#" class="btn-primary">Start your free assessment →</a>
+            <a href="#" class="btn-ghost">Explore all conditions</a>
+          </div>
+        </div>
+
+        <!-- Right: stat cards -->
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <div class="stat-value">85<span>%</span></div>
+            <div class="stat-label">of men will experience significant hair thinning by age 50.</div>
+            <div class="stat-source">Source: American Hair Loss Association, 2024</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="stat-value">40<span>%</span></div>
+            <div class="stat-label">of women experience noticeable hair loss by age 40.</div>
+            <div class="stat-source">Source: Cleveland Clinic, 2024</div>
+          </div>
+          <div class="hero-stat-card" style="background: var(--bg-subtle);">
+            <div class="label" style="margin-bottom: 10px; display: block;">Conditions covered</div>
+            <div class="hero-conditions-pill-list">
+              <span class="condition-mini-pill">Male Pattern Baldness</span>
+              <span class="condition-mini-pill">Female Pattern Hair Loss</span>
+              <span class="condition-mini-pill">Alopecia Areata</span>
+              <span class="condition-mini-pill">Postpartum Hair Loss</span>
+              <span class="condition-mini-pill">Stress-Related</span>
+              <span class="condition-mini-pill">Receding Hairline</span>
+              <span class="condition-mini-pill">Crown Thinning</span>
+              <span class="condition-mini-pill">Traction Alopecia</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <div class="trust-strip">
+    <div class="trust-strip-inner">
+      <div class="trust-item">✓ Medically reviewed content</div>
+      <div class="trust-dot"></div>
+      <div class="trust-item">8 conditions covered in depth</div>
+      <div class="trust-dot"></div>
+      <div class="trust-item">Cited clinical sources</div>
+      <div class="trust-dot"></div>
+      <div class="trust-item">No sponsorships or affiliate links</div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       SECTIONS 2–7 — Body layout: Sidebar + Main content
+       Source: sitemap-v1 §/hair-loss rows 2–7
+       ════════════════════════════════════════════════════════════════════ -->
+  <div class="body-layout">
+
+    <!-- ─── SIDEBAR: Cluster Navigation ─────────────────────────────── -->
+    <!-- Source: sitemap-v1 §/hair-loss row 6 -->
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Hair Loss Conditions</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="#" class="active">
+              All Conditions
+              <span class="sidebar-nav-count">8</span>
+            </a>
+          </li>
+          <li><a href="#">Male Pattern Baldness</a></li>
+          <li><a href="#">Female Pattern Hair Loss</a></li>
+          <li><a href="#">Alopecia Areata</a></li>
+          <li><a href="#">Receding Hairline</a></li>
+          <li><a href="#">Crown Thinning</a></li>
+          <li><a href="#">Postpartum Hair Loss</a></li>
+          <li><a href="#">Stress-Related Hair Loss</a></li>
+          <li><a href="#">Traction Alopecia</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">Related</div>
+        <ul class="sidebar-nav">
+          <li><a href="#">All Treatments →</a></li>
+          <li><a href="#">Find a Clinic →</a></li>
+          <li><a href="#">FUE vs FUT →</a></li>
+          <li><a href="#">Hair Loss Resources →</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-cta-card">
+        <p><strong>Not sure what type of hair loss you have?</strong> Take the free assessment and get a personalised explanation.</p>
+        <a href="#" class="btn-primary" style="font-size: 13px; padding: 10px 18px; width: 100%; justify-content: center;">
+          Start assessment →
+        </a>
+      </div>
+
+    </aside>
+
+
+    <!-- ─── MAIN CONTENT ──────────────────────────────────────────────── -->
+    <main class="main-content">
+
+      <!-- ══════════════════════════════════════════════════════════════
+           SECTION 2 — Explore Conditions
+           Source: sitemap-v1 §/hair-loss row 2
+           Grid/list of all 8 condition child pages
+           ══════════════════════════════════════════════════════════════ -->
+      <div class="section-hd">
+        <span class="label">Explore conditions</span>
+        <h2>Every type of hair loss, explained.</h2>
+        <p>Each condition page covers symptoms, causes, diagnosis, and the treatments most likely to help — written by specialists and updated regularly.</p>
+      </div>
+
+      <div class="conditions-grid">
+
+        <!-- Male Pattern Baldness — featured -->
+        <a href="#" class="condition-card-featured">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-genetic">Genetic</span>
+            <span class="badge-pill pill-hormonal">Hormonal</span>
+            <span style="display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:600; background:var(--bg-subtle); color:var(--ink-muted);">Most common</span>
+          </div>
+          <div class="card-icon">♂</div>
+          <div class="card-featured-title">Male Pattern Baldness</div>
+          <p class="card-stat">Affects <strong>~50% of men by age 50.</strong> The most common form of hair loss worldwide.</p>
+          <p class="card-desc">
+            Androgenetic alopecia causes progressive thinning at the crown and temples. Driven by DHT sensitivity in the hair follicle, it follows a predictable pattern classified on the Norwood scale.
+          </p>
+          <div class="card-symptoms">
+            <span class="symptom-tag">Receding temples</span>
+            <span class="symptom-tag">Crown thinning</span>
+            <span class="symptom-tag">Norwood scale</span>
+            <span class="symptom-tag">Gradual onset</span>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Female Pattern Hair Loss — featured -->
+        <a href="#" class="condition-card-featured">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-genetic">Genetic</span>
+            <span class="badge-pill pill-hormonal">Hormonal</span>
+          </div>
+          <div class="card-icon">♀</div>
+          <div class="card-featured-title">Female Pattern Hair Loss</div>
+          <p class="card-stat">Affects <strong>~40% of women by age 70.</strong> Often misdiagnosed or dismissed.</p>
+          <p class="card-desc">
+            Androgenetic alopecia in women presents as diffuse thinning across the crown rather than a receding hairline. Classified on the Ludwig scale. Hormonal changes — especially around menopause — can accelerate loss.
+          </p>
+          <div class="card-symptoms">
+            <span class="symptom-tag">Diffuse thinning</span>
+            <span class="symptom-tag">Crown widening</span>
+            <span class="symptom-tag">Ludwig scale</span>
+            <span class="symptom-tag">Postmenopausal</span>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Alopecia Areata -->
+        <a href="#" class="condition-card">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-autoimmune">Autoimmune</span>
+          </div>
+          <div class="card-icon">⬤</div>
+          <div class="card-title">Alopecia Areata</div>
+          <p class="card-desc">An autoimmune condition where the immune system mistakenly attacks hair follicles, causing patchy, sudden hair loss. Can affect the scalp, eyebrows, and body hair.</p>
+          <div class="card-meta-row">
+            <div class="card-meta-item"><strong>~2%</strong> prevalence globally</div>
+            <div class="card-meta-dot"></div>
+            <div class="card-meta-item">Any age</div>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Receding Hairline -->
+        <a href="#" class="condition-card">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-genetic">Genetic</span>
+            <span class="badge-pill pill-hormonal">Hormonal</span>
+          </div>
+          <div class="card-icon">↖</div>
+          <div class="card-title">Receding Hairline</div>
+          <p class="card-desc">Hairline recession starting at the temples is often the first visible sign of androgenetic alopecia. Early treatment significantly improves outcomes.</p>
+          <div class="card-meta-row">
+            <div class="card-meta-item">Often starts in <strong>20s–30s</strong></div>
+            <div class="card-meta-dot"></div>
+            <div class="card-meta-item">Men more affected</div>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Crown Thinning -->
+        <a href="#" class="condition-card">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-genetic">Genetic</span>
+          </div>
+          <div class="card-icon">◎</div>
+          <div class="card-title">Crown Thinning</div>
+          <p class="card-desc">Thinning concentrated at the vertex (top of the scalp). A common early presentation of male pattern baldness, often missed until significant density is lost.</p>
+          <div class="card-meta-row">
+            <div class="card-meta-item">Norwood <strong>III–V vertex</strong></div>
+            <div class="card-meta-dot"></div>
+            <div class="card-meta-item">Typically men</div>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Postpartum Hair Loss -->
+        <a href="#" class="condition-card">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-temporary">Temporary</span>
+            <span class="badge-pill pill-hormonal">Hormonal</span>
+          </div>
+          <div class="card-icon">✦</div>
+          <div class="card-title">Postpartum Hair Loss</div>
+          <p class="card-desc">A temporary, hormonal-driven shedding phase that typically begins 2–4 months after delivery. Affects up to 50% of new mothers. Resolves naturally within 6–12 months.</p>
+          <div class="card-meta-row">
+            <div class="card-meta-item"><strong>Up to 50%</strong> of mothers</div>
+            <div class="card-meta-dot"></div>
+            <div class="card-meta-item">Self-resolving</div>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Stress-Related Hair Loss -->
+        <a href="#" class="condition-card">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-temporary">Temporary</span>
+            <span class="badge-pill pill-lifestyle">Lifestyle</span>
+          </div>
+          <div class="card-icon">~</div>
+          <div class="card-title">Stress-Related Hair Loss</div>
+          <p class="card-desc">Telogen effluvium is a diffuse shedding triggered by physical or emotional stress — illness, surgery, crash dieting, or major life events. Usually temporary with proper treatment.</p>
+          <div class="card-meta-row">
+            <div class="card-meta-item">Sheds <strong>2–3 months</strong> post-trigger</div>
+            <div class="card-meta-dot"></div>
+            <div class="card-meta-item">All genders</div>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+        <!-- Traction Alopecia -->
+        <a href="#" class="condition-card">
+          <div class="card-badge-row">
+            <span class="badge-pill pill-lifestyle">Lifestyle</span>
+            <span class="badge-pill" style="background:#F0FFF4; color:#276749;">Preventable</span>
+          </div>
+          <div class="card-icon">⟳</div>
+          <div class="card-title">Traction Alopecia</div>
+          <p class="card-desc">Hair loss caused by repeated tension on the follicle from tight hairstyles — braids, weaves, ponytails. Often reversible if caught early, permanent if the follicle is scarred.</p>
+          <div class="card-meta-row">
+            <div class="card-meta-item">Frontotemporal pattern</div>
+            <div class="card-meta-dot"></div>
+            <div class="card-meta-item">Often reversible</div>
+          </div>
+          <span class="card-link">Read the full guide →</span>
+        </a>
+
+      </div>
+      <!-- /conditions-grid -->
+
+
+      <div class="section-divider"></div>
+
+
+      <!-- ══════════════════════════════════════════════════════════════
+           SECTION 3 — Am I Losing Hair? (Self-Assessment Prompt)
+           Source: sitemap-v1 §/hair-loss row 3
+           Brief self-assessment prompt with CTA to /assessment
+           ══════════════════════════════════════════════════════════════ -->
+      <div class="self-assessment-callout">
+        <div class="assessment-left">
+          <h3>Am I losing hair?</h3>
+          <p>
+            Hair loss isn't always obvious at first. If you've noticed any of these signs, a free assessment can help identify what's happening and what your options are.
+          </p>
+          <div class="assessment-checklist">
+            <div class="assessment-check-item">
+              <div class="check-box checked"></div>
+              <span>More hair than usual on your pillow or in the shower</span>
+            </div>
+            <div class="assessment-check-item">
+              <div class="check-box checked"></div>
+              <span>Hairline that has moved back at the temples</span>
+            </div>
+            <div class="assessment-check-item">
+              <div class="check-box checked"></div>
+              <span>A wider parting or visible scalp when your hair is wet</span>
+            </div>
+            <div class="assessment-check-item">
+              <div class="check-box"></div>
+              <span>Sudden patchy loss or bald spots</span>
+            </div>
+            <div class="assessment-check-item">
+              <div class="check-box"></div>
+              <span>Hair that feels noticeably thinner or finer than before</span>
+            </div>
+          </div>
+          <div style="margin-top: 24px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+            <a href="#" class="btn-primary">Start your free assessment →</a>
+            <span style="font-size: 12px; color: var(--ink-muted);">Free · 5 minutes · No commitment</span>
+          </div>
+        </div>
+
+        <div class="assessment-right">
+          <!-- Schematic phone mockup of the assessment screen -->
+          <div class="assessment-phone-mockup">
+            <div class="phone-screen-label">Assessment</div>
+            <div class="phone-screen-content">
+              <span class="psc-label">Select your hair loss pattern</span>
+              <div class="phone-pattern-grid">
+                <div class="pattern-dot active"></div>
+                <div class="pattern-dot"></div>
+                <div class="pattern-dot"></div>
+                <div class="pattern-dot active"></div>
+                <div class="pattern-dot active"></div>
+                <div class="pattern-dot"></div>
+                <div class="pattern-dot"></div>
+                <div class="pattern-dot active"></div>
+                <div class="pattern-dot"></div>
+              </div>
+              <div class="phone-btn">Continue →</div>
+            </div>
+          </div>
+          <div class="assessment-cta-note">App Store · Google Play · Free download</div>
+        </div>
+      </div>
+
+
+      <div class="section-divider"></div>
+
+
+      <!-- ══════════════════════════════════════════════════════════════
+           SECTION 4 — Common Causes
+           Source: sitemap-v1 §/hair-loss row 4
+           Educational: genetics, hormones, stress, nutrition
+           ══════════════════════════════════════════════════════════════ -->
+      <div class="causes-section">
+        <div class="section-hd">
+          <span class="label">Education</span>
+          <h2>What causes hair loss?</h2>
+          <p>Most hair loss is caused by one or more of these four factors. Understanding which applies to you is the first step to choosing the right treatment.</p>
+        </div>
+
+        <div class="causes-grid">
+
+          <div class="cause-card">
+            <div class="cause-icon-wrap">🧬</div>
+            <h4>Genetics</h4>
+            <p>The most common cause. If your parents or grandparents experienced hair loss, you are significantly more likely to as well. The AR gene, which governs androgen receptor sensitivity, is the primary inherited factor.</p>
+            <div class="cause-examples">
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Male pattern baldness (androgenetic alopecia)</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Female pattern hair loss</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Inherited alopecia universalis (rare)</span>
+              </div>
+            </div>
+            <a href="#" class="cause-conditions-link">See: Male Pattern Baldness · Female Pattern Hair Loss →</a>
+          </div>
+
+          <div class="cause-card">
+            <div class="cause-icon-wrap">⚗️</div>
+            <h4>Hormones</h4>
+            <p>DHT (dihydrotestosterone) binds to follicle receptors, shrinking the hair growth cycle over time. Hormonal fluctuations — pregnancy, menopause, thyroid issues — can also trigger temporary or permanent shedding.</p>
+            <div class="cause-examples">
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>DHT sensitivity in androgenetic alopecia</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Postpartum oestrogen drop</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Hypothyroidism and hyperthyroidism</span>
+              </div>
+            </div>
+            <a href="#" class="cause-conditions-link">See: Receding Hairline · Postpartum Hair Loss →</a>
+          </div>
+
+          <div class="cause-card">
+            <div class="cause-icon-wrap">🧠</div>
+            <h4>Stress &amp; illness</h4>
+            <p>Physical or emotional shock can push a large number of follicles into the telogen (resting) phase simultaneously, causing diffuse shedding 2–3 months after the triggering event.</p>
+            <div class="cause-examples">
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Telogen effluvium (stress-induced shedding)</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>High fever, surgery, or major illness</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Autoimmune triggers (alopecia areata)</span>
+              </div>
+            </div>
+            <a href="#" class="cause-conditions-link">See: Stress-Related Hair Loss · Alopecia Areata →</a>
+          </div>
+
+          <div class="cause-card">
+            <div class="cause-icon-wrap">🥗</div>
+            <h4>Nutrition &amp; lifestyle</h4>
+            <p>Hair follicles require iron, zinc, biotin, and adequate protein to complete a healthy growth cycle. Deficiencies — often from crash dieting or restrictive eating — produce temporary but significant shedding.</p>
+            <div class="cause-examples">
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Iron deficiency anaemia</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Crash dieting or low-protein diets</span>
+              </div>
+              <div class="cause-example">
+                <div class="cause-bullet"></div>
+                <span>Traction from tight hairstyles</span>
+              </div>
+            </div>
+            <a href="#" class="cause-conditions-link">See: Traction Alopecia · Stress-Related Hair Loss →</a>
+          </div>
+
+        </div>
+
+        <div class="causes-note">
+          <strong>Note:</strong> Most people experiencing hair loss have a combination of factors at play. A clinical assessment — whether in-app or with a verified provider — is the most accurate way to identify the root cause and the best-matched treatment.
+        </div>
+      </div>
+
+
+      <div class="section-divider"></div>
+
+
+      <!-- ══════════════════════════════════════════════════════════════
+           SECTION 5 — Treatment Options Overview
+           Source: sitemap-v1 §/hair-loss row 5
+           Link tiles to /treatments hub
+           ══════════════════════════════════════════════════════════════ -->
+      <div class="treatments-overview">
+        <div class="section-hd">
+          <span class="label">Your options</span>
+          <h2>Treatment options for hair loss.</h2>
+          <p>The right treatment depends on the type of hair loss, its stage, and your goals. Most conditions have at least one effective, evidence-based option.</p>
+        </div>
+
+        <div class="treatment-tiles">
+
+          <a href="#" class="treatment-tile">
+            <div class="tile-icon">✂</div>
+            <div class="tile-name">Hair Transplant</div>
+            <div class="tile-meta">FUE · FUT · DHI<br>From £2,500</div>
+            <div class="tile-arrow">→</div>
+          </a>
+
+          <a href="#" class="treatment-tile">
+            <div class="tile-icon">💊</div>
+            <div class="tile-name">Finasteride</div>
+            <div class="tile-meta">Prescription oral tablet<br>From £15 / month</div>
+            <div class="tile-arrow">→</div>
+          </a>
+
+          <a href="#" class="treatment-tile">
+            <div class="tile-icon">🧴</div>
+            <div class="tile-name">Minoxidil</div>
+            <div class="tile-meta">Topical or oral solution<br>From £10 / month</div>
+            <div class="tile-arrow">→</div>
+          </a>
+
+          <a href="#" class="treatment-tile">
+            <div class="tile-icon">🔬</div>
+            <div class="tile-name">PRP Therapy</div>
+            <div class="tile-meta">Platelet-rich plasma injections<br>From £500</div>
+            <div class="tile-arrow">→</div>
+          </a>
+
+          <a href="#" class="treatment-tile">
+            <div class="tile-icon">✦</div>
+            <div class="tile-name">Laser Therapy</div>
+            <div class="tile-meta">Low-level laser stimulation<br>From £200</div>
+            <div class="tile-arrow">→</div>
+          </a>
+
+          <a href="#" class="treatment-tile">
+            <div class="tile-icon">🖊</div>
+            <div class="tile-name">Scalp Micropigmentation</div>
+            <div class="tile-meta">Cosmetic density illusion<br>From £1,000</div>
+            <div class="tile-arrow">→</div>
+          </a>
+
+        </div>
+
+        <a href="#" class="treatments-hub-link">
+          <span>Not sure which treatment suits your condition?</span>
+          <span class="link-cta">Compare all treatments →</span>
+        </a>
+      </div>
+
+
+      <div class="section-divider"></div>
+
+
+      <!-- ══════════════════════════════════════════════════════════════
+           SECTION 7 — Related Resources
+           Source: sitemap-v1 §/hair-loss row 7
+           3 featured articles from /resources
+           ══════════════════════════════════════════════════════════════ -->
+      <div class="resources-section">
+        <div class="section-hd">
+          <span class="label">From our library</span>
+          <h2>Related reading.</h2>
+          <p>Evidence-based articles from our editorial team, reviewed by hair-loss specialists.</p>
+        </div>
+
+        <div class="article-cards">
+
+          <!-- Article 1 -->
+          <a href="#" class="article-card">
+            <div class="article-card-img">[ Editorial photo ]</div>
+            <div class="article-card-body">
+              <span class="article-category">Hair Loss · Guide</span>
+              <h4>The Norwood Scale explained: what stage am I at?</h4>
+              <p>A visual guide to the 7-stage classification system used by clinicians to assess male-pattern baldness and recommend treatments.</p>
+              <div class="article-meta">
+                <span>8 min read</span>
+                <div class="article-meta-dot"></div>
+                <span>Updated May 2026</span>
+              </div>
+            </div>
+            <div class="reviewed-bar">
+              <div class="reviewed-avatar"></div>
+              <span>Reviewed by <strong>Dr. Reza Ahmadi</strong>, Hair Restoration Surgeon</span>
+            </div>
+          </a>
+
+          <!-- Article 2 -->
+          <a href="#" class="article-card">
+            <div class="article-card-img">[ Editorial photo ]</div>
+            <div class="article-card-body">
+              <span class="article-category">Treatments · Comparison</span>
+              <h4>Finasteride vs Minoxidil: which is right for you?</h4>
+              <p>The two most-prescribed non-surgical treatments have different mechanisms and different patient profiles. Here's how to choose.</p>
+              <div class="article-meta">
+                <span>11 min read</span>
+                <div class="article-meta-dot"></div>
+                <span>Updated April 2026</span>
+              </div>
+            </div>
+            <div class="reviewed-bar">
+              <div class="reviewed-avatar"></div>
+              <span>Reviewed by <strong>Dr. Sarah Okonkwo</strong>, Dermatologist</span>
+            </div>
+          </a>
+
+          <!-- Article 3 -->
+          <a href="#" class="article-card">
+            <div class="article-card-img">[ Editorial photo ]</div>
+            <div class="article-card-body">
+              <span class="article-category">Conditions · Education</span>
+              <h4>Hair loss in women: why it's different — and often missed</h4>
+              <p>Female-pattern hair loss presents differently from male-pattern loss and is frequently misdiagnosed. What clinicians look for, and what actually works.</p>
+              <div class="article-meta">
+                <span>9 min read</span>
+                <div class="article-meta-dot"></div>
+                <span>Updated March 2026</span>
+              </div>
+            </div>
+            <div class="reviewed-bar">
+              <div class="reviewed-avatar"></div>
+              <span>Reviewed by <strong>Dr. Priya Menon</strong>, Trichologist</span>
+            </div>
+          </a>
+
+        </div>
+
+        <div style="margin-top: 24px; text-align: center;">
+          <a href="#" class="btn-ghost">Browse all hair loss articles →</a>
+        </div>
+      </div>
+
+    </main>
+    <!-- /main-content -->
+
+  </div>
+  <!-- /body-layout -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       SECTION 8 — Final CTA
+       Source: sitemap-v1 §/hair-loss row 8
+       'Start your free assessment →'
+       ════════════════════════════════════════════════════════════════════ -->
+  <section class="final-cta-section">
+    <div class="container">
+      <div class="final-cta-inner">
+
+        <div class="final-cta-copy">
+          <h2>Ready to understand<br>your <em>hair loss?</em></h2>
+          <p>
+            Take the free Hairline assessment. Answer a few questions about your pattern, history, and goals — and we'll identify the most likely cause and the treatments most likely to work for you.
+          </p>
+        </div>
+
+        <div class="final-cta-actions">
+          <a href="#" class="btn-primary">Start your free assessment →</a>
+          <a href="#" class="btn-ghost">Find a verified clinic near you →</a>
+          <span style="font-size: 12px; color: rgba(255,255,255,.35); text-align: right;">Free · 5 minutes · Backed by verified providers worldwide</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ─── FOOTER ────────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">hairline<span style="color: var(--accent);">.</span></a>
+          <p>Hair restoration, finally done right. Connect with verified providers worldwide.</p>
+          <div class="footer-app-badges">
+            <a href="#" class="footer-badge">&#xF8FF; App Store</a>
+            <a href="#" class="footer-badge">&#9654; Google Play</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Hair Loss</h4>
+          <ul>
+            <li><a href="#">Male Pattern Baldness</a></li>
+            <li><a href="#">Female Pattern Hair Loss</a></li>
+            <li><a href="#">Alopecia Areata</a></li>
+            <li><a href="#">Receding Hairline</a></li>
+            <li><a href="#">Crown Thinning</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Treatments</h4>
+          <ul>
+            <li><a href="#">Hair Transplant</a></li>
+            <li><a href="#">Finasteride</a></li>
+            <li><a href="#">Minoxidil</a></li>
+            <li><a href="#">PRP / SMP / Laser</a></li>
+            <li><a href="#">Compare treatments</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Patients</h4>
+          <ul>
+            <li><a href="#">Find a Clinic</a></li>
+            <li><a href="#">Free Assessment</a></li>
+            <li><a href="#">Aftercare</a></li>
+            <li><a href="#">Hairline Travel</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">For Clinics</a></li>
+            <li><a href="#">Resources</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Samasu Digital LTD. All rights reserved.</span>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+        <span style="color: rgba(255,255,255,.2);">🇬🇧 English</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

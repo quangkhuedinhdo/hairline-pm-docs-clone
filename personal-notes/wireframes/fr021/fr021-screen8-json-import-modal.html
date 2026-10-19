@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-021 Screen 8 — Admin: JSON Import Modal/Screen</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: #f4f5f7; color: #172b4d; }
+
+    /* ── Top bar ── */
+    .topbar { background: #fff; border-bottom: 1px solid #dfe1e6; height: 52px; display: flex; align-items: center; padding: 0 24px; gap: 16px; }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-lang { display: flex; align-items: center; gap: 6px; border: 1px solid #dfe1e6; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 13px; color: #42526e; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 24px 24px 48px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5e6c84; margin-bottom: 16px; }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #c1c7d0; }
+    .breadcrumb-current { color: #172b4d; font-weight: 500; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+    .page-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; text-decoration: none; }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-primary:hover { background: #0047b3; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-default:hover { background: #f4f5f7; }
+    .btn-success { background: #006644; color: #fff; }
+    .btn-success:hover { background: #005537; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-danger-outline { background: #fff; color: #bf2600; border: 1px solid #bf2600; }
+    .btn-link { background: none; border: none; color: #0052cc; padding: 0; font-size: 13px; cursor: pointer; text-decoration: underline; }
+    .btn:disabled, .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Cards ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; }
+    .card + .card { margin-top: 16px; }
+    .card-header { padding: 14px 20px; border-bottom: 1px solid #dfe1e6; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Form fields ── */
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .field-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+    .field-label.required::after { content: ' *'; color: #bf2600; }
+    .field-label.conditional::after { content: ' (conditional)'; color: #974f0c; font-style: italic; text-transform: none; font-weight: 400; letter-spacing: 0; }
+    .field-input {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit;
+    }
+    .field-input:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-select {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235e6c84' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 30px;
+    }
+    .field-select:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-select-ro {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 7px 10px; border-radius: 4px; border: 1px solid #e0e2e7;
+      background: #f4f5f7; font-family: inherit;
+    }
+    .field-textarea {
+      width: 100%; font-size: 13px; color: #172b4d;
+      padding: 8px 10px; border-radius: 4px; border: 1px solid #dfe1e6;
+      background: #fff; outline: none; font-family: inherit; resize: vertical;
+      min-height: 80px; line-height: 1.5;
+    }
+    .field-textarea:focus { border-color: #4c9aff; box-shadow: 0 0 0 2px rgba(76,154,255,0.2); }
+    .field-hint { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed #c1c7d0; border-radius: 6px;
+      padding: 24px 20px; text-align: center; background: #fafbfc;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .upload-zone:hover { border-color: #4c9aff; background: #f0f4ff; }
+    .upload-icon { font-size: 28px; margin-bottom: 8px; color: #5e6c84; }
+    .upload-label { font-size: 13px; font-weight: 500; color: #42526e; margin-bottom: 4px; }
+    .upload-hint { font-size: 12px; color: #5e6c84; }
+    .upload-file-selected {
+      display: flex; align-items: center; gap: 10px;
+      border: 1px solid #dfe1e6; border-radius: 6px; padding: 10px 14px;
+      background: #f8f9ff;
+    }
+    .upload-file-icon { font-size: 20px; }
+    .upload-file-name { font-size: 13px; font-weight: 500; color: #0052cc; flex: 1; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .upload-file-size { font-size: 12px; color: #5e6c84; }
+
+    /* ── Radio group ── */
+    .radio-group { display: flex; flex-direction: column; gap: 10px; }
+    .radio-option {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border: 1px solid #dfe1e6; border-radius: 6px;
+      cursor: pointer; background: #fff; transition: border-color 0.15s, background 0.15s;
+    }
+    .radio-option:hover { border-color: #4c9aff; background: #f8f9ff; }
+    .radio-option.selected { border-color: #0052cc; background: #f0f4ff; }
+    .radio-option.disabled { opacity: 0.5; cursor: not-allowed; background: #f4f5f7; }
+    .radio-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid #c1c7d0; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .radio-option.selected .radio-dot { border-color: #0052cc; }
+    .radio-option.selected .radio-dot::after {
+      content: ''; width: 8px; height: 8px; border-radius: 50%; background: #0052cc;
+    }
+    .radio-label { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .radio-desc { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+
+    /* ── Validation preview panel ── */
+    .validation-panel {
+      border: 1px solid #dfe1e6; border-radius: 6px; overflow: hidden;
+    }
+    .validation-panel.has-errors { border-color: #de350b; }
+    .validation-panel.has-warnings { border-color: #f5a623; }
+    .validation-panel.pass { border-color: #00875a; }
+    .validation-panel-header {
+      padding: 10px 14px; background: #f4f5f7;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .validation-panel.has-errors .validation-panel-header { background: #ffebe6; border-bottom-color: #de350b; }
+    .validation-panel.has-warnings .validation-panel-header { background: #fffae6; border-bottom-color: #f5a623; }
+    .validation-panel.pass .validation-panel-header { background: #e3fcef; border-bottom-color: #00875a; }
+    .validation-panel-title { font-size: 13px; font-weight: 600; color: #172b4d; display: flex; align-items: center; gap: 6px; }
+    .validation-panel-body { padding: 14px; }
+    .validation-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px;
+    }
+    .stat-item { text-align: center; padding: 10px; border-radius: 6px; border: 1px solid #dfe1e6; background: #fafbfc; }
+    .stat-item.created { border-color: #00875a; background: #e3fcef; }
+    .stat-item.updated { border-color: #0052cc; background: #deebff; }
+    .stat-item.unchanged { border-color: #dfe1e6; background: #f4f5f7; }
+    .stat-item.skipped { border-color: #c1c7d0; background: #f4f5f7; }
+    .stat-item.warnings { border-color: #f5a623; background: #fffae6; }
+    .stat-item.errors { border-color: #de350b; background: #ffebe6; }
+    .stat-number { font-size: 22px; font-weight: 700; color: #172b4d; line-height: 1; }
+    .stat-item.created .stat-number { color: #006644; }
+    .stat-item.updated .stat-number { color: #0052cc; }
+    .stat-item.warnings .stat-number { color: #974f0c; }
+    .stat-item.errors .stat-number { color: #bf2600; }
+    .stat-label { font-size: 11px; color: #5e6c84; margin-top: 4px; }
+    .validation-rows { display: flex; flex-direction: column; gap: 6px; }
+    .validation-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 12px; padding: 6px 10px; border-radius: 4px;
+    }
+    .validation-row.error { background: #ffebe6; color: #bf2600; }
+    .validation-row.warning { background: #fffae6; color: #974f0c; }
+    .validation-row-icon { flex-shrink: 0; margin-top: 1px; }
+    .validation-row-key { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; margin-right: 4px; }
+
+    /* ── Error report download ── */
+    .error-report-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border: 1px solid #f5a623; border-radius: 6px;
+      background: #fffae6;
+    }
+    .error-report-label { font-size: 13px; color: #974f0c; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+
+    /* ── Publish decision section ── */
+    .publish-decision-section {
+      border: 1px solid #dfe1e6; border-radius: 6px; overflow: hidden;
+    }
+    .publish-decision-section.active { border-color: #0052cc; }
+    .publish-decision-header {
+      padding: 12px 16px; background: #f4f5f7; border-bottom: 1px solid #dfe1e6;
+    }
+    .publish-decision-section.active .publish-decision-header { background: #f0f4ff; border-bottom-color: #c7dbff; }
+    .publish-decision-title { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .publish-decision-body { padding: 16px; }
+
+    /* ── Info banners ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border-radius: 6px;
+      font-size: 13px; margin-bottom: 16px;
+    }
+    .info-banner.info { background: #deebff; border: 1px solid #4c9aff; color: #0052cc; }
+    .info-banner.warning { background: #fffae6; border: 1px solid #f5a623; color: #974f0c; }
+    .info-banner.danger { background: #ffebe6; border: 1px solid #de350b; color: #bf2600; }
+    .info-banner-icon { flex-shrink: 0; font-size: 15px; }
+    .info-banner-text { font-size: 13px; line-height: 1.5; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .badge-pass     { background: #e3fcef; color: #006644; }
+    .badge-warning  { background: #fff0b3; color: #974f0c; }
+    .badge-blocked  { background: #ffebe6; color: #bf2600; }
+    .badge-info     { background: #deebff; color: #0052cc; }
+
+    /* ── Section divider ── */
+    .section-step {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .step-number {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .step-label { font-size: 13px; font-weight: 600; color: #172b4d; }
+
+    /* ── Action bar ── */
+    .action-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid #dfe1e6; background: #fafbff;
+      border-radius: 0 0 6px 6px;
+    }
+    .action-bar-left { font-size: 12px; color: #5e6c84; }
+    .action-bar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Two-column grid ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div class="topbar-logo">AdminPortal</div>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Users</a>
+    <a href="#" class="active">Localization</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-lang">🌐 EN (Admin)</div>
+</div>
+
+<!-- ── Page wrap ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Localization</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Vietnamese (vi)</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Import JSON</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Import JSON Translation Package</div>
+      <div class="page-subtitle">Upload a JSON file to import translation values for a language, surface, and key group.</div>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-default">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ── Step 1: Import target ── -->
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="section-step" style="margin-bottom:0;">
+        <div class="step-number">1</div>
+        <div class="card-title">Import Target</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="grid-3">
+
+        <!-- Target language -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label required">Target language</div>
+          <div class="field-select-ro">🇻🇳 Vietnamese (vi)</div>
+          <div class="field-hint">Pre-selected from Language Detail. Inactive/preparation languages allowed.</div>
+        </div>
+
+        <!-- Tenant/surface -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label required">Tenant / Surface</div>
+          <select class="field-select">
+            <option value="">Select surface…</option>
+            <option value="patient_app" selected>Patient App</option>
+            <option value="provider_dashboard">Provider Dashboard</option>
+            <option value="admin_platform">Admin Platform</option>
+            <option value="shared_notification">Shared / Notification</option>
+          </select>
+        </div>
+
+        <!-- Group/namespace -->
+        <div class="form-group" style="margin-bottom:0;">
+          <div class="field-label required">Group / Namespace</div>
+          <select class="field-select">
+            <option value="">Select group…</option>
+            <option value="common" selected>common</option>
+            <option value="appointments">appointments</option>
+            <option value="profile">profile</option>
+            <option value="notifications">notifications</option>
+            <option value="errors">errors</option>
+          </select>
+          <div class="field-hint">Must exist or be authorized for creation.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 2: File upload ── -->
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="section-step" style="margin-bottom:0;">
+        <div class="step-number">2</div>
+        <div class="card-title">Upload JSON File</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- File (upload zone — no file selected state) -->
+      <div class="form-group">
+        <div class="field-label required">File</div>
+        <!-- State: no file selected -->
+        <!--
+        <div class="upload-zone">
+          <div class="upload-icon">📄</div>
+          <div class="upload-label">Click to choose or drag-and-drop a JSON file</div>
+          <div class="upload-hint">Valid JSON only · Size limit applied by platform</div>
+        </div>
+        -->
+        <!-- State: file selected (shown for wireframe) -->
+        <div class="upload-file-selected">
+          <div class="upload-file-icon">📄</div>
+          <div class="upload-file-name">vi.common.patient-app.json</div>
+          <div class="upload-file-size">48 KB</div>
+          <button class="btn btn-default btn-sm">Replace</button>
+        </div>
+        <div class="field-hint">Valid JSON · Size limit configured by platform</div>
+      </div>
+
+      <!-- Import mode -->
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="field-label required">Import mode</div>
+        <div class="radio-group">
+          <div class="radio-option selected">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Overwrite draft values</div>
+              <div class="radio-desc">Replace existing draft values with imported values. Existing published values are not affected until a publish action is taken.</div>
+            </div>
+          </div>
+          <div class="radio-option">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Add missing keys only</div>
+              <div class="radio-desc">Only import keys that currently have no draft or published value. Existing values are preserved unchanged.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Step 3: Validation preview ── -->
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="section-step" style="margin-bottom:0;">
+        <div class="step-number">3</div>
+        <div class="card-title">Validation Preview</div>
+      </div>
+      <button class="btn btn-default btn-sm">▶ Run Validation</button>
+    </div>
+    <div class="card-body">
+
+      <!-- Validation preview panel — state: has warnings -->
+      <div class="validation-panel has-warnings">
+        <div class="validation-panel-header">
+          <div class="validation-panel-title">
+            ⚠ Validation complete — 2 warnings found
+          </div>
+          <span class="badge badge-warning">Review required</span>
+        </div>
+        <div class="validation-panel-body">
+
+          <!-- Stats grid -->
+          <div class="validation-stats">
+            <div class="stat-item created">
+              <div class="stat-number">12</div>
+              <div class="stat-label">Created</div>
+            </div>
+            <div class="stat-item updated">
+              <div class="stat-number">84</div>
+              <div class="stat-label">Updated</div>
+            </div>
+            <div class="stat-item unchanged">
+              <div class="stat-number">31</div>
+              <div class="stat-label">Unchanged</div>
+            </div>
+            <div class="stat-item skipped">
+              <div class="stat-number">3</div>
+              <div class="stat-label">Skipped</div>
+            </div>
+            <div class="stat-item warnings">
+              <div class="stat-number">2</div>
+              <div class="stat-label">Row warnings</div>
+            </div>
+            <div class="stat-item errors">
+              <div class="stat-number">0</div>
+              <div class="stat-label">Errors</div>
+            </div>
+          </div>
+
+          <!-- Row-level warnings -->
+          <div class="validation-rows">
+            <div class="validation-row warning">
+              <div class="validation-row-icon">⚠</div>
+              <div>
+                <span class="validation-row-key">common.appointment.cancel_reason</span>
+                Placeholder mismatch — source has <code>{patientName}</code>, imported value missing.
+              </div>
+            </div>
+            <div class="validation-row warning">
+              <div class="validation-row-icon">⚠</div>
+              <div>
+                <span class="validation-row-key">common.profile.dob_label</span>
+                Value length exceeds soft character limit (148 / 100). Review before publish.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Error report download (conditional — shown when validation issues exist) -->
+      <div class="error-report-bar" style="margin-top: 12px;">
+        <div class="error-report-label">
+          ⬇ Validation report available
+        </div>
+        <button class="btn btn-default btn-sm">Download Error Report (.csv)</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Step 4: Import decision ── -->
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="card-header">
+      <div class="section-step" style="margin-bottom:0;">
+        <div class="step-number">4</div>
+        <div class="card-title">Import Decision</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Import decision radio -->
+      <div class="form-group">
+        <div class="field-label required">Import decision</div>
+        <div class="radio-group">
+          <div class="radio-option selected">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Import as Draft</div>
+              <div class="radio-desc">Save imported values as draft. No live bundle is updated. Recommended default — allows review before publish.</div>
+            </div>
+          </div>
+          <div class="radio-option">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="radio-label">Import and Publish Version</div>
+              <div class="radio-desc">Import values and immediately publish as a new live version. Only available when validation passes with no blocking errors and all required authorizations are met.</div>
+            </div>
+          </div>
+        </div>
+        <div class="field-hint">
+          Import and Publish is disabled if validation errors exist or approval is required.
+        </div>
+      </div>
+
+      <!-- Publish summary (conditional — required when Import and Publish is chosen) -->
+      <div class="form-group" style="margin-bottom:0; display:none;" id="publish-summary-section">
+        <div class="field-label conditional">Publish summary</div>
+        <div class="info-banner warning" style="margin-bottom:8px;">
+          <div class="info-banner-icon">⚠</div>
+          <div class="info-banner-text">A publish summary is required when choosing <strong>Import and Publish Version</strong>. Describe the reason and scope of this publish for the audit record.</div>
+        </div>
+        <textarea class="field-textarea" placeholder="e.g. Full vi common namespace translated by external agency — reviewed and approved by L10n lead 2026-06-01…" rows="4"></textarea>
+        <div class="field-hint">Required before publish confirmation. Will be stored in the immutable version record.</div>
+      </div>
+
+      <!-- Publish summary shown state (for wireframe demo) -->
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="field-label conditional">Publish summary</div>
+        <div class="info-banner info" style="margin-bottom:8px;">
+          <div class="info-banner-icon">ℹ</div>
+          <div class="info-banner-text">Shown only when <strong>Import and Publish Version</strong> is selected. Required before confirmation.</div>
+        </div>
+        <textarea class="field-textarea" placeholder="e.g. Full vi common namespace translated by external agency — reviewed and approved by L10n lead 2026-06-01…" rows="3" disabled style="background:#f4f5f7; color:#a5adba; cursor:not-allowed;"></textarea>
+        <div class="field-hint">Not required for Import as Draft.</div>
+      </div>
+
+    </div>
+
+    <!-- Action bar -->
+    <div class="action-bar">
+      <div class="action-bar-left">Validation required before confirming import.</div>
+      <div class="action-bar-right">
+        <button class="btn btn-default">Cancel</button>
+        <button class="btn btn-primary">Confirm Import as Draft</button>
+        <button class="btn btn-success" disabled title="Import and Publish disabled — select Import and Publish Version and provide publish summary">Import and Publish Version</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>

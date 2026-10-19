@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 9.3 — Payout Detail (Affiliate Portal)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #0052cc;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #fff; letter-spacing: 0.01em; }
+    .topbar-logo span { font-weight: 400; opacity: 0.75; font-size: 13px; margin-left: 8px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); }
+    .topbar-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; border: 1.5px solid rgba(255,255,255,0.4);
+    }
+    .topbar-logout {
+      font-size: 12px; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 4px;
+      padding: 4px 10px; cursor: pointer; text-decoration: none;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      padding: 0 28px;
+    }
+    .tab-nav a {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 14px 20px;
+      font-size: 13px; font-weight: 500; color: #5e6c84;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-nav a:hover { color: #172b4d; }
+    .tab-nav a.active { color: #0052cc; border-bottom-color: #0052cc; font-weight: 600; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 28px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #97a0af; }
+
+    /* ── Payout header ── */
+    .payout-header {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    }
+    .payout-header-left { display: flex; flex-direction: column; gap: 6px; }
+    .payout-period { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .payout-id { font-size: 12px; color: #5e6c84; }
+    .payout-net { font-size: 28px; font-weight: 700; color: #006644; }
+    .payout-net-label { font-size: 11px; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 3px;
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-paid       { background: #e3fcef; color: #006644; }
+    .badge-pending    { background: #fffae6; color: #7a5200; }
+    .badge-processing { background: #e6f0ff; color: #0052cc; }
+    .badge-failed     { background: #ffebe6; color: #bf2600; }
+
+    /* ── Card ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; margin-bottom: 20px; }
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+    .card-title { font-size: 13px; font-weight: 600; color: #172b4d; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* ── Field rows ── */
+    .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .field-row {
+      display: flex; flex-direction: column; gap: 3px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f1f3;
+    }
+    .field-row:nth-child(odd) { border-right: 1px solid #f0f1f3; }
+    .field-row.full { grid-column: 1 / -1; }
+    .field-label { font-size: 11px; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.05em; }
+    .field-value { font-size: 14px; color: #172b4d; }
+    .field-value.mono {
+      font-family: 'Courier New', monospace; font-size: 12px;
+      background: #f0f1f3; border-radius: 3px; padding: 3px 8px;
+      display: inline-block; color: #42526e;
+    }
+    .field-value.currency { font-size: 18px; font-weight: 700; }
+    .field-value.deduction { color: #bf2600; }
+    .field-value.net-total { color: #006644; font-size: 18px; font-weight: 700; }
+
+    /* ── Commission calculation block ── */
+    .calc-block {
+      padding: 16px 20px;
+    }
+    .calc-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 0;
+      font-size: 13px;
+    }
+    .calc-row + .calc-row { border-top: 1px solid #f0f1f3; }
+    .calc-row.total {
+      border-top: 2px solid #dfe1e6;
+      padding-top: 12px; margin-top: 4px;
+      font-weight: 700; font-size: 15px;
+    }
+    .calc-label { color: #5e6c84; }
+    .calc-value { color: #172b4d; font-weight: 600; }
+    .calc-value.deduction { color: #bf2600; }
+    .calc-value.total-val { color: #006644; font-size: 17px; }
+
+    /* ── Included bookings table ── */
+    .bookings-table { width: 100%; border-collapse: collapse; }
+    .bookings-table thead th {
+      padding: 9px 16px;
+      text-align: left;
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      background: #f8f9fa; border-bottom: 1px solid #dfe1e6;
+    }
+    .bookings-table tbody tr { border-bottom: 1px solid #f0f1f3; }
+    .bookings-table tbody td { padding: 10px 16px; font-size: 13px; color: #172b4d; }
+    .bookings-table tfoot td {
+      padding: 10px 16px; font-size: 13px;
+      background: #f8f9fa; border-top: 2px solid #dfe1e6;
+      font-weight: 600;
+    }
+
+    /* ── Privacy note ── */
+    .privacy-note {
+      font-size: 11px; color: #5e6c84;
+      padding: 8px 16px 12px;
+      font-style: italic;
+    }
+
+    /* ── Actions bar ── */
+    .actions-bar {
+      display: flex; gap: 10px; align-items: center;
+      padding: 16px 20px;
+      border-top: 1px solid #dfe1e6;
+    }
+    .btn-primary {
+      padding: 8px 16px; border-radius: 4px;
+      background: #0052cc; color: #fff;
+      font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: #003d99; }
+    .btn-secondary {
+      padding: 8px 16px; border-radius: 4px;
+      background: #fff; color: #172b4d;
+      font-size: 13px; font-weight: 500;
+      border: 1px solid #dfe1e6; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-secondary:hover { background: #f4f5f7; }
+    .btn-disabled {
+      padding: 8px 16px; border-radius: 4px;
+      background: #f4f5f7; color: #97a0af;
+      font-size: 13px; font-weight: 500;
+      border: 1px solid #dfe1e6; cursor: not-allowed;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BAR ════════════════ -->
+<div class="topbar">
+  <div class="topbar-logo">Hairline <span>Affiliate Portal</span></div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">IC</div>
+    InfluCare Network
+    <a href="#" class="topbar-logout">Log out</a>
+  </div>
+</div>
+
+<!-- ════════════════ TAB NAVIGATION ════════════════ -->
+<div class="tab-nav">
+  <a href="#">📊 Overview</a>
+  <a href="#">🏷️ Promo Codes</a>
+  <a href="#" class="active">💳 Payouts</a>
+  <a href="#">👤 Profile</a>
+</div>
+
+<!-- ════════════════ PAGE CONTENT ════════════════ -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="fr018-screen9-3-payouts-tab.html">💳 Payouts</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>June 2026</span>
+  </div>
+
+  <!-- ── Payout header ── -->
+  <div class="payout-header">
+    <div class="payout-header-left">
+      <div class="payout-period">June 2026</div>
+      <div class="payout-id">Payout ID: payout_ICN_2026_06 &nbsp;·&nbsp; <span class="badge badge-paid">Paid</span></div>
+      <div style="margin-top:4px; font-size:12px; color:#5e6c84;">Period: Jun 1 – Jun 30, 2026</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="payout-net-label">Net Amount</div>
+      <div class="payout-net">$1,875.00</div>
+    </div>
+  </div>
+
+  <!-- ── Commission Calculation ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Commission Calculation</div>
+    </div>
+    <div class="calc-block">
+      <div class="calc-row">
+        <span class="calc-label">Gross Commission</span>
+        <span class="calc-value">$2,000.00</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">Reversals / Refunds</span>
+        <span class="calc-value deduction">− $125.00</span>
+      </div>
+      <div class="calc-row total">
+        <span class="calc-label">Net Amount</span>
+        <span class="calc-value total-val">$1,875.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Included Bookings ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Included Bookings</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="bookings-table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Booking Date</th>
+            <th>Booking Total</th>
+            <th>Commission</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-family:monospace;font-size:12px;">BK-20260601-0041</td>
+            <td style="color:#5e6c84;">Jun 1, 2026</td>
+            <td>$1,200.00</td>
+            <td style="color:#006644;font-weight:600;">$120.00</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;font-size:12px;">BK-20260604-0089</td>
+            <td style="color:#5e6c84;">Jun 4, 2026</td>
+            <td>$950.00</td>
+            <td style="color:#006644;font-weight:600;">$95.00</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;font-size:12px;">BK-20260607-0132</td>
+            <td style="color:#5e6c84;">Jun 7, 2026</td>
+            <td>$1,500.00</td>
+            <td style="color:#006644;font-weight:600;">$150.00</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;font-size:12px;">BK-20260610-0175</td>
+            <td style="color:#5e6c84;">Jun 10, 2026</td>
+            <td>$800.00</td>
+            <td style="color:#006644;font-weight:600;">$80.00</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="padding:8px 16px;font-size:12px;color:#5e6c84;text-align:center;font-style:italic;">
+              + 20 more completed bookings · Total 24 bookings
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">Total (24 bookings)</td>
+            <td>$20,000.00</td>
+            <td style="color:#006644;">$2,000.00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="privacy-note">
+      Aggregated booking data only — no patient identity is shown.
+    </div>
+  </div>
+
+  <!-- ── Payment Details ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Payment Details</div>
+    </div>
+    <div class="field-grid">
+
+      <div class="field-row">
+        <div class="field-label">Payment Method</div>
+        <div class="field-value">Stripe transfer to bank account</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Bank Account</div>
+        <div class="field-value">•••• •••• •••• 4892</div>
+      </div>
+
+      <div class="field-row full">
+        <div class="field-label">Transaction Reference</div>
+        <div class="field-value"><span class="mono">txn_3Pz8kLMsJ4Xk0012</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Actions bar ── -->
+  <div class="card">
+    <div class="actions-bar">
+      <a href="#" class="btn-primary">⬇ Download Receipt</a>
+      <a href="fr018-screen9-3-payouts-tab.html" class="btn-secondary">← Back to Payouts</a>
+    </div>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

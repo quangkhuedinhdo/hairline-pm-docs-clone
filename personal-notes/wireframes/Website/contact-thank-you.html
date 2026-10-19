@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — Contact Thank You — Hairline.app</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #40B174;
+      --green-dark: #2D8A57;
+      --green-card: #3A7A5C;
+      --green-lt:   #EAF7F1;
+      --ink:        #1A1A2E;
+      --ink-soft:   #4A4A5A;
+      --ink-muted:  #8A8A9A;
+      --border:     #E4E4EC;
+      --surface:    #F8F8FC;
+      --white:      #FFFFFF;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAV ─── */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 52px;
+    }
+    .logo {
+      font-size: 17px;
+      font-weight: 300;
+      letter-spacing: -.3px;
+      color: var(--ink);
+    }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .btn-clinics {
+      background: transparent;
+      color: var(--green);
+      border: 1.5px solid var(--green);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .menu-icon {
+      width: 32px; height: 32px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--ink-soft); cursor: pointer;
+    }
+
+    /* ─── BREADCRUMB ─── */
+    .breadcrumb-bar {
+      padding: 16px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+    .breadcrumb a { color: var(--ink-muted); text-decoration: none; }
+    .breadcrumb .sep { color: var(--border); }
+    .breadcrumb .current { color: var(--ink-soft); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--white);
+      padding: 56px 40px 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-left {}
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-lt);
+      border: 1.5px solid rgba(64,177,116,.25);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 20px;
+    }
+    .hero-tag .tag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+    .hero-headline {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .hero-headline em {
+      font-style: normal;
+      color: var(--green);
+    }
+    .hero-sub {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink-soft);
+    }
+
+    /* Success checkmark visual */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .confirm-card {
+      background: var(--green-lt);
+      border: 1.5px solid rgba(64,177,116,.2);
+      border-radius: 16px;
+      padding: 28px 32px;
+      width: 100%;
+    }
+    .confirm-icon {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .confirm-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--green-dark);
+      margin-bottom: 6px;
+    }
+    .confirm-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .confirm-meta {
+      font-size: 14px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .confirm-meta strong { color: var(--ink); }
+
+    /* ─── WHAT HAPPENS NEXT ─── */
+    .next-section {
+      padding: 64px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .next-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      color: var(--ink);
+      margin-bottom: 32px;
+    }
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+    }
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-body {}
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    /* ─── CONTACT DETAILS (same as original page) ─── */
+    .contacts-section {
+      padding: 48px 40px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .contact-item {}
+    .contact-icon {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .contact-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    .contact-value {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .contact-value a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .social-icons {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .social-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ─── EXPLORE MORE ─── */
+    .explore-section {
+      padding: 64px 40px;
+      background: var(--white);
+    }
+    .explore-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .explore-section p {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+    }
+    .explore-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .explore-card {
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .15s, box-shadow .15s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .explore-card:hover {
+      border-color: var(--green);
+      box-shadow: 0 4px 20px rgba(64,177,116,.1);
+    }
+    .explore-card-icon {
+      font-size: 24px;
+      width: 44px; height: 44px;
+      background: var(--green-lt);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .explore-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--green);
+    }
+    .explore-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .explore-card-desc {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .explore-card-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+      margin-top: auto;
+    }
+
+    /* ─── WIREFRAME LABEL ─── */
+    .wf-label {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      background: #6B63FF;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      border-radius: 6px;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<div class="topbar">
+  <div class="logo">hairline</div>
+  <div class="topbar-right">
+    <button class="btn-clinics">For Clinics</button>
+    <div class="menu-icon">☰</div>
+  </div>
+</div>
+
+<!-- ─── BREADCRUMB ─── -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb">
+    <a href="#">Home</a>
+    <span class="sep">/</span>
+    <a href="#">Contact</a>
+    <span class="sep">/</span>
+    <span class="current">Message sent</span>
+  </div>
+</div>
+
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">
+      <div class="tag-dot"></div>
+      Message received
+    </div>
+    <h1 class="hero-headline">
+      We'll be in<br>touch <em>soon.</em>
+    </h1>
+    <p class="hero-sub">
+      Your message has been sent. Our team will review it
+      and get back to you within one business day.
+    </p>
+  </div>
+
+  <div class="hero-right">
+    <div class="confirm-card">
+      <div class="confirm-icon">✓</div>
+      <div class="confirm-label">Confirmation</div>
+      <div class="confirm-title">Message sent successfully</div>
+      <div class="confirm-meta">
+        Sent to <strong>hello@hairline.app</strong><br>
+        Topic: <strong>Patient Enquiry</strong><br>
+        <br>
+        A copy has been sent to your email address.<br>
+        Expected reply: <strong>within 1 business day.</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── WHAT HAPPENS NEXT ─── -->
+<section class="next-section">
+  <h2>What happens next</h2>
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">We review your message</div>
+        <div class="step-desc">
+          Our team reads every message personally.
+          We don't use auto-responses for patient enquiries.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">We reply within one business day</div>
+        <div class="step-desc">
+          You'll hear back from us by email. Check your spam
+          folder if you don't see it within 24 hours.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">We match you to the right path</div>
+        <div class="step-desc">
+          If you're a patient, we'll point you to the assessment.
+          If you're a clinic, we'll set up a demo call.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── CONTACT DETAILS ─── -->
+<section class="contacts-section">
+  <div class="contacts-grid">
+    <div class="contact-item">
+      <div class="contact-icon">✉</div>
+      <div class="contact-label">Email us directly</div>
+      <div class="contact-value">
+        <a href="#">hello@hairline.app</a>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon">🏥</div>
+      <div class="contact-label">Clinic partnership enquiries</div>
+      <div class="contact-value">
+        <a href="#">partners@hairline.app</a><br>
+        Or <a href="#">book a demo</a> to see the platform in action.
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon">📍</div>
+      <div class="contact-label">Office</div>
+      <div class="contact-value">
+        12 Soho Square, London W1D 3QF<br>
+        United Kingdom
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon">◎</div>
+      <div class="contact-label">Social network</div>
+      <div class="contact-value">
+        <div class="social-icons">
+          <div class="social-icon">f</div>
+          <div class="social-icon">ig</div>
+          <div class="social-icon">X</div>
+          <div class="social-icon">in</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── EXPLORE MORE ─── -->
+<section class="explore-section">
+  <h2>While you wait</h2>
+  <p>Make the most of your time with these next steps.</p>
+  <div class="explore-grid">
+
+    <a class="explore-card" href="#">
+      <div class="explore-card-icon">◉</div>
+      <div class="explore-card-label">Free · 5 minutes</div>
+      <div class="explore-card-title">Start your hair-loss assessment</div>
+      <div class="explore-card-desc">
+        Get a personalised treatment plan and a shortlist of matched clinics — no pressure, no commitment.
+      </div>
+      <div class="explore-card-link">Start your assessment →</div>
+    </a>
+
+    <a class="explore-card" href="#">
+      <div class="explore-card-icon">📍</div>
+      <div class="explore-card-label">140+ providers</div>
+      <div class="explore-card-title">Find a verified clinic near you</div>
+      <div class="explore-card-desc">
+        Browse clinics across 14 countries. Filter by treatment type, location and budget.
+      </div>
+      <div class="explore-card-link">Find a clinic →</div>
+    </a>
+
+    <a class="explore-card" href="#">
+      <div class="explore-card-icon">📄</div>
+      <div class="explore-card-label">Medically reviewed</div>
+      <div class="explore-card-title">Read our hair restoration guides</div>
+      <div class="explore-card-desc">
+        FUE vs DHI, cost breakdowns, recovery timelines — everything you need to make an informed decision.
+      </div>
+      <div class="explore-card-link">Browse resources →</div>
+    </a>
+
+  </div>
+</section>
+
+
+<div class="wf-label">Wireframe — /contact/thank-you</div>
+
+</body>
+</html>

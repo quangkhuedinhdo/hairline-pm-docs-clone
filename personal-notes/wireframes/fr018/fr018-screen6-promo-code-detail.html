@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 6 — Promo Code Detail (Shared)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb-sep { color: #c1c7d0; }
+    .breadcrumb-note {
+      font-size: 11px; color: #97a0af; margin-left: 8px;
+      font-style: italic;
+    }
+
+    /* ── Entry-point note ── */
+    .entry-note {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: #5e6c84;
+      margin-bottom: 12px;
+    }
+    .entry-tag {
+      font-size: 11px; font-weight: 600;
+      background: #e6eeff; color: #0052cc;
+      padding: 2px 8px; border-radius: 3px;
+    }
+    .entry-tag.alt { background: #e3fcef; color: #006644; }
+
+    /* ── Page header (code header) ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      gap: 20px;
+    }
+    .code-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .code-text-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .code-pill-large {
+      font-family: 'Courier New', monospace;
+      font-size: 22px; font-weight: 700;
+      color: #0052cc;
+      background: #e6eeff;
+      padding: 5px 14px; border-radius: 5px;
+      letter-spacing: 0.06em;
+    }
+    .code-campaign { font-size: 15px; font-weight: 600; color: #172b4d; }
+    .code-meta-row { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #5e6c84; }
+    .code-meta-item { display: flex; align-items: center; gap: 4px; }
+    .code-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-danger  { background: #de350b; color: #fff; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-link    { background: transparent; color: #0052cc; border: none; padding: 0; font-size: 13px; cursor: pointer; }
+
+    /* ── Status badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 12px;
+      font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-active   { background: #e3fcef; color: #006644; }
+    .badge-inactive { background: #f4f5f7; color: #5e6c84; }
+    .badge-expired  { background: #f4f5f7; color: #97a0af; }
+    .badge-revoked  { background: #ffebe6; color: #bf2600; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .dot-green  { background: #36b37e; }
+    .dot-gray   { background: #97a0af; }
+    .dot-red    { background: #ff5630; }
+    .dot-orange { background: #ff991f; }
+
+    /* ── Two-column layout ── */
+    .two-col { display: grid; grid-template-columns: 1fr 320px; gap: 16px; margin-bottom: 16px; }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .card-body { padding: 20px; }
+
+    /* ── Settings grid ── */
+    .settings-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px;
+    }
+    .field-item { display: flex; flex-direction: column; gap: 3px; }
+    .field-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.04em; }
+    .field-value { font-size: 14px; color: #172b4d; }
+    .field-value.mono { font-family: 'Courier New', monospace; font-size: 13px; }
+    .field-value.muted { color: #5e6c84; }
+
+    .field-editable-row { display: flex; align-items: center; gap: 10px; }
+    .field-edit-badge {
+      font-size: 10px; font-weight: 600;
+      color: #0052cc; background: #e6eeff;
+      padding: 1px 6px; border-radius: 3px;
+    }
+    .field-locked-badge {
+      font-size: 10px; font-weight: 600;
+      color: #5e6c84; background: #f4f5f7;
+      padding: 1px 6px; border-radius: 3px;
+    }
+    .divider { border: none; border-top: 1px solid #f4f5f7; margin: 16px 0; }
+
+    /* ── Affiliate card ── */
+    .affiliate-link-card { display: flex; flex-direction: column; gap: 6px; }
+    .affiliate-name-large { font-size: 15px; font-weight: 600; color: #0052cc; cursor: pointer; }
+    .affiliate-meta { font-size: 12px; color: #5e6c84; }
+    .affiliate-meta span { margin-right: 12px; }
+
+    /* ── Performance stat strip ── */
+    .perf-strip {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .perf-cell {
+      padding: 16px 18px;
+      background: #fff;
+      border-right: 1px solid #dfe1e6;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .perf-cell:last-child { border-right: none; }
+    .perf-label { font-size: 11px; font-weight: 600; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.04em; }
+    .perf-value { font-size: 22px; font-weight: 700; color: #172b4d; }
+    .perf-value.blue   { color: #0052cc; }
+    .perf-value.green  { color: #006644; }
+    .perf-sub { font-size: 11px; color: #97a0af; margin-top: 1px; }
+
+    /* ── Chart area ── */
+    .chart-area {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .chart-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .chart-legend { display: flex; gap: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #5e6c84; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot-blue   { background: #0052cc; }
+    .legend-dot-green  { background: #36b37e; }
+    .chart-svg-wrap { overflow-x: auto; }
+
+    /* ── Generation source ── */
+    .gen-source-card {}
+    .gen-source-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #172b4d; }
+    .gen-source-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #5e6c84; margin-bottom: 4px; }
+    .batch-link { color: #0052cc; text-decoration: none; font-family: 'Courier New', monospace; font-size: 12px; }
+
+    /* ── Status controls card ── */
+    .status-controls {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .status-controls-left { display: flex; flex-direction: column; gap: 2px; }
+    .status-controls-title { font-size: 13px; font-weight: 600; color: #172b4d; }
+    .status-controls-desc { font-size: 12px; color: #5e6c84; }
+    .status-controls-right { display: flex; gap: 8px; }
+
+    /* ── Audit list ── */
+    .audit-list { padding: 0 20px 4px; }
+    .audit-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f4f5f7;
+    }
+    .audit-row:last-child { border-bottom: none; }
+    .audit-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #e6eeff; color: #0052cc;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0; margin-top: 1px;
+    }
+    .audit-body { flex: 1; }
+    .audit-event { font-size: 13px; font-weight: 500; color: #172b4d; }
+    .audit-detail { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+    .audit-time { font-size: 11px; color: #97a0af; white-space: nowrap; margin-top: 1px; }
+
+    /* ── Info banner ── */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 11px 16px;
+      background: #deebff;
+      border: 1px solid #b3d4ff;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 13px; color: #0747a6;
+    }
+
+    /* ── Warning banner ── */
+    .warn-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 11px 16px;
+      background: #fffae6;
+      border: 1px solid #ffe380;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-size: 13px; color: #7a5b00;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Providers</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Billing</a>
+    <a href="#">Reports</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+
+  <!-- Entry-point note (shared screen) -->
+  <div class="entry-note">
+    <span>This is a <strong>shared screen</strong> — reached from two entry points:</span>
+    <span class="entry-tag">Entry A — Screen 5: Promo Code Management</span>
+    <span class="entry-tag alt">Entry B — Screen 3: Affiliate Detail (shown below)</span>
+  </div>
+
+  <!-- Breadcrumb (Entry B — from Affiliate Detail) -->
+  <div class="breadcrumb">
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Glow Clinic London</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>SUMMER2026-GCL</span>
+    <span class="breadcrumb-note">(Back link to Affiliate Detail shown when opened from Screen 3)</span>
+  </div>
+
+  <!-- Code Header -->
+  <div class="page-header">
+    <div class="code-header-left">
+      <div class="code-text-row">
+        <span class="code-pill-large">SUMMER2026-GCL</span>
+        <span class="badge badge-active"><span class="dot dot-green"></span> Active</span>
+      </div>
+      <div class="code-campaign">Summer 2026 — Active UK Affiliates</div>
+      <div class="code-meta-row">
+        <div class="code-meta-item">Created: 26 Jun 2026</div>
+        <div class="code-meta-item">·</div>
+        <div class="code-meta-item">Code ID: CODE-00412</div>
+        <div class="code-meta-item">·</div>
+        <div class="code-meta-item">Hairline Fees Only</div>
+      </div>
+    </div>
+    <div class="code-header-right">
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-default">&#8595; Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FR-019 info banner -->
+  <div class="info-banner">
+    ℹ &nbsp;<span>Applied / completed counts and conversion stats are sourced from <strong>FR-019 redemption lifecycle</strong>. This screen displays attribution data — it does not recompute figures.</span>
+  </div>
+
+  <!-- Performance stat strip -->
+  <div class="perf-strip">
+    <div class="perf-cell">
+      <span class="perf-label">Applied</span>
+      <span class="perf-value blue">125</span>
+      <span class="perf-sub">Checkouts entered</span>
+    </div>
+    <div class="perf-cell">
+      <span class="perf-label">Completed</span>
+      <span class="perf-value green">87</span>
+      <span class="perf-sub">Paid bookings</span>
+    </div>
+    <div class="perf-cell">
+      <span class="perf-label">Conversion Rate</span>
+      <span class="perf-value">69.6%</span>
+      <span class="perf-sub">Completed / applied</span>
+    </div>
+    <div class="perf-cell">
+      <span class="perf-label">Revenue</span>
+      <span class="perf-value">$43,500</span>
+      <span class="perf-sub">Booking value attributed</span>
+    </div>
+    <div class="perf-cell">
+      <span class="perf-label">Commission Earned</span>
+      <span class="perf-value">$4,350</span>
+      <span class="perf-sub">@ 10% of booking revenue</span>
+    </div>
+  </div>
+
+  <!-- Two-column: Code Settings + Linked Affiliate -->
+  <div class="two-col">
+
+    <!-- Code Settings Panel -->
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-header">
+        <span class="card-title">Code Settings</span>
+        <span style="font-size:11px; color:#5e6c84;">Editable fields marked <span style="background:#e6eeff; color:#0052cc; padding:1px 5px; border-radius:3px; font-weight:600;">EDITABLE</span></span>
+      </div>
+      <div class="card-body">
+        <div class="settings-grid">
+
+          <div class="field-item">
+            <span class="field-label">Discount Type</span>
+            <div class="field-editable-row">
+              <span class="field-value">Hairline Fees Only</span>
+              <span class="field-locked-badge">FIXED</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Discount Amount</span>
+            <div class="field-editable-row">
+              <span class="field-value">10% of booking total</span>
+              <span class="field-locked-badge">FIXED</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Application Method</span>
+            <div class="field-editable-row">
+              <span class="field-value">Code-based (manual entry)</span>
+              <span class="field-locked-badge">FIXED</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Status</span>
+            <div class="field-editable-row">
+              <span class="badge badge-active"><span class="dot dot-green"></span> Active</span>
+              <span class="field-edit-badge">EDITABLE</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Expiration Date</span>
+            <div class="field-editable-row">
+              <span class="field-value">31 Dec 2026</span>
+              <span class="field-edit-badge">EDITABLE</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Maximum Usage Count</span>
+            <div class="field-editable-row">
+              <span class="field-value">200 completed redemptions</span>
+              <span class="field-edit-badge">EDITABLE</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Per-Patient Usage Limit</span>
+            <div class="field-editable-row">
+              <span class="field-value">1 per patient</span>
+              <span class="field-edit-badge">EDITABLE</span>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <span class="field-label">Linked Affiliate</span>
+            <div class="field-editable-row">
+              <span class="field-value muted">One-to-one (see panel →)</span>
+              <span class="field-locked-badge">FIXED</span>
+            </div>
+          </div>
+
+        </div>
+
+        <hr class="divider" />
+
+        <div class="warn-banner" style="margin-bottom:0;">
+          ⚠ &nbsp;<span>Discount value and linked affiliate <strong>cannot be changed</strong> after creation. To use different settings, create a new code.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Linked Affiliate + Generation Source -->
+    <div style="display:flex; flex-direction:column; gap:16px;">
+
+      <!-- Linked Affiliate -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+          <span class="card-title">Linked Affiliate</span>
+        </div>
+        <div class="card-body">
+          <div class="affiliate-link-card">
+            <div class="affiliate-name-large">↗ Glow Clinic London</div>
+            <div class="affiliate-meta">
+              <span>ID: AFF-00142</span>
+              <span>Type: Clinic Partner</span>
+            </div>
+            <div class="affiliate-meta">
+              <span>Status: <span style="color:#006644; font-weight:600;">Active</span></span>
+            </div>
+            <div class="affiliate-meta" style="margin-top:4px;">
+              <span>Country: United Kingdom</span>
+            </div>
+            <div style="margin-top:12px;">
+              <button class="btn btn-default" style="width:100%; justify-content:center;">View Affiliate Detail →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generation Source -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+          <span class="card-title">Generation Source</span>
+        </div>
+        <div class="card-body">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="field-item">
+              <span class="field-label">Mode</span>
+              <span class="field-value">Bulk — Filtered Segment</span>
+            </div>
+            <div class="field-item">
+              <span class="field-label">Batch ID</span>
+              <span class="field-value"><a href="#" class="batch-link">BATCH-2026-06-0047 ↗</a></span>
+            </div>
+            <div class="field-item">
+              <span class="field-label">Generated On</span>
+              <span class="field-value">26 Jun 2026, 14:32 UTC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Usage Over Time chart -->
+  <div class="chart-area">
+    <div class="chart-header">
+      <span class="card-title">Usage Over Time</span>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot legend-dot-blue"></div> Applied</div>
+        <div class="legend-item"><div class="legend-dot legend-dot-green"></div> Completed</div>
+      </div>
+    </div>
+    <div class="chart-svg-wrap">
+      <svg width="100%" height="140" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg" style="min-width:600px;">
+        <!-- Grid lines -->
+        <line x1="60" y1="10" x2="60" y2="115" stroke="#dfe1e6" stroke-width="1"/>
+        <line x1="60" y1="115" x2="890" y2="115" stroke="#dfe1e6" stroke-width="1"/>
+        <line x1="60" y1="75"  x2="890" y2="75"  stroke="#f4f5f7" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="60" y1="40"  x2="890" y2="40"  stroke="#f4f5f7" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <!-- Y axis labels -->
+        <text x="52" y="119" text-anchor="end" font-size="10" fill="#97a0af">0</text>
+        <text x="52" y="79"  text-anchor="end" font-size="10" fill="#97a0af">15</text>
+        <text x="52" y="44"  text-anchor="end" font-size="10" fill="#97a0af">30</text>
+
+        <!-- Applied line (blue) -->
+        <polyline
+          points="100,108  195,90  290,72  385,60  480,50  575,42  670,35  765,30  860,28"
+          fill="none" stroke="#0052cc" stroke-width="2.5" stroke-linejoin="round"/>
+
+        <!-- Completed line (green) -->
+        <polyline
+          points="100,112  195,97  290,83  385,72  480,64  575,56  670,50  765,46  860,44"
+          fill="none" stroke="#36b37e" stroke-width="2.5" stroke-linejoin="round"/>
+
+        <!-- X axis labels -->
+        <text x="100" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Jan</text>
+        <text x="195" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Feb</text>
+        <text x="290" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Mar</text>
+        <text x="385" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Apr</text>
+        <text x="480" y="130" text-anchor="middle" font-size="10" fill="#97a0af">May</text>
+        <text x="575" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Jun</text>
+        <text x="670" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Jul</text>
+        <text x="765" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Aug</text>
+        <text x="860" y="130" text-anchor="middle" font-size="10" fill="#97a0af">Sep</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Status Controls -->
+  <div class="status-controls">
+    <div class="status-controls-left">
+      <div class="status-controls-title">Status Controls</div>
+      <div class="status-controls-desc">Deactivation revokes checkout validity immediately. Expired / revoked codes cannot be copied as active codes.</div>
+    </div>
+    <div class="status-controls-right">
+      <button class="btn btn-default">Extend Expiration</button>
+      <button class="btn btn-danger">Deactivate</button>
+    </div>
+  </div>
+
+  <!-- Audit / History -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Audit / History</span>
+      <span style="font-size:12px; color:#5e6c84;">Append-only — 4 events</span>
+    </div>
+    <div class="audit-list">
+
+      <div class="audit-row">
+        <div class="audit-icon">+</div>
+        <div class="audit-body">
+          <div class="audit-event">Code created</div>
+          <div class="audit-detail">Bulk generation — Batch BATCH-2026-06-0047 · Campaign: Summer 2026 — Active UK Affiliates · Linked to AFF-00142 (Glow Clinic London)</div>
+        </div>
+        <div class="audit-time">26 Jun 2026, 14:32 UTC<br/>by Admin User</div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-icon" style="background:#e3fcef; color:#006644;">✓</div>
+        <div class="audit-body">
+          <div class="audit-event">Code registered with FR-019</div>
+          <div class="audit-detail">Promotion service registration successful · Code ID: CODE-00412 · Platform-wide uniqueness confirmed</div>
+        </div>
+        <div class="audit-time">26 Jun 2026, 14:32 UTC<br/>System</div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-icon" style="background:#fffae6; color:#7a5b00;">✎</div>
+        <div class="audit-body">
+          <div class="audit-event">Expiration date updated</div>
+          <div class="audit-detail">Previous: 30 Sep 2026 → New: 31 Dec 2026 · Usage limit unchanged (200)</div>
+        </div>
+        <div class="audit-time">10 Aug 2026, 09:14 UTC<br/>by Admin User</div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-icon" style="background:#e3fcef; color:#006644;">↑</div>
+        <div class="audit-body">
+          <div class="audit-event">Usage milestone reached</div>
+          <div class="audit-detail">Completed redemptions: 87 of 200 cap · Code remains active</div>
+        </div>
+        <div class="audit-time">18 Sep 2026, 17:50 UTC<br/>System</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

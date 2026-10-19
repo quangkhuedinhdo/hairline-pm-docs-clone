@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — Careers Detail Wireframe (/careers/[job-slug])</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+      --success:      #2D7A4E;
+      --success-bg:   #EDF7F2;
+
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --section-py:   120px;
+      --container:    1200px;
+      --radius-md:    12px;
+      --radius-lg:    20px;
+      --radius-xl:    28px;
+      --shadow-sm:    0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:    0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utilities ───────────────────────────────────────────────────── */
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 48px; }
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: .05em;
+    }
+    .badge-accent  { background: var(--accent-light); color: var(--accent); }
+    .badge-ink     { background: rgba(28,26,23,.08); color: var(--ink-mid); }
+    .badge-success { background: var(--success-bg); color: var(--success); }
+    .badge-outline { background: transparent; color: var(--ink-muted); border: 1px solid var(--border); }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 28px; background: var(--ink); color: var(--white);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: opacity .15s; border: none; cursor: pointer;
+      width: 100%;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-accent {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 28px; background: var(--accent); color: var(--white);
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: opacity .15s; border: none; cursor: pointer;
+      width: 100%;
+    }
+    .btn-accent:hover { opacity: .88; }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 28px; background: transparent; color: var(--ink);
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      transition: border-color .15s; width: 100%;
+    }
+    .btn-outline:hover { border-color: var(--ink-mid); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0; background: none; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--accent);
+      text-decoration: none;
+    }
+    .btn-ghost:hover { text-decoration: underline; }
+
+    /* ─── NAV ─────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,248,245,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; gap: 32px; height: 64px;
+      max-width: var(--container); margin: 0 auto; padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--ink); text-decoration: none; margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--ink-mid);
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta-b2b {
+      font-size: 13px; font-weight: 600; color: var(--ink-muted);
+      text-decoration: none; border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ──────────────────────────────────────────────────── */
+    .breadcrumb { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .breadcrumb ol { display: flex; align-items: center; gap: 8px; list-style: none; flex-wrap: wrap; }
+    .breadcrumb li { display: flex; align-items: center; gap: 8px; }
+    .breadcrumb a { font-size: 13px; color: var(--ink-muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb .crumb-sep { font-size: 13px; color: var(--border); }
+    .breadcrumb .crumb-current { font-size: 13px; color: var(--ink-mid); font-weight: 500; }
+
+    /* ─── PAGE LAYOUT ─────────────────────────────────────────────────── */
+    .page-wrapper {
+      padding: 48px 0 120px;
+    }
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* ─── LEFT COLUMN — JOB CONTENT ───────────────────────────────────── */
+    .job-header { margin-bottom: 40px; }
+
+    .job-dept-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .job-title {
+      font-size: 48px; font-weight: 700; letter-spacing: -.03em;
+      line-height: 1.08; margin-bottom: 20px;
+    }
+    .job-meta-strip {
+      display: flex; flex-wrap: wrap; gap: 20px; padding: 20px 24px;
+      background: var(--bg-subtle); border-radius: var(--radius-lg);
+      margin-bottom: 32px;
+    }
+    .meta-item {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .meta-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .meta-value {
+      font-size: 14px; font-weight: 600; color: var(--ink);
+    }
+    .meta-sep {
+      width: 1px; background: var(--border); align-self: stretch;
+    }
+
+    /* Job body prose */
+    .job-body { max-width: 680px; }
+    .job-section { margin-bottom: 48px; }
+    .job-section-title {
+      font-size: 20px; font-weight: 700; letter-spacing: -.01em;
+      margin-bottom: 16px; color: var(--ink);
+    }
+    .job-body p {
+      font-size: 16px; color: var(--ink-mid); line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .job-body p:last-child { margin-bottom: 0; }
+    .job-list {
+      list-style: none; display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 0;
+    }
+    .job-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; color: var(--ink-mid); line-height: 1.5;
+    }
+    .job-list li::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* Subsection within job section */
+    .job-subsection { margin-top: 28px; }
+    .job-subsection-title {
+      font-size: 13px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--ink-muted);
+      margin-bottom: 12px;
+    }
+
+    /* Nice-to-have list variant */
+    .job-list.muted li { color: var(--ink-muted); }
+    .job-list.muted li::before { background: var(--border); }
+
+    /* Divider in body */
+    .body-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* About Hairline block */
+    .about-block {
+      padding: 32px; background: var(--bg-subtle);
+      border-radius: var(--radius-lg); margin-bottom: 48px;
+    }
+    .about-block-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px;
+    }
+    .about-block h3 {
+      font-size: 18px; font-weight: 700; margin-bottom: 12px;
+    }
+    .about-block p {
+      font-size: 14px; color: var(--ink-mid); line-height: 1.65;
+      margin-bottom: 0;
+    }
+
+    /* Equal opportunity notice */
+    .eeo-block {
+      padding: 20px 24px;
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .eeo-icon { font-size: 20px; flex-shrink: 0; }
+    .eeo-text { font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
+    .eeo-text strong { color: var(--ink-mid); }
+
+    /* ─── RIGHT COLUMN — SIDEBAR ──────────────────────────────────────── */
+    .job-sidebar {
+      position: sticky; top: 80px;
+    }
+
+    .apply-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 32px;
+      box-shadow: var(--shadow-md); margin-bottom: 20px;
+    }
+    .apply-card-title {
+      font-size: 18px; font-weight: 700; margin-bottom: 6px;
+    }
+    .apply-card-sub {
+      font-size: 13px; color: var(--ink-muted); margin-bottom: 24px;
+    }
+    .apply-btn-stack {
+      display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;
+    }
+    .apply-divider {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .apply-divider-line { flex: 1; border-top: 1px solid var(--border); }
+    .apply-divider-text { font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
+
+    .apply-share {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--border); cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--ink-mid);
+      background: none; transition: border-color .15s;
+    }
+    .apply-share:hover { border-color: var(--ink-mid); }
+
+    /* Role details list */
+    .role-details {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 28px;
+      margin-bottom: 20px;
+    }
+    .role-details-title {
+      font-size: 13px; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--ink-muted);
+      margin-bottom: 20px;
+    }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-key {
+      font-size: 13px; color: var(--ink-muted); flex-shrink: 0;
+    }
+    .detail-val {
+      font-size: 13px; font-weight: 600; color: var(--ink); text-align: right;
+    }
+
+    /* Hiring team block */
+    .hiring-block {
+      background: var(--bg-subtle); border-radius: var(--radius-xl); padding: 24px;
+    }
+    .hiring-block-title {
+      font-size: 12px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--ink-muted); margin-bottom: 16px;
+    }
+    .hiring-person {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+    }
+    .hiring-person:last-child { margin-bottom: 0; }
+    .hiring-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .hiring-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .hiring-role { font-size: 12px; color: var(--ink-muted); }
+    .hiring-ask {
+      margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+    }
+    .hiring-ask a {
+      font-size: 13px; font-weight: 600; color: var(--accent);
+      text-decoration: none;
+    }
+    .hiring-ask a:hover { text-decoration: underline; }
+
+    /* ─── INTERVIEW PROCESS ───────────────────────────────────────────── */
+    .process-section { padding: 80px 0; background: var(--bg-subtle); }
+    .process-section .section-header { margin-bottom: 48px; }
+    .section-header h2 {
+      font-size: 36px; font-weight: 700; letter-spacing: -.02em;
+      margin-top: 10px; margin-bottom: 0;
+    }
+    .label {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .process-steps {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute; top: 24px; left: 10%; right: 10%;
+      height: 1px; background: var(--border);
+      z-index: 0;
+    }
+    .process-step {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 0 20px;
+      position: relative; z-index: 1;
+    }
+    .process-step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--white); border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .process-step.done .process-step-num {
+      background: var(--accent); border-color: var(--accent); color: var(--white);
+    }
+    .process-step h4 {
+      font-size: 14px; font-weight: 700; margin-bottom: 6px;
+    }
+    .process-step p {
+      font-size: 13px; color: var(--ink-muted); line-height: 1.5;
+    }
+    .process-step-tag {
+      margin-top: 10px; font-size: 11px; color: var(--ink-muted);
+      background: var(--border); padding: 2px 8px; border-radius: 999px;
+    }
+
+    /* ─── RELATED ROLES ───────────────────────────────────────────────── */
+    .related-roles-section { padding: 80px 0; }
+    .related-roles-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .related-roles-header h2 {
+      font-size: 28px; font-weight: 700; letter-spacing: -.02em;
+    }
+    .related-roles-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .related-job-card {
+      padding: 24px; background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 12px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .related-job-card:hover {
+      border-color: var(--ink-mid); box-shadow: var(--shadow-sm);
+    }
+    .related-job-dept {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .related-job-title {
+      font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.3;
+    }
+    .related-job-meta {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark); color: rgba(255,255,255,.6);
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .footer-inner { padding: 64px 0 40px; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 48px;
+    }
+    .footer-brand-name { font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+    .footer-brand-name span { color: var(--accent); }
+    .footer-tagline { font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
+    .footer-col-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 16px;
+    }
+    .footer-col-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col-links a {
+      font-size: 13px; color: rgba(255,255,255,.55);
+      text-decoration: none; transition: color .15s;
+    }
+    .footer-col-links a:hover { color: var(--white); }
+    .footer-bottom {
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,.07);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-legal { font-size: 12px; display: flex; gap: 20px; }
+    .footer-legal a { color: rgba(255,255,255,.4); text-decoration: none; }
+    .footer-legal a:hover { color: rgba(255,255,255,.7); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- NAV                                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">hairline<span>.</span></a>
+      <ul class="nav-links">
+        <li><a href="/how-it-works">How it works</a></li>
+        <li><a href="/find-a-clinic">Find a clinic</a></li>
+        <li><a href="/treatments">Treatments</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+      <a href="/for-providers" class="nav-cta-b2b">For clinics →</a>
+      <a href="/assessment" class="btn-primary" style="padding:10px 20px;font-size:14px;width:auto;">Start assessment</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- BREADCRUMB                                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="crumb-sep">/</span></li>
+        <li><a href="careers-listing-wireframe.html">Careers</a></li>
+        <li><span class="crumb-sep">/</span></li>
+        <li><a href="careers-listing-wireframe.html">Engineering</a></li>
+        <li><span class="crumb-sep">/</span></li>
+        <li><span class="crumb-current">Senior Backend Engineer — Patient Platform</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- MAIN PAGE CONTENT                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="page-grid">
+
+        <!-- ─── LEFT: JOB CONTENT ──────────────────────────────────────── -->
+        <main>
+          <!-- Job header -->
+          <div class="job-header">
+            <div class="job-dept-row">
+              <span class="badge badge-accent">New</span>
+              <span class="badge badge-ink">Engineering</span>
+              <span class="badge badge-success">Actively hiring</span>
+            </div>
+            <h1 class="job-title">Senior Backend Engineer<br>— Patient Platform</h1>
+
+            <!-- Quick meta strip -->
+            <div class="job-meta-strip">
+              <div class="meta-item">
+                <span class="meta-label">Location</span>
+                <span class="meta-value">Remote (UK / EU preferred)</span>
+              </div>
+              <div class="meta-sep"></div>
+              <div class="meta-item">
+                <span class="meta-label">Employment</span>
+                <span class="meta-value">Full-time</span>
+              </div>
+              <div class="meta-sep"></div>
+              <div class="meta-item">
+                <span class="meta-label">Salary</span>
+                <span class="meta-value">£90,000 – £120,000</span>
+              </div>
+              <div class="meta-sep"></div>
+              <div class="meta-item">
+                <span class="meta-label">Equity</span>
+                <span class="meta-value">0.1% – 0.3% (vested 4yr)</span>
+              </div>
+              <div class="meta-sep"></div>
+              <div class="meta-item">
+                <span class="meta-label">Posted</span>
+                <span class="meta-value">2 days ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Job body -->
+          <div class="job-body">
+
+            <!-- About the role -->
+            <div class="job-section">
+              <h2 class="job-section-title">About the role</h2>
+              <p>
+                Hairline is connecting patients with the world's best hair restoration providers — and we need
+                the engineering to match. As a Senior Backend Engineer on the Patient Platform team, you'll
+                own the core APIs and data layer that power the patient journey: from the initial hair-loss
+                assessment all the way through to post-procedure recovery tracking.
+              </p>
+              <p>
+                This isn't a "maintain the roadmap" role. We're at an inflection point — scaling from thousands
+                to hundreds of thousands of active users — and you'll be making architectural decisions that
+                will shape the platform for years. You'll work closely with our product and clinical teams to
+                translate complex healthcare workflows into clean, performant APIs.
+              </p>
+              <p>
+                You'll be the third engineer on a backend team that ships fast and cares deeply about code quality.
+                The stack is Node.js (TypeScript), PostgreSQL, and AWS, with a move toward event-driven
+                architecture already underway.
+              </p>
+            </div>
+
+            <hr class="body-divider" />
+
+            <!-- What you'll do -->
+            <div class="job-section">
+              <h2 class="job-section-title">What you'll do</h2>
+              <ul class="job-list">
+                <li>Design and build the APIs that power patient onboarding, provider matching, and consultation booking — used by patients in 30+ countries.</li>
+                <li>Own the data models for patient health records, procedure history, and aftercare symptom logs — with HIPAA and GDPR compliance baked in from the start.</li>
+                <li>Lead the migration of our monolithic booking service to an event-driven microservices architecture using AWS SQS and EventBridge.</li>
+                <li>Write production-grade code (TypeScript, Node.js, PostgreSQL) with the test coverage and documentation to match.</li>
+                <li>Collaborate with the mobile and frontend teams on API contracts — you'll be the backend voice in cross-functional design reviews.</li>
+                <li>Participate in an on-call rotation (low frequency — we invest heavily in reliability upfront).</li>
+                <li>Mentor more junior engineers and raise the quality bar across the team through code review and knowledge sharing.</li>
+              </ul>
+            </div>
+
+            <hr class="body-divider" />
+
+            <!-- What we're looking for -->
+            <div class="job-section">
+              <h2 class="job-section-title">What we're looking for</h2>
+
+              <div class="job-subsection">
+                <div class="job-subsection-title">Must have</div>
+                <ul class="job-list">
+                  <li>5+ years of backend engineering experience, with at least 3 years in Node.js / TypeScript in production.</li>
+                  <li>Deep familiarity with relational databases (PostgreSQL preferred) — schema design, query optimisation, migrations at scale.</li>
+                  <li>Experience designing and versioning REST APIs for mobile and web clients.</li>
+                  <li>A track record of working in regulated or sensitive data environments — healthcare, fintech, legal, or similar.</li>
+                  <li>Strong opinions about reliability — you think about failure modes before you ship, not after.</li>
+                  <li>Comfortable working asynchronously with a distributed remote team.</li>
+                </ul>
+              </div>
+
+              <div class="job-subsection" style="margin-top:28px;">
+                <div class="job-subsection-title">Nice to have</div>
+                <ul class="job-list muted">
+                  <li>Experience building healthcare platforms with HIPAA / GDPR compliance requirements.</li>
+                  <li>Familiarity with event-driven architecture patterns (SQS, SNS, EventBridge, Kafka).</li>
+                  <li>GraphQL API experience.</li>
+                  <li>Prior work at a marketplace or two-sided platform (matching, availability, booking systems).</li>
+                  <li>Any professional experience in digital health, medtech, or life sciences.</li>
+                </ul>
+              </div>
+            </div>
+
+            <hr class="body-divider" />
+
+            <!-- What we offer -->
+            <div class="job-section">
+              <h2 class="job-section-title">What we offer</h2>
+              <ul class="job-list">
+                <li><strong>£90,000 – £120,000</strong> base salary, benchmarked to the top 25th percentile.</li>
+                <li><strong>0.1% – 0.3% equity</strong> with a standard 4-year vest / 1-year cliff.</li>
+                <li><strong>Remote-first.</strong> We have London and Dubai hubs, but remote is genuinely first-class — not a workaround.</li>
+                <li><strong>£2,000/year</strong> learning and conference budget, with internal knowledge-share sessions.</li>
+                <li><strong>Private health cover</strong> for you and your dependents from day one, including mental health support.</li>
+                <li><strong>28 days holiday</strong> + bank holidays + your birthday off. We actually track that people use it.</li>
+                <li><strong>Hairline health benefit</strong> — free access to the full platform, including a funded consultation.</li>
+              </ul>
+            </div>
+
+            <hr class="body-divider" />
+
+            <!-- About Hairline block -->
+            <div class="about-block">
+              <div class="about-block-label">About Hairline</div>
+              <h3>We're building the most trusted name in hair restoration.</h3>
+              <p>
+                Hairline connects people experiencing hair loss with vetted hair restoration providers worldwide.
+                Our platform covers everything from the initial assessment and 3D head-scan diagnostics through
+                to provider matching, treatment booking, and post-procedure recovery tracking via Hairline
+                Aftercare. We also offer Hairline Travel — full medical-travel packages for patients who choose
+                to be treated abroad. We're early, ambitious, and backed by investors who think this category
+                is ripe for disruption.
+              </p>
+            </div>
+
+            <!-- Equal opportunity notice -->
+            <div class="eeo-block">
+              <div class="eeo-icon">🌍</div>
+              <div class="eeo-text">
+                <strong>Hairline is an equal opportunity employer.</strong> We celebrate diversity and are committed
+                to creating an inclusive environment for all employees. We welcome applications from people of all
+                backgrounds, identities, and experiences. If you need reasonable adjustments during the application
+                or interview process, please let us know.
+              </div>
+            </div>
+
+          </div>
+        </main>
+
+        <!-- ─── RIGHT: SIDEBAR ─────────────────────────────────────────── -->
+        <aside class="job-sidebar">
+
+          <!-- Apply card -->
+          <div class="apply-card">
+            <div class="apply-card-title">Apply for this role</div>
+            <p class="apply-card-sub">Takes about 10 minutes. No cover letter required.</p>
+            <div class="apply-btn-stack">
+              <a href="#apply" class="btn-accent">Apply now →</a>
+            </div>
+            <div class="apply-divider">
+              <div class="apply-divider-line"></div>
+              <span class="apply-divider-text">or</span>
+              <div class="apply-divider-line"></div>
+            </div>
+            <button class="apply-share">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16">
+                <circle cx="12" cy="3" r="1.5"/><circle cx="4" cy="8" r="1.5"/><circle cx="12" cy="13" r="1.5"/>
+                <path d="M5.5 8.5l5 3M10.5 4L5.5 7.5"/>
+              </svg>
+              Share this role
+            </button>
+          </div>
+
+          <!-- Role details -->
+          <div class="role-details">
+            <div class="role-details-title">Role details</div>
+            <div class="detail-row">
+              <span class="detail-key">Department</span>
+              <span class="detail-val">Engineering</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Sub-team</span>
+              <span class="detail-val">Patient Platform</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Reports to</span>
+              <span class="detail-val">VP Engineering</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Employment</span>
+              <span class="detail-val">Full-time, permanent</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Location</span>
+              <span class="detail-val">Remote — UK/EU preferred</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Salary</span>
+              <span class="detail-val">£90,000 – £120,000</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Equity</span>
+              <span class="detail-val">0.1% – 0.3%</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Start date</span>
+              <span class="detail-val">ASAP / flexible</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-key">Posted</span>
+              <span class="detail-val">20 June 2026</span>
+            </div>
+          </div>
+
+          <!-- Hiring team -->
+          <div class="hiring-block">
+            <div class="hiring-block-title">Hiring team</div>
+            <div class="hiring-person">
+              <div class="hiring-avatar">👩🏽‍💻</div>
+              <div>
+                <div class="hiring-name">Priya Mehta</div>
+                <div class="hiring-role">VP Engineering</div>
+              </div>
+            </div>
+            <div class="hiring-person">
+              <div class="hiring-avatar">🧑🏻‍💼</div>
+              <div>
+                <div class="hiring-name">James O'Brien</div>
+                <div class="hiring-role">Talent Lead</div>
+              </div>
+            </div>
+            <div class="hiring-ask">
+              <a href="mailto:talent@hairline.app">Have a question? Email us →</a>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- INTERVIEW PROCESS                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="process-section">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:48px;">
+        <span class="label">Our process</span>
+        <h2>What to expect</h2>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="process-step-num">1</div>
+          <h4>Application</h4>
+          <p>Submit your application. We review all applications within 5 business days.</p>
+          <div class="process-step-tag">~10 min</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">2</div>
+          <h4>Intro call</h4>
+          <p>A 30-min conversation with our talent team. We'll tell you more about Hairline and learn about you.</p>
+          <div class="process-step-tag">30 min</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">3</div>
+          <h4>Technical screen</h4>
+          <p>A practical take-home or live coding session focused on real-world API and data design problems.</p>
+          <div class="process-step-tag">90 min</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">4</div>
+          <h4>Final interviews</h4>
+          <p>Meet the engineering team and a cross-functional panel. No whiteboard puzzles — just real conversations.</p>
+          <div class="process-step-tag">3 hrs total</div>
+        </div>
+      </div>
+      <p style="margin-top:32px;font-size:14px;color:var(--ink-muted);text-align:center;">
+        We aim to complete the full process in <strong style="color:var(--ink);">3 weeks or less</strong> from your first call.
+        We'll keep you updated at every stage.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- RELATED ROLES                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="related-roles-section">
+    <div class="container">
+      <div class="related-roles-header">
+        <h2>More open roles</h2>
+        <a href="careers-listing-wireframe.html" class="btn-ghost">See all 12 roles →</a>
+      </div>
+      <div class="related-roles-grid">
+        <a href="careers-detail-wireframe.html" class="related-job-card">
+          <div class="related-job-dept">Engineering</div>
+          <div class="related-job-title">iOS Engineer — Mobile App</div>
+          <div class="related-job-meta">
+            <span class="badge badge-outline">Full-time</span>
+            <span class="badge badge-outline">Remote / London</span>
+          </div>
+        </a>
+        <a href="careers-detail-wireframe.html" class="related-job-card">
+          <div class="related-job-dept">Product & Design</div>
+          <div class="related-job-title">Senior Product Designer — Patient Experience</div>
+          <div class="related-job-meta">
+            <span class="badge badge-accent">New</span>
+            <span class="badge badge-outline">Remote</span>
+          </div>
+        </a>
+        <a href="careers-detail-wireframe.html" class="related-job-card">
+          <div class="related-job-dept">Engineering</div>
+          <div class="related-job-title">Staff Engineer — Infrastructure & Data</div>
+          <div class="related-job-meta">
+            <span class="badge badge-outline">Full-time</span>
+            <span class="badge badge-outline">Remote</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">hairline<span>.</span></div>
+          <p class="footer-tagline">Hair restoration, finally done right. Connecting patients with the world's best hair restoration providers.</p>
+          <div style="display:flex;gap:12px;margin-top:16px;">
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Instagram</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Twitter / X</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">LinkedIn</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <ul class="footer-col-links">
+            <li><a href="/how-it-works">How it works</a></li>
+            <li><a href="/find-a-clinic">Find a clinic</a></li>
+            <li><a href="/assessment">Hair assessment</a></li>
+            <li><a href="/aftercare">Aftercare</a></li>
+            <li><a href="/travel">Travel</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Treatments</div>
+          <ul class="footer-col-links">
+            <li><a href="/treatments/hair-transplant">Hair transplant</a></li>
+            <li><a href="/treatments/fue">FUE</a></li>
+            <li><a href="/treatments/finasteride">Finasteride</a></li>
+            <li><a href="/treatments/minoxidil">Minoxidil</a></li>
+            <li><a href="/treatments/prp">PRP</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-col-links">
+            <li><a href="/about">About</a></li>
+            <li><a href="careers-listing-wireframe.html" style="color:rgba(255,255,255,.8);">Careers</a></li>
+            <li><a href="/press">Press</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/for-providers">For clinics</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Resources</div>
+          <ul class="footer-col-links">
+            <li><a href="/resources">All articles</a></li>
+            <li><a href="/hair-loss">Hair loss guide</a></li>
+            <li><a href="/resources/comparisons">Treatment comparisons</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span style="font-size:12px;color:rgba(255,255,255,.3);">© 2026 Hairline Technologies Ltd. All rights reserved.</span>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/cookies">Cookies</a>
+          <a href="/accessibility">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — /for-providers/book-demo (Book a Demo)</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0ede8;
+      color: #1a1a1a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Wireframe legend (top of page) ──────────────────── */
+    .wf-legend {
+      background: #1a1a1a;
+      color: #f0ede8;
+      padding: 12px 32px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .wf-legend strong { font-size: 13px; letter-spacing: 0.05em; }
+    .wf-legend span { color: #aaa; }
+    .legend-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .chip-section { background: #3a3a4a; color: #ccc; }
+    .chip-b2b { background: #1e3a2f; color: #6fcf97; }
+    .chip-cta { background: #3a1e1e; color: #f2994a; }
+    .chip-placeholder { background: #3a3a3a; color: #999; border: 1px dashed #555; }
+
+    /* ── Layout ───────────────────────────────────────────── */
+    .page-wrapper { max-width: 1280px; margin: 0 auto; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 24px;
+      background: #e8e4de;
+      border-left: 3px solid #8b7355;
+      font-size: 11px;
+      font-weight: 700;
+      color: #5c4b30;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-label .sec-num {
+      background: #8b7355;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; flex-shrink: 0;
+    }
+    .section-note {
+      font-weight: 400;
+      color: #7a6a52;
+      font-style: italic;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* ── Placeholder blocks ───────────────────────────────── */
+    .ph {
+      background: #ddd8d0;
+      border: 1px dashed #bbb;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* ── NAV ──────────────────────────────────────────────── */
+    .wf-nav {
+      background: #fff;
+      border-bottom: 1px solid #e5e0d8;
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: #1a1a1a;
+    }
+    .nav-logo span { color: #8b7355; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links li a {
+      font-size: 14px;
+      color: #555;
+      text-decoration: none;
+    }
+    .nav-links li a.active { color: #1a1a1a; font-weight: 600; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 18px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary { background: #1a1a1a; color: #fff; }
+    .btn-ghost { background: transparent; border: 1.5px solid #ccc; color: #333; }
+    .btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 10px; }
+    .btn-xl { padding: 16px 36px; font-size: 18px; border-radius: 12px; }
+    .nav-b2b-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #1e3a2f;
+      color: #6fcf97;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .btn-book {
+      background: #6fcf97;
+      color: #16211c;
+      font-weight: 700;
+    }
+
+    /* ── BREADCRUMB ───────────────────────────────────────── */
+    .breadcrumb {
+      padding: 16px 80px 0;
+      font-size: 13px;
+      color: #999;
+    }
+    .breadcrumb a { color: #999; text-decoration: none; }
+    .breadcrumb .current { color: #1a1a1a; font-weight: 600; }
+
+    /* ── S1 + S2 — HERO / FORM SPLIT ──────────────────────── */
+    .hero-form-section {
+      background: #16211c;
+      color: #f0ede8;
+      padding: 80px 80px 96px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .hero-left { padding-top: 24px; }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6fcf97;
+      margin-bottom: 20px;
+      padding: 4px 10px;
+      border: 1px solid #2a4a3a;
+      border-radius: 4px;
+    }
+    .hero-h1 {
+      font-size: 44px;
+      line-height: 1.12;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      margin-bottom: 20px;
+      max-width: 460px;
+    }
+    .hero-h1 em { color: #6fcf97; font-style: normal; }
+    .hero-sub {
+      font-size: 16px;
+      line-height: 1.65;
+      color: #a8b5a8;
+      margin-bottom: 40px;
+      max-width: 420px;
+    }
+    .hero-trust-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .hero-trust-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 14px;
+      color: #c8d4c8;
+    }
+    .hero-trust-icon {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #1e3a2f;
+      color: #6fcf97;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .hero-mini-stats {
+      display: flex;
+      gap: 40px;
+      border-top: 1px solid #2a3d34;
+      padding-top: 28px;
+    }
+    .mini-stat { display: flex; flex-direction: column; gap: 2px; }
+    .mini-stat strong { font-size: 26px; font-weight: 800; color: #fff; }
+    .mini-stat span { font-size: 12px; color: #7a8f7a; }
+
+    /* ── FORM CARD ─────────────────────────────────────────── */
+    .form-card {
+      background: #faf8f5;
+      border-radius: 24px;
+      padding: 44px;
+      color: #1a1a1a;
+    }
+    .form-card-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+    .form-card-sub {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 28px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #555;
+    }
+    .form-input {
+      background: #fff;
+      border: 1.5px solid #e0dace;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: #999;
+    }
+    .form-select {
+      background: #fff;
+      border: 1.5px solid #e0dace;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .form-select .caret { font-size: 10px; color: #bbb; }
+    .form-textarea {
+      background: #fff;
+      border: 1.5px solid #e0dace;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: #999;
+      height: 64px;
+      align-items: flex-start;
+    }
+    .form-submit {
+      width: 100%;
+      justify-content: center;
+      margin-top: 8px;
+      padding: 15px 0;
+      font-size: 15px;
+    }
+    .form-disclaimer {
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── S3 — WHAT WE'LL COVER ────────────────────────────── */
+    .cover-section {
+      background: #fff;
+      padding: 80px 80px;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8b7355;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .section-h2 {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      color: #1a1a1a;
+      line-height: 1.15;
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto 56px;
+    }
+    .cover-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .cover-card {
+      background: #faf8f5;
+      border: 1.5px solid #e8e2da;
+      border-radius: 20px;
+      padding: 32px 24px;
+    }
+    .cover-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .cover-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .cover-card-body {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.55;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid #eee;
+    }
+    .cover-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666;
+      font-weight: 600;
+    }
+    .cover-meta-icon { color: #8b7355; }
+
+    /* ── S4 — SOCIAL PROOF ─────────────────────────────────── */
+    .proof-section {
+      background: #16211c;
+      padding: 72px 80px;
+      text-align: center;
+    }
+    .proof-h2 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #f0ede8;
+      margin-bottom: 8px;
+    }
+    .proof-sub {
+      font-size: 14px;
+      color: #7a9080;
+      margin-bottom: 40px;
+    }
+    .logo-wall {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .logo-tile {
+      background: #1e2e28;
+      border: 1px dashed #2a3d34;
+      border-radius: 10px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a6a5a;
+      font-size: 11px;
+    }
+    .proof-stats {
+      display: flex;
+      justify-content: center;
+      gap: 56px;
+      border-top: 1px solid #2a3d34;
+      padding-top: 32px;
+    }
+    .proof-stat-val { font-size: 30px; font-weight: 800; color: #6fcf97; }
+    .proof-stat-lbl { font-size: 12px; color: #7a9080; margin-top: 4px; }
+
+    /* ── S5 — ALTERNATE CONTACT ───────────────────────────── */
+    .alt-contact-section {
+      background: #faf8f5;
+      padding: 64px 80px 96px;
+      text-align: center;
+    }
+    .alt-contact-card {
+      max-width: 560px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1.5px solid #e8e2da;
+      border-radius: 20px;
+      padding: 40px 48px;
+    }
+    .alt-contact-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .alt-contact-body {
+      font-size: 14px;
+      color: #777;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .alt-contact-email {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    .alt-contact-note {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    .footer {
+      background: #111;
+      padding: 56px 80px 32px;
+      color: #555;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {
+      font-size: 18px;
+      font-weight: 800;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .footer-brand span { color: #5a7a5a; }
+    .footer-tagline { font-size: 12px; color: #444; line-height: 1.6; }
+    .footer-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #666; margin-bottom: 16px; text-transform: uppercase; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 13px; color: #444; text-decoration: none; }
+    .footer-bottom {
+      border-top: 1px solid #222;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    /* ── ANNOTATION TOOLTIP ───────────────────────────────── */
+    .annotation {
+      display: inline-block;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      font-size: 10px;
+      padding: 2px 7px;
+      color: #856404;
+      font-style: italic;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Responsive hint strip ────────────────────────────── */
+    .breakpoint-hint {
+      background: #fff;
+      border-top: 2px dashed #ddd;
+      border-bottom: 2px dashed #ddd;
+      padding: 10px 32px;
+      font-size: 11px;
+      color: #aaa;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .bp-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      font-weight: 600;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     WIREFRAME LEGEND
+══════════════════════════════════════════════════════════ -->
+<div class="wf-legend">
+  <strong>WIREFRAME</strong>
+  <span>hairline.app /for-providers/book-demo — Book a Demo (B2B)</span>
+  <span class="legend-chip chip-b2b">B2B Zone 6</span>
+  <span class="legend-chip chip-section">Brief §5.6 §1, §9 · Sitemap Zone 6 — /for-providers/book-demo</span>
+  <span style="color:#555;">Desktop 1280px · 5 sections</span>
+  <span style="margin-left:auto; color:#555;">Design Brief v2.0 — May 2026</span>
+</div>
+
+<div class="page-wrapper">
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION — Provider-specific top nav
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">NAV</span>
+  Provider Navigation — sticky top bar, shared across all /for-providers/* pages
+  <span class="section-note">— no nav CTA needed here (the page itself IS the conversion action), but kept for wayfinding consistency</span>
+</div>
+
+<nav class="wf-nav">
+  <div style="display:flex; align-items:center; gap:20px;">
+    <div class="nav-logo">hairline<span>.</span></div>
+    <span class="nav-b2b-badge">FOR CLINICS</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Overview</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Case Studies</a></li>
+    <li><a href="#">Enterprise</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost" style="font-size:13px;">Sign in</a>
+    <a href="#" class="btn btn-primary">Book a demo →</a>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="#">For Providers</a> / <span class="current">Book a Demo</span>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1 + 2 — HERO + BOOKING FORM (split layout)
+     Sitemap §Zone 6 §1: headline + demo description
+     Sitemap §Zone 6 §2: clinic name, your name, email, phone, clinic size, primary goal
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">1+2</span>
+  HERO (left) + BOOKING FORM (right) — split layout, form is the page's only job
+  <span class="section-note">— Sitemap §Zone 6 §1–2 · form-first pattern, no scroll required to convert on desktop</span>
+</div>
+
+<section class="hero-form-section">
+
+  <div class="hero-left">
+    <div class="hero-tag">★ Book a Demo</div>
+    <h1 class="hero-h1">See <em>Hairline</em> in action.</h1>
+    <p class="hero-sub">
+      A 30-minute walkthrough of the patient lead flow, the Provider Portal, and what onboarding looks like for your clinic.
+    </p>
+
+    <div class="hero-trust-list">
+      <div class="hero-trust-item">
+        <span class="hero-trust-icon">✓</span>
+        No commitment — see the numbers before you decide anything.
+      </div>
+      <div class="hero-trust-item">
+        <span class="hero-trust-icon">✓</span>
+        Tailored to your clinic's size, location and treatment focus.
+      </div>
+      <div class="hero-trust-item">
+        <span class="hero-trust-icon">✓</span>
+        Hosted by a partnerships specialist, not a sales script.
+      </div>
+    </div>
+
+    <div class="hero-mini-stats">
+      <div class="mini-stat">
+        <strong>340+</strong>
+        <span>Partner clinics</span>
+      </div>
+      <div class="mini-stat">
+        <strong>14</strong>
+        <span>Countries</span>
+      </div>
+      <div class="mini-stat">
+        <strong>30 min</strong>
+        <span>Avg. demo length</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-card-title">Request your demo</div>
+    <div class="form-card-sub">We'll reach out within one business day to schedule a time.</div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Clinic name</label>
+        <div class="form-input">e.g. Vera Clinic</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Your name</label>
+        <div class="form-input">e.g. Dr. Aylin Demir</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Work email</label>
+        <div class="form-input">you@yourclinic.com</div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Phone number</label>
+        <div class="form-input">+1 (___) ___-____</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Clinic size</label>
+        <div class="form-select">Select<span class="caret">▾</span></div>
+        <span class="annotation">Solo · 2–5 surgeons · 6–20 · Chain (20+)</span>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Primary goal</label>
+        <div class="form-select">Select<span class="caret">▾</span></div>
+        <span class="annotation">More leads · Lower CAC · Ops tools · Multi-location</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field full">
+        <label class="form-label">Anything else we should know? <span style="color:#bbb; font-weight:400;">(optional)</span></label>
+        <div class="form-textarea">e.g. current channels, timeline, specific questions…</div>
+      </div>
+    </div>
+
+    <a href="#" class="btn btn-book btn-lg form-submit">Book my demo →</a>
+    <div class="form-disclaimer">By submitting, you agree to our Privacy Policy. We'll never share your details with third parties.</div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3 — WHAT WE'LL COVER
+     Sitemap §Zone 6 §3: 3–4 bullets — walkthrough / lead flow demo / pricing / Q&A
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">3</span>
+  WHAT WE'LL COVER — sets expectations, reduces no-show risk
+  <span class="section-note">— Sitemap §Zone 6 §3 · 4-card grid, numbered sequence</span>
+</div>
+
+<section class="cover-section">
+  <div class="section-eyebrow">What to expect</div>
+  <h2 class="section-h2">Thirty minutes. No slides you didn't ask for.</h2>
+
+  <div class="cover-grid">
+    <div class="cover-card">
+      <div class="cover-num">1</div>
+      <div class="cover-card-title">Platform walkthrough</div>
+      <div class="cover-card-body">A live tour of the Provider Portal — scheduling, patient management, and the lead dashboard.</div>
+    </div>
+    <div class="cover-card">
+      <div class="cover-num">2</div>
+      <div class="cover-card-title">Patient lead flow demo</div>
+      <div class="cover-card-body">See exactly how pre-qualified patients are matched and routed to your clinic in real time.</div>
+    </div>
+    <div class="cover-card">
+      <div class="cover-num">3</div>
+      <div class="cover-card-title">Pricing discussion</div>
+      <div class="cover-card-body">A transparent walk through the commission model and what it would look like for your volume.</div>
+    </div>
+    <div class="cover-card">
+      <div class="cover-num">4</div>
+      <div class="cover-card-title">Q&amp;A</div>
+      <div class="cover-card-body">Bring your questions on compliance, exclusivity terms, or anything specific to your market.</div>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item"><span class="cover-meta-icon">⏱</span> 30 minutes, video call</div>
+    <div class="cover-meta-item"><span class="cover-meta-icon">👤</span> 1:1 with a partnerships specialist</div>
+    <div class="cover-meta-item"><span class="cover-meta-icon">🌐</span> Available in EN · AR · TR · DE · FR</div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4 — SOCIAL PROOF
+     Sitemap §Zone 6 §4: 'Join [X] clinics already growing with Hairline' + logo strip
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">4</span>
+  SOCIAL PROOF — logo wall + aggregate stats, reduces form-abandonment doubt
+  <span class="section-note">— Sitemap §Zone 6 §4 · dark band, mirrors case-studies page treatment for consistency</span>
+</div>
+
+<section class="proof-section">
+  <div class="proof-h2">Join 340+ clinics already growing with Hairline.</div>
+  <div class="proof-sub">A selection of partner clinics across 14 countries.</div>
+
+  <div class="logo-wall">
+    <div class="logo-tile">[ Logo ]</div>
+    <div class="logo-tile">[ Logo ]</div>
+    <div class="logo-tile">[ Logo ]</div>
+    <div class="logo-tile">[ Logo ]</div>
+    <div class="logo-tile">[ Logo ]</div>
+    <div class="logo-tile">[ Logo ]</div>
+  </div>
+
+  <div class="proof-stats">
+    <div>
+      <div class="proof-stat-val">3.1×</div>
+      <div class="proof-stat-lbl">Avg. qualified lead increase</div>
+    </div>
+    <div>
+      <div class="proof-stat-val">–58%</div>
+      <div class="proof-stat-lbl">Avg. CAC reduction</div>
+    </div>
+    <div>
+      <div class="proof-stat-val">5–7 days</div>
+      <div class="proof-stat-lbl">Time to go live</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 5 — ALTERNATE CONTACT
+     Sitemap §Zone 6 §5: direct email for clinics who prefer not to use the form
+══════════════════════════════════════════════════════════ -->
+<div class="section-label">
+  <span class="sec-num">5</span>
+  ALTERNATE CONTACT — fallback for clinics who don't want to use the form
+  <span class="section-note">— Sitemap §Zone 6 §5 · low-pressure exit, single card, centered</span>
+</div>
+
+<section class="alt-contact-section">
+  <div class="alt-contact-card">
+    <div class="alt-contact-title">Prefer not to fill out a form?</div>
+    <div class="alt-contact-body">Email our partnerships team directly and we'll set up a time that works for you.</div>
+    <div class="alt-contact-email">partnerships@hairline.app</div>
+    <div class="alt-contact-note">Typical response time: within 1 business day</div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">hairline<span>.</span></div>
+      <div class="footer-tagline">Hair restoration, done right. The platform connecting patients and clinics worldwide.</div>
+    </div>
+    <div class="footer-col">
+      <h4>For Providers</h4>
+      <ul>
+        <li><a href="#">Overview</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Enterprise</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Book a demo</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>For Patients</h4>
+      <ul>
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Find a clinic</a></li>
+        <li><a href="#">Treatments</a></li>
+        <li><a href="#">Aftercare</a></li>
+        <li><a href="#">Travel</a></li>
+        <li><a href="#">Assessment</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">HIPAA Notice</a></li>
+        <li><a href="#">GDPR</a></li>
+        <li><a href="#">Cookie Settings</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Hairline Technologies Ltd. All rights reserved.</span>
+    <span style="color:#333;">EN · AR · TR · DE · FR</span>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     BREAKPOINT / RESPONSIVE NOTES
+══════════════════════════════════════════════════════════ -->
+<div class="breakpoint-hint">
+  <strong>Responsive notes (wireframe shown at 1280px desktop):</strong>
+  <span class="bp-chip">768px tablet</span> Hero + form stack vertically (hero above form); "what we'll cover" grid → 2 columns; logo wall → 3 columns
+  <span class="bp-chip">360px mobile</span> Hero/form fully stacked, form fields go full-width (1 column); cover-grid → 1 column; logo wall → 2 columns; proof stats stack vertically
+  <span class="bp-chip">Mobile CTA</span> Sticky "Book my demo" bar pinned to bottom 40% while form is off-screen, per Brief §8.1 single-thumb reach
+</div>
+
+</div><!-- /.page-wrapper -->
+</body>
+</html>

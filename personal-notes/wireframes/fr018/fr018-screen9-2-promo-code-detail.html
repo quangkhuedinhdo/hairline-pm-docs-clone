@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 9.2 — Promo Code Detail (Affiliate Portal)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #0052cc;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #fff; letter-spacing: 0.01em; }
+    .topbar-logo span { font-weight: 400; opacity: 0.75; font-size: 13px; margin-left: 8px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); }
+    .topbar-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; border: 1.5px solid rgba(255,255,255,0.4);
+    }
+    .topbar-logout {
+      font-size: 12px; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 4px;
+      padding: 4px 10px; cursor: pointer; text-decoration: none;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      padding: 0 28px;
+    }
+    .tab-nav a {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 14px 20px;
+      font-size: 13px; font-weight: 500; color: #5e6c84;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-nav a:hover { color: #172b4d; }
+    .tab-nav a.active { color: #0052cc; border-bottom-color: #0052cc; font-weight: 600; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 28px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 20px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: #c1c7d0; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none; white-space: nowrap;
+    }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-copy {
+      background: #f0f1f3; color: #172b4d; border: 1px solid #dfe1e6;
+      font-size: 12px; padding: 5px 12px; border-radius: 3px; cursor: pointer;
+    }
+    .btn-copy:hover { background: #e6f0ff; border-color: #4c9aff; color: #0052cc; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* ── Status badge ── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 3px;
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-active   { background: #e3fcef; color: #006644; }
+    .badge-inactive { background: #dfe1e6; color: #42526e; }
+    .badge-expired  { background: #dfe1e6; color: #42526e; }
+    .badge-revoked  { background: #ffebe6; color: #bf2600; }
+
+    /* ── Code header card ── */
+    .code-header-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+    }
+    .code-header-left { flex: 1; }
+    .code-big {
+      font-family: 'Courier New', monospace;
+      font-size: 26px; font-weight: 700; letter-spacing: 0.1em;
+      color: #172b4d; margin-bottom: 8px;
+    }
+    .code-meta { font-size: 12px; color: #5e6c84; line-height: 1.8; }
+    .code-meta b { color: #172b4d; }
+    .code-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+    /* ── Referral link box ── */
+    .referral-link-box {
+      display: flex; align-items: center; gap: 8px;
+      background: #f0f1f3; border: 1px solid #dfe1e6; border-radius: 4px;
+      padding: 8px 12px; margin-top: 12px; max-width: 560px;
+    }
+    .referral-link-url {
+      color: #5e6c84; font-family: 'Courier New', monospace;
+      font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;
+    }
+
+    /* ── 3-column grid ── */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Section card ── */
+    .section-card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px;
+    }
+    .section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #5e6c84;
+      margin-bottom: 14px; padding-bottom: 8px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+
+    /* ── Key-value list ── */
+    .kv-list { display: flex; flex-direction: column; gap: 11px; }
+    .kv-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; }
+    .kv-label { color: #5e6c84; flex-shrink: 0; }
+    .kv-value { color: #172b4d; font-weight: 500; text-align: right; }
+    .kv-value.green { color: #006644; }
+
+    /* ── Conversion bar ── */
+    .conv-wrap { display: flex; align-items: center; gap: 8px; }
+    .conv-bar-bg { width: 80px; height: 6px; background: #dfe1e6; border-radius: 3px; overflow: hidden; }
+    .conv-bar-fill { height: 100%; background: #36b37e; border-radius: 3px; }
+    .conv-pct { font-size: 13px; color: #006644; font-weight: 600; }
+
+    /* ── Chart placeholder ── */
+    .chart-wrap {
+      background: #f8f9fa;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+    .chart-label { font-size: 11px; color: #5e6c84; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .chart-svg { width: 100%; height: 90px; display: block; }
+    .chart-legend { display: flex; gap: 16px; font-size: 11px; color: #5e6c84; margin-top: 8px; }
+    .legend-dot { display: inline-block; width: 10px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
+
+    /* ── X-axis month labels ── */
+    .chart-months { display: flex; justify-content: space-between; font-size: 10px; color: #97a0af; margin-top: 4px; padding: 0 4px; }
+
+    /* ── Marketing material items ── */
+    .material-list { display: flex; flex-direction: column; gap: 8px; }
+    .material-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; background: #f8f9fa;
+      border: 1px solid #dfe1e6; border-radius: 4px; padding: 9px 12px;
+    }
+    .material-icon { font-size: 16px; flex-shrink: 0; }
+    .material-name { color: #172b4d; flex: 1; }
+    .material-link { color: #0052cc; text-decoration: none; font-size: 12px; flex-shrink: 0; }
+    .material-link:hover { text-decoration: underline; }
+    .material-note { font-size: 11px; color: #97a0af; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BAR ════════════════ -->
+<div class="topbar">
+  <div class="topbar-logo">Hairline <span>Affiliate Portal</span></div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">IC</div>
+    InfluCare Network
+    <a href="#" class="topbar-logout">Log out</a>
+  </div>
+</div>
+
+<!-- ════════════════ TAB NAVIGATION ════════════════ -->
+<div class="tab-nav">
+  <a href="#">📊 Overview</a>
+  <a href="fr018-screen9-2-promo-codes-tab.html" class="active">🏷️ Promo Codes</a>
+  <a href="#">💳 Payouts</a>
+  <a href="#">👤 Profile</a>
+</div>
+
+<!-- ════════════════ PAGE CONTENT ════════════════ -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="fr018-screen9-2-promo-codes-tab.html">Promo Codes</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>PARTNER10-ICN</span>
+  </div>
+
+  <!-- Code header card -->
+  <div class="code-header-card">
+    <div class="code-header-left">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+        <div class="code-big">PARTNER10-ICN</div>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div class="code-meta">
+        <b>Campaign:</b> PARTNER10 &nbsp;·&nbsp;
+        <b>Active window:</b> 2025-11-05 – No expiry &nbsp;·&nbsp;
+        <b>Created:</b> 2025-11-05 &nbsp;·&nbsp;
+        <b>Last used:</b> 2026-06-29
+      </div>
+      <div class="code-actions">
+        <button class="btn btn-copy">📋 Copy Code</button>
+        <button class="btn btn-copy">🔗 Copy Referral Link</button>
+      </div>
+      <div class="referral-link-box">
+        <span class="referral-link-url">https://app.hairline.com/ref/PARTNER10-ICN?auto=1</span>
+        <button class="btn btn-copy btn-sm">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-column detail grid -->
+  <div class="detail-grid">
+
+    <!-- Col 1: Discount Terms -->
+    <div class="section-card">
+      <div class="section-title">Discount Terms</div>
+      <div class="kv-list">
+        <div class="kv-row">
+          <span class="kv-label">Discount Type</span>
+          <span class="kv-value">Hairline Fees Only</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Discount Value</span>
+          <span class="kv-value">$50 fixed</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Application Method</span>
+          <span class="kv-value">Auto-apply (referral link)</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Per-Patient Limit</span>
+          <span class="kv-value">1 use per patient</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Max Usage Count</span>
+          <span class="kv-value">Unlimited</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Expiration Date</span>
+          <span class="kv-value">None</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 2: Performance + Chart -->
+    <div class="section-card">
+      <div class="section-title">Performance</div>
+      <div class="kv-list">
+        <div class="kv-row">
+          <span class="kv-label">Applied Count</span>
+          <span class="kv-value">204</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Completed Count</span>
+          <span class="kv-value">166</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Conversion Rate</span>
+          <span class="kv-value">
+            <div class="conv-wrap" style="justify-content:flex-end;">
+              <div class="conv-bar-bg"><div class="conv-bar-fill" style="width:81%"></div></div>
+              <span class="conv-pct">81.4%</span>
+            </div>
+          </span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Revenue Generated</span>
+          <span class="kv-value">$28,900</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Commission Earned</span>
+          <span class="kv-value green" style="font-weight:700;">$4,335</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Last Used Date</span>
+          <span class="kv-value">2026-06-29</span>
+        </div>
+      </div>
+
+      <!-- Usage Over Time chart -->
+      <div class="chart-wrap">
+        <div class="chart-label">Usage Over Time</div>
+        <svg class="chart-svg" viewBox="0 0 280 80" preserveAspectRatio="none">
+          <line x1="0" y1="70" x2="280" y2="70" stroke="#dfe1e6" stroke-width="1"/>
+          <line x1="0" y1="47" x2="280" y2="47" stroke="#dfe1e6" stroke-width="0.5" stroke-dasharray="4,3"/>
+          <line x1="0" y1="24" x2="280" y2="24" stroke="#dfe1e6" stroke-width="0.5" stroke-dasharray="4,3"/>
+          <!-- Applied (blue) -->
+          <polyline fill="none" stroke="#0052cc" stroke-width="2"
+            points="0,65 47,55 93,44 140,33 187,22 233,14 280,8"/>
+          <!-- Completed (green) -->
+          <polyline fill="none" stroke="#36b37e" stroke-width="2"
+            points="0,68 47,58 93,48 140,38 187,27 233,18 280,12"/>
+          <circle cx="0"   cy="65" r="3" fill="#0052cc"/>
+          <circle cx="93"  cy="44" r="3" fill="#0052cc"/>
+          <circle cx="187" cy="22" r="3" fill="#0052cc"/>
+          <circle cx="280" cy="8"  r="3" fill="#0052cc"/>
+          <circle cx="0"   cy="68" r="3" fill="#36b37e"/>
+          <circle cx="93"  cy="48" r="3" fill="#36b37e"/>
+          <circle cx="187" cy="27" r="3" fill="#36b37e"/>
+          <circle cx="280" cy="12" r="3" fill="#36b37e"/>
+        </svg>
+        <div class="chart-months">
+          <span>Nov '25</span><span>Jan '26</span><span>Mar '26</span><span>May '26</span><span>Jun '26</span>
+        </div>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#0052cc;"></span>Applied</span>
+          <span><span class="legend-dot" style="background:#36b37e;"></span>Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 3: Marketing Materials -->
+    <div class="section-card">
+      <div class="section-title">Marketing Materials</div>
+      <div style="font-size:12px;color:#5e6c84;margin-bottom:12px;">
+        Read-only links to externally hosted campaign assets assigned to this code/campaign.
+      </div>
+      <div class="material-list">
+        <div class="material-item">
+          <span class="material-icon">🖼️</span>
+          <span class="material-name">Banner 728×90 – PARTNER10</span>
+          <a href="#" class="material-link">Open ↗</a>
+        </div>
+        <div class="material-item">
+          <span class="material-icon">📄</span>
+          <span class="material-name">Email Template – PARTNER10</span>
+          <a href="#" class="material-link">Open ↗</a>
+        </div>
+        <div class="material-item">
+          <span class="material-icon">📱</span>
+          <span class="material-name">Social Post Kit – PARTNER10</span>
+          <a href="#" class="material-link">Open ↗</a>
+        </div>
+      </div>
+      <p class="material-note">
+        Asset creation and hosting are managed by the Hairline team. Contact your account manager to request new materials.
+      </p>
+    </div>
+
+  </div><!-- /.detail-grid -->
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

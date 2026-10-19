@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hairline.app — /providers/[clinic-slug] Wireframe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:      #FAF8F5;
+      --bg-subtle:    #F3EFE9;
+      --bg-dark:      #1C1A17;
+      --ink:          #1C1A17;
+      --ink-mid:      #4A4540;
+      --ink-muted:    #9A9289;
+      --accent:       #B85C38;
+      --accent-light: #F5DDD4;
+      --border:       #E2DDD7;
+      --white:        #FFFFFF;
+      --green:        #2E6B4F;
+      --green-light:  #D4EAE0;
+
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --section-py:  80px;
+      --container:   1200px;
+      --radius-md:   12px;
+      --radius-lg:   20px;
+      --radius-xl:   28px;
+      --shadow-sm:   0 2px 8px rgba(28,26,23,.06);
+      --shadow-md:   0 8px 32px rgba(28,26,23,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-base);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Utility ─────────────────────────────────────────────────────── */
+    .container {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* ─── Buttons ─────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity .15s;
+      width: 100%;
+    }
+    .btn-primary:hover { opacity: .88; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 28px;
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color .15s;
+      width: 100%;
+    }
+    .btn-secondary:hover { border-color: var(--ink-mid); }
+
+    .text-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .text-link:hover { text-decoration: underline; }
+
+    /* ─── NAV ────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,248,245,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 64px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      text-decoration: none;
+      margin-right: auto;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta-b2b {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 16px;
+      transition: border-color .15s, color .15s;
+    }
+    .nav-cta-b2b:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+    /* ─── BREADCRUMB ─────────────────────────────────────────────────── */
+    .breadcrumb {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .breadcrumb a {
+      font-size: 13px;
+      color: var(--ink-muted);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb-sep { font-size: 13px; color: var(--border); }
+    .breadcrumb-current { font-size: 13px; color: var(--ink-mid); font-weight: 500; }
+
+    /* ─── SECTION 1 — HERO GALLERY ───────────────────────────────────── */
+    .hero-gallery {
+      padding: 32px 0 0;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      grid-template-rows: 280px 280px;
+      gap: 8px;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .gallery-cell {
+      background: var(--bg-subtle);
+      border: 1.5px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      font-size: 13px;
+      position: relative;
+    }
+    .gallery-cell:first-child {
+      grid-row: 1 / 3;
+      font-size: 15px;
+    }
+    .gallery-cell-label {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      background: rgba(28,26,23,.55);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .gallery-show-all {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+    .gallery-cell-inner-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink-muted);
+    }
+    .gallery-cell-icon { font-size: 24px; }
+
+    /* ─── CLINIC HEADER ──────────────────────────────────────────────── */
+    .clinic-header-section {
+      padding-top: 36px;
+      padding-bottom: 24px;
+    }
+    .clinic-header-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: start;
+    }
+    .clinic-title-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .clinic-name {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--green-light);
+      color: var(--green);
+    }
+    .clinic-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .clinic-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .clinic-rating-stars { color: var(--accent); }
+    .clinic-rating-count {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink-muted);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .clinic-location {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: var(--ink-mid);
+    }
+    .clinic-badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--ink-mid);
+      border: 1px solid var(--border);
+    }
+    /* Share / Save actions */
+    .clinic-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .icon-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+    /* ─── TWO-COLUMN LAYOUT (content + sticky booking) ───────────────── */
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 72px;
+      align-items: start;
+      padding-bottom: 80px;
+    }
+    .profile-content { min-width: 0; }
+    .profile-sidebar { position: sticky; top: 88px; }
+
+    /* ─── SECTION: ABOUT ─────────────────────────────────────────────── */
+    .about-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    .about-section p {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .about-section p:last-child { margin-bottom: 0; }
+
+    /* ─── SECTION: LEAD SURGEONS ─────────────────────────────────────── */
+    .surgeons-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+    .surgeons-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .surgeon-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+    }
+    .surgeon-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .surgeon-info h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .surgeon-title {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .surgeon-meta {
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+    .surgeon-exp-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 10px;
+      background: var(--accent-light);
+      color: var(--accent);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ─── SECTION: SERVICES ──────────────────────────────────────────── */
+    .services-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .services-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .service-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--white);
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+      text-decoration: none;
+      transition: border-color .15s, background .15s;
+    }
+    .service-pill:hover { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+    .service-pill.primary {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ─── SECTION: PRICING ───────────────────────────────────────────── */
+    .pricing-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .pricing-note {
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+    }
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .pricing-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      padding: 0 16px 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pricing-table td {
+      padding: 16px 16px 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--ink-mid);
+      vertical-align: middle;
+    }
+    .pricing-table tr:last-child td { border-bottom: none; }
+    .pricing-treatment {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .pricing-range {
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .pricing-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .pricing-tag.popular { background: var(--accent-light); color: var(--accent); }
+    .pricing-tag.new { background: var(--green-light); color: var(--green); }
+
+    .pricing-disclaimer {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    /* ─── SECTION: PATIENT REVIEWS ───────────────────────────────────── */
+    .reviews-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .reviews-summary-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .reviews-big-score {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: -.04em;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .reviews-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .reviews-stars-row {
+      display: flex;
+      gap: 3px;
+      color: var(--accent);
+      font-size: 18px;
+    }
+    .reviews-count {
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+    .reviews-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .breakdown-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .breakdown-label { width: 36px; text-align: right; }
+    .breakdown-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .breakdown-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+    }
+    .breakdown-count { width: 20px; font-size: 11px; }
+
+    .reviews-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .review-card {
+      padding: 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .review-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .review-author-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .review-author-meta {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+    .review-stars { color: var(--accent); font-size: 13px; margin-bottom: 10px; }
+    .review-treatment-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--bg-subtle);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      margin-bottom: 10px;
+    }
+    .review-text {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.7;
+    }
+    .review-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .verified-review-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .review-helpful {
+      font-size: 12px;
+      color: var(--ink-muted);
+      cursor: pointer;
+    }
+    .review-helpful:hover { color: var(--ink); }
+
+    .reviews-load-more {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* ─── SECTION: PHOTO GALLERY ─────────────────────────────────────── */
+    .photo-gallery-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .facility-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .facility-thumb {
+      aspect-ratio: 4 / 3;
+      background: var(--bg-subtle);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      font-size: 12px;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .facility-thumb-icon { font-size: 22px; }
+
+    /* ─── SECTION: BEFORE & AFTER ────────────────────────────────────── */
+    .before-after-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .before-after-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+    .ba-notice-icon { font-size: 18px; flex-shrink: 0; }
+    .ba-notice-text {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.5;
+    }
+    .ba-consent-gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 40px;
+      background: var(--white);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-xl);
+      text-align: center;
+    }
+    .ba-gate-icon { font-size: 36px; }
+    .ba-gate-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .ba-gate-text {
+      font-size: 13px;
+      color: var(--ink-muted);
+      max-width: 320px;
+    }
+    .ba-gate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 24px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+
+    /* ─── SECTION: MAP ───────────────────────────────────────────────── */
+    .map-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .map-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .map-placeholder {
+      background: var(--bg-subtle);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-xl);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--ink-muted);
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-pin {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: var(--accent);
+      box-shadow: 0 2px 8px rgba(184,92,56,.35);
+      top: 42%;
+      left: 48%;
+    }
+    .map-label {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+    .directions-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .directions-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .directions-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .directions-text h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .directions-text p {
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    /* ─── STICKY BOOKING PANEL ───────────────────────────────────────── */
+    .booking-panel {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+    }
+    .booking-panel-header {
+      margin-bottom: 22px;
+    }
+    .booking-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .booking-price-from { font-size: 12px; color: var(--ink-muted); }
+    .booking-price {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      color: var(--ink);
+    }
+    .booking-price-unit { font-size: 14px; color: var(--ink-muted); }
+    .booking-rating-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .booking-rating-stars { color: var(--accent); }
+    .booking-rating-num { font-weight: 700; color: var(--ink); }
+    .booking-review-count { color: var(--ink-muted); text-decoration: underline; cursor: pointer; }
+
+    .booking-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .booking-field {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .booking-field-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      padding: 10px 14px 4px;
+    }
+    .booking-field-value {
+      padding: 0 14px 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .booking-field-value.placeholder { color: var(--ink-muted); }
+    .booking-field-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .booking-field-split .booking-sub-field:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .booking-sub-field {
+      padding: 10px 14px;
+    }
+
+    .booking-cta-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .booking-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+
+    .booking-features {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .booking-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink-mid);
+    }
+    .booking-feature-icon { font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+    .booking-feature-text span { font-weight: 600; color: var(--ink); }
+
+    /* Report link */
+    .report-link-row {
+      text-align: center;
+      margin-top: 18px;
+    }
+    .report-link {
+      font-size: 12px;
+      color: var(--ink-muted);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .report-link:hover { color: var(--ink); }
+
+    /* ─── SECTION: RELATED CLINICS ───────────────────────────────────── */
+    .related-section {
+      padding: 64px 0;
+      border-top: 1px solid var(--border);
+    }
+    .related-section .label { margin-bottom: 12px; display: block; }
+    .related-section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 32px;
+    }
+    .related-clinics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .related-clinic-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s;
+      text-decoration: none;
+    }
+    .related-clinic-card:hover { box-shadow: var(--shadow-md); }
+    .related-clinic-thumb {
+      height: 160px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      font-size: 13px;
+    }
+    .related-clinic-body { padding: 18px 20px; }
+    .related-clinic-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .related-clinic-meta {
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+    }
+    .related-clinic-rating {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .related-clinic-rating span { color: var(--accent); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark);
+      padding: 64px 0 40px;
+    }
+    .footer-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .footer-brand .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -.02em;
+      margin-bottom: 12px;
+    }
+    .footer-brand .logo span { color: var(--accent); }
+    .footer-brand p {
+      font-size: 13px;
+      color: rgba(255,255,255,.45);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 16px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col ul a {
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+    }
+    .footer-legal {
+      font-size: 12px;
+      color: rgba(255,255,255,.3);
+    }
+    .footer-legal a {
+      color: rgba(255,255,255,.4);
+      text-decoration: none;
+    }
+    .footer-legal a:hover { color: rgba(255,255,255,.7); }
+    .footer-socials { display: flex; gap: 16px; }
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+    .social-link:hover { border-color: rgba(255,255,255,.4); color: var(--white); }
+
+    /* ─── Wireframe annotation ───────────────────────────────────────── */
+    .anno {
+      display: inline-block;
+      background: #FFE066;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: #6B5000;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    .wireframe-badge {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 8px 16px;
+      border-radius: 999px;
+      z-index: 999;
+      opacity: .8;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Hairline<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/how-it-works">How it works</a></li>
+      <li><a href="/for-patients">For Patients</a></li>
+      <li><a href="/treatments">Treatments</a></li>
+      <li><a href="/find-a-clinic">Find a Clinic</a></li>
+      <li><a href="/resources">Resources</a></li>
+    </ul>
+    <a href="/for-providers" class="nav-cta-b2b">For Clinics →</a>
+  </div>
+</nav>
+
+<!-- ─── BREADCRUMB ────────────────────────────────────────────────────── -->
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="/">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="/find-a-clinic">Find a Clinic</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="/find-a-clinic/istanbul">Istanbul</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Vera Clinic</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 1 — HERO GALLERY
+     Airbnb-style 5-cell photo grid. Main image left, 4 thumbnails right.
+     "Show all photos" button bottom-right.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="hero-gallery">
+  <div class="container">
+    <div class="gallery-grid">
+
+      <!-- Main image -->
+      <div class="gallery-cell" style="grid-row: 1 / 3;">
+        <div class="gallery-cell-inner-label">
+          <span class="gallery-cell-icon">🏥</span>
+          <span>Clinic exterior — main photo</span>
+        </div>
+        <span class="gallery-cell-label">Clinic exterior</span>
+      </div>
+
+      <!-- Top-right 1 -->
+      <div class="gallery-cell">
+        <div class="gallery-cell-inner-label">
+          <span class="gallery-cell-icon">🔬</span>
+          <span>Treatment suite</span>
+        </div>
+      </div>
+
+      <!-- Top-right 2 -->
+      <div class="gallery-cell">
+        <div class="gallery-cell-inner-label">
+          <span class="gallery-cell-icon">🛋</span>
+          <span>Consultation room</span>
+        </div>
+      </div>
+
+      <!-- Bottom-right 1 -->
+      <div class="gallery-cell">
+        <div class="gallery-cell-inner-label">
+          <span class="gallery-cell-icon">🪟</span>
+          <span>Reception area</span>
+        </div>
+      </div>
+
+      <!-- Bottom-right 2 — with "show all" button -->
+      <div class="gallery-cell" style="position:relative;">
+        <div class="gallery-cell-inner-label">
+          <span class="gallery-cell-icon">🖼</span>
+          <span>Recovery suite</span>
+        </div>
+        <button class="gallery-show-all">⊞ Show all 24 photos</button>
+      </div>
+
+    </div><!-- /gallery-grid -->
+  </div>
+</section>
+
+<!-- ─── CLINIC HEADER + START OF TWO-COLUMN ──────────────────────────── -->
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION 2 — CLINIC HEADER
+       Name · verification badge · star rating · total reviews · location
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="clinic-header-section">
+    <div class="clinic-header-grid">
+      <div>
+        <div class="clinic-title-row">
+          <h1 class="clinic-name">Vera Clinic</h1>
+          <span class="verified-badge">✓ Hairline Verified</span>
+        </div>
+        <div class="clinic-meta-row">
+          <div class="clinic-rating">
+            <span class="clinic-rating-stars">★★★★★</span>
+            <span>4.9</span>
+            <span class="clinic-rating-count">· 214 reviews</span>
+          </div>
+          <div class="clinic-location">📍 Istanbul, Turkey</div>
+          <div class="pill-badge">🌍 International patients</div>
+        </div>
+        <div class="clinic-badge-row">
+          <span class="pill-badge">💎 Premium partner</span>
+          <span class="pill-badge">✓ FUE specialist</span>
+          <span class="pill-badge">🗓 Est. 2012</span>
+          <span class="pill-badge">🏅 Top-rated 2025</span>
+        </div>
+      </div>
+      <div class="clinic-actions">
+        <a href="#" class="icon-btn">↗ Share</a>
+        <a href="#" class="icon-btn">♡ Save</a>
+      </div>
+    </div>
+  </div><!-- /clinic-header-section -->
+
+  <!-- ─── Two-column layout starts here ──────────────────────────────── -->
+  <div class="profile-layout">
+
+    <!-- LEFT COLUMN — main content -->
+    <div class="profile-content">
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 3 — ABOUT
+           3-paragraph description. Tone: direct, evidence-led.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="about-section">
+        <h2>About Vera Clinic <span class="anno">SECTION 3</span></h2>
+        <p>
+          Vera Clinic is one of Istanbul's most established hair restoration centres, with over 12 years of clinical practice and more than 15,000 procedures performed. The clinic specialises in Follicular Unit Extraction (FUE), DHI, and combined hair-and-beard restoration for male and female patients from more than 60 countries.
+        </p>
+        <p>
+          The clinic operates three dedicated surgical theatres and a dedicated international patient coordination team, with full-service support from pre-arrival consultation through to post-procedure Aftercare. All consultations are conducted in-person or via the Hairline app by a board-certified trichologist before any surgical recommendation is made.
+        </p>
+        <p>
+          Vera Clinic is accredited by the Turkish Ministry of Health and the Joint Commission International (JCI). Patient outcome data is audited annually, and all before-and-after records are maintained with full consent documentation — accessible within the Hairline app under your treatment timeline.
+        </p>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 4 — LEAD SURGEONS
+           Photo · name · credentials · years of experience
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="surgeons-section">
+        <h2>Lead surgeons <span class="anno">SECTION 4</span></h2>
+        <div class="surgeons-grid">
+
+          <div class="surgeon-card">
+            <div class="surgeon-avatar">👨‍⚕️</div>
+            <div class="surgeon-info">
+              <h3>Dr. Mehmet Karaca</h3>
+              <div class="surgeon-title">Chief Hair Restoration Surgeon</div>
+              <div class="surgeon-meta">
+                MD · Board-certified Dermatologist<br>
+                Specialties: FUE, DHI, Scalp Reconstruction
+              </div>
+              <span class="surgeon-exp-badge">18 years experience</span>
+            </div>
+          </div>
+
+          <div class="surgeon-card">
+            <div class="surgeon-avatar">👩‍⚕️</div>
+            <div class="surgeon-info">
+              <h3>Dr. Selin Özdemir</h3>
+              <div class="surgeon-title">Female Hair Loss Specialist</div>
+              <div class="surgeon-meta">
+                MD, PhD · Trichologist<br>
+                Specialties: Female-pattern loss, PRP, FUE
+              </div>
+              <span class="surgeon-exp-badge">11 years experience</span>
+            </div>
+          </div>
+
+          <div class="surgeon-card">
+            <div class="surgeon-avatar">👨‍⚕️</div>
+            <div class="surgeon-info">
+              <h3>Dr. Ahmet Yilmaz</h3>
+              <div class="surgeon-title">Hair Transplant Surgeon</div>
+              <div class="surgeon-meta">
+                MD · Certified Hair Restoration Specialist<br>
+                Specialties: FUE, Eyebrow, Beard restoration
+              </div>
+              <span class="surgeon-exp-badge">9 years experience</span>
+            </div>
+          </div>
+
+          <div class="surgeon-card">
+            <div class="surgeon-avatar">👩‍⚕️</div>
+            <div class="surgeon-info">
+              <h3>Dr. Nadia Hassan</h3>
+              <div class="surgeon-title">PRP & Non-surgical Lead</div>
+              <div class="surgeon-meta">
+                MD · Clinical Trichologist<br>
+                Specialties: PRP, Minoxidil protocols, Alopecia
+              </div>
+              <span class="surgeon-exp-badge">7 years experience</span>
+            </div>
+          </div>
+
+        </div><!-- /surgeons-grid -->
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 5 — SERVICES OFFERED
+           Pills linking to relevant /treatments pages
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="services-section">
+        <h2>Services offered <span class="anno">SECTION 5</span></h2>
+        <div class="services-pills">
+          <a href="/treatments/hair-transplant/fue" class="service-pill primary">FUE Hair Transplant</a>
+          <a href="/treatments/hair-transplant/dhi" class="service-pill primary">DHI Hair Transplant</a>
+          <a href="/treatments/prp" class="service-pill">PRP Therapy</a>
+          <a href="/treatments/hair-transplant/fut" class="service-pill">FUT Hair Transplant</a>
+          <a href="/treatments/finasteride" class="service-pill">Finasteride</a>
+          <a href="/treatments/minoxidil" class="service-pill">Minoxidil</a>
+          <a href="/treatments/scalp-micropigmentation" class="service-pill">Scalp Micropigmentation</a>
+          <a href="/treatments/laser-therapy" class="service-pill">Laser Therapy</a>
+        </div>
+        <p style="font-size:13px; color:var(--ink-muted);">Not sure which treatment is right? <a href="/assessment" class="text-link">Start your free assessment →</a></p>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 6 — PRICING TRANSPARENCY
+           Table: treatment / low / mid / premium ranges.
+           No booking bait. Honest, direct.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="pricing-section">
+        <h2>Typical pricing <span class="anno">SECTION 6</span></h2>
+        <p class="pricing-note">All prices in GBP. Final cost depends on graft count, assessed during free consultation.</p>
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Treatment</th>
+              <th>Entry range</th>
+              <th>Mid range</th>
+              <th>Premium</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="pricing-treatment">FUE Hair Transplant</div>
+                <div style="font-size:12px; color:var(--ink-muted); margin-top:3px;">1,500–3,500 grafts</div>
+              </td>
+              <td class="pricing-range">£1,800</td>
+              <td class="pricing-range">£2,800</td>
+              <td class="pricing-range">£4,200</td>
+              <td><span class="pricing-tag popular">Popular</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="pricing-treatment">DHI Hair Transplant</div>
+                <div style="font-size:12px; color:var(--ink-muted); margin-top:3px;">1,000–2,500 grafts</div>
+              </td>
+              <td class="pricing-range">£2,200</td>
+              <td class="pricing-range">£3,400</td>
+              <td class="pricing-range">£5,000</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="pricing-treatment">PRP Therapy</div>
+                <div style="font-size:12px; color:var(--ink-muted); margin-top:3px;">Per session (3-session course)</div>
+              </td>
+              <td class="pricing-range">£280</td>
+              <td class="pricing-range">£380</td>
+              <td class="pricing-range">£500</td>
+              <td><span class="pricing-tag new">Non-surgical</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="pricing-treatment">Scalp Micropigmentation</div>
+                <div style="font-size:12px; color:var(--ink-muted); margin-top:3px;">Full scalp coverage</div>
+              </td>
+              <td class="pricing-range">£900</td>
+              <td class="pricing-range">£1,500</td>
+              <td class="pricing-range">£2,200</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="pricing-disclaimer">
+          Prices shown are indicative ranges based on past procedures. VAT may apply. Hairline Travel packages (flights, hotel, transfers) are priced separately — <a href="/travel" class="text-link">see Hairline Travel</a>.
+        </p>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 7 — PATIENT REVIEWS
+           Verified-purchase only · rating breakdown · long-form quotes
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="reviews-section">
+        <h2>Patient reviews <span class="anno">SECTION 7</span></h2>
+        <div class="reviews-summary-row">
+          <div class="reviews-big-score">4.9</div>
+          <div class="reviews-meta">
+            <div class="reviews-stars-row">★★★★★</div>
+            <div class="reviews-count">214 verified patient reviews</div>
+          </div>
+          <div class="reviews-breakdown">
+            <div class="breakdown-row">
+              <span class="breakdown-label">5★</span>
+              <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:87%"></div></div>
+              <span class="breakdown-count">186</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">4★</span>
+              <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:10%"></div></div>
+              <span class="breakdown-count">21</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">3★</span>
+              <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:3%"></div></div>
+              <span class="breakdown-count">5</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">2★</span>
+              <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:1%"></div></div>
+              <span class="breakdown-count">2</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">1★</span>
+              <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:0%"></div></div>
+              <span class="breakdown-count">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reviews-list">
+
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">👤</div>
+              <div>
+                <div class="review-author-name">James T., United Kingdom</div>
+                <div class="review-author-meta">Treatment: February 2025 · FUE Hair Transplant</div>
+              </div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+            <div class="review-treatment-tag">FUE · 2,400 grafts</div>
+            <p class="review-text">
+              "From the first consultation to the 12-month follow-up, Vera Clinic was transparent about every step and realistic about what to expect. The coordination team handled all the travel logistics — hotel, transfers, medication — without me having to chase anything. At 14 months, the density is exactly what the surgeon projected. I had two friends who went elsewhere for similar procedures and had very different experiences."
+            </p>
+            <div class="review-footer">
+              <span class="verified-review-badge">✓ Verified patient via Hairline</span>
+              <span class="review-helpful">Helpful? 18 found this useful</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">👤</div>
+              <div>
+                <div class="review-author-name">Priya M., United Arab Emirates</div>
+                <div class="review-author-meta">Treatment: October 2024 · PRP Therapy</div>
+              </div>
+            </div>
+            <div class="review-stars">★★★★★</div>
+            <div class="review-treatment-tag">PRP · 3-session course</div>
+            <p class="review-text">
+              "I was nervous about going to a clinic I'd never heard of before Hairline, but the vetting gave me confidence. Dr. Özdemir is exceptional — she took 45 minutes at the first consultation to explain exactly what PRP could and couldn't achieve for my type of hair loss, rather than just pitching a more expensive procedure. Six months in, the shedding has slowed measurably and my Aftercare photos show clear regrowth in the crown area."
+            </p>
+            <div class="review-footer">
+              <span class="verified-review-badge">✓ Verified patient via Hairline</span>
+              <span class="review-helpful">Helpful? 11 found this useful</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar">👤</div>
+              <div>
+                <div class="review-author-name">Carlos M., Spain</div>
+                <div class="review-author-meta">Treatment: June 2024 · DHI Hair Transplant</div>
+              </div>
+            </div>
+            <div class="review-stars">★★★★☆</div>
+            <div class="review-treatment-tag">DHI · 1,800 grafts</div>
+            <p class="review-text">
+              "The procedure itself was excellent and the surgical team are clearly very skilled. I'm giving four stars rather than five only because the waiting time on day 2 was longer than estimated. The results at 10 months are strong — density is good and the hairline design is natural. I would recommend Vera and would use them again for any top-up work."
+            </p>
+            <div class="review-footer">
+              <span class="verified-review-badge">✓ Verified patient via Hairline</span>
+              <span class="review-helpful">Helpful? 7 found this useful</span>
+            </div>
+          </div>
+
+        </div><!-- /reviews-list -->
+
+        <div class="reviews-load-more">
+          <a href="#" class="text-link">See all 214 reviews →</a>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 8 — PHOTO GALLERY (facility)
+           6-thumbnail grid. Links to lightbox.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="photo-gallery-section">
+        <h2>Facility photos <span class="anno">SECTION 8</span></h2>
+        <div class="facility-gallery-grid">
+          <div class="facility-thumb"><span class="facility-thumb-icon">🏥</span><span>Main entrance</span></div>
+          <div class="facility-thumb"><span class="facility-thumb-icon">🔬</span><span>Surgical suite A</span></div>
+          <div class="facility-thumb"><span class="facility-thumb-icon">💺</span><span>Procedure chair</span></div>
+          <div class="facility-thumb"><span class="facility-thumb-icon">🛋</span><span>Consultation room</span></div>
+          <div class="facility-thumb"><span class="facility-thumb-icon">🧴</span><span>Recovery room</span></div>
+          <div class="facility-thumb"><span class="facility-thumb-icon">🪟</span><span>Waiting area</span></div>
+        </div>
+        <div style="margin-top:14px;">
+          <a href="#" class="text-link">View all 24 facility photos →</a>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 9 — BEFORE & AFTER GALLERY
+           Consent-gated. Faces blurred by default. Gate UI.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="before-after-section">
+        <h2>Before &amp; after <span class="anno">SECTION 9</span></h2>
+        <div class="before-after-notice">
+          <span class="ba-notice-icon">ℹ</span>
+          <p class="ba-notice-text">
+            All before-and-after photos are from verified Hairline patients who have consented to share their results. Faces are blurred by default. Tap any image to view with your consent preference applied.
+          </p>
+        </div>
+        <div class="ba-consent-gate">
+          <span class="ba-gate-icon">🔒</span>
+          <div class="ba-gate-title">Consent required to view results</div>
+          <p class="ba-gate-text">
+            Before-and-after photography involves real patient outcomes. Please confirm you understand these are individual results, and that outcomes vary by patient.
+          </p>
+          <a href="#" class="ba-gate-btn">I understand — show results</a>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SECTION 10 — MAP + HOW TO GET THERE
+           Map placeholder + directions breakdown
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="map-section">
+        <h2>Location &amp; how to get there <span class="anno">SECTION 10</span></h2>
+        <div class="map-layout">
+          <div class="map-placeholder">
+            <div class="map-pin"></div>
+            <div class="map-label">🗺 Interactive map — Vera Clinic, Istanbul</div>
+            <span style="font-size:12px; position:relative; z-index:1; color:var(--ink-muted);">Bağcılar, Istanbul, Turkey</span>
+          </div>
+          <div class="directions-info">
+            <h3>Getting there</h3>
+            <div class="directions-item">
+              <div class="directions-icon">✈️</div>
+              <div class="directions-text">
+                <h4>From Istanbul Airport (IST)</h4>
+                <p>35–45 min by taxi or pre-arranged clinic transfer. Hairline Travel includes airport pickup.</p>
+              </div>
+            </div>
+            <div class="directions-item">
+              <div class="directions-icon">🚇</div>
+              <div class="directions-text">
+                <h4>By metro</h4>
+                <p>M1A line to Bağcılar station, then 5-min walk. Multilingual signage throughout.</p>
+              </div>
+            </div>
+            <div class="directions-item">
+              <div class="directions-icon">🚗</div>
+              <div class="directions-text">
+                <h4>Clinic transfer included</h4>
+                <p>All Hairline-booked patients receive a complimentary hotel-to-clinic transfer on procedure day.</p>
+              </div>
+            </div>
+            <div class="directions-item">
+              <div class="directions-icon">📍</div>
+              <div class="directions-text">
+                <h4>Address</h4>
+                <p>Mahmutbey Mahallesi, Taşocağı Yolu Cd. No:12, Bağcılar / Istanbul, Turkey 34218</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /profile-content -->
+
+    <!-- RIGHT COLUMN — sticky booking panel -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 11 — BOOK CONSULTATION CTA
+         Airbnb-style sticky panel. Price anchor + form + CTA.
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="profile-sidebar">
+      <div class="booking-panel">
+        <div class="booking-panel-header">
+          <div class="booking-price-row">
+            <span class="booking-price-from">from</span>
+            <span class="booking-price">£1,800</span>
+            <span class="booking-price-unit">/ procedure</span>
+          </div>
+          <div class="booking-rating-row">
+            <span class="booking-rating-stars">★</span>
+            <span class="booking-rating-num">4.9</span>
+            <span class="booking-review-count">· 214 reviews</span>
+          </div>
+        </div>
+
+        <div class="booking-form">
+          <div class="booking-field">
+            <div class="booking-field-label">Treatment</div>
+            <div class="booking-field-value placeholder">Select treatment</div>
+          </div>
+          <div class="booking-field-split">
+            <div class="booking-sub-field">
+              <div style="font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:3px;">Preferred date</div>
+              <div style="font-size:14px; font-weight:500; color:var(--ink-muted);">Add date</div>
+            </div>
+            <div class="booking-sub-field">
+              <div style="font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:3px;">Consultation</div>
+              <div style="font-size:14px; font-weight:500; color:var(--ink-muted);">In-app or in-person</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-cta-stack">
+          <a href="/assessment" class="btn-primary">Book a consultation →</a>
+          <a href="#" class="btn-secondary">Message the clinic</a>
+        </div>
+        <p class="booking-note">Free consultation · No commitment · Instant confirmation</p>
+
+        <div class="booking-features">
+          <div class="booking-feature-item">
+            <span class="booking-feature-icon">✓</span>
+            <div class="booking-feature-text"><span>Hairline Verified clinic</span> — credentials checked by our medical team</div>
+          </div>
+          <div class="booking-feature-item">
+            <span class="booking-feature-icon">🌿</span>
+            <div class="booking-feature-text"><span>Aftercare included</span> — 12-month recovery tracking in the app</div>
+          </div>
+          <div class="booking-feature-item">
+            <span class="booking-feature-icon">✈️</span>
+            <div class="booking-feature-text"><span>Hairline Travel available</span> — flights, hotel &amp; transfers bundled</div>
+          </div>
+          <div class="booking-feature-item">
+            <span class="booking-feature-icon">🔒</span>
+            <div class="booking-feature-text"><span>Your data is safe</span> — GDPR &amp; HIPAA compliant</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-link-row">
+        <span class="report-link">⚑ Report this listing</span>
+      </div>
+    </div><!-- /profile-sidebar -->
+
+  </div><!-- /profile-layout -->
+
+</div><!-- /container -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     RELATED CLINICS
+     3 compact cards linking to similar providers
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="related-section">
+  <div class="container">
+    <span class="label">Similar clinics</span>
+    <h2>More verified clinics in Istanbul</h2>
+    <div class="related-clinics-grid">
+
+      <a href="/providers/hair-transplant-istanbul" class="related-clinic-card">
+        <div class="related-clinic-thumb">🏥 Clinic exterior photo</div>
+        <div class="related-clinic-body">
+          <div class="related-clinic-name">Cosmedica Clinic</div>
+          <div class="related-clinic-meta">Istanbul, Turkey · FUE, DHI, PRP</div>
+          <div class="related-clinic-rating"><span>★</span> 4.8 · 187 reviews</div>
+        </div>
+      </a>
+
+      <a href="/providers/estetik-international" class="related-clinic-card">
+        <div class="related-clinic-thumb">🏥 Clinic exterior photo</div>
+        <div class="related-clinic-body">
+          <div class="related-clinic-name">Estetik International</div>
+          <div class="related-clinic-meta">Istanbul, Turkey · FUE, SMP, Laser</div>
+          <div class="related-clinic-rating"><span>★</span> 4.7 · 142 reviews</div>
+        </div>
+      </a>
+
+      <a href="/providers/clinic-izel" class="related-clinic-card">
+        <div class="related-clinic-thumb">🏥 Clinic exterior photo</div>
+        <div class="related-clinic-body">
+          <div class="related-clinic-name">Clinic İzel</div>
+          <div class="related-clinic-meta">Istanbul, Turkey · FUE, DHI</div>
+          <div class="related-clinic-rating"><span>★</span> 4.7 · 96 reviews</div>
+        </div>
+      </a>
+
+    </div>
+    <div style="margin-top:28px; text-align:center;">
+      <a href="/find-a-clinic/istanbul" class="text-link">Browse all Istanbul clinics →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">Hairline<span>.</span></div>
+        <p>Hair restoration, done right. Connecting patients with vetted providers worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">For Patients</div>
+        <ul>
+          <li><a href="/for-patients">Overview</a></li>
+          <li><a href="/assessment">Start assessment</a></li>
+          <li><a href="/find-a-clinic">Find a clinic</a></li>
+          <li><a href="/aftercare">Aftercare</a></li>
+          <li><a href="/travel">Travel</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Treatments</div>
+        <ul>
+          <li><a href="/treatments/hair-transplant">Hair Transplant</a></li>
+          <li><a href="/treatments/hair-transplant/fue">FUE</a></li>
+          <li><a href="/treatments/prp">PRP</a></li>
+          <li><a href="/treatments/finasteride">Finasteride</a></li>
+          <li><a href="/treatments">View all →</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/press">Press</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">For Clinics</div>
+        <ul>
+          <li><a href="/for-providers">Overview</a></li>
+          <li><a href="/for-providers/features">Features</a></li>
+          <li><a href="/for-providers/case-studies">Case studies</a></li>
+          <li><a href="/for-providers/book-demo">Book a demo</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        © 2026 Hairline Technologies Ltd. &nbsp;·&nbsp;
+        <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+        <a href="/terms">Terms</a> &nbsp;·&nbsp;
+        <a href="/cookies">Cookies</a>
+      </div>
+      <div class="footer-socials">
+        <a href="#" class="social-link">𝕏</a>
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">IG</a>
+        <a href="#" class="social-link">YT</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Wireframe stamp -->
+<div class="wireframe-badge">WIREFRAME · /providers/[clinic-slug]</div>
+
+</body>
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-037 Screen 3 — Daily Monitoring Log</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #e8eaed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 60px;
+      color: #1c1c1e;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      width: 100%; max-width: 1020px;
+      margin-bottom: 32px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; }
+    .page-header p  { font-size: 13px; color: #6e6e73; margin-top: 4px; }
+    .wf-badge {
+      background: #1c1c1e; color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      white-space: nowrap; margin-top: 4px;
+    }
+
+    /* ── Phones row ── */
+    .phones-row {
+      display: flex; gap: 36px;
+      align-items: flex-start; justify-content: center;
+      width: 100%; max-width: 1020px;
+    }
+    .phone-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .phone-col-label {
+      font-size: 11px; font-weight: 700;
+      color: #6e6e73; text-transform: uppercase; letter-spacing: 0.07em;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 375px; border-radius: 48px;
+      background: #fff; border: 3px solid #1c1c1e;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1),
+                  0 24px 60px rgba(0,0,0,0.25),
+                  inset 0 0 0 2px #3a3a3c;
+      overflow: hidden;
+    }
+    .dynamic-island { position: relative; height: 0; }
+    .di-pill {
+      position: absolute; top: 12px; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 34px;
+      background: #1c1c1e; border-radius: 20px; z-index: 10;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      height: 54px; background: #fff;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 28px 8px;
+      font-size: 12px; font-weight: 600; color: #1c1c1e;
+      position: relative; z-index: 5;
+    }
+    .status-time { font-size: 15px; font-weight: 700; }
+    .status-icons { display: flex; gap: 5px; font-size: 11px; }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      height: 44px; background: #fff;
+      display: flex; align-items: center; padding: 0 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      position: relative;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 16px; color: #007aff; cursor: pointer; white-space: nowrap;
+    }
+    .nav-back-chevron { font-size: 20px; line-height: 1; }
+    .nav-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 16px; font-weight: 600; color: #1c1c1e; white-space: nowrap;
+    }
+    .nav-action {
+      margin-left: auto; font-size: 16px;
+      color: #007aff; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+
+    /* ── Screen scroll ── */
+    .screen-scroll {
+      height: 720px; overflow-y: auto;
+      background: #f2f2f7; scrollbar-width: none;
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Section group (iOS-style) ── */
+    .section-group { margin-bottom: 8px; }
+    .section-group-header {
+      padding: 12px 16px 6px;
+      font-size: 12px; font-weight: 600; color: #8e8e93;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .section-group-body {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+
+    /* ── Date picker row ── */
+    .date-row {
+      display: flex; align-items: center;
+      padding: 14px 16px; background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .date-label { font-size: 15px; color: #1c1c1e; flex: 1; }
+    .date-value { font-size: 15px; color: #007aff; font-weight: 500; }
+
+    /* Inline calendar mini (date picker expanded) */
+    .date-picker-inline {
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      padding: 8px 12px 12px;
+    }
+    .dpi-cal-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 4px 8px;
+    }
+    .dpi-cal-month { font-size: 13px; font-weight: 700; color: #1c1c1e; }
+    .dpi-cal-arrow { font-size: 16px; color: #007aff; cursor: pointer; padding: 0 4px; }
+    .dpi-grid { width: 100%; border-collapse: collapse; }
+    .dpi-grid th {
+      font-size: 10px; font-weight: 600; color: #8e8e93;
+      text-align: center; padding: 0 0 4px;
+    }
+    .dpi-grid td { text-align: center; padding: 1px 0; }
+    .dpi-day {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 50%;
+      font-size: 13px; color: #1c1c1e; cursor: pointer;
+    }
+    .dpi-day.today  { background: #007aff; color: #fff; font-weight: 700; }
+    .dpi-day.empty  { color: transparent; pointer-events: none; }
+    .dpi-day.future { color: #c7c7cc; pointer-events: none; }
+    .dpi-day.has-entry { position: relative; }
+    .dpi-day.has-entry::after {
+      content: '';
+      position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; border-radius: 50%; background: #007aff;
+    }
+    .dpi-day.today.has-entry::after { background: #fff; }
+
+    /* ── Severity slider ── */
+    .severity-group {
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .severity-group:last-child { border-bottom: none; }
+    .severity-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .severity-lbl { font-size: 15px; color: #1c1c1e; }
+    .severity-badge {
+      background: #007aff; color: #fff;
+      font-size: 15px; font-weight: 700;
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .severity-badge.low    { background: #34c759; }
+    .severity-badge.mid    { background: #ff9500; }
+    .severity-badge.high   { background: #ff3b30; }
+    .slider-track {
+      position: relative; height: 8px;
+      background: linear-gradient(to right, #34c759, #ffcc00, #ff3b30);
+      border-radius: 4px; margin-bottom: 8px;
+    }
+    .slider-thumb {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #fff; border: 2.5px solid #007aff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .slider-labels {
+      display: flex; justify-content: space-between;
+      font-size: 10px; color: #8e8e93;
+    }
+    .sev-pips { display: flex; gap: 3px; margin-top: 10px; }
+    .sev-pip  {
+      flex: 1; height: 4px; border-radius: 2px;
+    }
+    .sev-pip.active { outline: 2px solid #007aff; outline-offset: 1px; }
+
+    /* ── Field (textarea) ── */
+    .field-inline {
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .field-inline:last-child { border-bottom: none; }
+    .field-inline-label {
+      font-size: 12px; font-weight: 600; color: #8e8e93;
+      display: flex; justify-content: space-between; margin-bottom: 6px;
+    }
+    .field-inline textarea {
+      width: 100%; border: none; outline: none;
+      font-size: 15px; color: #1c1c1e;
+      font-family: inherit; background: transparent;
+      resize: none; min-height: 80px;
+    }
+    .field-inline textarea::placeholder { color: #c7c7cc; }
+
+    /* ── Photos ── */
+    .photo-row-wrap {
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .photo-row-wrap:last-child { border-bottom: none; }
+    .photo-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .photo-scroll::-webkit-scrollbar { display: none; }
+    .photo-thumb {
+      width: 72px; height: 72px; border-radius: 12px;
+      background: #f2f2f7; border: 1px solid rgba(60,60,67,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0; position: relative;
+    }
+    .photo-remove {
+      position: absolute; top: -5px; right: -5px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #ff3b30; color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-add {
+      background: #f2f2f7; border: 1.5px dashed #c7c7cc;
+      font-size: 26px; color: #007aff; cursor: pointer;
+    }
+
+    /* ── Head scan row ── */
+    .scan-row {
+      display: flex; align-items: center; padding: 14px 16px;
+      background: #fff; border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      gap: 12px; cursor: pointer;
+    }
+    .scan-row:last-child { border-bottom: none; }
+    .scan-row-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .scan-row-icon.purple { background: #f3e8ff; }
+    .scan-row-icon.green  { background: #e3fef0; }
+    .scan-row-body { flex: 1; }
+    .scan-row-label { font-size: 15px; color: #1c1c1e; }
+    .scan-row-sub   { font-size: 12px; color: #8e8e93; margin-top: 1px; }
+    .scan-row-chevron { font-size: 16px; color: #c7c7cc; }
+    .scan-row-badge {
+      font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 6px;
+    }
+    .badge-linked { background: #e3fef0; color: #1a7a3c; }
+    .badge-screen4 { background: #f3e8ff; color: #7b2fa3; }
+
+    /* ── Bottom bar ── */
+    .bottom-bar {
+      background: #fff; border-top: 0.5px solid rgba(60,60,67,0.18);
+      padding: 10px 16px 6px;
+    }
+    .btn-primary-mobile {
+      width: 100%; height: 50px; border-radius: 14px;
+      background: #007aff; color: #fff;
+      font-size: 16px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-primary-mobile:disabled { background: #a0c4ff; }
+    .home-indicator {
+      display: flex; justify-content: center;
+      padding: 8px 0 6px; background: #fff;
+    }
+    .home-bar { width: 134px; height: 5px; background: #1c1c1e; border-radius: 3px; opacity: 0.15; }
+
+    /* ── Entry card (Phone B) ── */
+    .entry-card {
+      background: #fff; margin-bottom: 8px;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .entry-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 16px 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .entry-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px;
+    }
+    .badge-latest {
+      background: #007aff; color: #fff;
+    }
+    .badge-authoritative {
+      background: #d1f7e3; color: #1a7a3c;
+    }
+    .badge-earlier {
+      background: #f2f2f7; color: #8e8e93;
+    }
+    .entry-ts { font-size: 12px; color: #8e8e93; margin-left: auto; }
+    .entry-body { padding: 12px 16px; }
+    .entry-severity-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .entry-sev-label { font-size: 13px; color: #8e8e93; }
+    .entry-sev-val {
+      font-size: 22px; font-weight: 700; color: #1c1c1e; line-height: 1;
+    }
+    .entry-sev-bar {
+      flex: 1; height: 5px; border-radius: 3px;
+      background: linear-gradient(to right, #34c759 0%, #ffcc00 50%, #ff3b30 100%);
+      position: relative; overflow: visible;
+    }
+    .entry-sev-marker {
+      position: absolute; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #fff; border: 2px solid #007aff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .entry-notes {
+      font-size: 14px; color: #1c1c1e; line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .entry-photos { display: flex; gap: 6px; margin-bottom: 8px; }
+    .entry-photo-thumb {
+      width: 60px; height: 60px; border-radius: 10px;
+      background: #f2f2f7; border: 1px solid rgba(60,60,67,0.1);
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .entry-scan-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; background: #f9f9fb;
+      border-radius: 8px; margin-bottom: 8px;
+      font-size: 13px; color: #8e8e93;
+    }
+    .entry-scan-row span { color: #7b2fa3; font-weight: 600; }
+    .entry-actions {
+      display: flex; justify-content: flex-end; gap: 12px;
+      padding: 0 16px 12px;
+    }
+    .entry-action-btn {
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      padding: 6px 14px; border-radius: 8px; border: none;
+      font-family: inherit;
+    }
+    .btn-edit   { background: #f2f2f7; color: #007aff; }
+    .btn-delete { background: #fff1f0; color: #ff3b30; }
+
+    /* ── Add another entry button ── */
+    .add-entry-row {
+      display: flex; align-items: center; justify-content: center;
+      padding: 14px 16px; gap: 6px;
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      font-size: 16px; font-weight: 500; color: #007aff;
+      cursor: pointer; margin-bottom: 8px;
+    }
+
+    /* ── Date banner (Phone B) ── */
+    .date-banner {
+      background: #fff; padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .date-banner-date {
+      font-size: 17px; font-weight: 700; color: #1c1c1e;
+    }
+    .date-banner-sub { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .date-banner-pill {
+      font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 10px;
+      background: #d1f7e3; color: #1a7a3c;
+    }
+
+    /* ── Authoritative note banner ── */
+    .auth-note {
+      background: #e3f0ff; padding: 9px 14px;
+      font-size: 12px; color: #0047b3; line-height: 1.5;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      margin-bottom: 8px;
+    }
+    .auth-note strong { font-weight: 700; }
+
+    /* ── Annotations ── */
+    .annotation-list { width: 160px; flex-shrink: 0; padding-top: 70px; }
+    .ann-section-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #8e8e93; margin-bottom: 10px;
+    }
+    .annotation-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 14px; }
+    .ann-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; flex-shrink: 0; margin-top: 4px; }
+    .ann-dot.blue   { background: #007aff; }
+    .ann-dot.green  { background: #34c759; }
+    .ann-dot.purple { background: #af52de; }
+    .ann-dot.orange { background: #ff9500; }
+    .ann-text { font-size: 11px; color: #1c1c1e; line-height: 1.5; }
+    .ann-text strong        { color: #ff3b30; }
+    .ann-text strong.blue   { color: #007aff; }
+    .ann-text strong.green  { color: #1a7a3c; }
+    .ann-text strong.purple { color: #7b2fa3; }
+    .ann-text strong.orange { color: #b35c00; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>FR-037 · Screen 3 — Daily Monitoring Log</h1>
+    <p>Patient Platform (P-05) &nbsp;·&nbsp; Records a dated observation using the same structure on every date</p>
+  </div>
+  <span class="wf-badge">Wireframe</span>
+</div>
+
+<div class="phones-row">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- PHONE A: New log entry (blank form)                   -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">State A — New Log Entry</div>
+    <div class="phone">
+      <div class="dynamic-island"><div class="di-pill"></div></div>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Calendar</div>
+        <div class="nav-title">New Log Entry</div>
+        <div class="nav-action" style="color:#c7c7cc;">Save</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- LOG DATE -->
+        <div class="section-group">
+          <div class="section-group-header">Log Date <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+            <!-- Date row (tapped — shows picker below) -->
+            <div class="date-row" style="background:#f0f6ff; border-bottom: 0.5px solid #007aff;">
+              <span class="date-label">Date</span>
+              <span class="date-value">25 Aug 2026 ▾</span>
+            </div>
+
+            <!-- Inline calendar picker (expanded state) -->
+            <div class="date-picker-inline">
+              <div class="dpi-cal-nav">
+                <span class="dpi-cal-arrow">‹</span>
+                <span class="dpi-cal-month">August 2026</span>
+                <span class="dpi-cal-arrow" style="color:#c7c7cc;">›</span>
+              </div>
+              <table class="dpi-grid">
+                <thead>
+                  <tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="dpi-day empty">0</span></td>
+                    <td><span class="dpi-day empty">0</span></td>
+                    <td><span class="dpi-day empty">0</span></td>
+                    <td><span class="dpi-day empty">0</span></td>
+                    <td><span class="dpi-day empty">0</span></td>
+                    <td><span class="dpi-day empty">0</span></td>
+                    <td><span class="dpi-day">1</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dpi-day has-entry">2</span></td>
+                    <td><span class="dpi-day">3</span></td>
+                    <td><span class="dpi-day">4</span></td>
+                    <td><span class="dpi-day has-entry">5</span></td>
+                    <td><span class="dpi-day">6</span></td>
+                    <td><span class="dpi-day">7</span></td>
+                    <td><span class="dpi-day has-entry">8</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dpi-day">9</span></td>
+                    <td><span class="dpi-day">10</span></td>
+                    <td><span class="dpi-day has-entry">11</span></td>
+                    <td><span class="dpi-day">12</span></td>
+                    <td><span class="dpi-day">13</span></td>
+                    <td><span class="dpi-day has-entry">14</span></td>
+                    <td><span class="dpi-day">15</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dpi-day">16</span></td>
+                    <td><span class="dpi-day has-entry">17</span></td>
+                    <td><span class="dpi-day">18</span></td>
+                    <td><span class="dpi-day">19</span></td>
+                    <td><span class="dpi-day has-entry">20</span></td>
+                    <td><span class="dpi-day">21</span></td>
+                    <td><span class="dpi-day has-entry">22</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dpi-day">23</span></td>
+                    <td><span class="dpi-day">24</span></td>
+                    <td><span class="dpi-day today has-entry">25</span></td>
+                    <td><span class="dpi-day future">26</span></td>
+                    <td><span class="dpi-day future">27</span></td>
+                    <td><span class="dpi-day future">28</span></td>
+                    <td><span class="dpi-day future">29</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="dpi-day future">30</span></td>
+                    <td><span class="dpi-day future">31</span></td>
+                    <td colspan="5"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="font-size:10px; color:#8e8e93; text-align:center; margin-top:6px;">
+                • = existing entry &nbsp;·&nbsp; Future dates disabled
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEVERITY -->
+        <div class="section-group">
+          <div class="section-group-header">Severity <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+            <div class="severity-group" style="border-bottom:none;">
+              <div class="severity-top">
+                <span class="severity-lbl">How severe is your condition today?</span>
+                <div class="severity-badge low">5</div>
+              </div>
+              <div class="slider-track">
+                <div class="slider-thumb" style="left:44%;"></div>
+              </div>
+              <div class="slider-labels">
+                <span>1 — Minimal</span>
+                <span>5 — Moderate</span>
+                <span>10 — Severe</span>
+              </div>
+              <div class="sev-pips">
+                <div class="sev-pip" style="background:#34c759;"></div>
+                <div class="sev-pip" style="background:#5dde76;"></div>
+                <div class="sev-pip" style="background:#85e695;"></div>
+                <div class="sev-pip" style="background:#ffd60a;"></div>
+                <div class="sev-pip active" style="background:#ffb800;"></div>
+                <div class="sev-pip" style="background:#ff9500;"></div>
+                <div class="sev-pip" style="background:#ff6b00;"></div>
+                <div class="sev-pip" style="background:#ff453a;"></div>
+                <div class="sev-pip" style="background:#e5342a;"></div>
+                <div class="sev-pip" style="background:#c0251d;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="section-group">
+          <div class="section-group-header">
+            Notes
+            <span style="font-size:10px; color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;">(Optional)</span>
+          </div>
+          <div class="section-group-body">
+            <div class="field-inline" style="border:none;">
+              <div class="field-inline-label">
+                <span></span>
+                <span>0 / 3000</span>
+              </div>
+              <textarea rows="4" placeholder="Describe today's observation — shedding, scalp condition, or anything you notice…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHOTOS -->
+        <div class="section-group">
+          <div class="section-group-header">
+            Photos
+            <span style="font-size:10px; color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;">(Optional)</span>
+          </div>
+          <div class="section-group-body">
+            <div class="photo-row-wrap" style="border:none;">
+              <div class="photo-scroll">
+                <div class="photo-thumb photo-add">＋</div>
+              </div>
+              <div style="font-size:11px; color:#8e8e93; margin-top:8px;">JPG, PNG, HEIC &nbsp;·&nbsp; Secure storage</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEAD SCAN -->
+        <div class="section-group">
+          <div class="section-group-header">
+            Head Scan
+            <span style="font-size:10px; color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;">(Optional · FR-002 V1)</span>
+          </div>
+          <div class="section-group-body">
+            <!-- Capture new scan → Screen 4 -->
+            <div class="scan-row">
+              <div class="scan-row-icon purple">📷</div>
+              <div class="scan-row-body">
+                <div class="scan-row-label">Capture New Head Scan</div>
+                <div class="scan-row-sub">Opens 4-view guided capture (Screen 4)</div>
+              </div>
+              <span class="scan-row-badge badge-screen4">→ S4</span>
+            </div>
+
+            <!-- Or select from history -->
+            <div class="scan-row" style="border-bottom:none;">
+              <div class="scan-row-icon" style="background:#f2f2f7;">🗂️</div>
+              <div class="scan-row-body">
+                <div class="scan-row-label">Select from Scan History</div>
+                <div class="scan-row-sub">Reuse a scan already captured for this case</div>
+              </div>
+              <span class="scan-row-chevron">›</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div><!-- /.screen-scroll -->
+
+      <div class="bottom-bar">
+        <button class="btn-primary-mobile" disabled style="background:#a0c4ff;">Save Entry</button>
+      </div>
+      <div class="home-indicator"><div class="home-bar"></div></div>
+    </div><!-- /.phone -->
+  </div><!-- /.phone-col A -->
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- PHONE B: Date detail — multiple entries on same date  -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">State B — Multiple Entries on Same Date</div>
+    <div class="phone">
+      <div class="dynamic-island"><div class="di-pill"></div></div>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Calendar</div>
+        <div class="nav-title">25 Aug 2026</div>
+        <div class="nav-action">＋ Entry</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- Date banner -->
+        <div class="date-banner">
+          <div>
+            <div class="date-banner-date">Tuesday, 25 August 2026</div>
+            <div class="date-banner-sub">2 entries &nbsp;·&nbsp; Logged Day 12</div>
+          </div>
+          <span class="date-banner-pill">Logged</span>
+        </div>
+
+        <!-- Authoritative note -->
+        <div class="auth-note">
+          <strong>Severity for trend:</strong> Latest entry's rating (3/10 at 14:32) is authoritative for severity trend, summary, and PDF. Earlier entries remain visible and auditable.
+        </div>
+
+        <!-- ── Entry 1 (latest = authoritative) ── -->
+        <div class="entry-card">
+          <div class="entry-header">
+            <span class="entry-badge badge-latest">Latest</span>
+            <span class="entry-badge badge-authoritative">Authoritative</span>
+            <span class="entry-ts">25 Aug · 14:32</span>
+          </div>
+          <div class="entry-body">
+            <!-- Severity -->
+            <div class="entry-severity-row">
+              <span class="entry-sev-label">Severity</span>
+              <span class="entry-sev-val">3</span>
+              <span style="font-size:12px; color:#8e8e93;">/ 10</span>
+              <div class="entry-sev-bar" style="flex:1;">
+                <div class="entry-sev-marker" style="left:22%;"></div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="entry-notes">
+              Shedding seems slightly reduced compared to last week. Crown area looks a bit better in the mirror. Scalp not itchy today.
+            </div>
+
+            <!-- Photos -->
+            <div class="entry-photos">
+              <div class="entry-photo-thumb">🖼️</div>
+              <div class="entry-photo-thumb">🖼️</div>
+            </div>
+
+            <!-- Head scan linked -->
+            <div class="entry-scan-row">
+              🧑‍💻 <span>Head scan linked</span> &nbsp;·&nbsp; Aug 20 set selected &nbsp;·&nbsp; 4 views
+            </div>
+          </div>
+
+          <div class="entry-actions">
+            <button class="entry-action-btn btn-edit">Edit</button>
+            <button class="entry-action-btn btn-delete">Delete</button>
+          </div>
+        </div>
+
+        <!-- ── Entry 2 (earlier, superseded) ── -->
+        <div class="entry-card">
+          <div class="entry-header">
+            <span class="entry-badge badge-earlier">Earlier entry</span>
+            <span class="entry-ts">25 Aug · 09:17</span>
+          </div>
+          <div class="entry-body">
+            <!-- Severity -->
+            <div class="entry-severity-row">
+              <span class="entry-sev-label">Severity</span>
+              <span class="entry-sev-val" style="color:#8e8e93;">4</span>
+              <span style="font-size:12px; color:#8e8e93;">/ 10</span>
+              <div class="entry-sev-bar" style="flex:1; opacity:0.5;">
+                <div class="entry-sev-marker" style="left:33%; border-color:#8e8e93;"></div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="entry-notes" style="color:#8e8e93;">
+              Morning check — similar to yesterday. Slight tenderness on left side of scalp.
+            </div>
+          </div>
+
+          <div class="entry-actions">
+            <button class="entry-action-btn btn-edit">Edit</button>
+            <button class="entry-action-btn btn-delete">Delete</button>
+          </div>
+        </div>
+
+        <!-- Add another entry -->
+        <div class="add-entry-row">
+          ＋ &nbsp;Add Another Entry for This Date
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div><!-- /.screen-scroll -->
+
+      <div class="bottom-bar" style="padding-top:12px; padding-bottom:10px;">
+        <div style="text-align:center; font-size:13px; color:#8e8e93;">
+          All entries auditable while case is active
+        </div>
+      </div>
+      <div class="home-indicator"><div class="home-bar"></div></div>
+    </div><!-- /.phone -->
+  </div><!-- /.phone-col B -->
+
+
+  <!-- Annotations -->
+  <div class="annotation-list">
+    <div class="ann-section-title">Design Notes</div>
+
+    <div class="annotation-item">
+      <div class="ann-dot blue"></div>
+      <div class="ann-text"><strong class="blue">Date picker</strong> disables future dates. Dots show dates that already have entries — picking one adds a second entry for that date.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot orange"></div>
+      <div class="ann-text"><strong class="orange">Save disabled</strong> until Severity is set (required). Date defaults to today; Notes, Photos, Head Scan are optional.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot purple"></div>
+      <div class="ann-text"><strong class="purple">Head Scan row</strong> routes to Screen 4 for guided 4-view capture, or lets patient select an existing case scan.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot"></div>
+      <div class="ann-text"><strong>Multiple entries</strong> on same date are allowed. "Logged Days" counts the date once — not the number of entries.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot green"></div>
+      <div class="ann-text"><strong class="green">Latest entry</strong> (14:32) is authoritative for severity trend and PDF. Earlier entry (09:17) stays visible and auditable — not hidden or deleted.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot"></div>
+      <div class="ann-text"><strong>Edit / Delete</strong> available while case is active. All versions remain auditable per PRD business rule.</div>
+    </div>
+  </div>
+
+</div><!-- /.phones-row -->
+
+</body>
+</html>

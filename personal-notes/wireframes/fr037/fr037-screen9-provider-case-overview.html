@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FR-037 Screen 9 – Provider: Monitoring Case Overview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: #0f2027;
+    color: #a8b2c8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid #1e3040;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo span { color: #38bdf8; }
+  .sidebar-section {
+    padding: 14px 18px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a5a6a;
+  }
+  .sidebar-item {
+    padding: 9px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    font-size: 13px;
+  }
+  .sidebar-item:hover { background: #162530; color: #fff; }
+  .sidebar-item.active {
+    background: #0d3349;
+    color: #fff;
+    border-left-color: #38bdf8;
+  }
+  .sidebar-icon { width: 16px; text-align: center; font-style: normal; }
+  .sidebar-badge {
+    margin-left: auto;
+    background: #38bdf8;
+    color: #0f2027;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 20px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .sidebar-badge.red { background: #ef4444; color: #fff; }
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 14px 18px;
+    border-top: 1px solid #1e3040;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .sidebar-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #38bdf8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #0f2027;
+    flex-shrink: 0;
+  }
+  .sidebar-user-name { font-size: 12px; font-weight: 600; color: #fff; }
+  .sidebar-user-role { font-size: 10px; color: #4a5a6a; margin-top: 1px; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-x: hidden; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    color: #6b7280; font-size: 13px;
+  }
+  .breadcrumb-sep { color: #d1d5db; }
+  .breadcrumb-current { color: #1a1a2e; font-weight: 600; }
+  .breadcrumb-link { color: #0ea5e9; cursor: pointer; }
+  .breadcrumb-link:hover { text-decoration: underline; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn-ghost {
+    padding: 6px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+  }
+  .btn-ghost:hover { background: #f9fafb; }
+
+  .btn-danger {
+    padding: 6px 16px;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    color: #dc2626;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-danger:hover { background: #fef2f2; }
+
+  /* ── Anon notice ── */
+  .anon-notice {
+    background: #f0f9ff;
+    border-bottom: 1px solid #bae6fd;
+    padding: 7px 28px;
+    font-size: 12px;
+    color: #0369a1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Case Header Card ── */
+  .case-header-card {
+    background: #fff;
+    border-bottom: 1px solid #e4e8f0;
+    padding: 16px 28px;
+    flex-shrink: 0;
+  }
+  .case-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .case-header-left { display: flex; flex-direction: column; gap: 8px; }
+  .case-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .case-id-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; border: 1px solid;
+  }
+  .badge-active     { color: #065f46; background: #d1fae5; border-color: #6ee7b7; }
+  .badge-provider   { color: #1d4ed8; background: #dbeafe; border-color: #93c5fd; }
+  .badge-initial    { color: #92400e; background: #fef3c7; border-color: #fcd34d; }
+  .badge-reassign   { color: #6b21a8; background: #f3e8ff; border-color: #c084fc; }
+  .badge-pending    { color: #c2410c; background: #fff7ed; border-color: #fb923c; }
+
+  .case-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .case-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .case-meta-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; }
+  .case-meta-value { font-size: 13px; color: #374151; font-weight: 500; }
+  .case-meta-value.mono { font-family: 'IBM Plex Mono', 'Consolas', monospace; font-weight: 700; color: #111827; }
+
+  .case-header-right { display: flex; align-items: flex-start; gap: 8px; flex-shrink: 0; }
+
+  /* ── Content body ── */
+  .content-body {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding: 20px 28px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .col-left  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .col-right { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e4e8f0;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: #111827; display: flex; align-items: center; gap: 7px; }
+  .card-hint  { font-size: 11px; color: #9ca3af; }
+  .card-body  { padding: 16px 20px; }
+
+  /* ── Dashboard stats ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; font-weight: 700; color: #111827; line-height: 1; }
+  .stat-sub   { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+
+  /* ── Severity trend (SVG chart) ── */
+  .chart-section { margin-bottom: 16px; }
+  .chart-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .chart-title { font-size: 12px; font-weight: 600; color: #374151; }
+  .chart-legend {
+    display: flex; gap: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6b7280; }
+  .legend-dot  { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-dot-patient  { background: #3b82f6; }
+  .legend-dot-provider { background: #10b981; }
+
+  .chart-wrap {
+    position: relative;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 8px;
+    padding: 12px 16px 8px;
+  }
+  .chart-axis-y {
+    position: absolute; left: 16px; top: 12px; bottom: 24px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    font-size: 10px; color: #d1d5db;
+  }
+
+  .trend-summary-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .trend-mini {
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .trend-mini-label { font-size: 10px; color: #9ca3af; margin-bottom: 3px; }
+  .trend-mini-val   { font-size: 15px; font-weight: 700; color: #111827; }
+
+  /* ── Scan history ── */
+  .scan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .scan-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 8px;
+  }
+  .scan-thumb {
+    width: 48px; height: 48px;
+    border-radius: 6px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    color: #9ca3af;
+    overflow: hidden;
+  }
+  .scan-thumb-inner {
+    width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    padding: 3px;
+  }
+  .scan-thumb-view {
+    background: #d1d5db;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6px;
+    color: #6b7280;
+    font-weight: 600;
+  }
+  .scan-info { flex: 1; min-width: 0; }
+  .scan-date { font-size: 12px; font-weight: 600; color: #374151; }
+  .scan-sub  { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+  .scan-badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 7px; border-radius: 4px;
+    font-size: 10px; font-weight: 600;
+    background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7;
+  }
+
+  /* ── Calendar ── */
+  .calendar-wrap { padding: 16px 20px; }
+  .cal-legend {
+    display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #6b7280; }
+  .cal-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .cal-dot-patient  { background: #3b82f6; }
+  .cal-dot-provider { background: #10b981; }
+  .cal-dot-both     { background: linear-gradient(135deg, #3b82f6 50%, #10b981 50%); }
+
+  .cal-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .cal-month-label { font-size: 13px; font-weight: 600; color: #374151; }
+  .cal-nav-btn {
+    width: 26px; height: 26px; border-radius: 6px;
+    border: 1px solid #e5e7eb; background: #fff;
+    cursor: pointer; font-size: 12px; color: #374151;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-dow {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9ca3af;
+    padding: 6px 0;
+  }
+  .cal-day {
+    position: relative;
+    min-height: 46px;
+    border-radius: 6px;
+    padding: 4px 5px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #f3f4f6;
+    transition: background 0.1s;
+  }
+  .cal-day:hover { background: #f9fafb; }
+  .cal-day.other-month { background: #fafafa; }
+  .cal-day.other-month .cal-day-num { color: #e5e7eb; }
+  .cal-day.today { border-color: #bfdbfe; background: #eff6ff; }
+  .cal-day-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: #374151;
+    line-height: 1;
+  }
+  .cal-day.today .cal-day-num { color: #2563eb; font-weight: 700; }
+  .cal-events { display: flex; gap: 2px; margin-top: 4px; flex-wrap: wrap; }
+  .cal-ev {
+    height: 6px; border-radius: 3px;
+    flex: 1;
+    min-width: 6px;
+    max-width: 22px;
+  }
+  .cal-ev-patient  { background: #3b82f6; }
+  .cal-ev-provider { background: #10b981; }
+
+  /* Cal event tooltip label under day */
+  .cal-ev-label {
+    font-size: 9px; color: #9ca3af; margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* ── Read-only field ── */
+  .ro-field { margin-bottom: 12px; }
+  .ro-field:last-child { margin-bottom: 0; }
+  .ro-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; margin-bottom: 4px; }
+  .ro-value { font-size: 13px; color: #374151; line-height: 1.5; }
+  .ro-value.mono { font-family: 'IBM Plex Mono', 'Consolas', monospace; }
+
+  .section-divider { border: none; border-top: 1px solid #f3f4f6; margin: 12px 0; }
+
+  /* ── Advice Window Summary ── */
+  .advice-window-stack { display: flex; flex-direction: column; gap: 10px; }
+
+  .advice-window-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    position: relative;
+  }
+  .advice-window-card.current   { border-color: #bae6fd; background: #f0f9ff; }
+  .advice-window-card.expired   { border-color: #fde68a; background: #fffbeb; }
+  .advice-window-card.submitted { border-color: #bbf7d0; background: #f0fdf4; }
+
+  .aw-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .aw-title  { font-size: 12px; font-weight: 600; color: #374151; }
+  .aw-state  {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; border: 1px solid;
+  }
+  .aw-state-available { color: #0369a1; background: #e0f2fe; border-color: #bae6fd; }
+  .aw-state-expired   { color: #b45309; background: #fef3c7; border-color: #fcd34d; }
+  .aw-state-submitted { color: #065f46; background: #d1fae5; border-color: #6ee7b7; }
+
+  .aw-body { font-size: 12px; color: #6b7280; line-height: 1.45; }
+  .aw-body strong { color: #374151; }
+
+  .aw-action-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 10px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #0ea5e9;
+    color: #fff;
+    border: none;
+    width: 100%;
+    justify-content: center;
+  }
+  .aw-action-btn:hover { background: #0284c7; }
+
+  .aw-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #0ea5e9;
+    cursor: pointer;
+    background: none; border: none; padding: 0;
+    text-decoration: underline;
+  }
+
+  /* ── Advice History ── */
+  .advice-history-list { display: flex; flex-direction: column; }
+  .advice-entry {
+    display: flex;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .advice-entry:last-child { border-bottom: none; }
+  .advice-entry:hover { background: #f9fafb; }
+
+  .advice-entry-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #d1fae5;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .advice-entry-body { flex: 1; min-width: 0; }
+  .advice-entry-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-bottom: 4px;
+  }
+  .advice-entry-date { font-size: 12px; font-weight: 600; color: #374151; }
+  .advice-entry-state { font-size: 10px; font-weight: 600; }
+  .state-edited { color: #7c3aed; }
+  .advice-entry-text {
+    font-size: 12px; color: #6b7280; line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .advice-entry-meta { font-size: 11px; color: #9ca3af; margin-top: 5px; }
+
+  /* ── Medical Questionnaire ── */
+  .mq-item { margin-bottom: 12px; }
+  .mq-item:last-child { margin-bottom: 0; }
+  .mq-q { font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 3px; }
+  .mq-a { font-size: 12px; color: #374151; line-height: 1.45; }
+  .mq-a.bold { font-weight: 600; color: #111827; }
+
+  /* ── Withdraw section ── */
+  .withdraw-box {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #fca5a5;
+    padding: 16px 20px;
+  }
+  .withdraw-title  { font-size: 13px; font-weight: 600; color: #dc2626; margin-bottom: 6px; }
+  .withdraw-desc   { font-size: 12px; color: #6b7280; line-height: 1.45; margin-bottom: 12px; }
+  .btn-danger-full {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%;
+    padding: 9px 16px;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    color: #dc2626;
+    cursor: pointer;
+  }
+  .btn-danger-full:hover { background: #fef2f2; }
+
+  /* ── Misc tag styles ── */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 500; border: 1px solid;
+  }
+  .tag-blue   { color: #1d4ed8; background: #dbeafe; border-color: #93c5fd; }
+  .tag-green  { color: #065f46; background: #d1fae5; border-color: #6ee7b7; }
+  .tag-yellow { color: #92400e; background: #fef3c7; border-color: #fcd34d; }
+
+  /* ── Inline read-only alert ── */
+  .alert-read-only {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 500; color: #6b7280;
+    background: #f3f4f6; border: 1px solid #e5e7eb;
+    padding: 2px 8px; border-radius: 4px;
+  }
+
+  /* ── Section separator with label ── */
+  .section-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #9ca3af;
+    padding: 10px 20px 6px;
+    background: #fafafa;
+    border-bottom: 1px solid #f3f4f6;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Hair<span>line</span> Provider</div>
+
+    <div class="sidebar-section">Overview</div>
+    <div class="sidebar-item"><i class="sidebar-icon">▦</i> Dashboard</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💬</i> Inquiries</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📋</i> Quotes &amp; Bookings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">🏥</i> Treatments</div>
+
+    <div class="sidebar-section">Finance</div>
+    <div class="sidebar-item"><i class="sidebar-icon">💰</i> Earnings &amp; Payouts</div>
+    <div class="sidebar-item"><i class="sidebar-icon">📊</i> Reports</div>
+
+    <div class="sidebar-section">Monitoring</div>
+    <div class="sidebar-item active">
+      <i class="sidebar-icon">🩺</i> Advice Queue
+      <span class="sidebar-badge red">3</span>
+    </div>
+
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item"><i class="sidebar-icon">⚙</i> Clinic Profile</div>
+    <div class="sidebar-item"><i class="sidebar-icon">👥</i> Team</div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-avatar">SL</div>
+      <div>
+        <div class="sidebar-user-name">Dr. Sarah Lim</div>
+        <div class="sidebar-user-role">Hair Loss Specialist</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- ── Top bar ── -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Monitoring</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-link">Advice Queue</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Case MC-0031</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-ghost">← Back to Queue</button>
+        <button class="btn-danger">⚠ Withdraw from Case</button>
+      </div>
+    </div>
+
+    <!-- ── Anon notice ── -->
+    <div class="anon-notice">
+      🔒 Patient identity is anonymised for all FR-037 monitoring screens. Full details are revealed only through FR-003 conversion and its payment confirmation.
+    </div>
+
+    <!-- ── Case Header Card ── -->
+    <div class="case-header-card">
+      <div class="case-header-top">
+        <div class="case-header-left">
+
+          <div class="case-title-row">
+            <span class="case-id-label">MC-0031</span>
+            <span class="badge badge-active">● Active</span>
+            <span class="badge badge-provider">Provider Advice</span>
+            <span class="badge badge-reassign">Reassignment</span>
+            <span class="alert-read-only">🔒 Read-only overview</span>
+          </div>
+
+          <div class="case-meta-row">
+            <div class="case-meta-item">
+              <div class="case-meta-label">Patient (Anonymised)</div>
+              <div class="case-meta-value mono">PT-4821</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Case Start Date</div>
+              <div class="case-meta-value">1 May 2026</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Assignment Type</div>
+              <div class="case-meta-value">Reassignment <span style="color:#9ca3af;font-size:11px;">(prior provider withdrew)</span></div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Assigned to You</div>
+              <div class="case-meta-value">10 Aug 2026</div>
+            </div>
+            <div class="case-meta-item">
+              <div class="case-meta-label">Mode</div>
+              <div class="case-meta-value">Provider Advice</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Content body ── -->
+    <div class="content-body">
+
+      <!-- ── Left column ── -->
+      <div class="col-left">
+
+        <!-- Monitoring Dashboard -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📊 Monitoring Dashboard <span style="font-weight:400;color:#9ca3af;font-size:11px;">(patient parity · read-only)</span></span>
+          </div>
+          <div class="card-body">
+
+            <!-- Stats -->
+            <div class="stats-row">
+              <div class="stat-box">
+                <div class="stat-label">Logged Days</div>
+                <div class="stat-value">28</div>
+                <div class="stat-sub">out of 132 days active</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Scans Captured</div>
+                <div class="stat-value">4</div>
+                <div class="stat-sub">latest: 20 Aug 2026</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Latest Severity</div>
+                <div class="stat-value" style="color:#d97706;">7</div>
+                <div class="stat-sub">logged 25 Aug 2026</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Advice Submitted</div>
+                <div class="stat-value">1</div>
+                <div class="stat-sub">window 2 pending</div>
+              </div>
+            </div>
+
+            <!-- Severity Trend Chart -->
+            <div class="chart-section">
+              <div class="chart-header">
+                <span class="chart-title">Severity Trend over Time</span>
+                <div class="chart-legend">
+                  <div class="legend-item"><span class="legend-dot legend-dot-patient"></span> Patient log entry</div>
+                  <div class="legend-item"><span class="legend-dot legend-dot-provider"></span> Provider advice posted</div>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <svg width="100%" height="140" viewBox="0 0 680 140" preserveAspectRatio="none">
+                  <!-- Grid lines -->
+                  <line x1="40" y1="10"  x2="680" y2="10"  stroke="#f3f4f6" stroke-width="1"/>
+                  <line x1="40" y1="38"  x2="680" y2="38"  stroke="#f3f4f6" stroke-width="1"/>
+                  <line x1="40" y1="66"  x2="680" y2="66"  stroke="#f3f4f6" stroke-width="1"/>
+                  <line x1="40" y1="94"  x2="680" y2="94"  stroke="#f3f4f6" stroke-width="1"/>
+                  <line x1="40" y1="122" x2="680" y2="122" stroke="#f3f4f6" stroke-width="1"/>
+                  <!-- Y axis labels -->
+                  <text x="34" y="13"  text-anchor="end" font-size="9" fill="#d1d5db">10</text>
+                  <text x="34" y="41"  text-anchor="end" font-size="9" fill="#d1d5db"> 8</text>
+                  <text x="34" y="69"  text-anchor="end" font-size="9" fill="#d1d5db"> 6</text>
+                  <text x="34" y="97"  text-anchor="end" font-size="9" fill="#d1d5db"> 4</text>
+                  <text x="34" y="125" text-anchor="end" font-size="9" fill="#d1d5db"> 2</text>
+                  <!-- Patient severity line (scale: severity * 12 from bottom, bottom=132) -->
+                  <!-- Points: (x, y) where y = 132 - severity*12 -->
+                  <!-- entries: 4→84, 5→72, 4→84, 6→60, 5→72, 7→48, 6→60, 7→48, 8→36, 7→48, 7→48, 8→36 (illustrative) -->
+                  <polyline
+                    points="60,84 110,72 160,84 210,60 260,72 310,48 360,60 410,48 460,36 510,48 560,48 610,36"
+                    fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+                  <!-- Patient dots -->
+                  <circle cx="60"  cy="84" r="3.5" fill="#3b82f6"/>
+                  <circle cx="110" cy="72" r="3.5" fill="#3b82f6"/>
+                  <circle cx="160" cy="84" r="3.5" fill="#3b82f6"/>
+                  <circle cx="210" cy="60" r="3.5" fill="#3b82f6"/>
+                  <circle cx="260" cy="72" r="3.5" fill="#3b82f6"/>
+                  <circle cx="310" cy="48" r="3.5" fill="#3b82f6"/>
+                  <circle cx="360" cy="60" r="3.5" fill="#3b82f6"/>
+                  <circle cx="410" cy="48" r="3.5" fill="#3b82f6"/>
+                  <circle cx="460" cy="36" r="3.5" fill="#3b82f6"/>
+                  <circle cx="510" cy="48" r="3.5" fill="#3b82f6"/>
+                  <circle cx="560" cy="48" r="3.5" fill="#3b82f6"/>
+                  <circle cx="610" cy="36" r="3.5" fill="#3b82f6"/>
+                  <!-- Provider advice markers (diamond shape at x=310 and x=510) -->
+                  <polygon points="310,28 317,35 310,42 303,35" fill="#10b981" stroke="#fff" stroke-width="1.5"/>
+                  <polygon points="510,28 517,35 510,42 503,35" fill="#10b981" stroke="#fff" stroke-width="1.5"/>
+                  <!-- X axis date labels -->
+                  <text x="60"  y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">May 15</text>
+                  <text x="160" y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">Jun 1</text>
+                  <text x="260" y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">Jun 20</text>
+                  <text x="360" y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">Jul 10</text>
+                  <text x="460" y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">Aug 1</text>
+                  <text x="560" y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">Aug 20</text>
+                  <text x="610" y="136" text-anchor="middle" font-size="8.5" fill="#9ca3af">Aug 25</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Trend summary row -->
+            <div class="trend-summary-row">
+              <div class="trend-mini">
+                <div class="trend-mini-label">First</div>
+                <div class="trend-mini-val">4</div>
+              </div>
+              <div class="trend-mini">
+                <div class="trend-mini-label">Latest</div>
+                <div class="trend-mini-val" style="color:#d97706;">7</div>
+              </div>
+              <div class="trend-mini">
+                <div class="trend-mini-label">Min</div>
+                <div class="trend-mini-val" style="color:#059669;">3</div>
+              </div>
+              <div class="trend-mini">
+                <div class="trend-mini-label">Max</div>
+                <div class="trend-mini-val" style="color:#dc2626;">8</div>
+              </div>
+              <div class="trend-mini">
+                <div class="trend-mini-label">Average</div>
+                <div class="trend-mini-val">5.8</div>
+              </div>
+            </div>
+
+            <hr class="section-divider" style="margin-top:16px;">
+
+            <!-- Scan History -->
+            <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px;">Head Scan History (4 sets)</div>
+            <div class="scan-list">
+
+              <div class="scan-item">
+                <div class="scan-thumb">
+                  <div class="scan-thumb-inner">
+                    <div class="scan-thumb-view">F</div>
+                    <div class="scan-thumb-view">T</div>
+                    <div class="scan-thumb-view">L</div>
+                    <div class="scan-thumb-view">R</div>
+                  </div>
+                </div>
+                <div class="scan-info">
+                  <div class="scan-date">20 Aug 2026 · 11:02</div>
+                  <div class="scan-sub">4 views · Front, Top, Left, Right</div>
+                  <div class="scan-sub">Logged on: 20 Aug 2026</div>
+                </div>
+                <span class="scan-badge">Latest</span>
+              </div>
+
+              <div class="scan-item">
+                <div class="scan-thumb">
+                  <div class="scan-thumb-inner">
+                    <div class="scan-thumb-view">F</div>
+                    <div class="scan-thumb-view">T</div>
+                    <div class="scan-thumb-view">L</div>
+                    <div class="scan-thumb-view">R</div>
+                  </div>
+                </div>
+                <div class="scan-info">
+                  <div class="scan-date">18 Jul 2026 · 09:44</div>
+                  <div class="scan-sub">4 views · Front, Top, Left, Right</div>
+                  <div class="scan-sub">Logged on: 18 Jul 2026</div>
+                </div>
+              </div>
+
+              <div class="scan-item">
+                <div class="scan-thumb">
+                  <div class="scan-thumb-inner">
+                    <div class="scan-thumb-view">F</div>
+                    <div class="scan-thumb-view">T</div>
+                    <div class="scan-thumb-view">L</div>
+                    <div class="scan-thumb-view">R</div>
+                  </div>
+                </div>
+                <div class="scan-info">
+                  <div class="scan-date">10 Jun 2026 · 15:20</div>
+                  <div class="scan-sub">4 views · Front, Top, Left, Right</div>
+                  <div class="scan-sub">Logged on: 10 Jun 2026</div>
+                </div>
+              </div>
+
+              <div class="scan-item" style="opacity:0.6;">
+                <div class="scan-thumb" style="background:#fef2f2;">
+                  <div style="font-size:20px;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">⚠</div>
+                </div>
+                <div class="scan-info">
+                  <div class="scan-date">15 May 2026 · 10:05</div>
+                  <div class="scan-sub" style="color:#ef4444;">Quality validation failed — not usable for conversion</div>
+                  <div class="scan-sub">Logged on: 15 May 2026</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Monitoring Calendar -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📅 Monitoring Calendar <span style="font-weight:400;color:#9ca3af;font-size:11px;">(patient parity · read-only)</span></span>
+          </div>
+          <div class="calendar-wrap">
+
+            <div class="cal-legend">
+              <div class="cal-legend-item"><span class="cal-dot cal-dot-patient"></span> Patient log — click opens Screen 10A</div>
+              <div class="cal-legend-item"><span class="cal-dot cal-dot-provider"></span> Provider advice — click opens Screen 10B</div>
+              <div class="cal-legend-item"><span class="cal-dot cal-dot-both"></span> Both on same date</div>
+            </div>
+
+            <div class="cal-nav">
+              <button class="cal-nav-btn">‹</button>
+              <span class="cal-month-label">August 2026</span>
+              <button class="cal-nav-btn">›</button>
+            </div>
+
+            <div class="cal-grid">
+              <!-- Day-of-week headers -->
+              <div class="cal-dow">Mon</div>
+              <div class="cal-dow">Tue</div>
+              <div class="cal-dow">Wed</div>
+              <div class="cal-dow">Thu</div>
+              <div class="cal-dow">Fri</div>
+              <div class="cal-dow">Sat</div>
+              <div class="cal-dow">Sun</div>
+
+              <!-- Week 1: Jul 27 – Aug 2 -->
+              <div class="cal-day other-month"><div class="cal-day-num">27</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">28</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">29</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">30</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">31</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">1</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">2</div></div>
+
+              <!-- Week 2: Aug 3–9 -->
+              <div class="cal-day"><div class="cal-day-num">3</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">4</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">5</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">6</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">7</div></div>
+              <div class="cal-day"><div class="cal-day-num">8</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">9</div>
+                <div class="cal-events">
+                  <div class="cal-ev cal-ev-patient"></div>
+                  <div class="cal-ev cal-ev-provider"></div>
+                </div>
+                <div class="cal-ev-label">Log + Advice</div>
+              </div>
+
+              <!-- Week 3: Aug 10–16 -->
+              <div class="cal-day" style="border-color:#bae6fd;background:#f0f9ff;">
+                <div class="cal-day-num" style="color:#0369a1;">10</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-provider"></div></div>
+                <div class="cal-ev-label" style="color:#0369a1;">Assignment</div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">11</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">12</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">13</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">14</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">15</div></div>
+              <div class="cal-day"><div class="cal-day-num">16</div></div>
+
+              <!-- Week 4: Aug 17–23 -->
+              <div class="cal-day"><div class="cal-day-num">17</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">18</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">19</div></div>
+              <div class="cal-day">
+                <div class="cal-day-num">20</div>
+                <div class="cal-events">
+                  <div class="cal-ev cal-ev-patient"></div>
+                </div>
+                <div class="cal-ev-label">Scan set</div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">21</div></div>
+              <div class="cal-day"><div class="cal-day-num">22</div></div>
+              <div class="cal-day"><div class="cal-day-num">23</div></div>
+
+              <!-- Week 5: Aug 24–30 -->
+              <div class="cal-day">
+                <div class="cal-day-num">24</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+              </div>
+              <div class="cal-day today">
+                <div class="cal-day-num">25</div>
+                <div class="cal-events"><div class="cal-ev cal-ev-patient"></div></div>
+                <div class="cal-ev-label">Today · logged</div>
+              </div>
+              <div class="cal-day"><div class="cal-day-num">26</div></div>
+              <div class="cal-day"><div class="cal-day-num">27</div></div>
+              <div class="cal-day"><div class="cal-day-num">28</div></div>
+              <div class="cal-day"><div class="cal-day-num">29</div></div>
+              <div class="cal-day"><div class="cal-day-num">30</div></div>
+
+              <!-- Week 6: Aug 31 -->
+              <div class="cal-day"><div class="cal-day-num">31</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">1</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">2</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">3</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">4</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">5</div></div>
+              <div class="cal-day other-month"><div class="cal-day-num">6</div></div>
+            </div>
+
+            <div style="margin-top:10px;padding:8px 10px;background:#f9fafb;border:1px solid #f3f4f6;border-radius:6px;font-size:11px;color:#6b7280;display:flex;align-items:center;gap:6px;">
+              ℹ️ Click any blue event to open the daily log detail (Screen 10A). Click any green event to open the provider advice detail (Screen 10B).
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /.col-left -->
+
+      <!-- ── Right column ── -->
+      <div class="col-right">
+
+        <!-- Medical Questionnaire -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Medical Questionnaire</span>
+            <span class="alert-read-only">🔒 Read-only</span>
+          </div>
+          <div class="card-body">
+
+            <div class="mq-item">
+              <div class="mq-q">Nature of hair-loss concern</div>
+              <div class="mq-a">Gradual thinning at crown and temples, primarily frontal recession. No sudden shedding events. Noticed over approximately 18 months.</div>
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="mq-item">
+              <div class="mq-q">Duration of condition</div>
+              <div class="mq-a bold">18 – 24 months</div>
+            </div>
+
+            <div class="mq-item">
+              <div class="mq-q">Previous treatments</div>
+              <div class="mq-a">Topical minoxidil 5% for 6 months (2024). Discontinued due to scalp irritation. No surgical procedures.</div>
+            </div>
+
+            <div class="mq-item">
+              <div class="mq-q">Initial severity (self-rated)</div>
+              <div class="mq-a bold">4 / 10</div>
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="mq-item">
+              <div class="mq-q">Lifestyle factors</div>
+              <div class="mq-a">High-stress work environment. Sleep averaging 5–6 hours. Diet largely protein-deficient. No smoking.</div>
+            </div>
+
+            <div class="mq-item">
+              <div class="mq-q">Additional notes</div>
+              <div class="mq-a">Family history: maternal grandfather with significant hair loss at age 40.</div>
+            </div>
+
+            <hr class="section-divider">
+
+            <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px;">FR-025 Medical Answers (Advice-mode required)</div>
+
+            <div class="mq-item">
+              <div class="mq-q">Current medications</div>
+              <div class="mq-a">Vitamin D supplement (2000 IU/day). No prescription medications.</div>
+            </div>
+
+            <div class="mq-item">
+              <div class="mq-q">Known allergies</div>
+              <div class="mq-a bold">None reported</div>
+            </div>
+
+            <div class="mq-item">
+              <div class="mq-q">Recent blood work</div>
+              <div class="mq-a">Ferritin: 18 ng/mL (borderline low). Thyroid (TSH): 2.1 mIU/L (normal). Testosterone: normal range.</div>
+            </div>
+
+            <div class="mq-item">
+              <div class="mq-q">Scalp conditions</div>
+              <div class="mq-a">Mild dandruff. No psoriasis or dermatitis diagnosed.</div>
+            </div>
+
+            <div style="margin-top:8px;padding:7px 10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;font-size:11px;color:#0369a1;">
+              ✓ All required FR-025 questions answered. Questionnaire version: v2.1 · Completed: 2 May 2026
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Advice Window Summary -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💬 Advice Window Summary</span>
+          </div>
+          <div class="card-body" style="padding:12px 16px;">
+
+            <div class="advice-window-stack">
+
+              <!-- Current window: Available -->
+              <div class="advice-window-card current">
+                <div class="aw-header">
+                  <span class="aw-title">Window 2 (Current)</span>
+                  <span class="aw-state aw-state-available">● Available Now</span>
+                </div>
+                <div class="aw-body">
+                  <strong>Window opened:</strong> 24 Aug 2026<br>
+                  <strong>Cadence:</strong> Bi-weekly (14-day interval)<br>
+                  <strong>Status:</strong> No advice submitted yet. No ordinary deadline — remains open until advice is submitted or a successor window opens.<br>
+                  <br>
+                  Next window opens: <strong>7 Sep 2026</strong> (if no submission before then).
+                </div>
+                <button class="aw-action-btn">Post Advice for Window 2 →</button>
+              </div>
+
+              <!-- Superseded window: Expired-unsubmitted -->
+              <div class="advice-window-card expired">
+                <div class="aw-header">
+                  <span class="aw-title">Window 1 (Superseded)</span>
+                  <span class="aw-state aw-state-expired">⚠ Expired — Unsubmitted</span>
+                </div>
+                <div class="aw-body">
+                  <strong>Window opened:</strong> 10 Aug 2026<br>
+                  <strong>Expired:</strong> 24 Aug 2026 — Window 2 opened before advice was submitted.<br>
+                  No advice was posted for this window.
+                </div>
+                <button class="aw-link">View window detail →</button>
+              </div>
+
+            </div>
+
+            <div style="margin-top:10px;padding:7px 10px;background:#f9fafb;border:1px solid #f3f4f6;border-radius:6px;font-size:11px;color:#9ca3af;">
+              ℹ️ Each window may have one advice paragraph. A new window automatically expires an unsubmitted prior window.
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Advice History -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📜 Advice History</span>
+            <span class="card-hint">1 posted · click entry to open Screen 10B</span>
+          </div>
+
+          <div class="advice-history-list">
+
+            <!-- Entry 1: the only submitted advice -->
+            <div class="advice-entry">
+              <div class="advice-entry-icon">💬</div>
+              <div class="advice-entry-body">
+                <div class="advice-entry-header">
+                  <span class="advice-entry-date">9 Aug 2026</span>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:10px;font-weight:600;color:#065f46;background:#d1fae5;border:1px solid #6ee7b7;padding:1px 7px;border-radius:4px;">Submitted</span>
+                    <span class="advice-entry-state state-edited">✎ Edited</span>
+                  </div>
+                </div>
+                <div class="advice-entry-text">
+                  Based on the severity trend and scan history reviewed, the gradual worsening pattern from 4 to 7 over 14 weeks combined with…
+                </div>
+                <div class="advice-entry-meta">
+                  Window 1 · Originally: 9 Aug 2026 11:22 · Last edited: 12 Aug 2026 09:05 · Dr. Sarah Lim
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty state notice for prior windows -->
+            <div style="padding:12px 20px;background:#fafafa;font-size:11px;color:#9ca3af;border-top:1px solid #f3f4f6;text-align:center;">
+              No earlier advice entries — this is your first assignment on this case (reassignment). Prior provider's advice records are not visible to you.
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Withdraw box -->
+        <div class="withdraw-box">
+          <div class="withdraw-title">⚠ Withdraw from Case</div>
+          <div class="withdraw-desc">
+            Withdrawing immediately ends your access to this case. A reason is required and will be visible to Admin for reassignment. The patient's monitoring continues uninterrupted.
+          </div>
+          <button class="btn-danger-full">⚠ Withdraw from Case MC-0031</button>
+        </div>
+
+      </div><!-- /.col-right -->
+
+    </div><!-- /.content-body -->
+
+  </div><!-- /.main -->
+</div><!-- /.layout -->
+</body>
+</html>

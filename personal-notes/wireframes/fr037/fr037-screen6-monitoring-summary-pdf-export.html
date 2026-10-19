@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-037 Screen 6 — Monitoring Summary &amp; PDF Export</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #e8eaed;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 60px;
+      color: #1c1c1e;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      width: 100%; max-width: 1060px; margin-bottom: 32px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; }
+    .page-header p  { font-size: 13px; color: #6e6e73; margin-top: 4px; }
+    .wf-badge {
+      background: #1c1c1e; color: #fff; font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px; text-transform: uppercase;
+      letter-spacing: 0.06em; white-space: nowrap; margin-top: 4px;
+    }
+
+    /* ── Phones row ── */
+    .phones-row {
+      display: flex; gap: 36px; align-items: flex-start;
+      justify-content: center; width: 100%; max-width: 1060px;
+    }
+    .phone-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .phone-col-label {
+      font-size: 11px; font-weight: 700; color: #6e6e73;
+      text-transform: uppercase; letter-spacing: 0.07em; text-align: center;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 375px; border-radius: 48px; background: #fff;
+      border: 3px solid #1c1c1e;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1),
+                  0 24px 60px rgba(0,0,0,0.25),
+                  inset 0 0 0 2px #3a3a3c;
+      overflow: hidden;
+    }
+    .di-pill {
+      display: block; width: 120px; height: 34px;
+      background: #1c1c1e; border-radius: 20px;
+      margin: 12px auto 0; position: relative; z-index: 10;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      height: 54px; background: #fff;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 28px 8px; font-size: 12px; font-weight: 600; color: #1c1c1e;
+    }
+    .status-time { font-size: 15px; font-weight: 700; }
+    .status-icons { display: flex; gap: 5px; font-size: 11px; }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      height: 44px; background: #fff;
+      display: flex; align-items: center; padding: 0 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18); position: relative;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 16px; color: #007aff; cursor: pointer;
+    }
+    .nav-back-chevron { font-size: 20px; line-height: 1; }
+    .nav-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 16px; font-weight: 600; color: #1c1c1e; white-space: nowrap;
+    }
+    .nav-right { margin-left: auto; font-size: 20px; color: #007aff; cursor: pointer; }
+
+    /* ── Screen scroll ── */
+    .screen-scroll {
+      height: 730px; overflow-y: auto;
+      background: #f2f2f7; scrollbar-width: none;
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Completed case banner ── */
+    .completed-banner {
+      background: #fff; padding: 14px 16px 12px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .completed-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: #e3fef0; display: flex; align-items: center;
+      justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .completed-body { flex: 1; }
+    .completed-title { font-size: 15px; font-weight: 700; color: #1c1c1e; }
+    .completed-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .completed-pill {
+      font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 10px;
+      background: #f2f2f7; color: #8e8e93; white-space: nowrap;
+    }
+
+    /* ── PDF status card ── */
+    .pdf-card {
+      background: #fff; margin-bottom: 8px;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .pdf-card-inner { padding: 16px; }
+
+    /* PDF ready state */
+    .pdf-ready {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    }
+    .pdf-ready-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: #e3fef0; display: flex; align-items: center;
+      justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .pdf-ready-body { flex: 1; }
+    .pdf-ready-title { font-size: 15px; font-weight: 600; color: #1a7a3c; }
+    .pdf-ready-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .btn-download {
+      width: 100%; height: 48px; border-radius: 12px;
+      background: #34c759; color: #fff;
+      font-size: 15px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .pdf-meta {
+      margin-top: 8px; font-size: 11px; color: #8e8e93; text-align: center;
+    }
+
+    /* PDF generating state */
+    .pdf-generating {
+      display: flex; align-items: center; gap: 12px; padding: 4px 0 8px;
+    }
+    .spinner {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 3px solid #e5e5ea; border-top-color: #007aff;
+      flex-shrink: 0; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pdf-generating-body { flex: 1; }
+    .pdf-generating-title { font-size: 14px; font-weight: 600; color: #1c1c1e; }
+    .pdf-generating-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .pdf-progress-bar {
+      height: 4px; background: #e5e5ea; border-radius: 2px;
+      margin-top: 10px; overflow: hidden;
+    }
+    .pdf-progress-fill {
+      height: 100%; width: 60%; background: #007aff; border-radius: 2px;
+    }
+
+    /* PDF failed state */
+    .pdf-failed {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .pdf-failed-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #fff0f0; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .pdf-failed-body { flex: 1; }
+    .pdf-failed-title { font-size: 14px; font-weight: 600; color: #c0392b; }
+    .pdf-failed-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; line-height: 1.4; }
+    .btn-retry {
+      margin-top: 10px; height: 40px; border-radius: 10px;
+      background: #fff0f0; color: #c0392b;
+      font-size: 14px; font-weight: 600; border: 1.5px solid #ffb3b3;
+      cursor: pointer; font-family: inherit; padding: 0 16px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ── Section group (iOS) ── */
+    .section-group { margin-bottom: 8px; }
+    .section-group-header {
+      padding: 12px 16px 6px; font-size: 12px; font-weight: 600;
+      color: #8e8e93; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .section-group-body {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+
+    /* ── Monitoring period row ── */
+    .info-row {
+      display: flex; align-items: center; padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18); min-height: 48px; gap: 8px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: 14px; color: #8e8e93; flex: 1; }
+    .info-value { font-size: 14px; color: #1c1c1e; font-weight: 500; text-align: right; }
+
+    /* ── Stat grid ── */
+    .stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    }
+    .stat-cell {
+      padding: 14px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      border-right: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .stat-cell:nth-child(even)       { border-right: none; }
+    .stat-cell:nth-last-child(-n+2)  { border-bottom: none; }
+    .stat-val { font-size: 22px; font-weight: 700; color: #1c1c1e; line-height: 1; }
+    .stat-val.blue   { color: #007aff; }
+    .stat-val.green  { color: #1a7a3c; }
+    .stat-val.orange { color: #b35c00; }
+    .stat-val.purple { color: #7b2fa3; }
+    .stat-lbl { font-size: 11px; color: #8e8e93; margin-top: 4px; }
+
+    /* Trend arrow */
+    .trend-down { color: #1a7a3c; font-size: 22px; font-weight: 700; line-height: 1; }
+    .trend-up   { color: #ff3b30; font-size: 22px; font-weight: 700; line-height: 1; }
+
+    /* ── Log timeline entries ── */
+    .timeline-entry {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .timeline-entry:last-child { border-bottom: none; }
+    .tl-date-col { flex-shrink: 0; width: 46px; text-align: center; padding-top: 2px; }
+    .tl-date-day  { font-size: 18px; font-weight: 700; color: #1c1c1e; line-height: 1; }
+    .tl-date-mon  { font-size: 10px; color: #8e8e93; }
+    .tl-connector { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+    .tl-dot       { width: 10px; height: 10px; border-radius: 50%; background: #007aff; flex-shrink: 0; }
+    .tl-dot.scan  { background: #af52de; }
+    .tl-dot.advice{ background: #34c759; }
+    .tl-line      { width: 2px; flex: 1; background: #e5e5ea; margin-top: 3px; min-height: 20px; }
+    .tl-body      { flex: 1; }
+    .tl-sev-row   { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .tl-sev-badge {
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px;
+    }
+    .sev-low  { background: #e3fef0; color: #1a7a3c; }
+    .sev-mid  { background: #fff3cd; color: #856404; }
+    .sev-high { background: #fff0f0; color: #c0392b; }
+    .tl-type-tag {
+      font-size: 10px; color: #8e8e93; font-weight: 500;
+    }
+    .tl-notes { font-size: 13px; color: #1c1c1e; line-height: 1.4; margin-bottom: 6px; }
+    .tl-notes.placeholder { color: #c7c7cc; font-style: italic; }
+    .tl-media  { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tl-media-tag {
+      font-size: 10px; font-weight: 500;
+      background: #f2f2f7; color: #8e8e93;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .tl-media-tag.purple { background: #f3e8ff; color: #7b2fa3; }
+    .tl-media-tag.green  { background: #e3fef0; color: #1a7a3c; }
+
+    /* Show more row */
+    .show-more-row {
+      padding: 12px 16px; text-align: center;
+      font-size: 14px; font-weight: 500; color: #007aff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      cursor: pointer; background: #fff;
+    }
+
+    /* ── Scan gallery ── */
+    .scan-group { padding: 12px 16px; border-bottom: 0.5px solid rgba(60,60,67,0.18); }
+    .scan-group:last-child { border-bottom: none; }
+    .scan-group-date { font-size: 12px; font-weight: 600; color: #8e8e93; margin-bottom: 8px; }
+    .scan-thumbs { display: flex; gap: 6px; }
+    .scan-thumb {
+      width: 68px; height: 68px; border-radius: 10px;
+      background: #f2f2f7; border: 1px solid rgba(60,60,67,0.1);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 18px; gap: 2px; flex-shrink: 0;
+    }
+    .scan-thumb-label { font-size: 9px; color: #8e8e93; font-weight: 500; }
+    .scan-quality {
+      font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+      background: #e3fef0; color: #1a7a3c; margin-top: 4px; align-self: flex-start;
+    }
+
+    /* ── Provider advice list ── */
+    .advice-entry {
+      padding: 12px 16px; border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .advice-entry:last-child { border-bottom: none; }
+    .advice-entry-meta {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
+    }
+    .advice-provider { font-size: 12px; font-weight: 600; color: #1c1c1e; }
+    .advice-date     { font-size: 11px; color: #8e8e93; }
+    .advice-edited   { font-size: 10px; font-weight: 600; background: #fff3cd; color: #856404; padding: 1px 6px; border-radius: 4px; }
+    .advice-text-block {
+      font-size: 13px; color: #1c1c1e; line-height: 1.5;
+      background: #f9f9fb; border-left: 3px solid #34c759;
+      padding: 8px 10px; border-radius: 0 6px 6px 0;
+    }
+
+    /* ── Annotations ── */
+    .annotation-list { width: 164px; flex-shrink: 0; padding-top: 70px; }
+    .ann-section-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #8e8e93; margin-bottom: 10px;
+    }
+    .annotation-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 14px; }
+    .ann-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; flex-shrink: 0; margin-top: 4px; }
+    .ann-dot.blue   { background: #007aff; }
+    .ann-dot.green  { background: #34c759; }
+    .ann-dot.purple { background: #af52de; }
+    .ann-dot.orange { background: #ff9500; }
+    .ann-dot.gray   { background: #8e8e93; }
+    .ann-text { font-size: 11px; color: #1c1c1e; line-height: 1.5; }
+    .ann-text strong        { color: #ff3b30; }
+    .ann-text strong.blue   { color: #007aff; }
+    .ann-text strong.green  { color: #1a7a3c; }
+    .ann-text strong.purple { color: #7b2fa3; }
+    .ann-text strong.orange { color: #b35c00; }
+    .ann-text strong.gray   { color: #6e6e73; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>FR-037 · Screen 6 — Monitoring Summary &amp; PDF Export</h1>
+    <p>Patient Platform (P-05, P-07) &nbsp;·&nbsp; Displays the completed case and its downloadable report</p>
+  </div>
+  <span class="wf-badge">Wireframe</span>
+</div>
+
+<div class="phones-row">
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHONE A: PDF Ready — Self-monitoring completed case       -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">State A — PDF Ready (Self-Monitoring)</div>
+    <div class="phone">
+      <span class="di-pill"></span>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Cases</div>
+        <div class="nav-title">Case Summary</div>
+        <div class="nav-right">⤴</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- Completed banner -->
+        <div class="completed-banner">
+          <div class="completed-icon">✅</div>
+          <div class="completed-body">
+            <div class="completed-title">Monitoring Completed</div>
+            <div class="completed-sub">Case is read-only &nbsp;·&nbsp; Completed 25 Aug 2026</div>
+          </div>
+          <span class="completed-pill">Self-Monitoring</span>
+        </div>
+
+        <!-- PDF status — READY -->
+        <div class="pdf-card" style="margin-top:8px;">
+          <div class="pdf-card-inner">
+            <div class="pdf-ready">
+              <div class="pdf-ready-icon">📄</div>
+              <div class="pdf-ready-body">
+                <div class="pdf-ready-title">PDF Report Ready</div>
+                <div class="pdf-ready-sub">Generated 25 Aug 2026 · 14:47 &nbsp;·&nbsp; 2.3 MB</div>
+              </div>
+            </div>
+            <button class="btn-download">⬇ &nbsp;Download PDF Report</button>
+            <div class="pdf-meta">Link expires in 24 h &nbsp;·&nbsp; Re-generate any time</div>
+          </div>
+        </div>
+
+        <!-- Monitoring period + key stats -->
+        <div class="section-group">
+          <div class="section-group-header">Overview</div>
+          <div class="section-group-body">
+            <div class="info-row">
+              <span class="info-label">Monitoring Period</span>
+              <span class="info-value">1 Jul – 25 Aug 2026</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Days Active</span>
+              <span class="info-value">55 days</span>
+            </div>
+            <div class="info-row" style="border-bottom:none;">
+              <span class="info-label">Days Logged</span>
+              <span class="info-value" style="color:#007aff; font-weight:700;">12 days</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Severity summary -->
+        <div class="section-group">
+          <div class="section-group-header">Severity Summary</div>
+          <div class="section-group-body">
+            <div class="stat-grid">
+              <div class="stat-cell">
+                <div class="stat-val">5</div>
+                <div class="stat-lbl">First</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val green">3</div>
+                <div class="stat-lbl">Latest</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val green">2</div>
+                <div class="stat-lbl">Minimum</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val orange">7</div>
+                <div class="stat-lbl">Maximum</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">4.1</div>
+                <div class="stat-lbl">Average</div>
+              </div>
+              <div class="stat-cell">
+                <div class="trend-down">↘</div>
+                <div class="stat-lbl">Trend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log timeline -->
+        <div class="section-group">
+          <div class="section-group-header">Log Timeline</div>
+          <div class="section-group-body">
+
+            <div class="timeline-entry">
+              <div class="tl-date-col">
+                <div class="tl-date-day">25</div>
+                <div class="tl-date-mon">AUG</div>
+              </div>
+              <div class="tl-connector"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-sev-row">
+                  <span class="tl-sev-badge sev-low">3 / 10</span>
+                  <span class="tl-type-tag">Patient log</span>
+                </div>
+                <div class="tl-notes">Shedding slightly reduced. Crown looking better. Scalp not itchy.</div>
+                <div class="tl-media">
+                  <span class="tl-media-tag">📷 2 photos</span>
+                  <span class="tl-media-tag purple">🧑‍💻 Scan linked</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="timeline-entry">
+              <div class="tl-date-col">
+                <div class="tl-date-day">20</div>
+                <div class="tl-date-mon">AUG</div>
+              </div>
+              <div class="tl-connector"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-sev-row">
+                  <span class="tl-sev-badge sev-mid">4 / 10</span>
+                  <span class="tl-type-tag">Patient log</span>
+                </div>
+                <div class="tl-notes">Similar to last week. Left temple area slightly more noticeable.</div>
+                <div class="tl-media">
+                  <span class="tl-media-tag purple">🧑‍💻 New scan · 4 views</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="timeline-entry" style="border-bottom:none;">
+              <div class="tl-date-col">
+                <div class="tl-date-day">14</div>
+                <div class="tl-date-mon">AUG</div>
+              </div>
+              <div class="tl-connector"><div class="tl-dot"></div></div>
+              <div class="tl-body">
+                <div class="tl-sev-row">
+                  <span class="tl-sev-badge sev-mid">4 / 10</span>
+                  <span class="tl-type-tag">Patient log</span>
+                </div>
+                <div class="tl-notes">No significant change from last entry.</div>
+                <div class="tl-media">
+                  <span class="tl-media-tag">📷 1 photo</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="show-more-row">Show all 12 logged days ›</div>
+        </div>
+
+        <!-- Head scan gallery -->
+        <div class="section-group">
+          <div class="section-group-header">Head Scans (FR-002 V1)</div>
+          <div class="section-group-body">
+
+            <div class="scan-group">
+              <div class="scan-group-date">25 Aug 2026 — Selected for this case</div>
+              <div class="scan-thumbs">
+                <div class="scan-thumb">😐<div class="scan-thumb-label">Front</div></div>
+                <div class="scan-thumb">☝️<div class="scan-thumb-label">Top</div></div>
+                <div class="scan-thumb">👈<div class="scan-thumb-label">Left</div></div>
+                <div class="scan-thumb">👉<div class="scan-thumb-label">Right</div></div>
+              </div>
+              <div class="scan-quality">✓ Quality validated · 4/4 views</div>
+            </div>
+
+            <div class="scan-group" style="border-bottom:none; opacity:0.7;">
+              <div class="scan-group-date">20 Aug 2026</div>
+              <div class="scan-thumbs">
+                <div class="scan-thumb">😐<div class="scan-thumb-label">Front</div></div>
+                <div class="scan-thumb">☝️<div class="scan-thumb-label">Top</div></div>
+                <div class="scan-thumb">👈<div class="scan-thumb-label">Left</div></div>
+                <div class="scan-thumb">👉<div class="scan-thumb-label">Right</div></div>
+              </div>
+              <div class="scan-quality">✓ Quality validated · 4/4 views</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div style="height: 20px;"></div>
+      </div><!-- /.screen-scroll -->
+    </div><!-- /.phone A -->
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHONE B: PDF states + Provider Advice list (Advice mode) -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">State B — PDF States &amp; Provider Advice</div>
+    <div class="phone">
+      <span class="di-pill"></span>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Cases</div>
+        <div class="nav-title">Case Summary</div>
+        <div class="nav-right">⤴</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- Completed banner -->
+        <div class="completed-banner">
+          <div class="completed-icon">✅</div>
+          <div class="completed-body">
+            <div class="completed-title">Monitoring Completed</div>
+            <div class="completed-sub">Case is read-only &nbsp;·&nbsp; Completed 25 Aug 2026</div>
+          </div>
+          <span class="completed-pill" style="background:#cfe2ff; color:#084298;">Provider Advice</span>
+        </div>
+
+        <!-- ─ PDF state stack: all 3 states shown for reference ─ -->
+
+        <!-- PDF: GENERATING -->
+        <div class="pdf-card" style="margin-top:8px;">
+          <div class="pdf-card-inner">
+            <div style="font-size:10px; font-weight:700; color:#8e8e93; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">PDF Status · Generating</div>
+            <div class="pdf-generating">
+              <div class="spinner"></div>
+              <div class="pdf-generating-body">
+                <div class="pdf-generating-title">Generating PDF Report…</div>
+                <div class="pdf-generating-sub">This may take up to 60 seconds. You can leave and return.</div>
+              </div>
+            </div>
+            <div class="pdf-progress-bar"><div class="pdf-progress-fill"></div></div>
+          </div>
+        </div>
+
+        <!-- PDF: FAILED -->
+        <div class="pdf-card">
+          <div class="pdf-card-inner">
+            <div style="font-size:10px; font-weight:700; color:#8e8e93; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">PDF Status · Failed</div>
+            <div class="pdf-failed">
+              <div class="pdf-failed-icon">⚠️</div>
+              <div class="pdf-failed-body">
+                <div class="pdf-failed-title">PDF Generation Failed</div>
+                <div class="pdf-failed-sub">Report could not be generated. The completed case is unaffected — you can retry at any time.</div>
+                <button class="btn-retry">↺ &nbsp;Retry PDF Generation</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Severity summary (advice mode stat grid) -->
+        <div class="section-group">
+          <div class="section-group-header">Severity Summary</div>
+          <div class="section-group-body">
+            <div class="stat-grid">
+              <div class="stat-cell">
+                <div class="stat-val">5</div>
+                <div class="stat-lbl">First</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val green">3</div>
+                <div class="stat-lbl">Latest</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val green">2</div>
+                <div class="stat-lbl">Minimum</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val orange">7</div>
+                <div class="stat-lbl">Maximum</div>
+              </div>
+              <div class="stat-cell">
+                <div class="stat-val">4.1</div>
+                <div class="stat-lbl">Average</div>
+              </div>
+              <div class="stat-cell">
+                <div class="trend-down">↘</div>
+                <div class="stat-lbl">Trend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log timeline (condensed) -->
+        <div class="section-group">
+          <div class="section-group-header">Log Timeline</div>
+          <div class="section-group-body">
+
+            <div class="timeline-entry">
+              <div class="tl-date-col">
+                <div class="tl-date-day">25</div>
+                <div class="tl-date-mon">AUG</div>
+              </div>
+              <div class="tl-connector"><div class="tl-dot"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-sev-row">
+                  <span class="tl-sev-badge sev-low">3 / 10</span>
+                  <span class="tl-type-tag">Patient log</span>
+                </div>
+                <div class="tl-notes">Shedding slightly reduced. Crown looking better.</div>
+                <div class="tl-media">
+                  <span class="tl-media-tag">📷 2 photos</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Provider advice entry on same date — separate record -->
+            <div class="timeline-entry" style="background:#f9fff9;">
+              <div class="tl-date-col">
+                <div class="tl-date-day">25</div>
+                <div class="tl-date-mon">AUG</div>
+              </div>
+              <div class="tl-connector"><div class="tl-dot advice"></div><div class="tl-line"></div></div>
+              <div class="tl-body">
+                <div class="tl-sev-row">
+                  <span class="tl-type-tag" style="color:#1a7a3c; font-weight:600;">● Provider Advice</span>
+                </div>
+                <div class="tl-notes" style="color:#5e6c74;">Pattern appears stable. Continue current routine. No urgent action needed.</div>
+                <div class="tl-media">
+                  <span class="tl-media-tag green">P-001 · Edited</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="timeline-entry" style="border-bottom:none; opacity:0.6;">
+              <div class="tl-date-col">
+                <div class="tl-date-day">20</div>
+                <div class="tl-date-mon">AUG</div>
+              </div>
+              <div class="tl-connector"><div class="tl-dot"></div></div>
+              <div class="tl-body">
+                <div class="tl-sev-row">
+                  <span class="tl-sev-badge sev-mid">4 / 10</span>
+                  <span class="tl-type-tag">Patient log</span>
+                </div>
+                <div class="tl-notes">Similar to last week. Left temple slightly more noticeable.</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="show-more-row">Show all 12 patient logs + 2 advice entries ›</div>
+        </div>
+
+        <!-- Provider Advice list (conditional — advice mode only) -->
+        <div class="section-group">
+          <div class="section-group-header">
+            Provider Advice
+            <span style="font-size:10px; color:#8e8e93; font-weight:400; text-transform:none; letter-spacing:0;"> — Advice mode only · Read-only</span>
+          </div>
+          <div class="section-group-body">
+
+            <div class="advice-entry">
+              <div class="advice-entry-meta">
+                <span class="advice-provider">Provider P-001</span>
+                <span class="advice-date">25 Aug 2026 · 10:14</span>
+                <span class="advice-edited">Edited · 11:02</span>
+              </div>
+              <div class="advice-text-block">
+                Pattern appears stable based on recent logs and Aug 20 scan. Continue current routine and log any changes in shedding distribution. No urgent action needed at this stage.
+              </div>
+            </div>
+
+            <div class="advice-entry" style="opacity:0.75;">
+              <div class="advice-entry-meta">
+                <span class="advice-provider">Provider P-001</span>
+                <span class="advice-date">15 Aug 2026 · 09:30</span>
+              </div>
+              <div class="advice-text-block">
+                Good initial overview. Severity scores suggest mild presentation. Keep logging regularly so I can track changes over the coming weeks.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div style="height: 20px;"></div>
+      </div><!-- /.screen-scroll -->
+    </div><!-- /.phone B -->
+  </div>
+
+
+  <!-- Annotations -->
+  <div class="annotation-list">
+    <div class="ann-section-title">Design Notes</div>
+
+    <div class="annotation-item">
+      <div class="ann-dot gray"></div>
+      <div class="ann-text"><strong class="gray">Case is read-only</strong> — không có Edit/Delete actions. Nav bar chỉ có Share (⤴) để forward PDF.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot green"></div>
+      <div class="ann-text"><strong class="green">PDF Ready:</strong> Download button active với signed link có expiry. Có thể re-generate bất cứ lúc nào mà không ảnh hưởng case.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot blue"></div>
+      <div class="ann-text"><strong class="blue">PDF Generating:</strong> Progress bar + "You can leave and return." Không block người dùng xem content.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot"></div>
+      <div class="ann-text"><strong>PDF Failed:</strong> Retry button — PRD ghi rõ "retryable without altering the completed case."</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot green"></div>
+      <div class="ann-text"><strong class="green">Provider Advice entries</strong> trong timeline là separate records — dùng màu xanh lá + label riêng, không bao giờ merge vào patient log.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot purple"></div>
+      <div class="ann-text"><strong class="purple">Scan gallery</strong> grouped by capture date — authorized access only per PRD.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot orange"></div>
+      <div class="ann-text"><strong class="orange">Severity Summary</strong> có đủ 6 metrics: First, Latest, Min, Max, Average, Trend — đúng theo PRD field table.</div>
+    </div>
+  </div>
+
+</div><!-- /.phones-row -->
+
+</body>
+</html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe — /resources — Resource & Article Index — Hairline.app §4.5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS ───────────────────────────────────────── */
+    :root {
+      --bg:            #FAF8F5;
+      --surface:       #FFFFFF;
+      --surface-sub:   #F5F1EC;
+      --accent:        #B85C38;
+      --accent-lt:     #F5EDE8;
+      --accent-hover:  #9C4E2E;
+      --ink:           #1A1611;
+      --ink-2:         #5C544A;
+      --ink-3:         #9A9087;
+      --border:        #E8E2D9;
+      --cluster-bg:    #EEE9E2;
+      --tag-bg:        #EDE8E2;
+      --green:         #2D6A4F;
+      --green-bg:      #EAF4EE;
+      --blue:          #1E5FA8;
+      --blue-bg:       #EAF0FA;
+      --purple:        #5B3E9B;
+      --purple-bg:     #F0EBFA;
+
+      --sans:   'Inter', system-ui, sans-serif;
+      --serif:  Georgia, 'Times New Roman', serif;
+
+      --nav-h:      64px;
+      --sidebar-w:  244px;
+      --r-sm:  6px; --r-md: 12px; --r-lg: 16px;
+      --r-xl:  20px; --r-2xl: 24px; --r-full: 9999px;
+      --sh-sm: 0 1px 3px rgba(26,22,17,.06),0 1px 2px rgba(26,22,17,.04);
+      --sh-md: 0 4px 16px rgba(26,22,17,.08),0 2px 4px rgba(26,22,17,.04);
+    }
+
+    /* ── RESET ───────────────────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);font-size:16px;color:var(--ink);background:var(--bg);line-height:1.6}
+    h1,h2,h3,h4,h5{font-family:var(--sans);font-weight:600;line-height:1.2;color:var(--ink)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* ── WIREFRAME BANNER ────────────────────────────────────── */
+    .wf-banner{background:#6366F1;color:#fff;text-align:center;padding:10px 24px;
+      font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    .wf-label{display:inline-flex;align-items:center;gap:6px;background:#6366F1;color:#fff;
+      font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      padding:2px 8px;border-radius:var(--r-sm);margin-bottom:10px}
+    .wf-note{font-size:11px;color:#6366F1;border-left:2px solid #6366F1;
+      padding-left:10px;margin-top:8px;font-style:italic;line-height:1.5}
+
+    /* ── BUTTONS ─────────────────────────────────────────────── */
+    .btn-primary{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;
+      font-family:var(--sans);font-size:14px;font-weight:600;padding:10px 22px;
+      border-radius:var(--r-full);border:none;cursor:pointer;text-decoration:none;transition:background .15s}
+    .btn-primary:hover{background:var(--accent-hover);text-decoration:none;color:#fff}
+    .btn-lg{font-size:15px;padding:14px 30px}
+    .btn-ghost{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--ink);
+      font-family:var(--sans);font-size:13px;font-weight:500;padding:8px 16px;
+      border-radius:var(--r-sm);border:1px solid var(--border);cursor:pointer;transition:all .15s;text-decoration:none}
+    .btn-ghost:hover{background:var(--tag-bg);text-decoration:none;color:var(--ink)}
+    .btn-white{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--accent);
+      font-size:14px;font-weight:600;padding:12px 24px;border-radius:var(--r-full);
+      text-align:center;text-decoration:none;border:none;cursor:pointer}
+    .btn-white:hover{opacity:.9;text-decoration:none;color:var(--accent)}
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    .nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.95);
+      backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:var(--nav-h)}
+    .nav-inner{max-width:1280px;margin:0 auto;padding:0 32px;height:100%;
+      display:flex;align-items:center;justify-content:space-between;gap:32px}
+    .nav-logo{font-weight:700;font-size:20px;color:var(--ink);letter-spacing:-.02em;
+      flex-shrink:0;text-decoration:none}
+    .nav-logo span{color:var(--accent)}
+    .nav-links{display:flex;align-items:center;gap:2px;list-style:none;flex:1;justify-content:center}
+    .nav-links li a{font-size:13px;font-weight:500;color:var(--ink);padding:8px 12px;
+      border-radius:var(--r-sm);display:flex;align-items:center;gap:4px;transition:background .15s}
+    .nav-links li a:hover{background:var(--tag-bg);text-decoration:none}
+    .nav-links li a.active{color:var(--accent);background:var(--accent-lt)}
+    .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .nav-pill{font-size:12px;font-weight:600;color:var(--accent);
+      border:1.5px solid var(--accent);padding:5px 14px;border-radius:var(--r-full);
+      letter-spacing:.02em;transition:all .15s}
+    .nav-pill:hover{background:var(--accent);color:#fff;text-decoration:none}
+
+    /* ── BREADCRUMB ──────────────────────────────────────────── */
+    .breadcrumb{background:var(--bg);border-bottom:1px solid var(--border);padding:10px 0}
+    .bc-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;
+      gap:8px;font-size:13px;color:var(--ink-3)}
+    .bc-inner a{color:var(--ink-3)}
+    .bc-inner a:hover{color:var(--accent);text-decoration:none}
+    .bc-inner .sep{opacity:.4}
+    .bc-inner .cur{color:var(--ink-2);font-weight:500}
+
+    /* ── HERO ─────────────────────────────────────────────────── */
+    .hero{background:var(--surface);padding:72px 0 56px;border-bottom:1px solid var(--border)}
+    .hero-inner{max-width:1280px;margin:0 auto;padding:0 32px;
+      display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:center}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-lt);
+      color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:3px 12px;border-radius:var(--r-full);margin-bottom:18px}
+    .hero-h1{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1.08;
+      margin-bottom:20px;color:var(--ink)}
+    .hero-h1 em{font-style:normal;color:var(--accent)}
+    .hero-desc{font-family:var(--serif);font-size:19px;line-height:1.65;
+      color:var(--ink-2);max-width:540px;margin-bottom:28px}
+    .hero-stats{display:flex;gap:32px;padding-top:24px;border-top:1px solid var(--border)}
+    .hero-stat-item{display:flex;flex-direction:column;gap:2px}
+    .hero-stat-n{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+    .hero-stat-l{font-size:12px;color:var(--ink-3)}
+
+    /* Featured article promo card in hero */
+    .hero-featured{background:var(--surface-sub);border:1px solid var(--border);
+      border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--sh-md)}
+    .feat-img-ph{width:100%;height:180px;background:linear-gradient(135deg,#EDE0D4 0%,#D4C5B5 100%);
+      display:flex;align-items:center;justify-content:center;color:var(--ink-3);
+      font-size:12px;gap:8px;letter-spacing:.04em;position:relative}
+    .feat-img-label{position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;
+      font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:3px 10px;border-radius:var(--r-full)}
+    .feat-img-icon{font-size:36px;opacity:.25}
+    .feat-body{padding:20px}
+    .feat-cat{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:8px}
+    .feat-title{font-size:17px;font-weight:600;line-height:1.3;color:var(--ink);margin-bottom:10px}
+    .feat-meta{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink-3)}
+    .feat-author{display:flex;align-items:center;gap:6px}
+    .feat-av{width:22px;height:22px;background:var(--tag-bg);border-radius:var(--r-full);
+      display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-2)}
+
+    /* ── PAGE BODY ────────────────────────────────────────────── */
+    .page-body{max-width:1280px;margin:0 auto;padding:48px 32px;
+      display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:48px;align-items:start}
+
+    /* ── SIDEBAR ─────────────────────────────────────────────── */
+    .sidebar{position:sticky;top:calc(var(--nav-h) + 24px);
+      max-height:calc(100vh - var(--nav-h) - 48px);overflow-y:auto;
+      display:flex;flex-direction:column;gap:20px}
+    .sidebar::-webkit-scrollbar{width:3px}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+    .cat-nav-card,.sb-newsletter{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);padding:20px;box-shadow:var(--sh-sm)}
+    .cat-nav-card{background:var(--cluster-bg);border-color:#DDD8D0}
+    .sb-newsletter{background:var(--accent);border:none}
+    .cat-nav-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink-3);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #DDD8D0}
+    .cat-list{list-style:none;display:flex;flex-direction:column;gap:1px}
+    .cat-list li a{display:flex;align-items:center;justify-content:space-between;
+      font-size:13px;color:var(--ink-2);padding:8px 10px;border-radius:var(--r-sm);
+      transition:all .15s;text-decoration:none}
+    .cat-list li a:hover{background:var(--accent-lt);color:var(--accent)}
+    .cat-list li a.active{background:var(--accent-lt);color:var(--accent);font-weight:500}
+    .cat-count{font-size:11px;color:var(--ink-3);background:rgba(255,255,255,.6);
+      padding:1px 7px;border-radius:var(--r-full)}
+    .cat-list li a.active .cat-count{background:rgba(184,92,56,.12);color:var(--accent)}
+
+    .cat-dot{width:8px;height:8px;border-radius:var(--r-full);flex-shrink:0;margin-right:8px}
+
+    .sb-newsletter h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+    .sb-newsletter p{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:14px;line-height:1.5}
+    .sb-email-row{display:flex;flex-direction:column;gap:8px}
+    .sb-email-input{width:100%;padding:9px 12px;border-radius:var(--r-sm);
+      border:none;font-size:12px;background:rgba(255,255,255,.15);color:#fff;
+      outline:none;placeholder:rgba(255,255,255,.6)}
+    .sb-email-input::placeholder{color:rgba(255,255,255,.6)}
+
+    /* ── MAIN CONTENT ─────────────────────────────────────────── */
+    .main{min-width:0;display:flex;flex-direction:column;gap:40px}
+
+    /* Featured article full card */
+    .section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink-3);margin-bottom:16px}
+    .featured-card{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--sh-md);
+      display:grid;grid-template-columns:1fr 1fr}
+    .fc-img-ph{background:linear-gradient(135deg,#EDE0D4 0%,#C9B09A 100%);
+      min-height:280px;display:flex;align-items:center;justify-content:center;
+      color:var(--ink-3);position:relative;flex-direction:column;gap:10px}
+    .fc-img-ph .fc-img-icon{font-size:56px;opacity:.2}
+    .fc-img-note{font-size:11px;opacity:.5;letter-spacing:.04em}
+    .fc-badge{position:absolute;top:16px;left:16px;background:var(--accent);color:#fff;
+      font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:4px 12px;border-radius:var(--r-full)}
+    .fc-body{padding:32px 32px 28px;display:flex;flex-direction:column;justify-content:space-between}
+    .fc-cat{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:12px}
+    .fc-title{font-size:26px;font-weight:700;line-height:1.25;letter-spacing:-.02em;
+      color:var(--ink);margin-bottom:14px}
+    .fc-excerpt{font-family:var(--serif);font-size:15px;line-height:1.65;
+      color:var(--ink-2);margin-bottom:20px;flex:1}
+    .fc-footer{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+      padding-top:18px;border-top:1px solid var(--border)}
+    .fc-author{display:flex;align-items:center;gap:8px}
+    .fc-av{width:30px;height:30px;background:var(--surface-sub);border:2px solid var(--border);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:13px}
+    .fc-author-name{font-size:13px;font-weight:500;color:var(--ink)}
+    .fc-meta-item{font-size:12px;color:var(--ink-3)}
+    .fc-read-link{margin-left:auto}
+
+    /* ── FILTER BAR ───────────────────────────────────────────── */
+    .filter-bar{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--sh-sm);
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .filter-label{font-size:12px;font-weight:600;color:var(--ink-3);
+      letter-spacing:.04em;text-transform:uppercase;margin-right:4px}
+    .filter-tabs{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+    .f-tab{font-size:13px;font-weight:500;color:var(--ink-2);padding:6px 14px;
+      border-radius:var(--r-full);border:1.5px solid var(--border);cursor:pointer;
+      transition:all .15s;background:transparent;white-space:nowrap}
+    .f-tab:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+    .f-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+    .filter-sort{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .filter-sort label{font-size:12px;color:var(--ink-3)}
+    .sort-select{font-size:12px;padding:5px 10px;border:1px solid var(--border);
+      border-radius:var(--r-sm);background:var(--bg);color:var(--ink-2);cursor:pointer;
+      outline:none}
+
+    /* ── ARTICLE GRID ─────────────────────────────────────────── */
+    .articles-section{display:flex;flex-direction:column;gap:16px}
+    .articles-header{display:flex;align-items:center;justify-content:space-between}
+    .articles-count{font-size:14px;color:var(--ink-3)}
+    .articles-count strong{color:var(--ink)}
+    .article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+    .art-card{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-sm);
+      transition:box-shadow .2s,transform .2s;display:flex;flex-direction:column}
+    .art-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+
+    .art-img-ph{height:160px;display:flex;align-items:center;justify-content:center;
+      position:relative;font-size:28px;opacity:.3}
+    .art-img-ph.cat-treatments{background:linear-gradient(135deg,#EDE0D4,#D4B8A8)}
+    .art-img-ph.cat-conditions{background:linear-gradient(135deg,#E0EAF5,#C0D4E8)}
+    .art-img-ph.cat-recovery{background:linear-gradient(135deg,#E0F0E8,#B8D8C4)}
+    .art-img-ph.cat-travel{background:linear-gradient(135deg,#EDE8F5,#D0C0E8)}
+    .art-img-ph.cat-guides{background:linear-gradient(135deg,#FAF0E0,#E8D8B8)}
+
+    .art-cat-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:var(--r-full)}
+    .cat-treatments .art-cat-badge{background:var(--accent-lt);color:var(--accent)}
+    .cat-conditions  .art-cat-badge{background:var(--blue-bg);color:var(--blue)}
+    .cat-recovery    .art-cat-badge{background:var(--green-bg);color:var(--green)}
+    .cat-travel      .art-cat-badge{background:var(--purple-bg);color:var(--purple)}
+    .cat-guides      .art-cat-badge{background:#FDF3E0;color:#A07020}
+
+    .art-body{padding:18px;display:flex;flex-direction:column;flex:1}
+    .art-title{font-size:15px;font-weight:600;line-height:1.35;color:var(--ink);
+      margin-bottom:8px}
+    .art-excerpt{font-size:13px;line-height:1.55;color:var(--ink-2);
+      flex:1;margin-bottom:14px}
+    .art-footer{display:flex;align-items:center;gap:8px;padding-top:12px;
+      border-top:1px solid var(--border);font-size:12px;color:var(--ink-3)}
+    .art-av{width:22px;height:22px;background:var(--surface-sub);border:2px solid var(--border);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:9px}
+    .art-author{font-size:12px;color:var(--ink-2);font-weight:500}
+    .art-dot{color:var(--border)}
+    .art-read{margin-left:auto}
+    .reviewed-badge-sm{display:inline-flex;align-items:center;gap:4px;background:var(--green-bg);
+      color:var(--green);font-size:10px;font-weight:500;padding:2px 8px;border-radius:var(--r-full)}
+
+    /* ── PAGINATION ───────────────────────────────────────────── */
+    .pagination{display:flex;align-items:center;justify-content:center;gap:6px}
+    .pg-btn{width:36px;height:36px;border-radius:var(--r-sm);border:1px solid var(--border);
+      background:var(--surface);display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:all .15s}
+    .pg-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .pg-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .pg-ellipsis{font-size:13px;color:var(--ink-3);padding:0 4px}
+
+    /* ── NEWSLETTER FULL-WIDTH ────────────────────────────────── */
+    .newsletter-band{background:var(--ink);padding:80px 0;margin-top:16px}
+    .nl-inner{max-width:1280px;margin:0 auto;padding:0 32px;
+      display:grid;grid-template-columns:1fr 420px;gap:64px;align-items:center}
+    .nl-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(184,92,56,.2);
+      color:var(--accent-lt);font-size:11px;font-weight:700;letter-spacing:.1em;
+      text-transform:uppercase;padding:3px 12px;border-radius:var(--r-full);margin-bottom:18px}
+    .nl-h2{font-size:36px;font-weight:700;letter-spacing:-.03em;color:#fff;
+      margin-bottom:14px;line-height:1.15}
+    .nl-desc{font-family:var(--serif);font-size:16px;line-height:1.65;
+      color:rgba(255,255,255,.65);max-width:440px}
+    .nl-proof{margin-top:24px;display:flex;align-items:center;gap:12px}
+    .nl-proof-avs{display:flex}
+    .nl-av{width:28px;height:28px;border-radius:var(--r-full);
+      background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);
+      display:flex;align-items:center;justify-content:center;font-size:11px}
+    .nl-av+.nl-av{margin-left:-8px}
+    .nl-proof-text{font-size:13px;color:rgba(255,255,255,.6)}
+    .nl-proof-text strong{color:rgba(255,255,255,.85)}
+
+    .nl-form-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+      border-radius:var(--r-2xl);padding:32px}
+    .nl-form-label{font-size:12px;font-weight:600;color:rgba(255,255,255,.5);
+      letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+    .nl-form-input{width:100%;padding:13px 16px;background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.15);border-radius:var(--r-md);
+      color:#fff;font-size:14px;margin-bottom:12px;outline:none;font-family:var(--sans)}
+    .nl-form-input::placeholder{color:rgba(255,255,255,.35)}
+    .nl-form-btn{width:100%;padding:14px;background:var(--accent);border:none;
+      border-radius:var(--r-md);color:#fff;font-size:14px;font-weight:600;
+      cursor:pointer;transition:background .15s;font-family:var(--sans)}
+    .nl-form-btn:hover{background:var(--accent-hover)}
+    .nl-form-disclaimer{font-size:11px;color:rgba(255,255,255,.35);
+      text-align:center;margin-top:10px;line-height:1.5}
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    .footer{background:var(--surface);border-top:1px solid var(--border);padding:48px 0 32px}
+    .footer-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+    .footer-grid{display:grid;grid-template-columns:200px repeat(4,1fr);gap:40px;
+      margin-bottom:40px}
+    .footer-logo{font-weight:700;font-size:20px;letter-spacing:-.02em;color:var(--ink)}
+    .footer-logo span{color:var(--accent)}
+    .footer-tagline{font-size:13px;color:var(--ink-3);margin-top:8px;line-height:1.5}
+    .footer-col h5{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--ink-3);margin-bottom:14px}
+    .footer-links{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .footer-links li a{font-size:13px;color:var(--ink-2);transition:color .15s}
+    .footer-links li a:hover{color:var(--accent);text-decoration:none}
+    .footer-bottom{display:flex;align-items:center;justify-content:space-between;
+      padding-top:24px;border-top:1px solid var(--border);flex-wrap:wrap;gap:12px}
+    .footer-legal{font-size:12px;color:var(--ink-3);display:flex;gap:16px;flex-wrap:wrap}
+    .footer-legal a{color:var(--ink-3)}
+    .footer-social{display:flex;gap:8px}
+    .social-btn{width:32px;height:32px;border-radius:var(--r-sm);background:var(--surface-sub);
+      border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+      font-size:12px;color:var(--ink-2);cursor:pointer;transition:all .15s}
+    .social-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* ── ANNOTATION PANEL ───────────────────────────────────────*/
+    .annotation-panel{background:#F0F0FF;border:1px solid #C7C7F5;border-radius:var(--r-lg);
+      padding:24px;margin:32px auto;max-width:1280px;margin-left:auto;margin-right:auto;
+      margin-bottom:0}
+    .ann-inner{padding:0 32px}
+    .annotation-panel h3{font-size:13px;font-weight:700;color:#4040B0;margin-bottom:14px;
+      letter-spacing:.04em;text-transform:uppercase}
+    .ann-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .ann-item h4{font-size:12px;font-weight:600;color:#4040B0;margin-bottom:6px}
+    .ann-item p,.ann-item li{font-size:12px;color:#5050A0;line-height:1.55}
+    .ann-item ul{padding-left:16px}
+
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────────────────────────────────────────────
+     WIREFRAME BANNER
+────────────────────────────────────────────────────────────────-->
+<div class="wf-banner">
+  ✦ WIREFRAME — /resources — Resource & Article Index — Hairline.app §4.5 / §6.3 ✦
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────
+     GLOBAL NAV
+────────────────────────────────────────────────────────────────-->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">hair<span>line</span></a>
+    <ul class="nav-links">
+      <li><a href="#">For Patients</a></li>
+      <li><a href="#">Treatments ▾</a></li>
+      <li><a href="#">Hair Loss ▾</a></li>
+      <li><a href="#" class="active">Resources</a></li>
+      <li><a href="#">Find a Clinic</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="nav-pill">For Clinics →</a>
+      <a href="#" class="btn-primary" style="font-size:13px;padding:8px 18px">Download App</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────────────────────────────────────────────────────
+     BREADCRUMB
+────────────────────────────────────────────────────────────────-->
+<div class="breadcrumb">
+  <div class="bc-inner">
+    <a href="#">Home</a>
+    <span class="sep">›</span>
+    <span class="cur">Resources</span>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────
+     S1 — HERO
+     Brief §4.5: "Article index, filterable by category"
+     Sitemap: editorial headline, brief intro positioning
+     Hairline as a knowledge source
+────────────────────────────────────────────────────────────────-->
+<section class="hero" id="s1-hero">
+  <div class="hero-inner">
+    <!-- Left: Editorial copy -->
+    <div>
+      <div class="wf-label">§ S1 — Hero</div>
+      <div class="hero-tag">✦ Editorial Hub</div>
+      <h1 class="hero-h1">Hair loss,<br><em>explained properly.</em></h1>
+      <p class="hero-desc">
+        Evidence-based guides, expert analysis and real patient stories — written and reviewed by clinicians, not copywriters.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat-item">
+          <span class="hero-stat-n">140+</span>
+          <span class="hero-stat-l">Articles published</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-n">18</span>
+          <span class="hero-stat-l">Medical reviewers</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-n">Weekly</span>
+          <span class="hero-stat-l">New content</span>
+        </div>
+      </div>
+      <p class="wf-note" style="margin-top:20px">
+        SEO anchor — /resources is an editorial hub that must rank for broad hair-loss research intent queries.<br>
+        Tone: authoritative, calm, human. Reference: Healthline hub pages.
+      </p>
+    </div>
+
+    <!-- Right: Mini featured card preview -->
+    <div>
+      <p class="wf-note" style="margin-bottom:12px">Right column: promoted featured article preview card</p>
+      <div class="hero-featured">
+        <div class="feat-img-ph">
+          <span class="feat-img-label">FEATURED</span>
+          <span class="feat-img-icon">📷</span>
+          <span style="font-size:11px;opacity:.5;letter-spacing:.04em">Article hero image</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-cat">Hair Transplant · Guide</div>
+          <div class="feat-title">FUE vs FUT: which hair transplant technique is right for you in 2026?</div>
+          <div class="feat-meta">
+            <div class="feat-author">
+              <div class="feat-av">👤</div>
+              <span>Dr. Sarah Chen</span>
+            </div>
+            <span>·</span>
+            <span>8 min read</span>
+            <span>·</span>
+            <span style="color:var(--green);font-weight:500">Medically reviewed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     PAGE BODY: SIDEBAR + MAIN
+────────────────────────────────────────────────────────────────-->
+<div class="page-body">
+
+  <!-- ── SIDEBAR ───────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- S5: Category Navigation -->
+    <div class="cat-nav-card">
+      <div class="cat-nav-title">Browse by Category</div>
+      <ul class="cat-list">
+        <li>
+          <a href="#" class="active">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:var(--ink-3)"></span>
+              All Articles
+            </span>
+            <span class="cat-count">143</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:var(--accent)"></span>
+              Treatments
+            </span>
+            <span class="cat-count">42</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:var(--blue)"></span>
+              Conditions
+            </span>
+            <span class="cat-count">38</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:var(--green)"></span>
+              Recovery
+            </span>
+            <span class="cat-count">24</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:var(--purple)"></span>
+              Travel
+            </span>
+            <span class="cat-count">18</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:#A07020"></span>
+              Guides
+            </span>
+            <span class="cat-count">21</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:var(--ink-3)"></span>
+              Comparisons
+            </span>
+            <span class="cat-count">12</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span class="cat-dot" style="background:#C05080"></span>
+              Research
+            </span>
+            <span class="cat-count">9</span>
+          </a>
+        </li>
+      </ul>
+      <p class="wf-note" style="margin-top:14px">
+        Each category link → /resources/[category]. Active state shows current filter. Article counts update dynamically.
+      </p>
+    </div>
+
+    <!-- Sidebar newsletter signup -->
+    <div class="sb-newsletter">
+      <div class="wf-label" style="background:rgba(255,255,255,.2);margin-bottom:12px">S6 — Newsletter</div>
+      <h4>Get new research in your inbox</h4>
+      <p>Weekly summaries of the latest hair-loss science and clinical updates.</p>
+      <div class="sb-email-row">
+        <input class="sb-email-input" type="email" placeholder="your@email.com">
+        <a href="#" class="btn-white" style="display:block;text-align:center;padding:10px 0;font-size:13px">Subscribe →</a>
+      </div>
+      <p style="font-size:10px;color:rgba(255,255,255,.4);margin-top:8px;line-height:1.5">
+        No spam. Unsubscribe any time. Privacy policy applies.
+      </p>
+    </div>
+
+    <!-- Quick links card -->
+    <div class="cat-nav-card">
+      <div class="cat-nav-title">Trending this month</div>
+      <ul class="cat-list">
+        <li><a href="#">FUE vs FUT: 2026 comparison</a></li>
+        <li><a href="#">Finasteride: what to expect</a></li>
+        <li><a href="#">Hair transplant in Istanbul guide</a></li>
+        <li><a href="#">Female pattern hair loss signs</a></li>
+        <li><a href="#">PRP therapy: does it work?</a></li>
+      </ul>
+    </div>
+
+  </aside>
+
+  <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- S2 — Featured Article Card -->
+    <section id="s2-featured">
+      <div class="wf-label">§ S2 — Featured Article</div>
+      <div class="section-label">Editor's pick</div>
+      <div class="featured-card">
+        <div class="fc-img-ph">
+          <span class="fc-badge">FEATURED</span>
+          <span class="fc-img-icon">📷</span>
+          <span class="fc-img-note">Full-width editorial photography<br>aspect-ratio: 16 / 9 within card column</span>
+        </div>
+        <div class="fc-body">
+          <div>
+            <div class="fc-cat">Hair Transplant · Guide</div>
+            <h2 class="fc-title">FUE vs FUT: which hair transplant technique is right for you in 2026?</h2>
+            <p class="fc-excerpt">
+              The two dominant transplant methods differ in extraction technique, scarring, recovery time and graft yield. This comprehensive comparison helps you understand the real-world trade-offs before your first consultation.
+            </p>
+          </div>
+          <div class="fc-footer">
+            <div class="fc-author">
+              <div class="fc-av">👤</div>
+              <div>
+                <div class="fc-author-name">Dr. Sarah Chen</div>
+                <div style="font-size:11px;color:var(--ink-3)">Hair Restoration Surgeon</div>
+              </div>
+            </div>
+            <span class="fc-meta-item">12 min read</span>
+            <span class="reviewed-badge-sm">✓ Medically reviewed</span>
+            <a href="#" class="btn-primary fc-read-link" style="font-size:13px;padding:8px 18px">Read article →</a>
+          </div>
+        </div>
+      </div>
+      <p class="wf-note" style="margin-top:10px">
+        Featured card: full-width within main column. Editorial image left, copy right. CMS-editable "Editor's pick" flag. One featured article maximum — no carousel.
+      </p>
+    </section>
+
+    <!-- S3 — Filter Bar -->
+    <section id="s3-filter">
+      <div class="wf-label">§ S3 — Filter Bar</div>
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <div class="filter-tabs">
+          <button class="f-tab active">All</button>
+          <button class="f-tab">Treatments</button>
+          <button class="f-tab">Conditions</button>
+          <button class="f-tab">Recovery</button>
+          <button class="f-tab">Travel</button>
+          <button class="f-tab">Guides</button>
+          <button class="f-tab">Comparisons</button>
+        </div>
+        <div class="filter-sort">
+          <label>Sort:</label>
+          <select class="sort-select">
+            <option>Most recent</option>
+            <option>Most read</option>
+            <option>Alphabetical</option>
+          </select>
+        </div>
+      </div>
+      <p class="wf-note" style="margin-top:8px">
+        Filter tabs mirror sidebar category list. Active filter state matches sidebar active state (they are in sync). Sort defaults to "Most recent". URL reflects active filter: /resources?category=treatments
+      </p>
+    </section>
+
+    <!-- S4 — Article Grid -->
+    <section id="s4-grid" class="articles-section">
+      <div class="wf-label">§ S4 — Article Grid (filterable, paginated)</div>
+
+      <div class="articles-header">
+        <p class="articles-count">Showing <strong>143 articles</strong></p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn-ghost" style="font-size:12px;padding:6px 12px">☰ List</button>
+          <button class="btn-ghost" style="font-size:12px;padding:6px 12px;background:var(--tag-bg)">⊞ Grid</button>
+        </div>
+      </div>
+
+      <div class="article-grid">
+
+        <!-- Card 1 — Treatments -->
+        <div class="art-card">
+          <div class="art-img-ph cat-treatments">
+            <span class="art-cat-badge">Treatments</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">How FUE hair transplants work: a step-by-step guide for patients</h3>
+            <p class="art-excerpt">Everything you need to know before your first consultation — from graft extraction to the growth timeline.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Mark Osei</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">9 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 — Conditions -->
+        <div class="art-card">
+          <div class="art-img-ph cat-conditions">
+            <span class="art-cat-badge">Conditions</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">Female pattern hair loss: causes, stages and what actually helps</h3>
+            <p class="art-excerpt">FPHL affects 1 in 3 women by age 50. Here is what the evidence says about diagnosis and treatment options.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Priya Nair</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">7 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 — Recovery -->
+        <div class="art-card">
+          <div class="art-img-ph cat-recovery">
+            <span class="art-cat-badge">Recovery</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">Hair transplant aftercare: the first 14 days, explained clearly</h3>
+            <p class="art-excerpt">What to do, what to avoid and what to expect as your grafts settle in the weeks after your procedure.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Sarah Chen</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">11 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 — Travel -->
+        <div class="art-card">
+          <div class="art-img-ph cat-travel">
+            <span class="art-cat-badge">Travel</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">Hair transplant in Istanbul: what to know before you book</h3>
+            <p class="art-excerpt">Istanbul accounts for a significant share of global transplant volume. A grounded look at costs, quality and risks.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">James Whitmore</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">14 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 — Guides -->
+        <div class="art-card">
+          <div class="art-img-ph cat-guides">
+            <span class="art-cat-badge">Guides</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">Finasteride for hair loss: dosage, results timeline and side effects</h3>
+            <p class="art-excerpt">In clinical trials, finasteride slowed or reversed hair loss in 9 out of 10 men. Here is what the data says.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Leon Brookes</span>
+              <span class="art-dot">·</span>
+              <span class="reviewed-badge-sm" style="margin-left:auto">✓ Reviewed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 — Conditions -->
+        <div class="art-card">
+          <div class="art-img-ph cat-conditions">
+            <span class="art-cat-badge">Conditions</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">Alopecia areata: understanding the autoimmune trigger behind patchy hair loss</h3>
+            <p class="art-excerpt">Why the immune system attacks hair follicles, who it affects, and what modern treatment options look like.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Priya Nair</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">8 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7 — Comparisons -->
+        <div class="art-card">
+          <div class="art-img-ph cat-treatments" style="background:linear-gradient(135deg,#E8E0F0,#C8B8E0)">
+            <span class="art-cat-badge" style="background:rgba(91,62,155,.12);color:var(--purple)">Comparison</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">PRP vs Minoxidil: comparing two non-surgical hair loss treatments</h3>
+            <p class="art-excerpt">Both are commonly prescribed before surgery is considered. This comparison looks at evidence, cost and convenience.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Mark Osei</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">10 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8 — Recovery -->
+        <div class="art-card">
+          <div class="art-img-ph cat-recovery">
+            <span class="art-cat-badge">Recovery</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">Shock loss after hair transplant: is it normal and how long does it last?</h3>
+            <p class="art-excerpt">Temporary shedding of transplanted and native hair is common in the weeks after a procedure. Here is what to expect.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Dr. Sarah Chen</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">6 min</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9 — Guides -->
+        <div class="art-card">
+          <div class="art-img-ph cat-guides">
+            <span class="art-cat-badge">Guides</span>
+            📷
+          </div>
+          <div class="art-body">
+            <h3 class="art-title">How to choose a hair transplant clinic: 9 questions to ask before you commit</h3>
+            <p class="art-excerpt">Vetting a clinic is the most important decision in the process. A practical checklist that cuts through the marketing.</p>
+            <div class="art-footer">
+              <div class="art-av">👤</div>
+              <span class="art-author">Editorial team</span>
+              <span class="art-dot">·</span>
+              <span class="art-read">12 min</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /article-grid -->
+
+      <p class="wf-note" style="margin-top:12px">
+        Grid: 3-column desktop, 2-column tablet (768px), 1-column mobile. 9 articles per page (3×3 grid fills cleanly). Cards are equal-height flex columns. Image placeholder heights: 160px. Category colour-coding matches filter tabs and sidebar.
+      </p>
+
+      <!-- Pagination -->
+      <div class="pagination" style="margin-top:32px">
+        <button class="pg-btn" style="width:auto;padding:0 12px;gap:4px">‹ Prev</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <span class="pg-ellipsis">…</span>
+        <button class="pg-btn">16</button>
+        <button class="pg-btn" style="width:auto;padding:0 12px;gap:4px">Next ›</button>
+      </div>
+      <p class="wf-note" style="margin-top:8px">
+        Pagination: 9 articles per page. URL: /resources?page=2. Consider infinite scroll as alternative — discuss with engineering re: SEO implications (pagination preferred for SEO).
+      </p>
+
+    </section><!-- /S4 -->
+
+  </main><!-- /main -->
+</div><!-- /page-body -->
+
+<!-- ─────────────────────────────────────────────────────────────
+     S6 — NEWSLETTER BAND (full-width, outside grid)
+     Sitemap: "Get the latest hair-loss research in your inbox"
+────────────────────────────────────────────────────────────────-->
+<section class="newsletter-band" id="s6-newsletter">
+  <div class="nl-inner">
+    <div>
+      <div class="wf-label" style="margin-bottom:16px">§ S6 — Newsletter Signup</div>
+      <div class="nl-tag">✉ Weekly digest</div>
+      <h2 class="nl-h2">Stay ahead of the research.</h2>
+      <p class="nl-desc">
+        New clinical studies, treatment updates and practical guides — delivered once a week. No spam, unsubscribe any time.
+      </p>
+      <div class="nl-proof">
+        <div class="nl-proof-avs">
+          <div class="nl-av">👤</div>
+          <div class="nl-av">👤</div>
+          <div class="nl-av">👤</div>
+          <div class="nl-av">👤</div>
+        </div>
+        <p class="nl-proof-text">Join <strong>12,400+ readers</strong> getting the weekly digest</p>
+      </div>
+    </div>
+    <div>
+      <div class="nl-form-card">
+        <div class="nl-form-label">Your email</div>
+        <input class="nl-form-input" type="email" placeholder="name@email.com">
+        <button class="nl-form-btn">Get the weekly digest →</button>
+        <p class="nl-form-disclaimer">By subscribing you agree to our Privacy Policy. Unsubscribe any time.</p>
+      </div>
+      <p class="wf-note" style="border-color:rgba(99,102,241,.4);color:rgba(99,102,241,.8);margin-top:12px">
+        Same newsletter component reused on /resources/[category] pages. Email capture is an SEO conversion target per §2.4.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     FOOTER
+────────────────────────────────────────────────────────────────-->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">hair<span>line</span></div>
+        <p class="footer-tagline">Hair restoration, done right. Verified clinics in 14 countries.</p>
+      </div>
+      <div>
+        <h5>Patients</h5>
+        <ul class="footer-links">
+          <li><a href="#">For Patients</a></li>
+          <li><a href="#">Find a Clinic</a></li>
+          <li><a href="#">Start Assessment</a></li>
+          <li><a href="#">Hairline Aftercare</a></li>
+          <li><a href="#">Hairline Travel</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Treatments</h5>
+        <ul class="footer-links">
+          <li><a href="#">Hair Transplant</a></li>
+          <li><a href="#">FUE · FUT · DHI</a></li>
+          <li><a href="#">Finasteride</a></li>
+          <li><a href="#">Minoxidil</a></li>
+          <li><a href="#">PRP</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Resources</h5>
+        <ul class="footer-links">
+          <li><a href="#">All Articles</a></li>
+          <li><a href="#">Treatments</a></li>
+          <li><a href="#">Conditions</a></li>
+          <li><a href="#">Recovery</a></li>
+          <li><a href="#">Comparisons</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="#">For Clinics</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <span>© 2026 Hairline.app</span>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Cookie Settings</a>
+        <a href="#">Medical Disclaimer</a>
+      </div>
+      <div class="footer-social">
+        <button class="social-btn">𝕏</button>
+        <button class="social-btn">in</button>
+        <button class="social-btn">▶</button>
+        <button class="social-btn">📷</button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ─────────────────────────────────────────────────────────────
+     ANNOTATION PANEL (designer handoff notes)
+────────────────────────────────────────────────────────────────-->
+<div style="background:var(--bg);padding:48px 0 64px">
+<div class="ann-inner">
+  <div class="annotation-panel">
+    <h3>Wireframe Annotations — /resources — Resource & Article Index</h3>
+    <div class="ann-grid">
+      <div class="ann-item">
+        <h4>Section inventory (Brief §4.5 / Sitemap §S5)</h4>
+        <ul>
+          <li>S1 — Hero: editorial headline + stats + featured article preview card</li>
+          <li>S2 — Featured article: full editorial hero card (2-col inside main)</li>
+          <li>S3 — Filter bar: category tabs + sort selector</li>
+          <li>S4 — Article grid: 3-col, 9 cards/page, paginated</li>
+          <li>S5 — Category nav: sticky sidebar with article counts</li>
+          <li>S6 — Newsletter: full-width dark band, email capture</li>
+        </ul>
+      </div>
+      <div class="ann-item">
+        <h4>SEO design requirements (Brief §7)</h4>
+        <ul>
+          <li>Single H1 on page (hero headline)</li>
+          <li>Breadcrumb component present (§7.1)</li>
+          <li>Category sidebar = cluster navigation (§7.2)</li>
+          <li>Article counts support topical authority signalling</li>
+          <li>Newsletter email capture = SEO visitor conversion target (§2.4)</li>
+          <li>Pagination preferred over infinite scroll for crawlability</li>
+          <li>Each article card uses semantic article/heading markup</li>
+        </ul>
+      </div>
+      <div class="ann-item">
+        <h4>Interaction & responsive notes</h4>
+        <ul>
+          <li>Filter tabs + sidebar category list are in sync (same state)</li>
+          <li>Sidebar: sticky desktop / expandable accordion mobile</li>
+          <li>Grid: 3-col → 2-col (768px) → 1-col (360px)</li>
+          <li>Featured card: 2-col → stacked (768px)</li>
+          <li>URL reflects active filter: /resources?category=treatments</li>
+          <li>Article card hover: translateY(-2px) + shadow lift</li>
+          <li>Newsletter form: inline validation, success state with confirmation message</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>

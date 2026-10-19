@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 9.3 — Payouts Tab (Affiliate Portal)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #0052cc;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #fff; letter-spacing: 0.01em; }
+    .topbar-logo span { font-weight: 400; opacity: 0.75; font-size: 13px; margin-left: 8px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); }
+    .topbar-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; border: 1.5px solid rgba(255,255,255,0.4);
+    }
+    .topbar-logout {
+      font-size: 12px; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 4px;
+      padding: 4px 10px; cursor: pointer; text-decoration: none;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex;
+      padding: 0 28px;
+    }
+    .tab-nav a {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 14px 20px;
+      font-size: 13px; font-weight: 500; color: #5e6c84;
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-nav a:hover { color: #172b4d; }
+    .tab-nav a.active { color: #0052cc; border-bottom-color: #0052cc; font-weight: 600; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 28px; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+    .page-title { font-size: 18px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 4px; }
+
+    /* ── Upcoming payout panel ── */
+    .upcoming-panel {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .upcoming-panel-title {
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+    .upcoming-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .upcoming-item {
+      padding: 0 20px 0 0;
+      border-right: 1px solid #dfe1e6;
+      margin-right: 20px;
+    }
+    .upcoming-item:last-of-type {
+      border-right: none;
+      margin-right: 0;
+    }
+    .upcoming-label { font-size: 11px; color: #5e6c84; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+    .upcoming-value { font-size: 22px; font-weight: 700; color: #172b4d; }
+    .upcoming-value.accent { color: #0052cc; }
+    .upcoming-sub { font-size: 11px; color: #5e6c84; margin-top: 3px; }
+    .threshold-note {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #fffae6; border: 1px solid #ffe380; border-radius: 4px;
+      padding: 8px 12px; font-size: 12px; color: #7a5200;
+      margin-top: 14px;
+    }
+
+    /* ── Card ── */
+    .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 6px; margin-bottom: 20px; }
+
+    /* ── Card header ── */
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 12px 20px; border-bottom: 1px solid #dfe1e6; background: #f8f9fa;
+    }
+    .filter-label { font-size: 12px; color: #5e6c84; font-weight: 500; white-space: nowrap; }
+    .filter-select {
+      padding: 5px 10px; border: 1px solid #dfe1e6; border-radius: 4px;
+      font-size: 13px; color: #172b4d; background: #fff; cursor: pointer;
+    }
+    .filter-spacer { flex: 1; }
+    .result-count { font-size: 12px; color: #5e6c84; white-space: nowrap; }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px; font-weight: 600; color: #5e6c84;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      background: #f8f9fa; border-bottom: 1px solid #dfe1e6;
+      white-space: nowrap;
+    }
+    .data-table thead th.sortable { cursor: pointer; }
+    .data-table thead th.sortable:hover { color: #0052cc; }
+    .data-table tbody tr { border-bottom: 1px solid #f0f1f3; cursor: pointer; transition: background 0.1s; }
+    .data-table tbody tr:hover { background: #f4f5f7; }
+    .data-table tbody td { padding: 12px 14px; font-size: 13px; color: #172b4d; vertical-align: middle; }
+    .sort-desc::after { content: ' ▼'; font-size: 9px; }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-paid       { background: #e3fcef; color: #006644; }
+    .badge-pending    { background: #fffae6; color: #7a5200; }
+    .badge-processing { background: #e6f0ff; color: #0052cc; }
+    .badge-failed     { background: #ffebe6; color: #bf2600; }
+
+    /* ── Ref chip ── */
+    .ref-chip {
+      font-family: 'Courier New', monospace; font-size: 11px;
+      background: #f0f1f3; border-radius: 3px; padding: 2px 7px;
+      color: #42526e; white-space: nowrap; display: inline-block;
+    }
+
+    /* ── Detail link ── */
+    .detail-link {
+      color: #0052cc; font-size: 12px; text-decoration: none; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .detail-link:hover { text-decoration: underline; }
+
+    /* ── Legend ── */
+    .legend-row {
+      display: flex; gap: 14px; align-items: center;
+      font-size: 12px; color: #5e6c84; padding: 12px 20px;
+      flex-wrap: wrap; border-top: 1px solid #f0f1f3;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ TOP BAR ════════════════ -->
+<div class="topbar">
+  <div class="topbar-logo">Hairline <span>Affiliate Portal</span></div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">IC</div>
+    InfluCare Network
+    <a href="#" class="topbar-logout">Log out</a>
+  </div>
+</div>
+
+<!-- ════════════════ TAB NAVIGATION ════════════════ -->
+<div class="tab-nav">
+  <a href="#">📊 Overview</a>
+  <a href="#">🏷️ Promo Codes</a>
+  <a href="#" class="active">💳 Payouts</a>
+  <a href="#">👤 Profile</a>
+</div>
+
+<!-- ════════════════ PAGE CONTENT ════════════════ -->
+<div class="page-wrap">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Payouts</div>
+      <div class="page-subtitle">Payout history and upcoming payout — read-only view</div>
+    </div>
+  </div>
+
+  <!-- ── Upcoming payout panel ── -->
+  <div class="upcoming-panel">
+    <div class="upcoming-panel-title">Upcoming Payout</div>
+    <div class="upcoming-grid">
+
+      <div class="upcoming-item">
+        <div class="upcoming-label">Next Payout Date</div>
+        <div class="upcoming-value accent">Jul 7, 2026</div>
+        <div class="upcoming-sub">Fixed schedule — 7th of every month</div>
+      </div>
+
+      <div class="upcoming-item">
+        <div class="upcoming-label">Pending Amount</div>
+        <div class="upcoming-value">$1,240.00</div>
+        <div class="upcoming-sub">Commission awaiting next payout</div>
+      </div>
+
+      <div class="upcoming-item" style="border-right:none; margin-right:0; padding-right:0;">
+        <div class="upcoming-label">Included Bookings Count</div>
+        <div class="upcoming-value">18</div>
+        <div class="upcoming-sub">Completed bookings in current cycle</div>
+      </div>
+
+    </div>
+
+    <!-- Minimum threshold note — shown only when pending amount is below $50 -->
+    <div class="threshold-note">
+      <span>⚠</span>
+      <span>Your pending amount ($32.00) is below the $50 minimum payout threshold. It will roll over to the next payout cycle automatically.</span>
+    </div>
+  </div>
+
+  <!-- ── Payout history list ── -->
+  <div class="card">
+
+    <div class="card-header">
+      <span class="card-title">Payout History</span>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter by Status</span>
+      <select class="filter-select">
+        <option>All Statuses</option>
+        <option>Pending</option>
+        <option>Processing</option>
+        <option>Paid</option>
+        <option>Failed</option>
+      </select>
+
+      <div class="filter-spacer"></div>
+      <span class="result-count">6 payouts total</span>
+    </div>
+
+    <!-- Data table -->
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="sortable sort-desc">Payout Period</th>
+            <th class="sortable">Net Amount</th>
+            <th>Status</th>
+            <th>Completed Bookings</th>
+            <th>Payout Date</th>
+            <th>Transaction Reference</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Row 1: Paid -->
+          <tr>
+            <td style="font-weight:600;">June 2026</td>
+            <td style="font-weight:600;">$1,875.00</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td>24</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">Jul 7, 2026</td>
+            <td><span class="ref-chip">txn_3Pz8kLMsJ4Xk0012</span></td>
+            <td><a href="fr018-screen9-3-payouts-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 2: Paid -->
+          <tr>
+            <td style="font-weight:600;">May 2026</td>
+            <td style="font-weight:600;">$2,310.50</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td>31</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">Jun 7, 2026</td>
+            <td><span class="ref-chip">txn_3Oz5hKLrH4Xk9987</span></td>
+            <td><a href="fr018-screen9-3-payouts-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 3: Paid -->
+          <tr>
+            <td style="font-weight:600;">April 2026</td>
+            <td style="font-weight:600;">$980.00</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td>13</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">May 7, 2026</td>
+            <td><span class="ref-chip">txn_3Ny4gJKqG4Xk8821</span></td>
+            <td><a href="fr018-screen9-3-payouts-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 4: Failed -->
+          <tr>
+            <td style="font-weight:600;">March 2026</td>
+            <td style="font-weight:600;color:#bf2600;">$1,450.00</td>
+            <td><span class="badge badge-failed">Failed</span></td>
+            <td>19</td>
+            <td style="font-size:12px;color:#97a0af;white-space:nowrap;">Apr 7, 2026</td>
+            <td><span class="ref-chip" style="color:#97a0af;">—</span></td>
+            <td><a href="fr018-screen9-3-payouts-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 5: Paid -->
+          <tr>
+            <td style="font-weight:600;">February 2026</td>
+            <td style="font-weight:600;">$760.00</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td>10</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">Mar 7, 2026</td>
+            <td><span class="ref-chip">txn_3Lm2eIJoF4Xk7754</span></td>
+            <td><a href="fr018-screen9-3-payouts-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+          <!-- Row 6: Paid -->
+          <tr>
+            <td style="font-weight:600;">January 2026</td>
+            <td style="font-weight:600;">$620.00</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td>8</td>
+            <td style="font-size:12px;color:#5e6c84;white-space:nowrap;">Feb 7, 2026</td>
+            <td><span class="ref-chip">txn_3Km1dHInE4Xk6623</span></td>
+            <td><a href="fr018-screen9-3-payouts-detail.html" class="detail-link">View Detail →</a></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-row">
+      <strong style="color:#172b4d;">Status:</strong>
+      <span><span class="badge badge-pending">Pending</span> — scheduled, not yet processed</span>
+      <span><span class="badge badge-processing">Processing</span> — Stripe transfer initiated</span>
+      <span><span class="badge badge-paid">Paid</span> — transfer confirmed</span>
+      <span><span class="badge badge-failed">Failed</span> — transfer error, admin investigating</span>
+    </div>
+
+  </div><!-- /.card -->
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

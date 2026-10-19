@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe — /resources/[category] — Category Pages — Hairline.app §4.5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS ───────────────────────────────────────── */
+    :root {
+      --bg:            #FAF8F5;
+      --surface:       #FFFFFF;
+      --surface-sub:   #F5F1EC;
+      --accent:        #B85C38;
+      --accent-lt:     #F5EDE8;
+      --accent-hover:  #9C4E2E;
+      --ink:           #1A1611;
+      --ink-2:         #5C544A;
+      --ink-3:         #9A9087;
+      --border:        #E8E2D9;
+      --cluster-bg:    #EEE9E2;
+      --tag-bg:        #EDE8E2;
+      --green:         #2D6A4F;
+      --green-bg:      #EAF4EE;
+
+      --sans:   'Inter', system-ui, sans-serif;
+      --serif:  Georgia, 'Times New Roman', serif;
+
+      --nav-h: 64px;
+      --sidebar-w: 244px;
+      --r-sm: 6px; --r-md: 12px; --r-lg: 16px;
+      --r-xl: 20px; --r-2xl: 24px; --r-full: 9999px;
+      --sh-sm: 0 1px 3px rgba(26,22,17,.06),0 1px 2px rgba(26,22,17,.04);
+      --sh-md: 0 4px 16px rgba(26,22,17,.08),0 2px 4px rgba(26,22,17,.04);
+    }
+
+    /* ── RESET ───────────────────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);font-size:16px;color:var(--ink);background:var(--bg);line-height:1.6}
+    h1,h2,h3,h4,h5{font-family:var(--sans);font-weight:600;line-height:1.2;color:var(--ink)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* ── WIREFRAME ANNOTATION ────────────────────────────────── */
+    .wf-banner{background:#6366F1;color:#fff;text-align:center;padding:10px 24px;
+      font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    .wf-label{display:inline-flex;align-items:center;gap:6px;background:#6366F1;color:#fff;
+      font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      padding:2px 8px;border-radius:var(--r-sm);margin-bottom:10px}
+    .wf-note{font-size:11px;color:#6366F1;border-left:2px solid #6366F1;
+      padding-left:10px;margin-top:8px;font-style:italic;line-height:1.5}
+
+    /* ── BUTTONS ─────────────────────────────────────────────── */
+    .btn-primary{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;
+      font-family:var(--sans);font-size:14px;font-weight:600;padding:10px 22px;
+      border-radius:var(--r-full);border:none;cursor:pointer;text-decoration:none;transition:background .15s}
+    .btn-primary:hover{background:var(--accent-hover);text-decoration:none;color:#fff}
+    .btn-ghost{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--ink);
+      font-family:var(--sans);font-size:13px;font-weight:500;padding:8px 16px;
+      border-radius:var(--r-sm);border:1px solid var(--border);cursor:pointer;transition:all .15s}
+    .btn-ghost:hover{background:var(--tag-bg);text-decoration:none;color:var(--ink)}
+    .btn-white{display:block;background:#fff;color:var(--accent);font-size:13px;font-weight:600;
+      padding:10px 16px;border-radius:var(--r-full);text-align:center;text-decoration:none}
+    .btn-white:hover{opacity:.9;text-decoration:none;color:var(--accent)}
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    .nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.95);
+      backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:var(--nav-h)}
+    .nav-inner{max-width:1280px;margin:0 auto;padding:0 32px;height:100%;
+      display:flex;align-items:center;justify-content:space-between;gap:32px}
+    .nav-logo{font-weight:700;font-size:20px;color:var(--ink);letter-spacing:-.02em;flex-shrink:0;text-decoration:none}
+    .nav-logo span{color:var(--accent)}
+    .nav-links{display:flex;align-items:center;gap:2px;list-style:none;flex:1;justify-content:center}
+    .nav-links li a{font-size:13px;font-weight:500;color:var(--ink);padding:8px 12px;
+      border-radius:var(--r-sm);display:flex;align-items:center;gap:4px;transition:background .15s}
+    .nav-links li a:hover{background:var(--tag-bg);text-decoration:none}
+    .nav-links li a.active{color:var(--accent);background:var(--accent-lt)}
+    .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+
+    /* ── BREADCRUMB ──────────────────────────────────────────── */
+    .breadcrumb{background:var(--bg);border-bottom:1px solid var(--border);padding:10px 0}
+    .bc-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;
+      gap:8px;font-size:13px;color:var(--ink-3)}
+    .bc-inner a{color:var(--ink-3)}
+    .bc-inner a:hover{color:var(--accent);text-decoration:none}
+    .bc-inner .sep{opacity:.4}
+    .bc-inner .cur{color:var(--ink-2);font-weight:500}
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero{background:var(--surface);border-bottom:1px solid var(--border);padding:56px 0 44px}
+    .hero-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+    .hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .cat-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);
+      color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:4px 14px;border-radius:var(--r-full)}
+    .article-count{font-size:13px;color:var(--ink-3)}
+    .hero-h1{font-size:48px;font-weight:700;letter-spacing:-.03em;line-height:1.1;
+      max-width:640px;margin-bottom:14px}
+    .hero-desc{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--ink-2);
+      max-width:600px;margin-bottom:28px}
+    .hero-meta-strip{display:flex;align-items:center;gap:20px;padding-top:22px;
+      border-top:1px solid var(--border);flex-wrap:wrap}
+    .meta-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface-sub);
+      border:1px solid var(--border);border-radius:var(--r-full);
+      padding:5px 14px;font-size:12px;color:var(--ink-2);font-weight:500}
+    .meta-pill .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;flex-shrink:0}
+    .meta-pill .dot.green{background:var(--green)}
+
+    /* ── FEATURED ARTICLE CARD ───────────────────────────────── */
+    .featured-section{max-width:1280px;margin:0 auto;padding:40px 32px 0}
+    .featured-card{display:grid;grid-template-columns:1fr 380px;gap:0;
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2xl);
+      overflow:hidden;box-shadow:var(--sh-md);transition:all .2s;text-decoration:none}
+    .featured-card:hover{box-shadow:0 8px 32px rgba(26,22,17,.12);transform:translateY(-2px);
+      text-decoration:none}
+    .fc-body{padding:40px;display:flex;flex-direction:column;gap:0}
+    .fc-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .fc-tag{background:var(--accent-lt);color:var(--accent);font-size:11px;font-weight:700;
+      padding:3px 10px;border-radius:var(--r-sm);text-transform:uppercase;letter-spacing:.06em}
+    .fc-featured-badge{background:var(--tag-bg);color:var(--ink-3);font-size:11px;font-weight:600;
+      padding:3px 10px;border-radius:var(--r-sm);letter-spacing:.04em}
+    .fc-h{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.2;
+      color:var(--ink);margin-bottom:14px}
+    .fc-excerpt{font-family:var(--serif);font-size:16px;line-height:1.65;color:var(--ink-2);
+      margin-bottom:24px;flex:1}
+    .fc-author{display:flex;align-items:center;gap:10px;padding-top:20px;
+      border-top:1px solid var(--border)}
+    .fc-av{width:32px;height:32px;background:var(--surface-sub);border:1.5px solid var(--border);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:14px}
+    .fc-author-info{font-size:12px;color:var(--ink-3);line-height:1.4}
+    .fc-author-info strong{display:block;font-size:13px;color:var(--ink-2);font-weight:500}
+    .fc-meta{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink-3)}
+    .fc-img{background:var(--surface-sub);border-left:1px solid var(--border);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:12px;color:var(--ink-3);font-size:12px;text-align:center;padding:32px}
+    .fc-img-icon{font-size:52px;opacity:.2}
+    .fc-img-label{font-size:11px;font-weight:500;color:var(--ink-3)}
+    .fc-img-note{font-size:10px;color:var(--ink-3);opacity:.7}
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .page-body{max-width:1280px;margin:0 auto;padding:40px 32px;
+      display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:48px;align-items:start}
+
+    /* ── SIDEBAR ─────────────────────────────────────────────── */
+    .sidebar{position:sticky;top:calc(var(--nav-h) + 24px);
+      max-height:calc(100vh - var(--nav-h) - 48px);overflow-y:auto;
+      display:flex;flex-direction:column;gap:20px}
+    .sidebar::-webkit-scrollbar{width:3px}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+    .sb-card{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);padding:20px;box-shadow:var(--sh-sm)}
+    .sb-cluster{background:var(--cluster-bg);border-color:#DDD8D0}
+    .sb-cta-card{background:var(--accent);border:none;text-align:center;padding:24px}
+    .sb-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink-3);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+    .sb-cluster .sb-title{border-bottom-color:#DDD8D0}
+    .cat-nav{list-style:none;display:flex;flex-direction:column;gap:2px}
+    .cat-nav li a{display:flex;align-items:center;justify-content:space-between;
+      font-size:13px;color:var(--ink-2);padding:8px 10px;border-radius:var(--r-sm);
+      transition:all .15s;line-height:1.4}
+    .cat-nav li a:hover{background:var(--accent-lt);color:var(--accent);text-decoration:none}
+    .cat-nav li a.active{background:var(--accent-lt);color:var(--accent);font-weight:600}
+    .cat-nav li a.active::before{content:'→ ';color:var(--accent)}
+    .cat-count{background:var(--tag-bg);color:var(--ink-3);font-size:10px;font-weight:600;
+      padding:1px 7px;border-radius:var(--r-full)}
+    .cat-nav li a.active .cat-count{background:rgba(184,92,56,.15);color:var(--accent)}
+    .sb-cta-card h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px}
+    .sb-cta-card p{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:16px;line-height:1.5}
+    .sb-popular{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .sb-popular li a{display:block;font-size:13px;color:var(--ink-2);line-height:1.4;
+      padding-left:14px;position:relative}
+    .sb-popular li a::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:600}
+    .sb-popular li a:hover{color:var(--accent);text-decoration:none}
+    .sb-popular li .sb-read{font-size:11px;color:var(--ink-3);display:block;margin-top:1px}
+
+    /* ── ARTICLE GRID AREA ───────────────────────────────────── */
+    .grid-area{min-width:0}
+
+    /* Sort / filter bar */
+    .sort-bar{display:flex;align-items:center;justify-content:space-between;
+      padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:28px;gap:16px;flex-wrap:wrap}
+    .sort-left{display:flex;align-items:center;gap:8px}
+    .sort-label{font-size:13px;color:var(--ink-3);font-weight:500}
+    .sort-tabs{display:flex;gap:4px}
+    .sort-tab{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;
+      font-size:13px;font-weight:500;border-radius:var(--r-full);cursor:pointer;
+      border:1.5px solid var(--border);background:transparent;color:var(--ink-2);
+      transition:all .15s}
+    .sort-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .sort-tab:hover:not(.active){background:var(--tag-bg);border-color:var(--ink-3)}
+    .result-count{font-size:13px;color:var(--ink-3)}
+    .view-toggle{display:flex;gap:4px}
+    .view-btn{width:32px;height:32px;border-radius:var(--r-sm);border:1.5px solid var(--border);
+      background:transparent;display:flex;align-items:center;justify-content:center;
+      font-size:13px;cursor:pointer;color:var(--ink-3);transition:all .15s}
+    .view-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+    /* Article cards grid */
+    .article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px}
+
+    .art-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);
+      overflow:hidden;box-shadow:var(--sh-sm);transition:all .2s;text-decoration:none;display:flex;flex-direction:column}
+    .art-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px);text-decoration:none}
+    .art-img{height:148px;background:var(--surface-sub);border-bottom:1px solid var(--border);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:8px;color:var(--ink-3);font-size:11px;text-align:center;padding:16px;flex-shrink:0}
+    .art-img-icon{font-size:36px;opacity:.18}
+    .art-body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .art-tag-row{display:flex;align-items:center;gap:6px}
+    .art-tag{background:var(--accent-lt);color:var(--accent);font-size:10px;font-weight:700;
+      padding:2px 8px;border-radius:var(--r-sm);text-transform:uppercase;letter-spacing:.06em}
+    .art-new{background:#EAF4EE;color:var(--green);font-size:10px;font-weight:700;
+      padding:2px 8px;border-radius:var(--r-sm);text-transform:uppercase;letter-spacing:.06em}
+    .art-title{font-size:14px;font-weight:600;color:var(--ink);line-height:1.4;flex:1}
+    .art-excerpt{font-size:12px;color:var(--ink-2);line-height:1.55}
+    .art-footer{display:flex;align-items:center;justify-content:space-between;
+      padding-top:12px;border-top:1px solid var(--border);margin-top:auto}
+    .art-author{display:flex;align-items:center;gap:6px}
+    .art-av{width:22px;height:22px;background:var(--surface-sub);border:1.5px solid var(--border);
+      border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:10px}
+    .art-author-name{font-size:11px;color:var(--ink-3);font-weight:500}
+    .art-read-time{font-size:11px;color:var(--ink-3)}
+    .art-date{font-size:11px;color:var(--ink-3)}
+
+    /* Reviewed badge inline */
+    .art-reviewed{display:flex;align-items:center;gap:4px;background:var(--green-bg);
+      color:var(--green);font-size:10px;font-weight:600;padding:2px 7px;
+      border-radius:var(--r-sm);width:fit-content}
+
+    /* ── PAGINATION ──────────────────────────────────────────── */
+    .pagination{display:flex;align-items:center;justify-content:center;
+      gap:6px;padding:32px 0 0;border-top:1px solid var(--border)}
+    .pg-btn{width:36px;height:36px;border-radius:var(--r-sm);border:1.5px solid var(--border);
+      background:transparent;display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:500;cursor:pointer;color:var(--ink-2);transition:all .15s}
+    .pg-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .pg-btn:hover:not(.active){background:var(--tag-bg);border-color:var(--ink-3)}
+    .pg-btn.arrow{font-size:15px}
+    .pg-btn:disabled{opacity:.3;cursor:default}
+    .pg-ellipsis{font-size:13px;color:var(--ink-3);padding:0 4px}
+
+    /* ── RELATED CATEGORIES ──────────────────────────────────── */
+    .related-cats-section{background:var(--surface-sub);border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);padding:56px 0}
+    .rc-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+    .section-header{margin-bottom:28px}
+    .s-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:8px}
+    .s-h2{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+    .s-sub{font-size:14px;color:var(--ink-2);line-height:1.6}
+    .rc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .rc-tile{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-xl);
+      padding:24px;text-decoration:none;transition:all .2s;display:flex;flex-direction:column;gap:12px;
+      box-shadow:var(--sh-sm)}
+    .rc-tile:hover{border-color:var(--accent);box-shadow:var(--sh-md);
+      transform:translateY(-2px);text-decoration:none}
+    .rc-icon{width:40px;height:40px;background:var(--accent-lt);border-radius:var(--r-md);
+      display:flex;align-items:center;justify-content:center;font-size:20px}
+    .rc-name{font-size:15px;font-weight:600;color:var(--ink)}
+    .rc-desc{font-size:12px;color:var(--ink-2);line-height:1.55;flex:1}
+    .rc-count{font-size:11px;color:var(--ink-3);font-weight:500;
+      padding-top:10px;border-top:1px solid var(--border)}
+    .rc-count strong{color:var(--accent);font-weight:600}
+
+    /* ── NEWSLETTER SECTION ──────────────────────────────────── */
+    .newsletter-section{background:linear-gradient(135deg,#1A1611 0%,#2C2419 100%);padding:80px 0}
+    .nl-inner{max-width:1280px;margin:0 auto;padding:0 32px;
+      display:grid;grid-template-columns:1fr 480px;gap:64px;align-items:center}
+    .nl-left h2{font-size:34px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:14px}
+    .nl-left p{font-size:15px;color:rgba(255,255,255,.65);line-height:1.65;max-width:420px;margin-bottom:24px}
+    .nl-trust{display:flex;flex-direction:column;gap:8px}
+    .nl-trust-item{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.55)}
+    .nl-trust-item::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
+    .nl-form{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--r-2xl);padding:32px}
+    .nl-form-label{font-size:12px;font-weight:600;color:rgba(255,255,255,.7);
+      letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:block}
+    .nl-input-row{display:flex;gap:10px;margin-bottom:14px}
+    .nl-input{flex:1;padding:13px 18px;border:1.5px solid rgba(255,255,255,.15);
+      border-radius:var(--r-full);background:rgba(255,255,255,.08);
+      font-family:var(--sans);font-size:14px;color:#fff;outline:none}
+    .nl-input::placeholder{color:rgba(255,255,255,.35)}
+    .nl-input:focus{border-color:var(--accent);background:rgba(255,255,255,.12)}
+    .nl-submit{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;
+      font-family:var(--sans);font-size:14px;font-weight:600;padding:13px 24px;
+      border-radius:var(--r-full);border:none;cursor:pointer;white-space:nowrap;
+      transition:background .15s}
+    .nl-submit:hover{background:var(--accent-hover)}
+    .nl-fine{font-size:11px;color:rgba(255,255,255,.35);text-align:center}
+    .nl-tag-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+    .nl-tag{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.55);font-size:11px;font-weight:500;padding:4px 12px;
+      border-radius:var(--r-full)}
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    .footer{background:var(--ink);color:rgba(255,255,255,.65);padding:64px 0 32px}
+    .foot-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+      gap:32px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .foot-logo{font-size:20px;font-weight:700;color:#fff;margin-bottom:14px}
+    .foot-logo span{color:var(--accent)}
+    .foot-brand p{font-size:13px;line-height:1.6;max-width:260px}
+    .foot-col h5{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:#fff;margin-bottom:14px}
+    .foot-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .foot-col ul li a{font-size:13px;color:rgba(255,255,255,.55);transition:color .15s}
+    .foot-col ul li a:hover{color:#fff;text-decoration:none}
+    .foot-bottom{display:flex;align-items:center;justify-content:space-between;
+      padding-top:24px;font-size:12px;flex-wrap:wrap;gap:16px}
+    .foot-bottom-links{display:flex;gap:20px}
+    .foot-bottom-links a{color:rgba(255,255,255,.4);font-size:12px}
+    .foot-bottom-links a:hover{color:rgba(255,255,255,.8);text-decoration:none}
+  </style>
+</head>
+<body>
+
+<!-- WIREFRAME ANNOTATION BANNER -->
+<div class="wf-banner">
+  WIREFRAME · /resources/[category] · Category Pages ★ · Hairline.app §4.5
+  · Example URL: /resources/treatments · Applies to all 5 category pages: Treatments / Conditions / Recovery / Travel / Guides
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════════ -->
+<nav class="nav" role="navigation" aria-label="Primary navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">hair<span>line</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Hair Loss ▾</a></li>
+      <li><a href="#">Treatments ▾</a></li>
+      <li><a href="#">Find a Clinic</a></li>
+      <li><a href="#" class="active">Resources ▾</a></li>
+      <li><a href="#">How It Works</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">For Clinics →</a>
+      <a href="#" class="btn-primary">Download the app</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     BREADCRUMB  §7.1 SEO requirement
+══════════════════════════════════════════════════════════ -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="bc-inner">
+    <a href="#">Home</a>
+    <span class="sep">/</span>
+    <a href="#">Resources</a>
+    <span class="sep">/</span>
+    <span class="cur">Treatments</span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO  — Sitemap §/resources/[category] · Section 1
+     Category name · brief description · article count
+══════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero" aria-labelledby="cat-title">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="cat-badge">Treatments</span>
+      <span class="article-count">34 articles · Medically reviewed</span>
+    </div>
+    <h1 class="hero-h1" id="cat-title">Hair Loss Treatments — Everything You Need to Know</h1>
+    <p class="hero-desc">
+      Evidence-based guides to every treatment option — from daily medications to surgical hair transplants. Written by hair-loss specialists, reviewed by surgeons.
+    </p>
+    <div class="hero-meta-strip">
+      <span class="meta-pill"><span class="dot"></span>Updated monthly</span>
+      <span class="meta-pill"><span class="dot green"></span>Medically reviewed</span>
+      <span class="meta-pill"><span class="dot"></span>Peer-reviewed citations</span>
+      <span class="meta-pill"><span class="dot"></span>No sponsored content</span>
+    </div>
+    <p class="wf-note">Hero text: category name as H1 (§7.1 single H1 rule). Description pulled from CMS category record. Meta strip signals editorial quality — E-E-A-T trust reinforcement (§7.1).</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FEATURED ARTICLE CARD — top of content area
+     Editorially selected or most-read article in category
+══════════════════════════════════════════════════════════ -->
+<div class="featured-section">
+  <div class="wf-label">Featured / Lead Article — editorially pinned or algorithmically ranked</div>
+  <a href="#" class="featured-card" aria-label="Featured article">
+    <div class="fc-body">
+      <div class="fc-eyebrow">
+        <span class="fc-tag">Treatments</span>
+        <span class="fc-featured-badge">★ Editor's Pick</span>
+      </div>
+      <h2 class="fc-h">FUE vs FUT vs DHI: The Complete Hair Transplant Comparison for 2026</h2>
+      <p class="fc-excerpt">
+        The three main surgical hair restoration techniques differ significantly in extraction method, recovery time, graft yield, and cost. This guide walks through every dimension so you can make an informed choice — or know what to ask your surgeon.
+      </p>
+      <div class="fc-author">
+        <div class="fc-av">✍️</div>
+        <div>
+          <div class="fc-author-info">
+            <strong>Dr. Amir Rashid</strong>
+            Reviewed by Dr. Elena Vasquez · MBBS FRCS
+          </div>
+          <div class="fc-meta">
+            <span>⏱ 18 min read</span>
+            <span>·</span>
+            <span>📅 Mar 2026</span>
+            <span>·</span>
+            <span style="color:var(--green);font-weight:500">✓ Medically reviewed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-img">
+      <div class="fc-img-icon">🖼</div>
+      <div class="fc-img-label">Hero article image</div>
+      <div class="fc-img-note">Editorial photography — surgical setting, lifestyle, not stock (Brief §3.3)</div>
+      <div style="margin-top:12px" class="wf-note">Aspect ratio ~380×300. AVIF/WebP ≤200KB (§7.3)</div>
+    </div>
+  </a>
+  <p class="wf-note" style="margin-top:10px">Featured card: horizontal layout desktop. Mobile: stacks vertically, image above body. CMS field: "featured" boolean per article. Fallback: highest page-views in trailing 30 days.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT — Sidebar + Article Grid
+══════════════════════════════════════════════════════════ -->
+<div class="page-body">
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LEFT SIDEBAR — Category nav + Popular articles + CTA
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <aside class="sidebar" aria-label="Category navigation">
+
+    <!-- Category navigation  §7.2 pillar-and-cluster pattern -->
+    <div class="sb-card sb-cluster">
+      <div class="sb-title">Browse by Category</div>
+      <ul class="cat-nav">
+        <li>
+          <a href="#" class="active">
+            Treatments
+            <span class="cat-count">34</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            Conditions
+            <span class="cat-count">28</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            Recovery
+            <span class="cat-count">19</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            Travel
+            <span class="cat-count">14</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            Guides
+            <span class="cat-count">22</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Popular articles in this category -->
+    <div class="sb-card">
+      <div class="sb-title">Most Read</div>
+      <ul class="sb-popular">
+        <li>
+          <a href="#">
+            Does Finasteride Actually Work?
+            <span class="sb-read">⏱ 12 min · 94k reads</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            How Much Does a Hair Transplant Cost?
+            <span class="sb-read">⏱ 10 min · 88k reads</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            Minoxidil: What No One Tells You
+            <span class="sb-read">⏱ 8 min · 71k reads</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            PRP Therapy: Is It Worth It in 2026?
+            <span class="sb-read">⏱ 9 min · 52k reads</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            DHI vs FUE: The Honest Comparison
+            <span class="sb-read">⏱ 15 min · 47k reads</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Sidebar assessment CTA -->
+    <div class="sb-card sb-cta-card">
+      <h4>Not sure which treatment is right for you?</h4>
+      <p>Free 5-minute assessment — understand your hair loss pattern and get matched with vetted providers.</p>
+      <a href="#" class="btn-white">Start assessment →</a>
+    </div>
+
+  </aside>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       ARTICLE GRID AREA
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="grid-area">
+
+    <!-- ── Sort / Filter bar  — Sitemap Section 2 ──────── -->
+    <div class="sort-bar" role="toolbar" aria-label="Sort articles">
+      <div class="sort-left">
+        <span class="sort-label">Sort by:</span>
+        <div class="sort-tabs">
+          <button class="sort-tab active" aria-pressed="true">Newest</button>
+          <button class="sort-tab" aria-pressed="false">Most Read</button>
+          <button class="sort-tab" aria-pressed="false">A–Z</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="result-count">34 articles</span>
+        <div class="view-toggle" aria-label="View toggle">
+          <button class="view-btn active" aria-label="Grid view" title="Grid view">⊞</button>
+          <button class="view-btn" aria-label="List view" title="List view">☰</button>
+        </div>
+      </div>
+    </div>
+    <p class="wf-note" style="margin-bottom:20px">Sort bar: sticky on desktop scroll within the grid area. Sort state reflected in URL query string (?sort=newest) for shareable/crawlable URLs. View toggle: grid (default) vs list. Mobile: sort tabs collapse to a select dropdown.</p>
+
+    <!-- ── Article Grid  — Sitemap Section 3 ─────────── -->
+    <div class="wf-label">Article Grid — 3-column desktop / 2-column tablet / 1-column mobile · Paginated</div>
+    <div class="article-grid" aria-label="Article listing">
+
+      <!-- Card 1 -->
+      <a href="#" class="art-card">
+        <div class="art-img">
+          <div class="art-img-icon">🖼</div>
+          <div style="font-size:10px">Article hero image<br>148×— px · AVIF/WebP</div>
+        </div>
+        <div class="art-body">
+          <div class="art-tag-row">
+            <span class="art-tag">Treatments</span>
+            <span class="art-new">New</span>
+          </div>
+          <div class="art-title">Finasteride for Hair Loss: Dosage, Results, Side Effects — The Complete 2026 Guide</div>
+          <p class="art-excerpt">Everything you need to know before starting finasteride — how it works, what the clinical evidence says, and what to expect in year one.</p>
+          <div class="art-reviewed">✓ Medically reviewed</div>
+          <div class="art-footer">
+            <div class="art-author">
+              <div class="art-av">✍️</div>
+              <span class="art-author-name">Sarah Whitmore</span>
+            </div>
+            <span class="art-read-time">⏱ 12 min</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a href="#" class="art-card">
+        <div class="art-img">
+          <div class="art-img-icon">🖼</div>
+          <div style="font-size:10px">Article hero image</div>
+        </div>
+        <div class="art-body">
+          <div class="art-tag-row">
+            <span class="art-tag">Treatments</span>
+          </div>
+          <div class="art-title">Minoxidil: How It Works, Foam vs Liquid, and Who It's For</div>
+          <p class="art-excerpt">Minoxidil is the most widely used topical treatment for hair loss — but the formulation, concentration, and application method all affect results.</p>
+          <div class="art-reviewed">✓ Medically reviewed</div>
+          <div class="art-footer">
+            <div class="art-author">
+              <div class="art-av">✍️</div>
+              <span class="art-author-name">James Okeke MD</span>
+            </div>
+            <span class="art-read-time">⏱ 9 min</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 3 -->
+      <a href="#" class="art-card">
+        <div class="art-img">
+          <div class="art-img-icon">🖼</div>
+          <div style="font-size:10px">Article hero image</div>
+        </div>
+        <div class="art-body">
+          <div class="art-tag-row">
+            <span class="art-tag">Treatments</span>
+          </div>
+          <div class="art-title">PRP Therapy for Hair Loss: Evidence Review 2026</div>
+          <p class="art-excerpt">Platelet-rich plasma injections have grown rapidly in popularity. Here is what the peer-reviewed evidence actually shows about efficacy and patient selection.</p>
+          <div class="art-reviewed">✓ Medically reviewed</div>
+          <div class="art-footer">
+            <div class="art-author">
+              <div class="art-av">✍️</div>
+              <span class="art-author-name">Priya Mehta</span>
+            </div>
+            <span class="art-read-time">⏱ 11 min</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 4 -->
+      <a href="#" class="art-card">
+        <div class="art-img">
+          <div class="art-img-icon">🖼</div>
+          <div style="font-size:10px">Article hero image</div>
+        </div>
+        <div class="art-body">
+          <div class="art-tag-row">
+            <span class="art-tag">Treatments</span>
+          </div>
+          <div class="art-title">Scalp Micropigmentation: What Is It, How Long Does It Last?</div>
+          <p class="art-excerpt">SMP is a non-surgical cosmetic technique that creates the illusion of hair follicles using microneedled pigment. Here's a complete breakdown.</p>
+          <div class="art-footer">
+            <div class="art-author">
+              <div class="art-av">✍️</div>
+              <span class="art-author-name">Tom Archer</span>
+            </div>
+            <span class="art-read-time">⏱ 8 min</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 5 -->
+      <a href="#" class="art-card">
+        <div class="art-img">
+          <div class="art-img-icon">🖼</div>
+          <div style="font-size:10px">Article hero image</div>
+        </div>
+        <div class="art-body">
+          <div class="art-tag-row">
+            <span class="art-tag">Treatments</span>
+          </div>
+          <div class="art-title">Low-Level Laser Therapy (LLLT) for Hair Loss: Does It Work?</div>
+          <p class="art-excerpt">Laser caps and devices claim to stimulate hair regrowth using photobiomodulation. We review the clinical evidence and device comparisons.</p>
+          <div class="art-reviewed">✓ Medically reviewed</div>
+          <div class="art-footer">
+            <div class="art-author">
+              <div class="art-av">✍️</div>
+              <span class="art-author-name">Rachel Kim</span>
+            </div>
+            <span class="art-read-time">⏱ 10 min</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 6 -->
+      <a href="#" class="art-card">
+        <div class="art-img">
+          <div class="art-img-icon">🖼</div>
+          <div style="font-size:10px">Article hero image</div>
+        </div>
+        <div class="art-body">
+          <div class="art-tag-row">
+            <span class="art-tag">Treatments</span>
+          </div>
+          <div class="art-title">Combining Finasteride and Minoxidil: Is Combination Therapy Worth It?</div>
+          <p class="art-excerpt">Clinical trials consistently show that combination therapy outperforms either treatment alone. Here's the evidence and practical guidance on getting started.</p>
+          <div class="art-reviewed">✓ Medically reviewed</div>
+          <div class="art-footer">
+            <div class="art-author">
+              <div class="art-av">✍️</div>
+              <span class="art-author-name">James Okeke MD</span>
+            </div>
+            <span class="art-read-time">⏱ 14 min</span>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- end .article-grid -->
+
+    <p class="wf-note">Article grid: 3 columns desktop / 2 columns tablet (768px) / 1 column mobile. Cards equal height within each row (flexbox column). 'Medically reviewed' badge shows only when CMS field is set. Image dimensions: 16:9 at 148px height. Lazy-loaded below fold.</p>
+
+    <!-- ── Pagination ──────────────────────────────────── -->
+    <div class="pagination" aria-label="Pagination">
+      <button class="pg-btn arrow" aria-label="Previous page" disabled>‹</button>
+      <button class="pg-btn active" aria-label="Page 1">1</button>
+      <button class="pg-btn" aria-label="Page 2">2</button>
+      <button class="pg-btn" aria-label="Page 3">3</button>
+      <span class="pg-ellipsis">…</span>
+      <button class="pg-btn" aria-label="Page 6">6</button>
+      <button class="pg-btn arrow" aria-label="Next page">›</button>
+    </div>
+    <p class="wf-note" style="margin-top:12px">Pagination: 6 articles per page (desktop). URL pattern: /resources/treatments?page=2. On mobile: 4 articles per page. Prev/next ARIA labels for screen reader (§8.2). Active page does not link. Ellipsis collapses interior pages.</p>
+
+  </div><!-- end .grid-area -->
+
+</div><!-- end .page-body -->
+
+<!-- ══════════════════════════════════════════════════════════
+     RELATED CATEGORIES — Sitemap Section 4
+     Links to other /resources/[category] pages
+══════════════════════════════════════════════════════════ -->
+<section class="related-cats-section" aria-labelledby="rc-heading">
+  <div class="rc-inner">
+    <div class="section-header">
+      <div class="s-label">Related Categories</div>
+      <h2 class="s-h2" id="rc-heading">More from the Hairline knowledge base</h2>
+      <p class="s-sub">Explore our other editorial categories — all medically reviewed and updated regularly.</p>
+    </div>
+    <div class="rc-grid">
+      <a href="#" class="rc-tile" aria-label="Conditions category">
+        <div class="rc-icon">🩺</div>
+        <div class="rc-name">Conditions</div>
+        <p class="rc-desc">In-depth guides to every form of hair loss — from male pattern baldness to alopecia areata and postpartum shedding.</p>
+        <div class="rc-count"><strong>28</strong> articles</div>
+      </a>
+      <a href="#" class="rc-tile" aria-label="Recovery category">
+        <div class="rc-icon">🌱</div>
+        <div class="rc-name">Recovery</div>
+        <p class="rc-desc">Post-procedure care, graft survival, month-by-month timelines, and how to use Hairline Aftercare to track progress.</p>
+        <div class="rc-count"><strong>19</strong> articles</div>
+      </a>
+      <a href="#" class="rc-tile" aria-label="Travel category">
+        <div class="rc-icon">✈️</div>
+        <div class="rc-name">Travel</div>
+        <p class="rc-desc">Medical tourism guides — destinations, what to look for in an overseas clinic, and how Hairline Travel works.</p>
+        <div class="rc-count"><strong>14</strong> articles</div>
+      </a>
+      <a href="#" class="rc-tile" aria-label="Guides category">
+        <div class="rc-icon">📖</div>
+        <div class="rc-name">Guides</div>
+        <p class="rc-desc">Practical how-to content — choosing a surgeon, reading a quote, understanding graft counts, and preparing for a procedure.</p>
+        <div class="rc-count"><strong>22</strong> articles</div>
+      </a>
+    </div>
+    <p class="wf-note" style="margin-top:24px">Related categories excludes the currently active category. Tile count pulled from CMS at render time. On mobile: 2-column grid. Tiles link to /resources/[category] pages (§4.5 — Category Pages).</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     NEWSLETTER SIGNUP — Sitemap Section 5
+     Same email capture component as /resources index
+══════════════════════════════════════════════════════════ -->
+<section class="newsletter-section" aria-labelledby="nl-heading">
+  <div class="nl-inner">
+    <div class="nl-left">
+      <h2 id="nl-heading">Get the latest hair-loss research in your inbox</h2>
+      <p>
+        Monthly digest of new treatment research, clinical evidence updates, and guides from the Hairline editorial team. No spam — unsubscribe any time.
+      </p>
+      <div class="nl-trust">
+        <div class="nl-trust-item">New articles published every week</div>
+        <div class="nl-trust-item">All content medically reviewed before publishing</div>
+        <div class="nl-trust-item">12,000+ readers — no ads, no sponsored content</div>
+      </div>
+      <div class="nl-tag-list">
+        <span class="nl-tag">Treatments</span>
+        <span class="nl-tag">Conditions</span>
+        <span class="nl-tag">Recovery</span>
+        <span class="nl-tag">Travel</span>
+        <span class="nl-tag">Research updates</span>
+      </div>
+    </div>
+    <div class="nl-form">
+      <label class="nl-form-label" for="nl-email-cat">Email address</label>
+      <div class="nl-input-row">
+        <input class="nl-input" id="nl-email-cat" type="email" placeholder="you@example.com" aria-label="Email address">
+        <button class="nl-submit" type="button">Subscribe →</button>
+      </div>
+      <p class="nl-fine">Subscribing to Treatments updates. Change your topic preferences any time.</p>
+      <p class="wf-note" style="margin-top:14px">Category pre-selected from current page URL. Preference saved to subscriber profile — user can update topic checkboxes after signup. GDPR consent checkbox required for EU visitors (not shown here to keep wireframe clean — add as required).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="footer" aria-label="Site footer">
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="foot-logo">hair<span>line</span></div>
+        <p>Connecting people experiencing hair loss with vetted providers worldwide. Medically reviewed content you can trust.</p>
+      </div>
+      <div class="foot-col">
+        <h5>For Patients</h5>
+        <ul>
+          <li><a href="#">Find a Clinic</a></li>
+          <li><a href="#">Treatments</a></li>
+          <li><a href="#">Aftercare</a></li>
+          <li><a href="#">Travel</a></li>
+          <li><a href="#">Assessment</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">All Articles</a></li>
+          <li><a href="#">Treatments</a></li>
+          <li><a href="#">Conditions</a></li>
+          <li><a href="#">Recovery</a></li>
+          <li><a href="#">Guides</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Hair Loss</h5>
+        <ul>
+          <li><a href="#">All Conditions</a></li>
+          <li><a href="#">Male Pattern Baldness</a></li>
+          <li><a href="#">Alopecia Areata</a></li>
+          <li><a href="#">Receding Hairline</a></li>
+          <li><a href="#">Crown Thinning</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">For Clinics</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Hairline.app — Samasu Digital LTD</span>
+      <div class="foot-bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookie settings</a>
+        <a href="#">Sitemap</a>
+      </div>
+      <span>🌐 EN · Change language</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Sort tab toggle ───────────────────────────────────── */
+  document.querySelectorAll('.sort-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.sort-tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-pressed', 'false');
+      });
+      tab.classList.add('active');
+      tab.setAttribute('aria-pressed', 'true');
+    });
+  });
+
+  /* ── View toggle ───────────────────────────────────────── */
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* ── Pagination ────────────────────────────────────────── */
+  document.querySelectorAll('.pg-btn:not(.arrow):not([disabled])').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

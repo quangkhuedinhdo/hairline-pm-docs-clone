@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 4 — Affiliate Code Generation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #dfe1e6;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #0052cc; }
+    .topbar-nav { display: flex; gap: 24px; margin-left: 32px; }
+    .topbar-nav a { color: #42526e; text-decoration: none; font-size: 13px; }
+    .topbar-nav a.active { color: #0052cc; font-weight: 600; border-bottom: 2px solid #0052cc; padding-bottom: 2px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #42526e; }
+    .topbar-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #0052cc; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 28px 24px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #5e6c84; margin-bottom: 16px;
+    }
+    .breadcrumb a { color: #0052cc; text-decoration: none; }
+    .breadcrumb-sep { color: #c1c7d0; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: #172b4d; }
+    .page-subtitle { font-size: 13px; color: #5e6c84; margin-top: 3px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 4px; font-size: 13px;
+      font-weight: 500; cursor: pointer; border: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #0052cc; color: #fff; }
+    .btn-default { background: #fff; color: #42526e; border: 1px solid #dfe1e6; }
+    .btn-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+    .btn-lg { padding: 9px 20px; font-size: 14px; }
+
+    /* ── Card / Form card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #dfe1e6;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 14px; font-weight: 600; color: #172b4d; }
+    .card-subtitle { font-size: 12px; color: #5e6c84; margin-top: 2px; }
+    .card-body { padding: 20px; }
+
+    /* ── Section label within card ── */
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+      text-transform: uppercase; color: #5e6c84;
+      margin-bottom: 12px; margin-top: 20px;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* ── Form rows ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 12px 20px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+    .form-row-full {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      font-size: 13px; font-weight: 500; color: #172b4d;
+      padding-top: 7px;
+    }
+    .form-label .required { color: #de350b; margin-left: 2px; }
+    .form-hint {
+      font-size: 11px; color: #5e6c84; margin-top: 2px; line-height: 1.4;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 13px;
+      color: #172b4d;
+      background: #fff;
+      line-height: 1.4;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #0052cc;
+      box-shadow: 0 0 0 2px rgba(0,82,204,0.15);
+    }
+    .form-textarea { resize: vertical; min-height: 72px; }
+    .form-select {
+      appearance: none;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2342526e'/%3E%3C/svg%3E") no-repeat right 10px center;
+      padding-right: 28px;
+      cursor: pointer;
+    }
+    .input-group {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .input-addon {
+      font-size: 13px; color: #42526e; white-space: nowrap;
+    }
+    .char-count {
+      font-size: 11px; color: #5e6c84; margin-top: 3px; text-align: right;
+    }
+
+    /* ── Radio / Checkbox group ── */
+    .radio-group, .checkbox-group {
+      display: flex; flex-direction: column; gap: 8px;
+      padding-top: 4px;
+    }
+    .radio-group.horizontal { flex-direction: row; gap: 20px; }
+    .radio-option, .checkbox-option {
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .radio-option input[type="radio"],
+    .checkbox-option input[type="checkbox"] {
+      margin-top: 2px; flex-shrink: 0;
+      accent-color: #0052cc;
+    }
+    .radio-label, .checkbox-label {
+      font-size: 13px; color: #172b4d;
+    }
+    .radio-desc {
+      font-size: 11px; color: #5e6c84; margin-top: 1px; line-height: 1.4;
+    }
+
+    /* ── Mode selection cards ── */
+    .mode-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      padding-top: 2px;
+    }
+    .mode-card {
+      border: 2px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 14px 16px;
+      cursor: pointer;
+      position: relative;
+    }
+    .mode-card.selected {
+      border-color: #0052cc;
+      background: #f0f5ff;
+    }
+    .mode-card input[type="radio"] {
+      position: absolute; top: 14px; right: 14px;
+      accent-color: #0052cc;
+    }
+    .mode-card-title {
+      font-size: 13px; font-weight: 600; color: #172b4d; margin-bottom: 4px;
+    }
+    .mode-card-desc {
+      font-size: 11px; color: #5e6c84; line-height: 1.4;
+    }
+    .mode-card.selected .mode-card-title { color: #0052cc; }
+
+    /* ── Conditional panel ── */
+    .conditional-panel {
+      background: #f8f9fb;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .conditional-panel-label {
+      font-size: 12px; font-weight: 600; color: #5e6c84;
+      margin-bottom: 10px;
+    }
+
+    /* ── Multi-select tag input ── */
+    .tag-input-wrap {
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      background: #fff;
+      padding: 6px 8px;
+      min-height: 38px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      align-items: center;
+    }
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #e6edff; color: #0052cc;
+      border-radius: 12px; padding: 2px 8px;
+      font-size: 12px; font-weight: 500;
+    }
+    .tag-remove {
+      font-size: 14px; line-height: 1; cursor: pointer; color: #0052cc; opacity: 0.7;
+    }
+    .tag-placeholder { font-size: 13px; color: #8993a4; }
+
+    /* ── Filter chip row ── */
+    .filter-chips {
+      display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px;
+    }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #e6edff; color: #0052cc;
+      border-radius: 4px; padding: 3px 10px;
+      font-size: 12px; font-weight: 500;
+    }
+    .filter-chip-count {
+      background: #0052cc; color: #fff;
+      border-radius: 10px; padding: 0 6px;
+      font-size: 11px; font-weight: 600;
+    }
+    .filter-link {
+      font-size: 12px; color: #0052cc; text-decoration: none;
+      cursor: pointer;
+    }
+    .filter-link:hover { text-decoration: underline; }
+
+    /* ── Code preview badge ── */
+    .code-preview {
+      display: inline-block;
+      background: #f0f5ff;
+      border: 1px dashed #0052cc;
+      border-radius: 4px;
+      padding: 6px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: #0052cc;
+      letter-spacing: 1.5px;
+      margin-top: 6px;
+    }
+    .code-preview-label {
+      font-size: 11px; color: #5e6c84; margin-bottom: 4px;
+    }
+
+    /* ── Toggle switch ── */
+    .toggle-wrap { display: flex; align-items: center; gap: 10px; padding-top: 4px; }
+    .toggle {
+      position: relative; width: 40px; height: 22px;
+      display: inline-block;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer;
+      inset: 0; background: #dfe1e6; border-radius: 22px;
+      transition: 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: #0052cc; }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%;
+      transition: 0.2s;
+    }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .toggle-label { font-size: 13px; color: #172b4d; }
+    .toggle-status { font-size: 12px; color: #5e6c84; }
+
+    /* ── Margin guard alert ── */
+    .alert {
+      border-radius: 4px; padding: 10px 14px;
+      font-size: 12px; line-height: 1.5; margin-top: 10px;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .alert-icon { font-size: 14px; flex-shrink: 0; line-height: 1.5; }
+    .alert-warning {
+      background: #fffae6; border: 1px solid #f6c344; color: #974f0c;
+    }
+    .alert-error {
+      background: #ffebe6; border: 1px solid #ffbdad; color: #bf2600;
+    }
+    .alert-info {
+      background: #e6f0ff; border: 1px solid #b3d0ff; color: #0747a6;
+    }
+
+    /* ── Divider ── */
+    .divider { border: none; border-top: 1px solid #dfe1e6; margin: 16px 0; }
+
+    /* ── Bulk summary bar ── */
+    .bulk-summary {
+      background: #e6f0ff;
+      border: 1px solid #b3d0ff;
+      border-radius: 4px;
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: #0747a6;
+      margin-bottom: 14px;
+    }
+    .bulk-summary-count {
+      font-weight: 700; font-size: 15px; color: #0052cc;
+    }
+
+    /* ── Form footer ── */
+    .form-footer {
+      background: #fff;
+      border-top: 1px solid #dfe1e6;
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; bottom: 0;
+    }
+    .form-footer-note { font-size: 12px; color: #5e6c84; }
+
+    /* ── Utility ── */
+    .text-muted { color: #5e6c84; }
+    .text-required { color: #de350b; }
+    .badge {
+      display: inline-block; border-radius: 3px;
+      padding: 1px 7px; font-size: 11px; font-weight: 600;
+    }
+    .badge-info { background: #e6f0ff; color: #0052cc; }
+    .badge-warn { background: #fffae6; color: #974f0c; }
+    .mt-4 { margin-top: 4px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+
+    /* ── Annotation notes (wireframe annotation) ── */
+    .annotation {
+      font-size: 11px; color: #5e6c84; font-style: italic;
+      border-left: 2px solid #c1c7d0; padding-left: 8px; margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── State tab strip (wireframe state switcher) ── */
+    .state-tabs {
+      display: flex; gap: 0;
+      border-bottom: 2px solid #dfe1e6;
+      margin-bottom: 16px;
+    }
+    .state-tab {
+      padding: 8px 18px; font-size: 12px; font-weight: 600;
+      color: #5e6c84; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      white-space: nowrap;
+    }
+    .state-tab.active {
+      color: #0052cc;
+      border-bottom-color: #0052cc;
+    }
+
+    /* ── State divider (between wireframe states in same card) ── */
+    .state-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 20px 0 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      color: #5e6c84; text-transform: uppercase;
+    }
+    .state-divider::before, .state-divider::after {
+      content: ''; flex: 1; height: 1px; background: #dfe1e6;
+    }
+    .state-divider-badge {
+      background: #f4f5f7; border: 1px solid #dfe1e6;
+      border-radius: 10px; padding: 2px 10px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <span class="topbar-logo">Hairline Admin</span>
+  <nav class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Bookings</a>
+    <a href="#" class="active">Affiliates</a>
+    <a href="#">Payouts</a>
+    <a href="#">Settings</a>
+  </nav>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AD</div>
+    Admin User
+  </div>
+</div>
+
+<!-- ── Page content ── -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Affiliates</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Affiliate Management</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Generate Affiliate Code</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Generate Affiliate Code</div>
+      <div class="page-subtitle">Create affiliate-bound discount codes for one affiliate, a selected set, or a filtered segment.</div>
+    </div>
+  </div>
+
+  <!-- ── Section 1: Generation Mode ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Generation Mode</div>
+        <div class="card-subtitle">Select how to target affiliates for this code generation run.</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="mode-cards">
+        <!-- Single Affiliate (selected) -->
+        <div class="mode-card selected">
+          <input type="radio" name="generation_mode" checked />
+          <div class="mode-card-title">Single Affiliate</div>
+          <div class="mode-card-desc">
+            Generate one code for a single selected affiliate. Code name is entered manually.
+            On submit, routes to the Promo Code Detail (Screen 6).
+          </div>
+        </div>
+        <!-- Selected Affiliates -->
+        <div class="mode-card">
+          <input type="radio" name="generation_mode" />
+          <div class="mode-card-title">Selected Affiliates</div>
+          <div class="mode-card-desc">
+            Generate one distinct code per manually chosen affiliate. On submit, opens the Code Generation Results screen (Screen 4.1).
+          </div>
+        </div>
+        <!-- Filtered Segment -->
+        <div class="mode-card">
+          <input type="radio" name="generation_mode" />
+          <div class="mode-card-title">Filtered Segment</div>
+          <div class="mode-card-desc">
+            Generate one distinct code per affiliate matching a saved filter. System snapshots matched affiliate IDs at generation time.
+          </div>
+        </div>
+      </div>
+
+      <!-- Annotation -->
+      <div class="annotation mt-8">
+        Selected Affiliates and Filtered Segment modes open Screen 4.1 (Code Generation Results) after submit.
+        Single mode confirms inline and routes to Screen 6 (Promo Code Detail).
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 2: Affiliate Targeting (conditional on mode) ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Affiliate Targeting</div>
+        <div class="card-subtitle">Specify which affiliate(s) will receive the generated code(s).</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- State tab indicator (wireframe: all 3 states shown below) -->
+      <div class="state-tabs">
+        <div class="state-tab active">Single Affiliate</div>
+        <div class="state-tab">Selected Affiliates</div>
+        <div class="state-tab">Filtered Segment</div>
+      </div>
+
+      <!-- ── STATE A: SINGLE AFFILIATE MODE ── -->
+      <div class="state-divider"><span class="state-divider-badge">State A — Single Affiliate</span></div>
+
+      <div class="conditional-panel">
+        <div class="conditional-panel-label">SINGLE AFFILIATE MODE — Linked Affiliate (required)</div>
+
+        <div class="form-row">
+          <div>
+            <div class="form-label">Linked Affiliate <span class="required">*</span></div>
+            <div class="form-hint">Dropdown of active affiliates only.</div>
+          </div>
+          <div>
+            <select class="form-select">
+              <option value="">— Select active affiliate —</option>
+              <option value="aff-001" selected>Bright Beauty Clinic (aff-001)</option>
+              <option value="aff-002">Dr. Smith Aesthetics (aff-002)</option>
+              <option value="aff-003">HealthFirst Partners (aff-003)</option>
+              <option value="aff-004">Glow Influencer Network (aff-004)</option>
+            </select>
+            <div class="form-hint mt-4">
+              Only Active affiliates are selectable. Each generated code belongs to exactly one affiliate.
+              Same affiliate payout code cannot be assigned to multiple affiliates (system rejects on submit).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STATE B: SELECTED AFFILIATES MODE ── -->
+      <div class="state-divider"><span class="state-divider-badge">State B — Selected Affiliates</span></div>
+
+      <div class="conditional-panel">
+        <div class="conditional-panel-label">SELECTED AFFILIATES MODE — Affiliate Selection (required)</div>
+
+        <div class="form-row-full">
+          <div class="form-label" style="margin-bottom:6px;">
+            Select Affiliates <span class="required">*</span>
+          </div>
+          <div class="tag-input-wrap">
+            <span class="tag">Bright Beauty Clinic <span class="tag-remove">×</span></span>
+            <span class="tag">Dr. Smith Aesthetics <span class="tag-remove">×</span></span>
+            <span class="tag">Glow Influencer Network <span class="tag-remove">×</span></span>
+            <span class="tag">HealthFirst Partners <span class="tag-remove">×</span></span>
+            <span class="tag-placeholder">Search and add affiliates…</span>
+          </div>
+          <div class="form-hint mt-4">
+            4 affiliates selected. One unique code per affiliate will be generated using the same campaign settings below.
+            Ineligible affiliates (Inactive, Suspended, incomplete payout setup) are automatically excluded at generation time.
+          </div>
+        </div>
+
+        <div class="bulk-summary" style="margin-top:10px; margin-bottom:0;">
+          <span class="bulk-summary-count">4</span>
+          affiliates selected — system will generate 4 distinct codes.
+          On submit, opens Screen 4.1 (Code Generation Results) with created / skipped / failed breakdown.
+        </div>
+      </div>
+
+      <!-- ── STATE C: FILTERED SEGMENT MODE ── -->
+      <div class="state-divider"><span class="state-divider-badge">State C — Filtered Segment</span></div>
+
+      <div class="conditional-panel">
+        <div class="conditional-panel-label">FILTERED SEGMENT MODE — Filter Criteria (required)</div>
+
+        <div class="form-row-full" style="margin-bottom:12px;">
+          <div class="form-label" style="margin-bottom:6px;">
+            Filter Criteria <span class="required">*</span>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px;">
+            <select class="form-select" style="width:auto; min-width:140px;">
+              <option>Status</option>
+            </select>
+            <select class="form-select" style="width:auto; min-width:140px;">
+              <option>Country / Region</option>
+            </select>
+            <select class="form-select" style="width:auto; min-width:140px;">
+              <option>Affiliate Type</option>
+            </select>
+            <select class="form-select" style="width:auto; min-width:160px;">
+              <option>Performance Tier</option>
+            </select>
+            <select class="form-select" style="width:auto; min-width:180px;">
+              <option>Campaign Eligibility</option>
+            </select>
+            <select class="form-select" style="width:auto; min-width:180px;">
+              <option>Payout Setup Completeness</option>
+            </select>
+          </div>
+          <div class="filter-chips">
+            <span style="font-size:12px; color:#5e6c84; margin-right:2px;">Active filters:</span>
+            <span class="filter-chip">Status: Active</span>
+            <span class="filter-chip">Country: United Kingdom</span>
+            <span class="filter-chip">Type: Influencer</span>
+            <a class="filter-link" style="margin-left:4px;">+ Add filter</a>
+            <a class="filter-link" style="color:#5e6c84; margin-left:4px;">Clear all</a>
+          </div>
+          <div class="form-hint mt-8">
+            System snapshots the matched affiliate IDs at the moment "Generate Codes" is clicked.
+            Later changes to filter membership do <strong>not</strong> retroactively add or remove codes from this run.
+          </div>
+        </div>
+
+        <div class="bulk-summary" style="margin-bottom:0;">
+          <span class="bulk-summary-count">14</span>
+          affiliates match current filters — 14 distinct codes will be generated.
+          Ineligible affiliates in the result set are skipped; Screen 4.1 shows a per-row reason for each skipped/failed row.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 3: Campaign Settings ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Campaign Settings</div>
+        <div class="card-subtitle">Settings shared across all generated codes in this run.</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Campaign Name -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Campaign Name <span class="required">*</span></div>
+          <div class="form-hint">3–120 characters. Internal label — not shown to patients.</div>
+        </div>
+        <div>
+          <input type="text" class="form-input" value="SUMMER2026 UK Influencer Campaign" />
+          <div class="char-count">35 / 120</div>
+        </div>
+      </div>
+
+      <!-- Discount Code / Code Pattern — conditional on mode -->
+      <div class="state-divider" style="margin-top:16px;"><span class="state-divider-badge">State A — Single Affiliate</span></div>
+
+      <div class="form-row">
+        <div>
+          <div class="form-label">Discount Code <span class="required">*</span></div>
+          <div class="form-hint">
+            Unique code patients type at checkout.<br />
+            Uppercase alphanumeric, 4–20 chars, unique platform-wide.
+          </div>
+        </div>
+        <div>
+          <input type="text" class="form-input" value="SUMMER26" placeholder="e.g. PARTNER10" />
+          <div class="form-hint mt-4 text-muted">System auto-converts to uppercase on save. Uniqueness validated against all existing codes (case-insensitive).</div>
+          <div class="code-preview-label mt-8">Preview:</div>
+          <div class="code-preview">SUMMER26</div>
+        </div>
+      </div>
+
+      <div class="state-divider"><span class="state-divider-badge">State B & C — Selected Affiliates / Filtered Segment</span></div>
+
+      <div class="form-row">
+        <div>
+          <div class="form-label">Code Pattern <span class="required">*</span></div>
+          <div class="form-hint">
+            Prefix/suffix pattern for bulk generation. System appends a unique suffix per affiliate.<br />
+            Uppercase alphanumeric only.
+          </div>
+        </div>
+        <div>
+          <input type="text" class="form-input" value="SUMMER26-" placeholder="e.g. SUMMER26-" />
+          <div class="form-hint mt-4 text-muted">
+            System generates one distinct code per affiliate: SUMMER26-A1B2, SUMMER26-C3D4, etc.
+            Each generated code is validated for platform-wide uniqueness before the batch is committed.
+          </div>
+          <div class="code-preview-label mt-8">Example generated codes:</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+            <div class="code-preview" style="font-size:12px; padding:4px 10px;">SUMMER26-A1B2</div>
+            <div class="code-preview" style="font-size:12px; padding:4px 10px;">SUMMER26-C3D4</div>
+            <div class="code-preview" style="font-size:12px; padding:4px 10px;">SUMMER26-E5F6</div>
+            <span style="font-size:12px; color:#5e6c84; align-self:center;">… (one per affiliate)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 4: Discount Configuration ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Discount Configuration</div>
+        <div class="card-subtitle">Define the discount value and how it is applied at checkout.</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Discount Type -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Discount Type <span class="required">*</span></div>
+          <div class="form-hint">Determines which portion of the booking fee is discounted.</div>
+        </div>
+        <div>
+          <select class="form-select">
+            <option value="hairline_fees_only" selected>Hairline Fees Only (deducted from platform commission)</option>
+            <option value="both_fees" disabled>Both Fees (future — not available)</option>
+          </select>
+          <div class="form-hint mt-4 text-muted">Currently only "Hairline Fees Only" is supported. Discount is deducted from Hairline's commission, not from the provider's payout.</div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Discount Amount Type -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Discount Amount Type <span class="required">*</span></div>
+        </div>
+        <div class="radio-group horizontal">
+          <label class="radio-option">
+            <input type="radio" name="discount_amount_type" checked />
+            <span class="radio-label">Percentage</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="discount_amount_type" />
+            <span class="radio-label">Fixed Amount</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Discount Percentage (shown when Percentage selected) -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Discount Percentage <span class="required">*</span></div>
+          <div class="form-hint">Range: 5–30%. Required when Percentage is selected.</div>
+        </div>
+        <div>
+          <div class="input-group">
+            <input type="number" class="form-input" value="10" min="5" max="30" style="max-width:120px;" />
+            <span class="input-addon">%</span>
+          </div>
+          <div class="alert alert-warning mt-8">
+            <span class="alert-icon">⚠</span>
+            <div>
+              <strong>Margin Guard (Rule 15):</strong> Discount 10% + affiliate commission 15% = 25%.
+              This must not exceed Hairline's commission on the booking.
+              Percentage configurations that breach the ceiling are <strong>blocked</strong> with the shortfall shown.
+              Fixed-amount configurations raise a review warning instead.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discount Fixed Amount (hidden — shown when Fixed Amount selected) -->
+      <div class="form-row" style="display:none;">
+        <div>
+          <div class="form-label">Discount Fixed Amount <span class="required">*</span></div>
+          <div class="form-hint">Minimum $10. Required when Fixed Amount is selected.</div>
+        </div>
+        <div>
+          <div class="input-group">
+            <span class="input-addon">$</span>
+            <input type="number" class="form-input" placeholder="50" min="10" style="max-width:140px;" />
+          </div>
+          <div class="alert alert-warning mt-8" style="display:none;">
+            <span class="alert-icon">⚠</span>
+            <div>
+              <strong>Review Warning (Rule 15):</strong> Fixed-amount discounts may exceed Hairline's commission for low-value bookings.
+              System shows this warning for review; save is not blocked (unlike percentage breach which is blocked).
+              A documented business-approval override is required and audited.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Application Method -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Application Method <span class="required">*</span></div>
+          <div class="form-hint">How the discount is triggered at checkout.</div>
+        </div>
+        <div>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="application_method" checked />
+              <div>
+                <div class="radio-label">Code-based (manual entry)</div>
+                <div class="radio-desc">Patient manually types the code at checkout. Generates the code text shown above.</div>
+              </div>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="application_method" />
+              <div>
+                <div class="radio-label">Auto-apply</div>
+                <div class="radio-desc">Discount applied automatically when patient visits via the affiliate's unique referral link. No manual code entry needed.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 5: Validity & Limits ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Validity &amp; Limits</div>
+        <div class="card-subtitle">Optional constraints on when and how many times the code can be used.</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Expiration Date -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Expiration Date</div>
+          <div class="form-hint">Optional. Must be a future date if set.</div>
+        </div>
+        <div>
+          <input type="date" class="form-input" value="2026-09-01" style="max-width:200px;" />
+          <div class="form-hint mt-4 text-muted">
+            System auto-deactivates the code at midnight UTC on this date.
+            Leave blank for no expiration.
+          </div>
+        </div>
+      </div>
+
+      <!-- Maximum Usage Count -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Maximum Usage Count</div>
+          <div class="form-hint">
+            Optional. Counts <strong>completed (paid) redemptions only</strong>.
+            Applied-but-abandoned checkouts do not consume the cap.
+          </div>
+        </div>
+        <div>
+          <div class="input-group">
+            <input type="number" class="form-input" placeholder="Unlimited" min="1" style="max-width:160px;" />
+            <span class="input-addon">redemptions</span>
+          </div>
+          <div class="form-hint mt-4 text-muted">
+            System auto-deactivates the code when completed redemptions reach this cap.
+            A soft rate limit on applied events guards against application spam (separate from this cap).
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-Patient Usage Limit -->
+      <div class="form-row">
+        <div>
+          <div class="form-label">Per-Patient Usage Limit</div>
+          <div class="form-hint">Max completed redemptions per patient for this code. Default: 1.</div>
+        </div>
+        <div>
+          <div class="input-group">
+            <input type="number" class="form-input" value="1" min="1" style="max-width:100px;" />
+            <span class="input-addon">per patient</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Section 6: Status ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Status</div>
+    </div>
+    <div class="card-body">
+
+      <div class="form-row">
+        <div>
+          <div class="form-label">Code Status <span class="required">*</span></div>
+          <div class="form-hint">Active codes are immediately visible on the assigned affiliate's dashboard and valid at patient checkout.</div>
+        </div>
+        <div>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" checked />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">Active</span>
+            <span class="toggle-status text-muted">— Code is enabled immediately on save.</span>
+          </div>
+          <div class="form-hint mt-8 text-muted">
+            Inactive codes are saved but not valid at checkout. Can be activated later from Promo Code Management (Screen 5) or Promo Code Detail (Screen 6).
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard visibility note -->
+      <div class="alert alert-info mt-12">
+        <span class="alert-icon">ℹ</span>
+        <div>
+          Active codes appear in the assigned affiliate's portal immediately after creation.
+          Inactive, expired, or revoked codes remain visible in historical views with status labels.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Margin Guard summary (example blocked state) ── -->
+  <div class="card" style="border-color: #ffbdad;">
+    <div class="card-header" style="border-color: #ffbdad; background: #ffebe6;">
+      <div>
+        <div class="card-title" style="color: #bf2600;">⛔ Margin Guard — Blocked (Example State)</div>
+        <div class="card-subtitle" style="color: #bf2600;">
+          Rule 15: Discount % + Commission % exceeds Hairline's commission ceiling. Save is blocked.
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:12px; font-size:13px;">
+        <div style="background:#fff4f2; border:1px solid #ffbdad; border-radius:4px; padding:12px; text-align:center;">
+          <div style="font-size:11px; color:#5e6c84; margin-bottom:4px;">Configured Discount</div>
+          <div style="font-size:20px; font-weight:700; color:#bf2600;">10%</div>
+        </div>
+        <div style="background:#fff4f2; border:1px solid #ffbdad; border-radius:4px; padding:12px; text-align:center;">
+          <div style="font-size:11px; color:#5e6c84; margin-bottom:4px;">Affiliate Commission</div>
+          <div style="font-size:20px; font-weight:700; color:#bf2600;">15%</div>
+        </div>
+        <div style="background:#bf2600; border-radius:4px; padding:12px; text-align:center;">
+          <div style="font-size:11px; color: rgba(255,255,255,0.8); margin-bottom:4px;">Total vs. Ceiling</div>
+          <div style="font-size:20px; font-weight:700; color:#fff;">25% / 20%</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.8); margin-top:2px;">Shortfall: 5%</div>
+        </div>
+      </div>
+      <div class="alert alert-error mt-12">
+        <span class="alert-icon">⛔</span>
+        <div>
+          <strong>Save blocked.</strong> Discount (10%) + affiliate commission (15%) = 25%, which exceeds Hairline's commission ceiling of 20%
+          by 5 percentage points. To proceed, reduce the discount or commission, or obtain a documented business-approval override (audited).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacer for sticky footer -->
+  <div style="height: 16px;"></div>
+
+</div><!-- /page-wrap -->
+
+<!-- ── Sticky form footer ── -->
+<div class="form-footer">
+  <div>
+    <!-- Footer note varies by mode -->
+    <div class="form-footer-note">
+      <strong>State A — Single Affiliate:</strong> 1 code generated for Bright Beauty Clinic →
+      routes to Promo Code Detail (Screen 6).
+    </div>
+    <div class="form-footer-note" style="margin-top:3px;">
+      <strong>State B — Selected Affiliates:</strong> 4 distinct codes generated →
+      opens Code Generation Results (Screen 4.1) with created / skipped / failed summary.
+    </div>
+    <div class="form-footer-note" style="margin-top:3px;">
+      <strong>State C — Filtered Segment:</strong> up to 14 distinct codes generated →
+      opens Screen 4.1; affiliate IDs snapshotted at click time.
+    </div>
+  </div>
+  <div style="display:flex; gap:10px; flex-shrink:0;">
+    <button class="btn btn-default">Cancel</button>
+    <button class="btn btn-primary btn-lg">Generate Code(s)</button>
+  </div>
+</div>
+
+</body>
+</html>

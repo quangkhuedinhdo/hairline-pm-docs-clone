@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wireframe — Search — Hairline.app</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #1A1814;
+      --ink-soft:   #4A4540;
+      --ink-muted:  #8A8480;
+      --accent:     #B5713A;
+      --accent-lt:  #F5EDE4;
+      --surface:    #FAF9F7;
+      --surface-2:  #F2EFE9;
+      --border:     #E4DFD8;
+      --white:      #FFFFFF;
+      --radius-sm:  8px;
+      --radius-md:  16px;
+      --radius-lg:  24px;
+      --radius-xl:  32px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── ANNOTATION LAYER ─── */
+    .anno {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #6B63FF;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-bottom: 6px;
+    }
+    .anno-box {
+      border: 1.5px dashed #6B63FF22;
+      border-radius: var(--radius-md);
+      padding: 4px;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      color: var(--ink);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-search-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--accent);
+      font-size: 16px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ─── SEARCH HERO ─── */
+    .search-hero {
+      padding: 96px 48px 80px;
+      text-align: center;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .search-hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .search-hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .search-hero p {
+      font-size: 17px;
+      color: var(--ink-soft);
+      margin-bottom: 40px;
+    }
+
+    /* ─── SEARCH BAR ─── */
+    .search-bar-wrap {
+      max-width: 680px;
+      margin: 0 auto 32px;
+      position: relative;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 6px 6px 6px 24px;
+      box-shadow: 0 4px 24px rgba(26,24,20,.07);
+      transition: border-color .2s;
+    }
+    .search-bar:focus-within {
+      border-color: var(--accent);
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 17px;
+      font-family: inherit;
+      color: var(--ink);
+      background: transparent;
+    }
+    .search-bar input::placeholder { color: var(--ink-muted); }
+    .search-bar-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .search-bar-icon {
+      color: var(--ink-muted);
+      margin-right: 12px;
+      font-size: 17px;
+    }
+
+    /* ─── SEARCH CATEGORIES ─── */
+    .search-cats {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .cat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .cat-pill:hover, .cat-pill.active {
+      border-color: var(--accent);
+      background: var(--accent-lt);
+      color: var(--accent);
+    }
+    .cat-pill .cat-icon { font-size: 15px; }
+    .cat-pill .cat-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      background: var(--border);
+      border-radius: 10px;
+      padding: 1px 6px;
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    .search-body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 56px 48px 120px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+    }
+
+    /* ─── LEFT SIDEBAR ─── */
+    .sidebar {}
+    .sidebar-section {
+      margin-bottom: 32px;
+    }
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 12px;
+    }
+
+    .popular-list { list-style: none; }
+    .popular-list li {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .popular-list li:last-child { border-bottom: none; }
+    .popular-list a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink-soft);
+      transition: color .15s;
+    }
+    .popular-list a:hover { color: var(--accent); }
+    .popular-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--accent-lt);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-left: auto;
+    }
+
+    .browse-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .browse-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      text-decoration: none;
+      color: var(--ink);
+      transition: border-color .15s;
+    }
+    .browse-card:hover { border-color: var(--accent); }
+    .browse-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-lt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .browse-card-text { font-size: 13px; font-weight: 500; }
+    .browse-card-sub { font-size: 11px; color: var(--ink-muted); margin-top: 1px; }
+    .browse-card-arrow { margin-left: auto; color: var(--ink-muted); font-size: 14px; }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-content {}
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+    }
+    .section-header a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .content-section { margin-bottom: 52px; }
+
+    /* ─── FEATURED QUICK SEARCH ─── */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .quick-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      text-decoration: none;
+      color: var(--ink);
+      transition: box-shadow .2s;
+    }
+    .quick-card:hover {
+      box-shadow: 0 8px 32px rgba(26,24,20,.10);
+    }
+    .quick-card-img {
+      height: 120px;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+    .quick-card-body {
+      padding: 14px 16px;
+    }
+    .quick-card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .quick-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .quick-card-meta {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 4px;
+    }
+
+    /* ─── TRENDING SEARCHES ─── */
+    .trending-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .trend-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: all .15s;
+    }
+    .trend-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-lt);
+    }
+    .trend-tag .trend-icon { font-size: 14px; }
+    .trend-num {
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+
+    /* ─── RECENT SEARCHES ─── */
+    .recent-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .recent-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .recent-item:hover { background: var(--surface-2); }
+    .recent-icon { color: var(--ink-muted); font-size: 15px; }
+    .recent-text { font-size: 14px; color: var(--ink-soft); flex: 1; }
+    .recent-clear {
+      font-size: 12px;
+      color: var(--ink-muted);
+      cursor: pointer;
+    }
+    .recent-clear:hover { color: var(--accent); }
+
+    /* ─── SEPARATOR ─── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* ─── ASSESSMENT CTA ─── */
+    .cta-band {
+      background: var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .cta-band-text h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-band-text p {
+      font-size: 15px;
+      color: #A09890;
+    }
+    .cta-band-action {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .btn-white {
+      background: #fff;
+      color: var(--ink);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,.3);
+      border-radius: var(--radius-sm);
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink);
+      color: #7A746E;
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    footer .foot-logo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    footer .foot-logo span { color: var(--accent); }
+    footer nav a {
+      color: #7A746E;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+    footer nav a:hover { color: #fff; }
+
+    /* ─── WIREFRAME LABEL ─── */
+    .wf-label {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #6B63FF;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 16px rgba(107,99,255,.4);
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVIGATION ─── -->
+<nav>
+  <div class="nav-logo">Hairline<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#">For Patients</a></li>
+    <li><a href="#">Treatments</a></li>
+    <li><a href="#">Find a Clinic</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">For Clinics</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-search-icon">⌕</div>
+    <button class="btn-primary">Download the app</button>
+  </div>
+</nav>
+
+
+<!-- ─── SEARCH HERO ─── -->
+<section class="search-hero">
+  <span class="anno">Search Page — /search</span>
+  <h1>What are you looking <em>for?</em></h1>
+  <p>Search clinics, treatments, conditions, and expert articles across Hairline.</p>
+
+  <!-- Search Bar -->
+  <div class="search-bar-wrap anno-box">
+    <span class="anno">Primary Search Bar — full-width, sticky on scroll</span>
+    <div class="search-bar">
+      <span class="search-bar-icon">⌕</span>
+      <input type="text" placeholder="Search clinics, treatments, conditions…" />
+      <button class="search-bar-btn">Search</button>
+    </div>
+  </div>
+
+  <!-- Category Filters -->
+  <div class="anno-box">
+    <span class="anno">Category Filter Pills — filter scope before searching</span>
+    <div class="search-cats">
+      <div class="cat-pill active">
+        <span class="cat-icon">🏥</span>
+        All results
+        <span class="cat-count">All</span>
+      </div>
+      <div class="cat-pill">
+        <span class="cat-icon">📍</span>
+        Clinics
+        <span class="cat-count">140+</span>
+      </div>
+      <div class="cat-pill">
+        <span class="cat-icon">💊</span>
+        Treatments
+        <span class="cat-count">9</span>
+      </div>
+      <div class="cat-pill">
+        <span class="cat-icon">🧬</span>
+        Conditions
+        <span class="cat-count">8</span>
+      </div>
+      <div class="cat-pill">
+        <span class="cat-icon">📄</span>
+        Articles
+        <span class="cat-count">80+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── SEARCH BODY ─── -->
+<div class="search-body">
+
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar">
+
+    <!-- Popular Searches -->
+    <div class="sidebar-section anno-box">
+      <span class="anno">Popular Searches</span>
+      <div class="sidebar-title">Popular right now</div>
+      <ul class="popular-list">
+        <li>
+          <a href="#">
+            <span>FUE hair transplant</span>
+            <span class="popular-tag">Trending</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span>Clinics in Istanbul</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span>Finasteride side effects</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span>Male pattern baldness</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span>Hair transplant cost UK</span>
+            <span class="popular-tag">Trending</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span>PRP therapy results</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span>DHI vs FUE comparison</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Browse by Category -->
+    <div class="sidebar-section anno-box">
+      <span class="anno">Browse Shortcuts — jump directly into a section</span>
+      <div class="sidebar-title">Browse by category</div>
+      <div class="browse-cards">
+        <a class="browse-card" href="#">
+          <div class="browse-card-icon">📍</div>
+          <div>
+            <div class="browse-card-text">Find a clinic</div>
+            <div class="browse-card-sub">140+ verified providers</div>
+          </div>
+          <span class="browse-card-arrow">›</span>
+        </a>
+        <a class="browse-card" href="#">
+          <div class="browse-card-icon">💊</div>
+          <div>
+            <div class="browse-card-text">All treatments</div>
+            <div class="browse-card-sub">FUE, FUT, DHI, PRP…</div>
+          </div>
+          <span class="browse-card-arrow">›</span>
+        </a>
+        <a class="browse-card" href="#">
+          <div class="browse-card-icon">🧬</div>
+          <div>
+            <div class="browse-card-text">Hair loss conditions</div>
+            <div class="browse-card-sub">MPB, alopecia, thinning…</div>
+          </div>
+          <span class="browse-card-arrow">›</span>
+        </a>
+        <a class="browse-card" href="#">
+          <div class="browse-card-icon">📄</div>
+          <div>
+            <div class="browse-card-text">Expert articles</div>
+            <div class="browse-card-sub">Guides, research, comparisons</div>
+          </div>
+          <span class="browse-card-arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="main-content">
+
+    <!-- Recent Searches -->
+    <div class="content-section anno-box">
+      <span class="anno">Recent Searches — shown only when user has search history</span>
+      <div class="section-header">
+        <h2>Recent searches</h2>
+        <a href="#">Clear all</a>
+      </div>
+      <ul class="recent-list">
+        <li class="recent-item">
+          <span class="recent-icon">↺</span>
+          <span class="recent-text">Hair transplant clinics London</span>
+          <span class="recent-clear">✕</span>
+        </li>
+        <li class="recent-item">
+          <span class="recent-icon">↺</span>
+          <span class="recent-text">FUE recovery timeline</span>
+          <span class="recent-clear">✕</span>
+        </li>
+        <li class="recent-item">
+          <span class="recent-icon">↺</span>
+          <span class="recent-text">Minoxidil vs finasteride</span>
+          <span class="recent-clear">✕</span>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Trending Topics -->
+    <div class="content-section anno-box">
+      <span class="anno">Trending Topics — dynamic, SEO-intent driven</span>
+      <div class="section-header">
+        <h2>Trending topics</h2>
+      </div>
+      <div class="trending-tags">
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">🔥</span> FUE hair transplant <span class="trend-num">2.4k searches</span>
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">📈</span> Hair transplant cost 2026
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">🌍</span> Best clinics in Turkey
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">💊</span> Finasteride results
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">🩺</span> Alopecia areata treatment
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">🔥</span> DHI vs FUE <span class="trend-num">1.1k searches</span>
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">📍</span> Clinics in Dubai
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">🧬</span> Female hair loss causes
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">📸</span> Hair transplant before after
+        </a>
+        <a class="trend-tag" href="#">
+          <span class="trend-icon">💰</span> PRP therapy cost UK
+        </a>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Featured Quick Results -->
+    <div class="content-section anno-box">
+      <span class="anno">Featured Content — editorial picks, not yet a search query</span>
+      <div class="section-header">
+        <h2>Explore these first</h2>
+        <a href="#">Browse all →</a>
+      </div>
+      <div class="quick-grid">
+        <a class="quick-card" href="#">
+          <div class="quick-card-img">💊</div>
+          <div class="quick-card-body">
+            <div class="quick-card-tag">Treatment</div>
+            <div class="quick-card-title">FUE Hair Transplant</div>
+            <div class="quick-card-meta">From £3,200 · 9-month recovery</div>
+          </div>
+        </a>
+        <a class="quick-card" href="#">
+          <div class="quick-card-img">🧬</div>
+          <div class="quick-card-body">
+            <div class="quick-card-tag">Condition</div>
+            <div class="quick-card-title">Male Pattern Baldness</div>
+            <div class="quick-card-meta">Affects 50% of men over 50</div>
+          </div>
+        </a>
+        <a class="quick-card" href="#">
+          <div class="quick-card-img">📄</div>
+          <div class="quick-card-body">
+            <div class="quick-card-tag">Article · 8 min read</div>
+            <div class="quick-card-title">FUE vs DHI: Which is right for you?</div>
+            <div class="quick-card-meta">Medically reviewed · May 2026</div>
+          </div>
+        </a>
+        <a class="quick-card" href="#">
+          <div class="quick-card-img">📍</div>
+          <div class="quick-card-body">
+            <div class="quick-card-tag">Clinics · Istanbul</div>
+            <div class="quick-card-title">Top-rated clinics in Istanbul</div>
+            <div class="quick-card-meta">28 verified providers</div>
+          </div>
+        </a>
+        <a class="quick-card" href="#">
+          <div class="quick-card-img">💊</div>
+          <div class="quick-card-body">
+            <div class="quick-card-tag">Treatment</div>
+            <div class="quick-card-title">Finasteride for Hair Loss</div>
+            <div class="quick-card-meta">Prescription-only · From £25/mo</div>
+          </div>
+        </a>
+        <a class="quick-card" href="#">
+          <div class="quick-card-img">📄</div>
+          <div class="quick-card-body">
+            <div class="quick-card-tag">Article · 12 min read</div>
+            <div class="quick-card-title">Complete Guide to Hair Transplant Costs</div>
+            <div class="quick-card-meta">Medically reviewed · Apr 2026</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Assessment CTA -->
+    <div class="anno-box">
+      <span class="anno">Assessment CTA — persistent, non-intrusive conversion nudge</span>
+      <div class="cta-band">
+        <div class="cta-band-text">
+          <h3>Not sure what you're looking for?</h3>
+          <p>Take the free hair-loss assessment. Get matched with the right treatment and verified clinics in minutes.</p>
+        </div>
+        <div class="cta-band-action">
+          <button class="btn-white">Start your assessment →</button>
+          <button class="btn-ghost">Find a clinic near you</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="foot-logo">Hairline<span>.</span></div>
+  <div>© 2026 Hairline.app · Privacy · Terms · Cookies</div>
+  <nav>
+    <a href="#">For Patients</a>
+    <a href="#">For Clinics</a>
+    <a href="#">Resources</a>
+    <a href="#">Contact</a>
+  </nav>
+</footer>
+
+<div class="wf-label">Wireframe — /search</div>
+
+</body>
+</html>

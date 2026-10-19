@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-037 Screen 7 — Convert to Treatment Inquiry</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #e8eaed;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 60px;
+      color: #1c1c1e;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      width: 100%; max-width: 1060px; margin-bottom: 32px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; }
+    .page-header p  { font-size: 13px; color: #6e6e73; margin-top: 4px; }
+    .wf-badge {
+      background: #1c1c1e; color: #fff; font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px; text-transform: uppercase;
+      letter-spacing: 0.06em; white-space: nowrap; margin-top: 4px;
+    }
+
+    /* ── Phones row ── */
+    .phones-row {
+      display: flex; gap: 36px; align-items: flex-start;
+      justify-content: center; width: 100%; max-width: 1060px;
+    }
+    .phone-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .phone-col-label {
+      font-size: 11px; font-weight: 700; color: #6e6e73;
+      text-transform: uppercase; letter-spacing: 0.07em; text-align: center;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 375px; border-radius: 48px; background: #fff;
+      border: 3px solid #1c1c1e;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1),
+                  0 24px 60px rgba(0,0,0,0.25),
+                  inset 0 0 0 2px #3a3a3c;
+      overflow: hidden;
+    }
+    .di-pill {
+      display: block; width: 120px; height: 34px;
+      background: #1c1c1e; border-radius: 20px;
+      margin: 12px auto 0; position: relative; z-index: 10;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      height: 54px; background: #fff;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0 28px 8px; font-size: 12px; font-weight: 600; color: #1c1c1e;
+    }
+    .status-time { font-size: 15px; font-weight: 700; }
+    .status-icons { display: flex; gap: 5px; font-size: 11px; }
+
+    /* ── Nav bar ── */
+    .nav-bar {
+      height: 44px; background: #fff;
+      display: flex; align-items: center; padding: 0 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18); position: relative;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 16px; color: #007aff; cursor: pointer;
+    }
+    .nav-back-chevron { font-size: 20px; line-height: 1; }
+    .nav-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 16px; font-weight: 600; color: #1c1c1e; white-space: nowrap;
+    }
+
+    /* ── Step indicator ── */
+    .step-indicator {
+      background: #fff; padding: 12px 16px 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      display: flex; align-items: center; gap: 0;
+    }
+    .step-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+    }
+    .step-pill.done    { background: #e3fef0; color: #1a7a3c; }
+    .step-pill.active  { background: #007aff; color: #fff; }
+    .step-pill.pending { background: #f2f2f7; color: #8e8e93; }
+    .step-connector {
+      flex: 1; height: 2px; background: #e5e5ea; margin: 0 4px;
+    }
+    .step-connector.done { background: #34c759; }
+
+    /* ── Screen scroll ── */
+    .screen-scroll {
+      height: 710px; overflow-y: auto;
+      background: #f2f2f7; scrollbar-width: none;
+    }
+    .screen-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Section group ── */
+    .section-group { margin-bottom: 8px; }
+    .section-group-header {
+      padding: 12px 16px 6px; font-size: 12px; font-weight: 600;
+      color: #8e8e93; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .section-group-body {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+
+    /* ── Read-only badge ── */
+    .readonly-badge {
+      font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px;
+      background: #f2f2f7; color: #8e8e93; margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ── Monitoring recap card ── */
+    .recap-card {
+      background: #fff;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      margin-bottom: 8px;
+    }
+    .recap-header {
+      padding: 12px 16px 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .recap-title { font-size: 14px; font-weight: 700; color: #1c1c1e; }
+    .recap-period { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .recap-mode-pill {
+      font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px;
+      background: #cfe2ff; color: #084298;
+    }
+
+    .recap-stats {
+      display: flex; gap: 0;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .recap-stat {
+      flex: 1; padding: 10px 0; text-align: center;
+      border-right: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .recap-stat:last-child { border-right: none; }
+    .recap-stat-val { font-size: 18px; font-weight: 700; color: #1c1c1e; line-height: 1; }
+    .recap-stat-val.blue   { color: #007aff; }
+    .recap-stat-val.green  { color: #1a7a3c; }
+    .recap-stat-val.purple { color: #7b2fa3; }
+    .recap-stat-lbl { font-size: 10px; color: #8e8e93; margin-top: 3px; }
+
+    .recap-severity {
+      display: flex; gap: 0;
+      padding: 10px 0;
+    }
+    .recap-sev-item {
+      flex: 1; text-align: center;
+      border-right: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .recap-sev-item:last-child { border-right: none; }
+    .recap-sev-val { font-size: 15px; font-weight: 700; color: #1c1c1e; }
+    .recap-sev-lbl { font-size: 10px; color: #8e8e93; margin-top: 2px; }
+    .trend-down { color: #1a7a3c; }
+
+    /* ── Carried-over data rows ── */
+    .carried-row {
+      display: flex; align-items: flex-start; padding: 12px 16px; gap: 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .carried-row:last-child { border-bottom: none; }
+    .carried-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .carried-body { flex: 1; }
+    .carried-label { font-size: 13px; color: #8e8e93; font-weight: 500; margin-bottom: 3px; }
+    .carried-value { font-size: 14px; color: #1c1c1e; line-height: 1.4; }
+    .carried-value.muted { color: #8e8e93; font-style: italic; }
+    .carried-badge {
+      font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+    }
+    .cb-green  { background: #e3fef0; color: #1a7a3c; }
+    .cb-blue   { background: #e3f0ff; color: #0047b3; }
+    .cb-purple { background: #f3e8ff; color: #7b2fa3; }
+
+    /* ── Items still needed ── */
+    .needed-row {
+      display: flex; align-items: center; padding: 11px 16px; gap: 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .needed-row:last-child { border-bottom: none; }
+    .needed-circle {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid #c7c7cc; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #c7c7cc;
+    }
+    .needed-text { font-size: 14px; color: #1c1c1e; flex: 1; }
+    .needed-tag { font-size: 10px; color: #8e8e93; font-weight: 500; }
+
+    /* ── PDF attachment row ── */
+    .pdf-attach-row {
+      display: flex; align-items: center; padding: 13px 16px; gap: 12px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .pdf-attach-row:last-child { border-bottom: none; }
+    .pdf-attach-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .pdf-attach-icon.ready  { background: #e3fef0; }
+    .pdf-attach-icon.gen    { background: #e3f0ff; }
+    .pdf-attach-body { flex: 1; }
+    .pdf-attach-name  { font-size: 14px; font-weight: 600; color: #1c1c1e; }
+    .pdf-attach-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .pdf-attach-status {
+      font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 6px;
+    }
+    .pstat-ready { background: #e3fef0; color: #1a7a3c; }
+    .pstat-gen   { background: #e3f0ff; color: #0047b3; }
+
+    /* ── Provider routing notice ── */
+    .routing-notice {
+      background: #fff3cd;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      padding: 12px 16px; margin-bottom: 8px;
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 13px; color: #7a4f00; line-height: 1.5;
+    }
+    .routing-notice-icon { font-size: 18px; flex-shrink: 0; }
+
+    /* ── Step A read-only note ── */
+    .readonly-note {
+      background: #f2f2f7; padding: 10px 16px; margin-bottom: 8px;
+      font-size: 12px; color: #8e8e93; text-align: center; line-height: 1.5;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+
+    /* ── Editable field rows (Step B) ── */
+    .edit-row {
+      display: flex; align-items: flex-start; padding: 13px 16px; gap: 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18); cursor: pointer;
+    }
+    .edit-row:last-child { border-bottom: none; }
+    .edit-row-body { flex: 1; }
+    .edit-row-label { font-size: 12px; color: #8e8e93; font-weight: 500; margin-bottom: 3px; }
+    .edit-row-value { font-size: 15px; color: #1c1c1e; line-height: 1.4; }
+    .edit-row-value.placeholder { color: #c7c7cc; }
+    .edit-chevron { font-size: 16px; color: #c7c7cc; margin-top: 2px; }
+    .edit-prefill-badge {
+      font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px;
+      background: #e3f0ff; color: #0047b3; white-space: nowrap; margin-top: 4px; display: inline-block;
+    }
+
+    /* Severity preview (read-only in list, tap to edit) */
+    .sev-preview-row {
+      display: flex; align-items: center; padding: 13px 16px; gap: 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18); cursor: pointer;
+    }
+    .sev-preview-row:last-child { border-bottom: none; }
+    .sev-preview-label { font-size: 12px; color: #8e8e93; font-weight: 500; }
+    .sev-preview-track {
+      flex: 1; height: 5px; border-radius: 3px;
+      background: linear-gradient(to right, #34c759, #ffcc00, #ff3b30);
+      position: relative;
+    }
+    .sev-preview-marker {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #fff; border: 2px solid #007aff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .sev-preview-val {
+      font-size: 16px; font-weight: 700; color: #1a7a3c;
+      min-width: 28px; text-align: right;
+    }
+    .sev-preview-chevron { font-size: 16px; color: #c7c7cc; }
+
+    /* Scan select row */
+    .scan-select-row {
+      padding: 13px 16px; border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    }
+    .scan-select-row:last-child { border-bottom: none; }
+    .scan-select-label { font-size: 12px; color: #8e8e93; font-weight: 500; margin-bottom: 8px; }
+    .scan-selected-card {
+      display: flex; align-items: center; gap: 10px;
+      background: #f0f6ff; border: 1.5px solid #007aff;
+      border-radius: 10px; padding: 10px 12px;
+    }
+    .scan-selected-icon { font-size: 22px; }
+    .scan-selected-body { flex: 1; }
+    .scan-selected-name { font-size: 14px; font-weight: 600; color: #1c1c1e; }
+    .scan-selected-sub  { font-size: 12px; color: #8e8e93; margin-top: 1px; }
+    .scan-change-options {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .scan-opt-btn {
+      flex: 1; height: 34px; border-radius: 8px; border: 1px solid #c7c7cc;
+      background: #fff; color: #007aff; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+
+    /* Medical reconfirm row */
+    .mq-reconfirm-row {
+      display: flex; align-items: center; padding: 13px 16px; gap: 10px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18); cursor: pointer;
+    }
+    .mq-reconfirm-row:last-child { border-bottom: none; }
+    .mq-reconfirm-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: #e3fef0; display: flex; align-items: center;
+      justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .mq-reconfirm-body { flex: 1; }
+    .mq-reconfirm-title { font-size: 15px; font-weight: 600; color: #1c1c1e; }
+    .mq-reconfirm-sub   { font-size: 12px; color: #8e8e93; margin-top: 2px; }
+    .mq-reconfirm-status {
+      font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 6px;
+    }
+    .mqs-pending  { background: #fff3cd; color: #856404; }
+    .mqs-done     { background: #e3fef0; color: #1a7a3c; }
+
+    /* Handoff reference box */
+    .handoff-box {
+      margin: 0; padding: 12px 16px;
+      border-top: 0.5px solid rgba(60,60,67,0.18);
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      background: #fff; margin-bottom: 8px;
+    }
+    .handoff-box-header {
+      font-size: 12px; font-weight: 600; color: #8e8e93;
+      text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    .handoff-item {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .handoff-item:last-child { margin-bottom: 0; }
+    .handoff-bullet { font-size: 14px; color: #c7c7cc; }
+    .handoff-text { font-size: 13px; color: #8e8e93; }
+    .handoff-owner { font-size: 10px; font-weight: 600; background: #f2f2f7; color: #8e8e93; padding: 1px 5px; border-radius: 3px; }
+
+    /* Pre-fill notice banner */
+    .prefill-notice {
+      background: #e3f0ff; padding: 11px 16px;
+      border-bottom: 0.5px solid rgba(60,60,67,0.18);
+      font-size: 13px; color: #0047b3; line-height: 1.5;
+      margin-bottom: 0;
+    }
+    .prefill-notice strong { font-weight: 700; }
+
+    /* ── Bottom bar ── */
+    .bottom-bar {
+      background: #fff; border-top: 0.5px solid rgba(60,60,67,0.18);
+      padding: 10px 16px 6px;
+    }
+    .btn-cta {
+      width: 100%; height: 50px; border-radius: 14px;
+      font-size: 16px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-cta.blue     { background: #007aff; color: #fff; }
+    .btn-cta.disabled { background: #e5e5ea; color: #c7c7cc; cursor: not-allowed; }
+    .btn-back {
+      width: 100%; height: 44px; border-radius: 14px;
+      font-size: 15px; font-weight: 500; color: #007aff;
+      background: transparent; border: none; cursor: pointer; font-family: inherit;
+      margin-top: 4px;
+    }
+    .home-indicator {
+      display: flex; justify-content: center;
+      padding: 8px 0 6px; background: #fff;
+    }
+    .home-bar { width: 134px; height: 5px; background: #1c1c1e; border-radius: 3px; opacity: 0.15; }
+
+    /* ── Annotations ── */
+    .annotation-list { width: 164px; flex-shrink: 0; padding-top: 70px; }
+    .ann-section-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #8e8e93; margin-bottom: 10px;
+    }
+    .annotation-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 14px; }
+    .ann-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; flex-shrink: 0; margin-top: 4px; }
+    .ann-dot.blue   { background: #007aff; }
+    .ann-dot.green  { background: #34c759; }
+    .ann-dot.orange { background: #ff9500; }
+    .ann-dot.gray   { background: #8e8e93; }
+    .ann-dot.purple { background: #af52de; }
+    .ann-text { font-size: 11px; color: #1c1c1e; line-height: 1.5; }
+    .ann-text strong        { color: #ff3b30; }
+    .ann-text strong.blue   { color: #007aff; }
+    .ann-text strong.green  { color: #1a7a3c; }
+    .ann-text strong.orange { color: #b35c00; }
+    .ann-text strong.gray   { color: #6e6e73; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>FR-037 · Screen 7 — Convert to Treatment Inquiry</h1>
+    <p>Patient Platform (P-05) &nbsp;·&nbsp; Two-step handoff: Step A read-only preview → Step B editable review → FR-003</p>
+  </div>
+  <span class="wf-badge">Wireframe</span>
+</div>
+
+<div class="phones-row">
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHONE A: Screen 7 Step A — Conversion Summary (read-only) -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">Step A — Conversion Summary (Read-Only)</div>
+    <div class="phone">
+      <span class="di-pill"></span>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Back to Case</div>
+        <div class="nav-title">Request Treatment</div>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step-pill active">① Preview</div>
+        <div class="step-connector"></div>
+        <div class="step-pill pending">② Review &amp; Edit</div>
+        <div class="step-connector"></div>
+        <div class="step-pill pending">FR-003 →</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- Read-only note -->
+        <div class="readonly-note">
+          Preview only — no changes are made until Step B is submitted successfully.
+          <br/>Leaving this screen keeps your monitoring case active.
+        </div>
+
+        <!-- Monitoring recap -->
+        <div class="section-group">
+          <div class="section-group-header">Monitoring Recap <span class="readonly-badge">Read-only</span></div>
+          <div class="recap-card">
+            <div class="recap-header">
+              <div>
+                <div class="recap-title">Hair Loss Monitoring</div>
+                <div class="recap-period">1 Jul 2026 – 25 Aug 2026</div>
+              </div>
+              <span class="recap-mode-pill">Provider Advice</span>
+            </div>
+
+            <div class="recap-stats">
+              <div class="recap-stat">
+                <div class="recap-stat-val blue">12</div>
+                <div class="recap-stat-lbl">Days Logged</div>
+              </div>
+              <div class="recap-stat">
+                <div class="recap-stat-val purple">3</div>
+                <div class="recap-stat-lbl">Head Scans</div>
+              </div>
+              <div class="recap-stat">
+                <div class="recap-stat-val">2</div>
+                <div class="recap-stat-lbl">Advice Posts</div>
+              </div>
+            </div>
+
+            <div class="recap-severity">
+              <div class="recap-sev-item">
+                <div class="recap-sev-val">5</div>
+                <div class="recap-sev-lbl">First</div>
+              </div>
+              <div class="recap-sev-item">
+                <div class="recap-sev-val">3</div>
+                <div class="recap-sev-lbl">Latest</div>
+              </div>
+              <div class="recap-sev-item">
+                <div class="recap-sev-val">4.1</div>
+                <div class="recap-sev-lbl">Avg</div>
+              </div>
+              <div class="recap-sev-item">
+                <div class="recap-sev-val trend-down">↘</div>
+                <div class="recap-sev-lbl">Trend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carried-over data preview -->
+        <div class="section-group">
+          <div class="section-group-header">Carries Over to Inquiry <span class="readonly-badge">Read-only</span></div>
+          <div class="section-group-body">
+
+            <!-- Concern info group -->
+            <div class="carried-row" style="background:#fafafa; border-bottom: 0.5px solid rgba(60,60,67,0.18);">
+              <span class="carried-icon">📋</span>
+              <div class="carried-body">
+                <div class="carried-label">Concern Information</div>
+                <div class="carried-value">Nature of concern, duration, previous treatments, current severity</div>
+              </div>
+              <span class="carried-badge cb-green">✓ Pre-filled</span>
+            </div>
+
+            <div class="carried-row">
+              <span class="carried-icon">🩺</span>
+              <div class="carried-body">
+                <div class="carried-label">Medical Answers (FR-025)</div>
+                <div class="carried-value">8 answers on file — you will reconfirm in Step B</div>
+              </div>
+              <span class="carried-badge cb-green">✓ Pre-filled</span>
+            </div>
+
+            <div class="carried-row">
+              <span class="carried-icon">🧑‍💻</span>
+              <div class="carried-body">
+                <div class="carried-label">Selected Head Scan</div>
+                <div class="carried-value">Latest scan — 25 Aug 2026 · 4 views</div>
+                <div style="font-size:11px; color:#8e8e93; margin-top:2px;">You may choose another scan or retake in Step B</div>
+              </div>
+              <span class="carried-badge cb-purple">Default</span>
+            </div>
+
+            <div class="carried-row" style="border-bottom:none;">
+              <span class="carried-icon">📄</span>
+              <div class="carried-body">
+                <div class="carried-label">Monitoring Summary PDF</div>
+                <div class="carried-value">Will attach to the inquiry automatically</div>
+              </div>
+              <span class="carried-badge cb-green">✓ Ready</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Items still needed -->
+        <div class="section-group">
+          <div class="section-group-header">Still Needed — Collected on FR-003 Screens</div>
+          <div class="section-group-body">
+
+            <div class="needed-row">
+              <div class="needed-circle">○</div>
+              <div class="needed-text">Treatment destinations / clinics</div>
+              <span class="needed-tag">FR-003</span>
+            </div>
+            <div class="needed-row">
+              <div class="needed-circle">○</div>
+              <div class="needed-text">Preferred travel dates</div>
+              <span class="needed-tag">FR-003</span>
+            </div>
+            <div class="needed-row">
+              <div class="needed-circle">○</div>
+              <div class="needed-text">Provider selection preferences</div>
+              <span class="needed-tag">FR-003</span>
+            </div>
+            <div class="needed-row" style="border-bottom:none;">
+              <div class="needed-circle">○</div>
+              <div class="needed-text">Terms and submission</div>
+              <span class="needed-tag">FR-003</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Monitoring summary PDF attachment -->
+        <div class="section-group">
+          <div class="section-group-header">Monitoring Summary PDF</div>
+          <div class="section-group-body">
+            <div class="pdf-attach-row" style="border-bottom:none;">
+              <div class="pdf-attach-icon ready">📄</div>
+              <div class="pdf-attach-body">
+                <div class="pdf-attach-name">monitoring-summary.pdf</div>
+                <div class="pdf-attach-sub">Generated 25 Aug 2026 · 2.3 MB · Attaches to inquiry</div>
+              </div>
+              <span class="pdf-attach-status pstat-ready">Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Provider routing notice (conditional — advice mode with assignment) -->
+        <div class="routing-notice">
+          <span class="routing-notice-icon">⚠️</span>
+          <span><strong>Provider routing:</strong> Your assigned provider (P-001) will be the only initial quote recipient for this inquiry. This changes only if they decline before creating a quote, at which point FR-003 runs normal distribution automatically.</span>
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div><!-- /.screen-scroll -->
+
+      <div class="bottom-bar">
+        <button class="btn-cta blue">Continue to Review &amp; Edit →</button>
+        <button class="btn-back">← Back to Active Case</button>
+      </div>
+      <div class="home-indicator"><div class="home-bar"></div></div>
+    </div><!-- /.phone A -->
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- PHONE B: Screen 7 Step B — Review and Edit               -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="phone-col">
+    <div class="phone-col-label">Step B — Review &amp; Edit Carried-Over Data</div>
+    <div class="phone">
+      <span class="di-pill"></span>
+
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>▋▋▋</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="nav-bar">
+        <div class="nav-back"><span class="nav-back-chevron">‹</span> Preview</div>
+        <div class="nav-title">Review &amp; Edit</div>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step-pill done">✓ Preview</div>
+        <div class="step-connector done"></div>
+        <div class="step-pill active">② Review &amp; Edit</div>
+        <div class="step-connector"></div>
+        <div class="step-pill pending">FR-003 →</div>
+      </div>
+
+      <div class="screen-scroll">
+
+        <!-- Pre-fill notice -->
+        <div class="prefill-notice">
+          <strong>Pre-filled from your monitoring case.</strong> All fields are editable — review and adjust before continuing to FR-003.
+        </div>
+
+        <!-- Concern information (editable) -->
+        <div class="section-group">
+          <div class="section-group-header">Concern Information <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+
+            <div class="edit-row">
+              <div class="edit-row-body">
+                <div class="edit-row-label">Nature of Concern</div>
+                <div class="edit-row-value">Increased shedding at crown over 3 months, now stabilising slightly…</div>
+                <span class="edit-prefill-badge">Pre-filled from monitoring</span>
+              </div>
+              <div class="edit-chevron">›</div>
+            </div>
+
+            <div class="edit-row">
+              <div class="edit-row-body">
+                <div class="edit-row-label">Duration</div>
+                <div class="edit-row-value">3–6 months</div>
+                <span class="edit-prefill-badge">Pre-filled from monitoring</span>
+              </div>
+              <div class="edit-chevron">›</div>
+            </div>
+
+            <div class="edit-row">
+              <div class="edit-row-body">
+                <div class="edit-row-label">Previous Treatments</div>
+                <div class="edit-row-value">Minoxidil 5% for 8 months (discontinued)</div>
+                <span class="edit-prefill-badge">Pre-filled from monitoring</span>
+              </div>
+              <div class="edit-chevron">›</div>
+            </div>
+
+            <div class="sev-preview-row">
+              <div style="flex:1;">
+                <div class="edit-row-label" style="margin-bottom:6px;">Current Severity</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="sev-preview-track" style="flex:1;">
+                    <div class="sev-preview-marker" style="left:22%;"></div>
+                  </div>
+                  <span class="sev-preview-val">3</span>
+                </div>
+                <span class="edit-prefill-badge" style="margin-top:6px;">Pre-filled from monitoring</span>
+              </div>
+              <div class="sev-preview-chevron" style="margin-left:10px; margin-top:4px;">›</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Selected head scan -->
+        <div class="section-group">
+          <div class="section-group-header">Selected Head Scan <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+            <div class="scan-select-row">
+              <div class="scan-select-label">Latest scan selected by default — tap to change</div>
+              <div class="scan-selected-card">
+                <div class="scan-selected-icon">🧑‍💻</div>
+                <div class="scan-selected-body">
+                  <div class="scan-selected-name">25 Aug 2026 · 4 views</div>
+                  <div class="scan-selected-sub">Quality validated · FR-002 V1</div>
+                </div>
+                <span class="carried-badge cb-blue">Latest</span>
+              </div>
+              <div class="scan-change-options">
+                <button class="scan-opt-btn">🗂 Prior scan</button>
+                <button class="scan-opt-btn">📷 Retake</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Medical answers (reconfirm) -->
+        <div class="section-group">
+          <div class="section-group-header">Medical Answers <span style="color:#ff3b30">*</span></div>
+          <div class="section-group-body">
+            <div class="mq-reconfirm-row">
+              <div class="mq-reconfirm-icon">🩺</div>
+              <div class="mq-reconfirm-body">
+                <div class="mq-reconfirm-title">Review &amp; Reconfirm</div>
+                <div class="mq-reconfirm-sub">8 answers pre-filled · Must reconfirm all before continuing</div>
+              </div>
+              <span class="mq-reconfirm-status mqs-pending">Pending</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monitoring summary PDF (attached, read-only) -->
+        <div class="section-group">
+          <div class="section-group-header">Monitoring Summary PDF</div>
+          <div class="section-group-body">
+            <div class="pdf-attach-row" style="border-bottom:none;">
+              <div class="pdf-attach-icon ready">📄</div>
+              <div class="pdf-attach-body">
+                <div class="pdf-attach-name">monitoring-summary.pdf</div>
+                <div class="pdf-attach-sub">Attached to inquiry automatically · Cannot be removed</div>
+              </div>
+              <span class="pdf-attach-status pstat-ready">Attached</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inquiry-only handoff reference -->
+        <div class="handoff-box">
+          <div class="handoff-box-header">Collected on FR-003 Screens (Next)</div>
+          <div class="handoff-item">
+            <span class="handoff-bullet">→</span>
+            <span class="handoff-text">Treatment destinations / clinics</span>
+            <span class="handoff-owner">FR-003</span>
+          </div>
+          <div class="handoff-item">
+            <span class="handoff-bullet">→</span>
+            <span class="handoff-text">Preferred travel dates</span>
+            <span class="handoff-owner">FR-003</span>
+          </div>
+          <div class="handoff-item">
+            <span class="handoff-bullet">→</span>
+            <span class="handoff-text">Provider selection preferences</span>
+            <span class="handoff-owner">FR-003</span>
+          </div>
+          <div class="handoff-item">
+            <span class="handoff-bullet">→</span>
+            <span class="handoff-text">Terms and submission</span>
+            <span class="handoff-owner">FR-003</span>
+          </div>
+          <div style="font-size:11px; color:#8e8e93; margin-top:8px; line-height:1.4;">
+            FR-037 does not collect or validate these fields. Pre-filled values and the summary PDF are passed to FR-003 screens automatically.
+          </div>
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div><!-- /.screen-scroll -->
+
+      <!-- CTA disabled until medical answers reconfirmed -->
+      <div class="bottom-bar">
+        <button class="btn-cta disabled">Continue to FR-003 →</button>
+        <div style="text-align:center; font-size:12px; color:#8e8e93; margin-top:6px;">
+          Reconfirm medical answers to continue
+        </div>
+      </div>
+      <div class="home-indicator"><div class="home-bar"></div></div>
+    </div><!-- /.phone B -->
+  </div>
+
+
+  <!-- Annotations -->
+  <div class="annotation-list">
+    <div class="ann-section-title">Design Notes</div>
+
+    <div class="annotation-item">
+      <div class="ann-dot gray"></div>
+      <div class="ann-text"><strong class="gray">Step A hoàn toàn read-only</strong> — không có inquiry record, monitoring case không thay đổi. Back → case vẫn active.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot blue"></div>
+      <div class="ann-text"><strong class="blue">Step indicator</strong>: Step A active → Step B pending → FR-003. Khi sang Step B, Step A chuyển thành ✓ done + connector xanh lá.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot orange"></div>
+      <div class="ann-text"><strong class="orange">Provider routing notice</strong> chỉ hiện ở Step A khi advice mode + có active assignment. PRD: provider đó là người nhận quote duy nhất ban đầu.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot green"></div>
+      <div class="ann-text"><strong class="green">Step B: mọi field đều editable</strong> — pre-fill badge màu xanh nhắc patient biết giá trị đến từ monitoring case.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot"></div>
+      <div class="ann-text"><strong>Medical reconfirm</strong> bắt buộc — CTA disabled cho đến khi patient review và reconfirm 8 câu trả lời. Đây là gate quan trọng nhất của Step B.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot purple"></div>
+      <div class="ann-text"><strong class="purple">Scan: latest by default</strong> — patient có thể chọn scan cũ hơn hoặc retake. Hai nút nhỏ bên dưới scan card đã chọn.</div>
+    </div>
+
+    <div class="annotation-item">
+      <div class="ann-dot gray"></div>
+      <div class="ann-text"><strong class="gray">Handoff box</strong> liệt kê rõ những gì FR-003 sẽ thu thập — FR-037 không duplicate các fields đó, chỉ pass pre-filled values sang.</div>
+    </div>
+  </div>
+
+</div><!-- /.phones-row -->
+
+</body>
+</html>

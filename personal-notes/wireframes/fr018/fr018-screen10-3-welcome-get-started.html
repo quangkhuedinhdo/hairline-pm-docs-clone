@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FR-018 Screen 10.3 — Welcome / Get Started (First Login)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      background: #f4f5f7;
+      color: #172b4d;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #0052cc;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+    }
+    .topbar-logo { font-weight: 700; font-size: 16px; color: #fff; letter-spacing: 0.01em; }
+    .topbar-logo span { font-weight: 400; opacity: 0.75; font-size: 13px; margin-left: 8px; }
+
+    /* ── Page layout ── */
+    .page-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #dfe1e6;
+      box-shadow: 0 1px 4px rgba(9,30,66,0.10);
+      width: 100%;
+      max-width: 560px;
+      padding: 36px 40px 32px;
+    }
+
+    /* ── Welcome Header ── */
+    .welcome-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .welcome-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #e3fcef;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      border: 2px solid #abf5d1;
+    }
+    .welcome-icon svg { width: 28px; height: 28px; }
+    .welcome-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #172b4d;
+      margin-bottom: 8px;
+    }
+    .welcome-header p {
+      font-size: 13px;
+      color: #5e6c84;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #f4f5f7;
+      margin: 20px 0;
+    }
+
+    /* ── Section Label ── */
+    .section-heading {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b778c;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+    }
+
+    /* ── Assigned Codes Summary ── */
+    .code-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .code-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f4f5f7;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 10px 14px;
+    }
+    .code-item-left { display: flex; align-items: center; gap: 10px; }
+    .code-badge {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #172b4d;
+      background: #fff;
+      border: 1.5px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 3px 10px;
+      letter-spacing: 0.05em;
+    }
+    .code-label {
+      font-size: 12px;
+      color: #5e6c84;
+    }
+    .code-status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: #e3fcef;
+      color: #006644;
+      border: 1px solid #abf5d1;
+    }
+
+    /* ── Info Grid ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .info-card {
+      background: #f4f5f7;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .info-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b778c;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .info-card-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #172b4d;
+    }
+    .info-card-sub {
+      font-size: 11px;
+      color: #6b778c;
+      margin-top: 2px;
+    }
+
+    /* ── Referral Link ── */
+    .referral-block {
+      margin-bottom: 24px;
+    }
+    .referral-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .referral-input {
+      flex: 1;
+      background: #f4f5f7;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 9px 12px;
+      font-size: 12px;
+      color: #5e6c84;
+      font-family: 'Courier New', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-copy {
+      background: #fff;
+      border: 1.5px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #172b4d;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-copy:hover { background: #f4f5f7; border-color: #b3bac5; }
+    .referral-hint {
+      font-size: 11px;
+      color: #6b778c;
+      margin-top: 5px;
+    }
+
+    /* ── CTA Buttons ── */
+    .cta-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn-primary {
+      flex: 1;
+      background: #0052cc;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #0065ff; }
+    .btn-secondary {
+      flex: 1;
+      background: #fff;
+      color: #0052cc;
+      border: 1.5px solid #0052cc;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #deebff; }
+
+    /* ── Shown-once notice ── */
+    .shown-once-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fffae6;
+      border: 1px solid #ffe380;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #5d4215;
+      margin-bottom: 24px;
+    }
+    .shown-once-notice svg { flex-shrink: 0; width: 14px; height: 14px; }
+
+    /* ── Annotations ── */
+    .annotations {
+      max-width: 560px;
+      margin: 16px auto 0;
+      padding: 0 16px;
+    }
+    .annotation-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b778c;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+    .annotation-list { list-style: none; }
+    .annotation-list li {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      color: #5e6c84;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .annotation-list li .badge {
+      flex-shrink: 0;
+      background: #dfe1e6;
+      color: #172b4d;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 10px;
+      font-weight: 700;
+      height: fit-content;
+      margin-top: 1px;
+    }
+
+    /* ── Screen Flow ── */
+    .section-label {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b778c;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .states-row {
+      display: flex;
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 16px;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .state-card {
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #dfe1e6;
+      overflow: hidden;
+    }
+    .state-card-header {
+      background: #f4f5f7;
+      border-bottom: 1px solid #dfe1e6;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #5e6c84;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .state-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .state-dot.success { background: #00875a; }
+    .state-dot.info    { background: #0052cc; }
+    .state-card-body { padding: 14px 16px; }
+    .state-desc { font-size: 12px; color: #5e6c84; line-height: 1.5; }
+    .state-flow {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .state-flow-step {
+      background: #f4f5f7;
+      border: 1px solid #dfe1e6;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: #172b4d;
+      font-weight: 500;
+    }
+    .state-flow-arrow { font-size: 12px; color: #6b778c; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-logo">Hairline <span>Affiliate Portal</span></div>
+  </div>
+
+  <!-- ========== MAIN SCREEN ========== -->
+  <div class="page-center">
+    <div class="card">
+
+      <!-- Welcome Header -->
+      <div class="welcome-header">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+              stroke="#00875a" stroke-width="2" stroke-linejoin="round" fill="#c3f5dc"/>
+          </svg>
+        </div>
+        <h2>Welcome to Hairline!</h2>
+        <p>Your affiliate account is now active. Here's a summary of your programme details to help you get started.</p>
+      </div>
+
+      <!-- Shown-once notice -->
+      <div class="shown-once-notice">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="#f4820b" stroke-width="2"/>
+          <path d="M12 7v5" stroke="#f4820b" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="16.5" r="1" fill="#f4820b"/>
+        </svg>
+        This screen is shown once. After dismissal, you will land directly on your Overview.
+      </div>
+
+      <!-- Assigned Codes Summary -->
+      <div class="section-heading">Assigned Codes</div>
+      <div class="code-list">
+        <div class="code-item">
+          <div class="code-item-left">
+            <div class="code-badge">HAIR-AFF-001</div>
+            <div class="code-label">Standard Campaign Code</div>
+          </div>
+          <div class="code-status">Active</div>
+        </div>
+        <div class="code-item">
+          <div class="code-item-left">
+            <div class="code-badge">HAIR-AFF-VIP</div>
+            <div class="code-label">VIP Campaign Code</div>
+          </div>
+          <div class="code-status">Active</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Commission Summary + Payout Schedule -->
+      <div class="section-heading">Your Programme Details</div>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">Commission Summary</div>
+          <div class="info-card-value">10% per booking</div>
+          <div class="info-card-sub">On completed booking revenue (USD)</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Payout Schedule</div>
+          <div class="info-card-value">Monthly — 7th</div>
+          <div class="info-card-sub">Next payout: 7 Aug 2026</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Referral Link -->
+      <div class="referral-block">
+        <div class="section-heading">Your Referral Link</div>
+        <div class="referral-input-row">
+          <div class="referral-input">https://hairline.com/ref?aff=HAIR-AFF-001&auto=1</div>
+          <button class="btn-copy">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="9" y="9" width="13" height="13" rx="2" stroke="#172b4d" stroke-width="2"/>
+              <path d="M5 15H4C2.89 15 2 14.11 2 13V4C2 2.89 2.89 2 4 2H13C14.11 2 15 2.89 15 4V5" stroke="#172b4d" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Copy Link
+          </button>
+        </div>
+        <div class="referral-hint">Unique auto-apply URL — read-only. Patients who use this link will be attributed to your account.</div>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="cta-row">
+        <button class="btn-secondary">Complete Profile</button>
+        <button class="btn-primary">Get Started</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Annotations ── -->
+  <div class="annotations">
+    <div class="annotation-title">Field Notes</div>
+    <ul class="annotation-list">
+      <li><span class="badge">BR</span> <strong>Shown Once</strong>: Displayed only on the affiliate's first login after activation. Subsequent logins go directly to Overview (Screen 9.1).</li>
+      <li><span class="badge">BR</span> <strong>Privacy</strong>: Only the affiliate's own codes, commission structure, and payout schedule are shown — no other affiliates' data.</li>
+      <li><span class="badge">UX</span> <strong>Assigned Codes Summary</strong>: Read-only list of initial discount code(s). May show one or more codes.</li>
+      <li><span class="badge">UX</span> <strong>Commission Summary</strong>: Read-only display of the affiliate's commission structure (percentage or fixed amount per booking).</li>
+      <li><span class="badge">UX</span> <strong>Payout Schedule</strong>: Read-only. Payout frequency is monthly on the 7th (fixed, not configurable). Shows next payout date.</li>
+      <li><span class="badge">UX</span> <strong>Referral Link</strong>: Read-only, one-click copy. Unique auto-apply URL for the affiliate.</li>
+      <li><span class="badge">NAV</span> <strong>Complete Profile</strong> → opens Profile tab (Screen 9.4) for non-sensitive fields (phone, language).</li>
+      <li><span class="badge">NAV</span> <strong>Get Started</strong> → dismisses this screen and opens Overview tab (Screen 9.1). Screen not shown again.</li>
+    </ul>
+  </div>
+
+  <!-- ── Screen Flow ── -->
+  <hr style="border:none; border-top:2px dashed #dfe1e6; margin:32px auto 0; max-width:900px;">
+  <div class="section-label">Screen Flow</div>
+
+  <div class="states-row">
+    <div class="state-card">
+      <div class="state-card-header">
+        <span class="state-dot success"></span>
+        Happy Path — Complete Profile
+      </div>
+      <div class="state-card-body">
+        <div class="state-desc">Affiliate logs in for the first time → Welcome screen shown with codes, commission, payout schedule, referral link → clicks "Complete Profile" → routed to Profile tab (Screen 9.4).</div>
+        <div class="state-flow">
+          <span class="state-flow-step">First Login</span>
+          <span class="state-flow-arrow">→</span>
+          <span class="state-flow-step">Screen 10.3 (Welcome)</span>
+          <span class="state-flow-arrow">→</span>
+          <span class="state-flow-step">Complete Profile</span>
+          <span class="state-flow-arrow">→</span>
+          <span class="state-flow-step">Screen 9.4 (Profile Tab)</span>
+        </div>
+      </div>
+    </div>
+    <div class="state-card">
+      <div class="state-card-header">
+        <span class="state-dot info"></span>
+        Happy Path — Get Started
+      </div>
+      <div class="state-card-body">
+        <div class="state-desc">Affiliate logs in for the first time → Welcome screen shown → clicks "Get Started" → routed to Overview (Screen 9.1). Welcome screen not shown again on subsequent logins.</div>
+        <div class="state-flow">
+          <span class="state-flow-step">First Login</span>
+          <span class="state-flow-arrow">→</span>
+          <span class="state-flow-step">Screen 10.3 (Welcome)</span>
+          <span class="state-flow-arrow">→</span>
+          <span class="state-flow-step">Get Started</span>
+          <span class="state-flow-arrow">→</span>
+          <span class="state-flow-step">Screen 9.1 (Overview)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 40px;"></div>
+
+</body>
+</html>
