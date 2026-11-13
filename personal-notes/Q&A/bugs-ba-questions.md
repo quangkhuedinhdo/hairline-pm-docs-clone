@@ -22,8 +22,7 @@ Cách trả lời: ghi dưới từng issue, ví dụ "HAIRL-1712 Q1: Có".
 ### HAIRL-1712 (A-09 / FR-028) — vị trí patient theo IP
 PRD tự mâu thuẫn: `fr028-regional-config-pricing` dòng 97, 282, 593 và REQ-028-003 (dòng 768) yêu cầu lấy vị trí "from profile or IP geolocation", nhưng mục External Dependencies (dòng 562) ghi "None". Backend hiện chỉ dùng quốc gia trong profile (hoặc quốc gia app gửi lên).
 - **Q1.** Có cần IP geolocation không? Nếu Có: dùng file MaxMind GeoLite2 đặt trên server (tra cứu nội bộ, không gọi dịch vụ ngoài, cần licence key miễn phí và job cập nhật định kỳ), đúng không?
-- 
-- **Q2.** Nếu Không: sửa FR-028, bỏ "IP geolocation", chỉ dùng quốc gia trong profile, đúng không?
+**Q2.** Nếu Không: sửa FR-028, bỏ "IP geolocation", chỉ dùng quốc gia trong profile, đúng không?
 
 ### HAIRL-1740 (PR-02 / FR-003, FR-026) — thời hạn provider phản hồi inquiry
 `fr003-inquiry-submission` Rule 2 (dòng 1030) "Providers must respond within 72 hours (configurable)" và Screen 9 (dòng 852) "Inquiry expiration configurable by admin". Nhưng `fr026-app-settings-security` Screen 5c Inquiry Configuration (dòng 600, 798) chỉ có treatment area và lead time. Backend hiện đọc biến môi trường `INQUIRY_RESPONSE_DEADLINE_HOURS` (mặc định 72).
@@ -35,17 +34,17 @@ Phân tích đầy đủ trong repo backend: `docs/ba-questions/HAIRL-1746-produ
 - **Q2. Inquiry tự hết hạn (E7-G2).** FR-003 Rule 1 (dòng 1025) "Inquiry automatically expires if unquoted (configurable timeframe)" nhưng không có stage, luồng hay thông báo nào đi kèm, và system PRD EC-003 lại mô tả kết quả khác. Bỏ Rule 1 (chỉ giữ thời hạn phản hồi 72 giờ của từng provider), đúng không? Nếu Không: cần một change request định nghĩa stage, luồng và thông báo.
 - **Q3. HPID (W1-G5, W2-G7).** FR-003 dòng 761 ghi "HPID + YY + MM + 4-digit sequence" và gọi đây là mã inquiry; FR-016, FR-022, FR-034 lại coi HPID là mã patient. Dữ liệu hiện có dạng `HPID2501-0001` và là mã patient. Thống nhất HPID = mã patient, định dạng `HPIDYYMM-NNNN`, và trường "Inquiry Reference" ở màn 8a/8b và FR-006 hiển thị HPID của patient, đúng không?
 - **Q4. Bản nháp inquiry (A1-G1, A2-G2, A2-G3, US2-G1).** FR-003 dòng 131 và REQ-003-004 (dòng 1219) ghi "System saves draft" mà không nói lưu ở đâu; tech spec lưu trên thiết bị (`draft_inquiry`). Xác nhận bản nháp lưu trên thiết bị (không đồng bộ giữa các máy, hết hạn sau 7 ngày), và "incomplete/pending" chỉ là nhãn hiển thị trên app, không phải trạng thái API, đúng không?
-- **Q5. Giới hạn 5 file (E1-G2).** FR-003 Screen 3 (dòng 529–530) ghi "Up to 5 images" và "Up to 5 videos", nhưng Business Rules (dòng 542) ghi "Visual evidence limited to 5 files total". Áp dụng tối đa 5 file cho ảnh và video cộng lại, đúng không?
+- **Q5. Giới hạn 5 file (E1-G2).** FR-003 Screen 3 (dòng 529–530) ghi "Up to 5 images" và "Up to 5 videos", nhưng Business Rules (dòng 542) ghi "Visual evidence limited to 5 files total". Áp dụng tối đa 5 file cho ảnh và video cộng lại, đúng không? ✅Đồng ý
 - **Q6. Schema.** Các cột `inquiry_providers.response_deadline_at`, `responded_at`, `sla_breach_notified_at` đang được dùng nhưng chưa có trong `system-data-schema.md` §5A. BA bổ sung vào schema, đúng không?
 
 ### HAIRL-1655 (PR-01 / FR-009) — người nhận việc khi xoá thành viên
 `fr009-provider-team-roles` Screen 4 (dòng 409) ghi Reassignment Dropdown "Filters by role compatibility" nhưng không định nghĩa thế nào là "compatible". Design (`Provider/Setting & Support/Team/Remove or Suspend Team Member.png`) cho tìm bất kỳ thành viên nào.
-- **Q1.** Mọi thành viên Active đều nhận được việc chuyển giao (không lọc theo vai trò), đúng không? Nếu Không: liệt kê vai trò được nhận cho từng loại việc (inquiry, quote, lịch hẹn, tin nhắn).
+- **Q1.** Mọi thành viên Active đều nhận được việc chuyển giao (không lọc theo vai trò), đúng không? Nếu Không: liệt kê vai trò được nhận cho từng loại việc (inquiry, quote, lịch hẹn, tin nhắn).✅Tạm thời cứ cho mọi thành viên được active đều nhận được việc chuyển giao
 
 ### HAIRL-1640 (PR-01 / FR-009) — lý do xoá thành viên
 FR-009 Screen 4 (dòng 410) có "Removal Reason: select + textarea, Required Yes, Predefined reasons" nhưng không liệt kê lý do nào; Workflow bước 12 (dòng 252) lại ghi "reason (if provided)". Design modal Remove/Suspend **không có ô lý do**.
-- **Q1.** Danh sách lý do: "Left the clinic", "Role change", "Performance", "Security concern", "Other" (chọn Other thì bắt buộc ghi chú). Đồng ý không?
-- **Q2.** Lý do là bắt buộc (theo Screen 4), và designer bổ sung ô này vào modal, đúng không?
+- **Q1.** Danh sách lý do: "Left the clinic", "Role change", "Performance", "Security concern", "Other" (chọn Other thì bắt buộc ghi chú). Đồng ý không? ✅Đồng ý với điều này
+- **Q2.** Lý do là bắt buộc (theo Screen 4), và designer bổ sung ô này vào modal, đúng không? ✅Đồng ý với điều này
 
 ### HAIRL-1646 (PR-01 / FR-009) — nhóm hành động trong Activity Log
 FR-009 Tab 2 (dòng 482–487) có bộ lọc "Login, Inquiry, Quote, Treatment, Patient Communication, Settings". Design (Team member → Activity Log) cũng dùng đúng 6 nhóm này, nhưng không nói hành động nào thuộc nhóm nào.
@@ -57,11 +56,11 @@ FR-009 Tab 2 (dòng 482–487) có bộ lọc "Login, Inquiry, Quote, Treatment,
   - Patient Communication: tin nhắn, cuộc gọi.
   - Settings: hồ sơ, team, vai trò, thông báo, ngân hàng.
 
-  Đồng ý không?
+  Đồng ý không? ✅Đồng ý với điều này
 
 ### HAIRL-1654 (PR-01 / FR-009) — bộ lọc Region
 FR-009 Screen 10 Provider Team Directory (màn admin, dòng 596) có "Filter by status, role, region", nhưng thành viên không có trường region.
-- **Q1.** "Region" là quốc gia và thành phố của provider (FR-015 Tab 1 Location), đúng không?
+- **Q1.** "Region" là quốc gia và thành phố của provider (FR-015 Tab 1 Location), đúng không?✅Đồng ý với điều này
 
 ### HAIRL-1659 (PR-05 / FR-032, FR-017) — tiền tệ nhận payout
 `fr032-provider-dashboard-settings` Screen 4 Billing (dòng 1131–1178) không có trường tiền tệ; `fr017-payment-billing` Currency Rule 1 (dòng 1240) ghi "providers paid in their configured currency" nhưng không nói cấu hình ở đâu. Code hiện cho phép USD, AUD, BDT.
